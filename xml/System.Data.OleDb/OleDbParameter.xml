@@ -1,0 +1,1474 @@
+<Type Name="OleDbParameter" FullName="System.Data.OleDb.OleDbParameter">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="bb4132d6d467a4081d4b86f3de82b42ec0162271" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70426453" /></Metadata><TypeSignature Language="C#" Value="public sealed class OleDbParameter : System.Data.Common.DbParameter, ICloneable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit OleDbParameter extends System.Data.Common.DbParameter implements class System.Data.IDataParameter, class System.Data.IDbDataParameter, class System.ICloneable" />
+  <TypeSignature Language="DocId" Value="T:System.Data.OleDb.OleDbParameter" />
+  <TypeSignature Language="VB.NET" Value="Public NotInheritable Class OleDbParameter&#xA;Inherits DbParameter&#xA;Implements ICloneable" />
+  <TypeSignature Language="C++ CLI" Value="public ref class OleDbParameter sealed : System::Data::Common::DbParameter, ICloneable" />
+  <TypeSignature Language="F#" Value="type OleDbParameter = class&#xA;    inherit DbParameter&#xA;    interface ICloneable&#xA;    interface IDbDataParameter&#xA;    interface IDataParameter" />
+  <AssemblyInfo>
+    <AssemblyName>System.Data</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Data.OleDb</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Data.Common.DbParameter</BaseTypeName>
+    <BaseTypeName FrameworkAlternate="netframework-1.1">System.MarshalByRefObject</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Data.IDataParameter</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Data.IDbDataParameter</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.ICloneable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netframework-4.8;dotnet-plat-ext-3.0;netcore-3.0">
+      <AttributeName>System.ComponentModel.TypeConverter(typeof(System.Data.OleDb.OleDbParameter/OleDbParameterConverter))</AttributeName>
+    </Attribute>
+    <Attribute FrameworkAlternate="netframework-1.1">
+      <AttributeName>System.ComponentModel.TypeConverter(typeof(System.Data.OleDb.OleDbParameterConverter))</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary><span data-ttu-id="81583-101">表示 <see cref="T:System.Data.OleDb.OleDbCommand" /> 的参数，还可以表示它到 <see cref="T:System.Data.DataSet" /> 列的映射。</span><span class="sxs-lookup"><span data-stu-id="81583-101">Represents a parameter to an <see cref="T:System.Data.OleDb.OleDbCommand" /> and optionally its mapping to a <see cref="T:System.Data.DataSet" /> column.</span></span> <span data-ttu-id="81583-102">此类不能被继承。</span><span class="sxs-lookup"><span data-stu-id="81583-102">This class cannot be inherited.</span></span></summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-103">OLE DB.NET Framework 数据提供程序使用以问号（？）标记的位置参数，而不是命名参数。</span><span class="sxs-lookup"><span data-stu-id="81583-103">The OLE DB.NET Framework Data Provider uses positional parameters that are marked with a question mark (?) instead of named parameters.</span></span>  
+  
+ <span data-ttu-id="81583-104">使用 Oracle 的 Microsoft OLE DB 提供程序（MSDAORA）和 OLE DB.NET Framework 数据提供程序查询 Oracle 数据库时，如果使用`LIKE`子句来查询固定长度字段中的值，则可能不会返回所有预期匹配项。</span><span class="sxs-lookup"><span data-stu-id="81583-104">When querying an Oracle database using the Microsoft OLE DB Provider for Oracle (MSDAORA) and the OLE DB.NET Framework Data Provider, using the `LIKE` clause to query values in fixed-length fields may not return all expected matches.</span></span> <span data-ttu-id="81583-105">原因在于，当 Oracle 在`LIKE`子句中匹配固定长度字段的值时，它会与字符串的整个长度匹配，其中包括任何空白尾随空格。</span><span class="sxs-lookup"><span data-stu-id="81583-105">The reason is that when Oracle matches values for fixed-length fields in a `LIKE` clause, it matches the entire length of the string, including any padding trailing spaces.</span></span> <span data-ttu-id="81583-106">例如，如果 Oracle 数据库中的某个表包含一个名为 "Field1" 的字段（定义为`char(3)`），并且您在该表的行中输入值 "a"，则下面的代码不会返回该行。</span><span class="sxs-lookup"><span data-stu-id="81583-106">For example, if a table in an Oracle database contains a field named "Field1" that is defined as `char(3)`, and you enter the value "a" into a row of that table, the following code does not return the row.</span></span>  
+  
+```vb  
+Dim queryString As String = "SELECT * FROM Table1 WHERE Field1 LIKE ?"  
+Dim command As OleDbCommand = New OleDbCommand(queryString, connection)  
+command.Parameters.Add("@p1", OleDbType.Char, 3).Value = "a"  
+Dim reader As OleDbDataReader = command.ExecuteReader()  
+```  
+  
+```csharp  
+string queryString = "SELECT * FROM Table1 WHERE Field1 LIKE ?";  
+OleDbCommand command = new OleDbCommand(queryString, connection);  
+command.Parameters.Add("@p1", OleDbType.Char, 3).Value = "a";  
+OleDbDataReader reader = command.ExecuteReader();  
+```  
+  
+ <span data-ttu-id="81583-107">这是因为 oracle 将列值存储为 "a" （填充 "a"，尾随空格，固定字段长度为3），在进行固定长度的字段`LIKE`比较时，oracle 不会将其视为 "a" 参数值的匹配项。</span><span class="sxs-lookup"><span data-stu-id="81583-107">This is because Oracle stores the column value as "a  " (padding "a", with trailing spaces, to the fixed field length of 3), which Oracle does not treat as a match for the parameter value of "a" in the case of a `LIKE` comparison of fixed-length fields.</span></span>  
+  
+ <span data-ttu-id="81583-108">若要解决此问题，请将一个百分比（"%"）通配符追加到参数值`"a%"`（），或改为`=`使用 SQL 比较。</span><span class="sxs-lookup"><span data-stu-id="81583-108">To resolve this problem, append a percentage ("%") wildcard character to the parameter value (`"a%"`), or use an SQL `=` comparison instead.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-109">下面的示例<xref:System.Data.OleDb.OleDbParameter> <xref:System.Data.OleDb.OleDbParameterCollection>通过中<xref:System.Data.OleDb.OleDbDataAdapter>的集合创建的多个实例。</span><span class="sxs-lookup"><span data-stu-id="81583-109">The following example creates multiple instances of <xref:System.Data.OleDb.OleDbParameter> through the <xref:System.Data.OleDb.OleDbParameterCollection> collection within the <xref:System.Data.OleDb.OleDbDataAdapter>.</span></span> <span data-ttu-id="81583-110">这些参数用于从数据源中选择数据，并将数据放入中<xref:System.Data.DataSet>。</span><span class="sxs-lookup"><span data-stu-id="81583-110">These parameters are used to select data from the data source and place the data in the <xref:System.Data.DataSet>.</span></span> <span data-ttu-id="81583-111">此示例假设已使用<xref:System.Data.DataSet>相应的<xref:System.Data.OleDb.OleDbDataAdapter>架构、命令和连接创建了一个和。</span><span class="sxs-lookup"><span data-stu-id="81583-111">This example assumes that a <xref:System.Data.DataSet> and an <xref:System.Data.OleDb.OleDbDataAdapter> have already been created by using the appropriate schema, commands, and connection.</span></span>  
+  
+ [!code-csharp[Classic WebData OleDbParameter Example#1](~/samples/snippets/csharp/VS_Snippets_ADO.NET/Classic WebData OleDbParameter Example/CS/source.cs#1)]
+ [!code-vb[Classic WebData OleDbParameter Example#1](~/samples/snippets/visualbasic/VS_Snippets_ADO.NET/Classic WebData OleDbParameter Example/VB/source.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-112">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-112">Working with Commands</span></span></related>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary><span data-ttu-id="81583-113">初始化 <see cref="T:System.Data.OleDb.OleDbParameter" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="81583-113">Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class.</span></span></summary>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-114">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-114">Working with Commands</span></span></related>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OleDbParameter ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.OleDb.OleDbParameter.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; OleDbParameter();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="81583-115">初始化 <see cref="T:System.Data.OleDb.OleDbParameter" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="81583-115">Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ <span data-ttu-id="81583-116">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-116">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+ [!code-csharp[Classic WebData OleDbParameter.OleDbParameter Example#1](~/samples/snippets/csharp/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter Example/CS/source.cs#1)]
+ [!code-vb[Classic WebData OleDbParameter.OleDbParameter Example#1](~/samples/snippets/visualbasic/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-117">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-117">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OleDbParameter (string name, System.Data.OleDb.OleDbType dataType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, valuetype System.Data.OleDb.OleDbType dataType) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.OleDb.OleDbParameter.#ctor(System.String,System.Data.OleDb.OleDbType)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (name As String, dataType As OleDbType)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; OleDbParameter(System::String ^ name, System::Data::OleDb::OleDbType dataType);" />
+      <MemberSignature Language="F#" Value="new System.Data.OleDb.OleDbParameter : string * System.Data.OleDb.OleDbType -&gt; System.Data.OleDb.OleDbParameter" Usage="new System.Data.OleDb.OleDbParameter (name, dataType)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="dataType" Type="System.Data.OleDb.OleDbType" />
+      </Parameters>
+      <Docs>
+        <param name="name"><span data-ttu-id="81583-118">要映射的参数的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-118">The name of the parameter to map.</span></span></param>
+        <param name="dataType"><span data-ttu-id="81583-119"><see cref="T:System.Data.OleDb.OleDbType" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-119">One of the <see cref="T:System.Data.OleDb.OleDbType" /> values.</span></span></param>
+        <summary><span data-ttu-id="81583-120">初始化使用参数名称和数据类型的 <see cref="T:System.Data.OleDb.OleDbParameter" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="81583-120">Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name and data type.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-121">数据类型（如果适用） <xref:System.Data.OleDb.OleDbParameter.Size%2A> <xref:System.Data.OleDb.OleDbParameter.Precision%2A> ，并根据`dataType`参数的值进行推断。</span><span class="sxs-lookup"><span data-stu-id="81583-121">The data type, and if appropriate, <xref:System.Data.OleDb.OleDbParameter.Size%2A> and <xref:System.Data.OleDb.OleDbParameter.Precision%2A> are inferred from the value of the `dataType` parameter.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-122">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-122">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+ [!code-csharp[Classic WebData OleDbParameter.OleDbParameter1 Example#1](~/samples/snippets/csharp/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter1 Example/CS/source.cs#1)]
+ [!code-vb[Classic WebData OleDbParameter.OleDbParameter1 Example#1](~/samples/snippets/visualbasic/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter1 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="81583-123">参数 <paramref name="dataType" /> 中提供的值不是有效的后端数据类型。</span><span class="sxs-lookup"><span data-stu-id="81583-123">The value supplied in the <paramref name="dataType" /> parameter is an invalid back-end data type.</span></span></exception>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-124">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-124">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OleDbParameter (string name, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.OleDb.OleDbParameter.#ctor(System.String,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (name As String, value As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; OleDbParameter(System::String ^ name, System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="new System.Data.OleDb.OleDbParameter : string * obj -&gt; System.Data.OleDb.OleDbParameter" Usage="new System.Data.OleDb.OleDbParameter (name, value)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="name"><span data-ttu-id="81583-125">要映射的参数的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-125">The name of the parameter to map.</span></span></param>
+        <param name="value"><span data-ttu-id="81583-126">新 <see cref="T:System.Data.OleDb.OleDbParameter" /> 对象的值。</span><span class="sxs-lookup"><span data-stu-id="81583-126">The value of the new <see cref="T:System.Data.OleDb.OleDbParameter" /> object.</span></span></param>
+        <summary><span data-ttu-id="81583-127">初始化使用新 <see cref="T:System.Data.OleDb.OleDbParameter" /> 的参数名称和值的 <see cref="T:System.Data.OleDb.OleDbParameter" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="81583-127">Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name and the value of the new <see cref="T:System.Data.OleDb.OleDbParameter" />.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-128">使用<xref:System.Data.OleDb.OleDbParameter>构造函数的此重载来指定整数参数值时，请务必小心。</span><span class="sxs-lookup"><span data-stu-id="81583-128">Use caution when you are using this overload of the <xref:System.Data.OleDb.OleDbParameter> constructor to specify integer parameter values.</span></span> <span data-ttu-id="81583-129">因为此重载接受 <xref:System.Object> 类型的 `value`，所以当此值为零时，必须将整数值转换为 <xref:System.Object> 类型，如下面的 C# 示例所示。</span><span class="sxs-lookup"><span data-stu-id="81583-129">Because this overload takes a `value` of type <xref:System.Object>, you must convert the integral value to an <xref:System.Object> type when the value is zero, as the following C# example demonstrates.</span></span>  
+  
+```csharp  
+Parameter = new OleDbParameter("@pname", Convert.ToInt32(0));  
+```  
+  
+ <span data-ttu-id="81583-130">如果不执行此转换，编译器将假定您尝试调用<xref:System.Data.OleDb.OleDbParameter.%23ctor%2A>构造函数重载。</span><span class="sxs-lookup"><span data-stu-id="81583-130">If you do not perform this conversion, the compiler assumes that you are trying to call the <xref:System.Data.OleDb.OleDbParameter.%23ctor%2A> constructor overload.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-131">下面的示例创建一个<xref:System.Data.OleDb.OleDbParameter>。</span><span class="sxs-lookup"><span data-stu-id="81583-131">The following example creates an <xref:System.Data.OleDb.OleDbParameter>.</span></span>  
+  
+ [!code-csharp[Classic WebData OleDbParameter.OleDbParameter5 Example#1](~/samples/snippets/csharp/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter5 Example/CS/source.cs#1)]
+ [!code-vb[Classic WebData OleDbParameter.OleDbParameter5 Example#1](~/samples/snippets/visualbasic/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter5 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-132">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-132">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OleDbParameter (string name, System.Data.OleDb.OleDbType dataType, int size);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, valuetype System.Data.OleDb.OleDbType dataType, int32 size) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.OleDb.OleDbParameter.#ctor(System.String,System.Data.OleDb.OleDbType,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (name As String, dataType As OleDbType, size As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; OleDbParameter(System::String ^ name, System::Data::OleDb::OleDbType dataType, int size);" />
+      <MemberSignature Language="F#" Value="new System.Data.OleDb.OleDbParameter : string * System.Data.OleDb.OleDbType * int -&gt; System.Data.OleDb.OleDbParameter" Usage="new System.Data.OleDb.OleDbParameter (name, dataType, size)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="dataType" Type="System.Data.OleDb.OleDbType" />
+        <Parameter Name="size" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="name"><span data-ttu-id="81583-133">要映射的参数的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-133">The name of the parameter to map.</span></span></param>
+        <param name="dataType"><span data-ttu-id="81583-134"><see cref="T:System.Data.OleDb.OleDbType" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-134">One of the <see cref="T:System.Data.OleDb.OleDbType" /> values.</span></span></param>
+        <param name="size"><span data-ttu-id="81583-135">参数的长度。</span><span class="sxs-lookup"><span data-stu-id="81583-135">The length of the parameter.</span></span></param>
+        <summary><span data-ttu-id="81583-136">初始化使用参数名称、数据类型和长度的 <see cref="T:System.Data.OleDb.OleDbParameter" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="81583-136">Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name, data type, and length.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-137">如果参数`dataType` 中 `size` 未显式设置，则从参数的值推断。 <xref:System.Data.OleDb.OleDbParameter.Size%2A></span><span class="sxs-lookup"><span data-stu-id="81583-137">The <xref:System.Data.OleDb.OleDbParameter.Size%2A> is inferred from the value of the `dataType` parameter if it is not explicitly set in the `size` parameter.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-138">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-138">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+ [!code-csharp[Classic WebData OleDbParameter.OleDbParameter2 Example#1](~/samples/snippets/csharp/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter2 Example/CS/source.cs#1)]
+ [!code-vb[Classic WebData OleDbParameter.OleDbParameter2 Example#1](~/samples/snippets/visualbasic/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter2 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="81583-139">参数 <paramref name="dataType" /> 中提供的值不是有效的后端数据类型。</span><span class="sxs-lookup"><span data-stu-id="81583-139">The value supplied in the <paramref name="dataType" /> parameter is an invalid back-end data type.</span></span></exception>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-140">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-140">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OleDbParameter (string name, System.Data.OleDb.OleDbType dataType, int size, string srcColumn);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, valuetype System.Data.OleDb.OleDbType dataType, int32 size, string srcColumn) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.OleDb.OleDbParameter.#ctor(System.String,System.Data.OleDb.OleDbType,System.Int32,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (name As String, dataType As OleDbType, size As Integer, srcColumn As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; OleDbParameter(System::String ^ name, System::Data::OleDb::OleDbType dataType, int size, System::String ^ srcColumn);" />
+      <MemberSignature Language="F#" Value="new System.Data.OleDb.OleDbParameter : string * System.Data.OleDb.OleDbType * int * string -&gt; System.Data.OleDb.OleDbParameter" Usage="new System.Data.OleDb.OleDbParameter (name, dataType, size, srcColumn)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="dataType" Type="System.Data.OleDb.OleDbType" />
+        <Parameter Name="size" Type="System.Int32" />
+        <Parameter Name="srcColumn" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name"><span data-ttu-id="81583-141">要映射的参数的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-141">The name of the parameter to map.</span></span></param>
+        <param name="dataType"><span data-ttu-id="81583-142"><see cref="T:System.Data.OleDb.OleDbType" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-142">One of the <see cref="T:System.Data.OleDb.OleDbType" /> values.</span></span></param>
+        <param name="size"><span data-ttu-id="81583-143">参数的长度。</span><span class="sxs-lookup"><span data-stu-id="81583-143">The length of the parameter.</span></span></param>
+        <param name="srcColumn"><span data-ttu-id="81583-144">源列的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-144">The name of the source column.</span></span></param>
+        <summary><span data-ttu-id="81583-145">初始化使用参数名称、数据类型、长度和源列名称的 <see cref="T:System.Data.OleDb.OleDbParameter" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="81583-145">Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name, data type, length, and source column name.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-146">如果参数`dataType` 中 `size` 未显式设置，则从参数的值推断。 <xref:System.Data.OleDb.OleDbParameter.Size%2A></span><span class="sxs-lookup"><span data-stu-id="81583-146">The <xref:System.Data.OleDb.OleDbParameter.Size%2A> is inferred from the value of the `dataType` parameter if it is not explicitly set in the `size` parameter.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-147">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-147">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+ [!code-csharp[Classic WebData OleDbParameter.OleDbParameter3 Example#1](~/samples/snippets/csharp/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter3 Example/CS/source.cs#1)]
+ [!code-vb[Classic WebData OleDbParameter.OleDbParameter3 Example#1](~/samples/snippets/visualbasic/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter3 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="81583-148">参数 <paramref name="dataType" /> 中提供的值不是有效的后端数据类型。</span><span class="sxs-lookup"><span data-stu-id="81583-148">The value supplied in the <paramref name="dataType" /> parameter is an invalid back-end data type.</span></span></exception>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-149">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-149">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OleDbParameter (string parameterName, System.Data.OleDb.OleDbType dbType, int size, System.Data.ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, System.Data.DataRowVersion srcVersion, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string parameterName, valuetype System.Data.OleDb.OleDbType dbType, int32 size, valuetype System.Data.ParameterDirection direction, bool isNullable, unsigned int8 precision, unsigned int8 scale, string srcColumn, valuetype System.Data.DataRowVersion srcVersion, object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.OleDb.OleDbParameter.#ctor(System.String,System.Data.OleDb.OleDbType,System.Int32,System.Data.ParameterDirection,System.Boolean,System.Byte,System.Byte,System.String,System.Data.DataRowVersion,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (parameterName As String, dbType As OleDbType, size As Integer, direction As ParameterDirection, isNullable As Boolean, precision As Byte, scale As Byte, srcColumn As String, srcVersion As DataRowVersion, value As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; OleDbParameter(System::String ^ parameterName, System::Data::OleDb::OleDbType dbType, int size, System::Data::ParameterDirection direction, bool isNullable, System::Byte precision, System::Byte scale, System::String ^ srcColumn, System::Data::DataRowVersion srcVersion, System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="new System.Data.OleDb.OleDbParameter : string * System.Data.OleDb.OleDbType * int * System.Data.ParameterDirection * bool * byte * byte * string * System.Data.DataRowVersion * obj -&gt; System.Data.OleDb.OleDbParameter" Usage="new System.Data.OleDb.OleDbParameter (parameterName, dbType, size, direction, isNullable, precision, scale, srcColumn, srcVersion, value)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0">
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="parameterName" Type="System.String" />
+        <Parameter Name="dbType" Type="System.Data.OleDb.OleDbType" />
+        <Parameter Name="size" Type="System.Int32" />
+        <Parameter Name="direction" Type="System.Data.ParameterDirection" />
+        <Parameter Name="isNullable" Type="System.Boolean" />
+        <Parameter Name="precision" Type="System.Byte" />
+        <Parameter Name="scale" Type="System.Byte" />
+        <Parameter Name="srcColumn" Type="System.String" />
+        <Parameter Name="srcVersion" Type="System.Data.DataRowVersion" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="parameterName"><span data-ttu-id="81583-150">参数的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-150">The name of the parameter.</span></span></param>
+        <param name="dbType"><span data-ttu-id="81583-151"><see cref="T:System.Data.OleDb.OleDbType" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-151">One of the <see cref="T:System.Data.OleDb.OleDbType" /> values.</span></span></param>
+        <param name="size"><span data-ttu-id="81583-152">参数的长度。</span><span class="sxs-lookup"><span data-stu-id="81583-152">The length of the parameter.</span></span></param>
+        <param name="direction"><span data-ttu-id="81583-153"><see cref="T:System.Data.ParameterDirection" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-153">One of the <see cref="T:System.Data.ParameterDirection" /> values.</span></span></param>
+        <param name="isNullable"><span data-ttu-id="81583-154">如果字段的值可以为 null，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="81583-154"><see langword="true" /> if the value of the field can be null; otherwise <see langword="false" />.</span></span></param>
+        <param name="precision"><span data-ttu-id="81583-155">所解析的 <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> 的小数点左右两侧的总位数。</span><span class="sxs-lookup"><span data-stu-id="81583-155">The total number of digits to the left and right of the decimal point to which <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> is resolved.</span></span></param>
+        <param name="scale"><span data-ttu-id="81583-156">所解析的 <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> 的总小数位数。</span><span class="sxs-lookup"><span data-stu-id="81583-156">The total number of decimal places to which <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> is resolved.</span></span></param>
+        <param name="srcColumn"><span data-ttu-id="81583-157">源列的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-157">The name of the source column.</span></span></param>
+        <param name="srcVersion"><span data-ttu-id="81583-158"><see cref="T:System.Data.DataRowVersion" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-158">One of the <see cref="T:System.Data.DataRowVersion" /> values.</span></span></param>
+        <param name="value"><span data-ttu-id="81583-159">作为 <see cref="T:System.Object" /> 的值的 <see cref="T:System.Data.OleDb.OleDbParameter" />。</span><span class="sxs-lookup"><span data-stu-id="81583-159">An <see cref="T:System.Object" /> that is the value of the <see cref="T:System.Data.OleDb.OleDbParameter" />.</span></span></param>
+        <summary><span data-ttu-id="81583-160">初始化 <see cref="T:System.Data.OleDb.OleDbParameter" /> 类的新实例，该类使用参数名称、数据类型、长度、源列名、参数方向、数值精度和其他属性。</span><span class="sxs-lookup"><span data-stu-id="81583-160">Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name, data type, length, source column name, parameter direction, numeric precision, and other properties.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-161"><xref:System.Data.OleDb.OleDbParameter.Size%2A> <xref:System.Data.OleDb.OleDbParameter.Precision%2A> `dataType`如果在和 `precision` 参数中未显式设置，则将从参数的值中推断和。 `size`</span><span class="sxs-lookup"><span data-stu-id="81583-161">The <xref:System.Data.OleDb.OleDbParameter.Size%2A> and <xref:System.Data.OleDb.OleDbParameter.Precision%2A> are inferred from the value of the `dataType` parameter if they are not explicitly set in the `size` and `precision` parameters.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-162">下面的示例创建一个<xref:System.Data.OleDb.OleDbParameter> ，并<xref:System.Data.OleDb.OleDbParameter.ParameterName%2A>显示。</span><span class="sxs-lookup"><span data-stu-id="81583-162">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and displays the <xref:System.Data.OleDb.OleDbParameter.ParameterName%2A>.</span></span>  
+  
+ [!code-csharp[Classic WebData OleDbParameter.OleDbParameter4 Example#1](~/samples/snippets/csharp/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter4 Example/CS/source.cs#1)]
+ [!code-vb[Classic WebData OleDbParameter.OleDbParameter4 Example#1](~/samples/snippets/visualbasic/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter4 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="81583-163">参数 <paramref name="dataType" /> 中提供的值不是有效的后端数据类型。</span><span class="sxs-lookup"><span data-stu-id="81583-163">The value supplied in the <paramref name="dataType" /> parameter is an invalid back-end data type.</span></span></exception>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-164">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-164">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OleDbParameter (string parameterName, System.Data.OleDb.OleDbType dbType, int size, System.Data.ParameterDirection direction, byte precision, byte scale, string sourceColumn, System.Data.DataRowVersion sourceVersion, bool sourceColumnNullMapping, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string parameterName, valuetype System.Data.OleDb.OleDbType dbType, int32 size, valuetype System.Data.ParameterDirection direction, unsigned int8 precision, unsigned int8 scale, string sourceColumn, valuetype System.Data.DataRowVersion sourceVersion, bool sourceColumnNullMapping, object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.OleDb.OleDbParameter.#ctor(System.String,System.Data.OleDb.OleDbType,System.Int32,System.Data.ParameterDirection,System.Byte,System.Byte,System.String,System.Data.DataRowVersion,System.Boolean,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (parameterName As String, dbType As OleDbType, size As Integer, direction As ParameterDirection, precision As Byte, scale As Byte, sourceColumn As String, sourceVersion As DataRowVersion, sourceColumnNullMapping As Boolean, value As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; OleDbParameter(System::String ^ parameterName, System::Data::OleDb::OleDbType dbType, int size, System::Data::ParameterDirection direction, System::Byte precision, System::Byte scale, System::String ^ sourceColumn, System::Data::DataRowVersion sourceVersion, bool sourceColumnNullMapping, System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="new System.Data.OleDb.OleDbParameter : string * System.Data.OleDb.OleDbType * int * System.Data.ParameterDirection * byte * byte * string * System.Data.DataRowVersion * bool * obj -&gt; System.Data.OleDb.OleDbParameter" Usage="new System.Data.OleDb.OleDbParameter (parameterName, dbType, size, direction, precision, scale, sourceColumn, sourceVersion, sourceColumnNullMapping, value)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0">
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="parameterName" Type="System.String" Index="0" FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0" />
+        <Parameter Name="dbType" Type="System.Data.OleDb.OleDbType" Index="1" FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0" />
+        <Parameter Name="size" Type="System.Int32" Index="2" FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0" />
+        <Parameter Name="direction" Type="System.Data.ParameterDirection" Index="3" FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0" />
+        <Parameter Name="precision" Type="System.Byte" Index="4" FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0" />
+        <Parameter Name="scale" Type="System.Byte" Index="5" FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0" />
+        <Parameter Name="sourceColumn" Type="System.String" Index="6" FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0" />
+        <Parameter Name="sourceVersion" Type="System.Data.DataRowVersion" Index="7" FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0" />
+        <Parameter Name="sourceColumnNullMapping" Type="System.Boolean" Index="8" FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0" />
+        <Parameter Name="value" Type="System.Object" Index="9" FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="parameterName"><span data-ttu-id="81583-165">参数的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-165">The name of the parameter.</span></span></param>
+        <param name="dbType"><span data-ttu-id="81583-166"><see cref="T:System.Data.OleDb.OleDbType" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-166">One of the <see cref="T:System.Data.OleDb.OleDbType" /> values.</span></span></param>
+        <param name="size"><span data-ttu-id="81583-167">参数的长度。</span><span class="sxs-lookup"><span data-stu-id="81583-167">The length of the parameter.</span></span></param>
+        <param name="direction"><span data-ttu-id="81583-168"><see cref="T:System.Data.ParameterDirection" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-168">One of the <see cref="T:System.Data.ParameterDirection" /> values.</span></span></param>
+        <param name="precision"><span data-ttu-id="81583-169">所解析的 <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> 的小数点左右两侧的总位数。</span><span class="sxs-lookup"><span data-stu-id="81583-169">The total number of digits to the left and right of the decimal point to which <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> is resolved.</span></span></param>
+        <param name="scale"><span data-ttu-id="81583-170">所解析的 <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> 的总小数位数。</span><span class="sxs-lookup"><span data-stu-id="81583-170">The total number of decimal places to which <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> is resolved.</span></span></param>
+        <param name="sourceColumn"><span data-ttu-id="81583-171">源列的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-171">The name of the source column.</span></span></param>
+        <param name="sourceVersion"><span data-ttu-id="81583-172"><see cref="T:System.Data.DataRowVersion" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-172">One of the <see cref="T:System.Data.DataRowVersion" /> values.</span></span></param>
+        <param name="sourceColumnNullMapping"><span data-ttu-id="81583-173">如果源列可以为 null，则为 <see langword="true" />；如果不可以为 null，则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="81583-173"><see langword="true" /> if the source column is nullable; <see langword="false" /> if it is not.</span></span></param>
+        <param name="value"><span data-ttu-id="81583-174">作为 <see cref="T:System.Object" /> 的值的 <see cref="T:System.Data.OleDb.OleDbParameter" />。</span><span class="sxs-lookup"><span data-stu-id="81583-174">An <see cref="T:System.Object" /> that is the value of the <see cref="T:System.Data.OleDb.OleDbParameter" />.</span></span></param>
+        <summary><span data-ttu-id="81583-175">初始化 <see cref="T:System.Data.OleDb.OleDbParameter" /> 类的新实例，该类使用参数名称、数据类型、长度、源列名、参数方向、数值精度和其他属性。</span><span class="sxs-lookup"><span data-stu-id="81583-175">Initializes a new instance of the <see cref="T:System.Data.OleDb.OleDbParameter" /> class that uses the parameter name, data type, length, source column name, parameter direction, numeric precision, and other properties.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-176"><xref:System.Data.OleDb.OleDbParameter.Size%2A> <xref:System.Data.OleDb.OleDbParameter.Precision%2A> `dataType`如果在和 `precision` 参数中未显式设置，则将从参数的值中推断和。 `size`</span><span class="sxs-lookup"><span data-stu-id="81583-176">The <xref:System.Data.OleDb.OleDbParameter.Size%2A> and <xref:System.Data.OleDb.OleDbParameter.Precision%2A> are inferred from the value of the `dataType` parameter if they are not explicitly set in the `size` and `precision` parameters.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-177">下面的示例创建一个<xref:System.Data.OleDb.OleDbParameter> ，并<xref:System.Data.OleDb.OleDbParameter.ParameterName%2A>显示。</span><span class="sxs-lookup"><span data-stu-id="81583-177">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and displays the <xref:System.Data.OleDb.OleDbParameter.ParameterName%2A>.</span></span>  
+  
+ [!code-csharp[Classic WebData OleDbParameter.OleDbParameter4 Example#1](~/samples/snippets/csharp/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter4 Example/CS/source.cs#1)]
+ [!code-vb[Classic WebData OleDbParameter.OleDbParameter4 Example#1](~/samples/snippets/visualbasic/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.OleDbParameter4 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="81583-178">参数 <paramref name="dataType" /> 中提供的值不是有效的后端数据类型。</span><span class="sxs-lookup"><span data-stu-id="81583-178">The value supplied in the <paramref name="dataType" /> parameter is an invalid back-end data type.</span></span></exception>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-179">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-179">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="DbType">
+      <MemberSignature Language="C#" Value="public override System.Data.DbType DbType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Data.DbType DbType" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.DbType" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Property DbType As DbType" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Data::DbType DbType { System::Data::DbType get(); void set(System::Data::DbType value); };" />
+      <MemberSignature Language="F#" Value="member this.DbType : System.Data.DbType with get, set" Usage="System.Data.OleDb.OleDbParameter.DbType" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Data.IDataParameter.DbType</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.RefreshProperties(System.ComponentModel.RefreshProperties.All)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.Data.DataSysDescription("DataParameter_DbType")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Data.DbType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-180">获取或设置参数的 <see cref="T:System.Data.DbType" />。</span><span class="sxs-lookup"><span data-stu-id="81583-180">Gets or sets the <see cref="T:System.Data.DbType" /> of the parameter.</span></span></summary>
+        <value><span data-ttu-id="81583-181"><see cref="T:System.Data.DbType" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-181">One of the <see cref="T:System.Data.DbType" /> values.</span></span> <span data-ttu-id="81583-182">默认值为 <see cref="F:System.Data.DbType.String" />。</span><span class="sxs-lookup"><span data-stu-id="81583-182">The default is <see cref="F:System.Data.DbType.String" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-183"><xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> 和 <xref:System.Data.OleDb.OleDbParameter.DbType%2A> 已链接。</span><span class="sxs-lookup"><span data-stu-id="81583-183">The <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> and <xref:System.Data.OleDb.OleDbParameter.DbType%2A> are linked.</span></span> <span data-ttu-id="81583-184">因此，将<xref:System.Data.OleDb.OleDbParameter.DbType%2A> <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A>更改设置为支持<xref:System.Data.OleDb.OleDbParameter.OleDbType%2A>。</span><span class="sxs-lookup"><span data-stu-id="81583-184">Therefore, setting the <xref:System.Data.OleDb.OleDbParameter.DbType%2A> changes the <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> to a supporting <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A>.</span></span>  
+  
+ <span data-ttu-id="81583-185">有关支持的数据类型的列表，请参阅相应<xref:System.Data.OleDb.OleDbParameter.OleDbType%2A>成员。</span><span class="sxs-lookup"><span data-stu-id="81583-185">For a list of the supported data types, see the appropriate <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> member.</span></span> <span data-ttu-id="81583-186">有关详细信息，请参阅[DataAdapter 参数](~/docs/framework/data/adonet/dataadapter-parameters.md)。</span><span class="sxs-lookup"><span data-stu-id="81583-186">For more information, see [DataAdapter Parameters](~/docs/framework/data/adonet/dataadapter-parameters.md).</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-187">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-187">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+ [!code-csharp[Classic WebData OleDbParameter.DbType Example#1](~/samples/snippets/csharp/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.DbType Example/CS/source.cs#1)]
+ [!code-vb[Classic WebData OleDbParameter.DbType Example#1](~/samples/snippets/visualbasic/VS_Snippets_ADO.NET/Classic WebData OleDbParameter.DbType Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><span data-ttu-id="81583-188">该属性未设置为有效的 <see cref="T:System.Data.DbType" />。</span><span class="sxs-lookup"><span data-stu-id="81583-188">The property was not set to a valid <see cref="T:System.Data.DbType" />.</span></span></exception>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-189">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-189">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="Direction">
+      <MemberSignature Language="C#" Value="public override System.Data.ParameterDirection Direction { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Data.ParameterDirection Direction" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.Direction" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Property Direction As ParameterDirection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Data::ParameterDirection Direction { System::Data::ParameterDirection get(); void set(System::Data::ParameterDirection value); };" />
+      <MemberSignature Language="F#" Value="member this.Direction : System.Data.ParameterDirection with get, set" Usage="System.Data.OleDb.OleDbParameter.Direction" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Data.IDataParameter.Direction</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.DefaultValue(Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.Data.DataSysDescription("DataParameter_Direction")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0">
+          <AttributeName>System.ComponentModel.RefreshProperties(System.ComponentModel.RefreshProperties.All)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0">
+          <AttributeName>System.ComponentModel.RefreshProperties</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Data.ParameterDirection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-190">获取或设置一个值，该值指示参数是只可输入、只可输出、双向还是存储过程返回值参数。</span><span class="sxs-lookup"><span data-stu-id="81583-190">Gets or sets a value that indicates whether the parameter is input-only, output-only, bidirectional, or a stored procedure return-value parameter.</span></span></summary>
+        <value><span data-ttu-id="81583-191"><see cref="T:System.Data.ParameterDirection" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-191">One of the <see cref="T:System.Data.ParameterDirection" /> values.</span></span> <span data-ttu-id="81583-192">默认值为 <see langword="Input" />。</span><span class="sxs-lookup"><span data-stu-id="81583-192">The default is <see langword="Input" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-193">如果是输出，且关联<xref:System.Data.OleDb.OleDbCommand>的执行不返回值，则<xref:System.Data.OleDb.OleDbParameter>包含 null 值。 <xref:System.Data.ParameterDirection></span><span class="sxs-lookup"><span data-stu-id="81583-193">If the <xref:System.Data.ParameterDirection> is output, and execution of the associated <xref:System.Data.OleDb.OleDbCommand> does not return a value, the <xref:System.Data.OleDb.OleDbParameter> contains a null value.</span></span>  
+  
+ <span data-ttu-id="81583-194">`Output`在`InputOut`调用**或释放**之前，无法<xref:System.Data.OleDb.OleDbCommand.ExecuteReader%2A> 访问通过 `ReturnValue` 调用返回的、和参数。 <xref:System.Data.OleDb.OleDbDataReader> <xref:System.Data.OleDb.OleDbDataReader.Close%2A></span><span class="sxs-lookup"><span data-stu-id="81583-194">`Output`, `InputOut`, and `ReturnValue` parameters returned by calling <xref:System.Data.OleDb.OleDbCommand.ExecuteReader%2A> cannot be accessed until you call <xref:System.Data.OleDb.OleDbDataReader.Close%2A> or **Dispose** on the <xref:System.Data.OleDb.OleDbDataReader>.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-195">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-195">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+```vb  
+Public Sub CreateOleDbParameter()  
+    Dim parameter As New OleDbParameter("Description", OleDbType.VarChar, 88)  
+    parameter.Direction = ParameterDirection.Output  
+End Sub 'CreateOleDbParameter  
+```  
+  
+```csharp  
+public void CreateOleDbParameter()   
+ {  
+    OleDbParameter parameter = new OleDbParameter("Description", OleDbType.VarChar, 88);  
+    parameter.Direction = ParameterDirection.Output;  
+ }  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="81583-196">属性未设置为有效的 <see cref="T:System.Data.ParameterDirection" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-196">The property was not set to one of the valid <see cref="T:System.Data.ParameterDirection" /> values.</span></span></exception>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-197">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-197">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="IsNullable">
+      <MemberSignature Language="C#" Value="public override bool IsNullable { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsNullable" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.IsNullable" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Property IsNullable As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property bool IsNullable { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.IsNullable : bool with get, set" Usage="System.Data.OleDb.OleDbParameter.IsNullable" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.DesignOnly(true)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.Data.DataSysDescription("DataParameter_IsNullable")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-198">获取或设置一个值，该值指示参数是否接受 null 值。</span><span class="sxs-lookup"><span data-stu-id="81583-198">Gets or sets a value that indicates whether the parameter accepts null values.</span></span></summary>
+        <value><span data-ttu-id="81583-199">如果接受 null 值，则为<see langword="true" /> ；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="81583-199"><see langword="true" /> if null values are accepted; otherwise <see langword="false" />.</span></span> <span data-ttu-id="81583-200">默认值为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="81583-200">The default is <see langword="false" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-201">使用<xref:System.DBNull>类处理 Null 值。</span><span class="sxs-lookup"><span data-stu-id="81583-201">Null values are handled using the <xref:System.DBNull> class.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-202">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-202">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+```vb  
+Public Sub CreateOleDbParameter()  
+    Dim parameter As New OleDbParameter("Description", OleDbType.VarChar, 88)  
+    parameter.IsNullable = True  
+    parameter.Direction = ParameterDirection.Output  
+End Sub 'CreateOleDbParameter  
+```  
+  
+```csharp  
+public void CreateOleDbParameter()   
+ {  
+    OleDbParameter parameter = new OleDbParameter("Description", OleDbType.VarChar, 88);  
+    parameter.IsNullable = true;  
+    parameter.Direction = ParameterDirection.Output;  
+ }  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-203">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-203">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="Offset">
+      <MemberSignature Language="C#" Value="public int Offset { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Offset" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.Offset" />
+      <MemberSignature Language="VB.NET" Value="Public Property Offset As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int Offset { int get(); void set(int value); };" />
+      <MemberSignature Language="F#" Value="member this.Offset : int with get, set" Usage="System.Data.OleDb.OleDbParameter.Offset" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OleDbType">
+      <MemberSignature Language="C#" Value="public System.Data.OleDb.OleDbType OleDbType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Data.OleDb.OleDbType OleDbType" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.OleDbType" />
+      <MemberSignature Language="VB.NET" Value="Public Property OleDbType As OleDbType" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Data::OleDb::OleDbType OleDbType { System::Data::OleDb::OleDbType get(); void set(System::Data::OleDb::OleDbType value); };" />
+      <MemberSignature Language="F#" Value="member this.OleDbType : System.Data.OleDb.OleDbType with get, set" Usage="System.Data.OleDb.OleDbParameter.OleDbType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netframework-4.8;dotnet-plat-ext-3.0;netcore-3.0">
+          <AttributeName>System.Data.Common.DbProviderSpecificTypeProperty(true)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.DefaultValue(Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0">
+          <AttributeName>System.ComponentModel.RefreshProperties(System.ComponentModel.RefreshProperties.All)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.Data.DataSysDescription("OleDbParameter_OleDbType")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0">
+          <AttributeName>System.ComponentModel.RefreshProperties</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Data.OleDb.OleDbType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-204">获取或设置参数的 <see cref="T:System.Data.OleDb.OleDbType" />。</span><span class="sxs-lookup"><span data-stu-id="81583-204">Gets or sets the <see cref="T:System.Data.OleDb.OleDbType" /> of the parameter.</span></span></summary>
+        <value><span data-ttu-id="81583-205">参数的 <see cref="T:System.Data.OleDb.OleDbType" />。</span><span class="sxs-lookup"><span data-stu-id="81583-205">The <see cref="T:System.Data.OleDb.OleDbType" /> of the parameter.</span></span> <span data-ttu-id="81583-206">默认值为 <see cref="F:System.Data.OleDb.OleDbType.VarWChar" />。</span><span class="sxs-lookup"><span data-stu-id="81583-206">The default is <see cref="F:System.Data.OleDb.OleDbType.VarWChar" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-207"><xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> 和 <xref:System.Data.OleDb.OleDbParameter.DbType%2A> 已链接。</span><span class="sxs-lookup"><span data-stu-id="81583-207">The <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> and <xref:System.Data.OleDb.OleDbParameter.DbType%2A> are linked.</span></span> <span data-ttu-id="81583-208">因此，将<xref:System.Data.OleDb.OleDbParameter.DbType%2A> <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A>更改设置为支持<xref:System.Data.OleDb.OleDbType>。</span><span class="sxs-lookup"><span data-stu-id="81583-208">Therefore, setting the <xref:System.Data.OleDb.OleDbParameter.DbType%2A> changes the <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> to a supporting <xref:System.Data.OleDb.OleDbType>.</span></span>  
+  
+ <span data-ttu-id="81583-209">有关支持的数据类型的列表，请参阅相应<xref:System.Data.OleDb.OleDbType>成员。</span><span class="sxs-lookup"><span data-stu-id="81583-209">For a list of the supported data types, see the appropriate <xref:System.Data.OleDb.OleDbType> member.</span></span> <span data-ttu-id="81583-210">有关详细信息，请参阅[DataAdapter 参数](~/docs/framework/data/adonet/dataadapter-parameters.md)。</span><span class="sxs-lookup"><span data-stu-id="81583-210">For more information, see [DataAdapter Parameters](~/docs/framework/data/adonet/dataadapter-parameters.md).</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-211">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-211">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="ParameterName">
+      <MemberSignature Language="C#" Value="public override string ParameterName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ParameterName" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.ParameterName" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Property ParameterName As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::String ^ ParameterName { System::String ^ get(); void set(System::String ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.ParameterName : string with get, set" Usage="System.Data.OleDb.OleDbParameter.ParameterName" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Data.IDataParameter.ParameterName</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.Data.DataSysDescription("DataParameter_ParameterName")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-212">获取或设置 <see cref="T:System.Data.OleDb.OleDbParameter" /> 的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-212">Gets or sets the name of the <see cref="T:System.Data.OleDb.OleDbParameter" />.</span></span></summary>
+        <value><span data-ttu-id="81583-213"><see cref="T:System.Data.OleDb.OleDbParameter" /> 的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-213">The name of the <see cref="T:System.Data.OleDb.OleDbParameter" />.</span></span> <span data-ttu-id="81583-214">默认值为空字符串("")。</span><span class="sxs-lookup"><span data-stu-id="81583-214">The default is an empty string ("").</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-215">OLE DB .NET 提供程序使用以问号（？）标记的位置参数，而不是命名参数。</span><span class="sxs-lookup"><span data-stu-id="81583-215">The OLE DB .NET Provider uses positional parameters that are marked with a question mark (?) instead of named parameters.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-216">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-216">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+```vb  
+Public Sub CreateOleDbParameter()  
+    Dim parameter As New OleDbParameter("Description", OleDbType.VarChar, 88)  
+    parameter.Direction = ParameterDirection.Output  
+End Sub 'CreateOleDbParameter  
+```  
+  
+```csharp  
+public void CreateOleDbParameter()   
+ {  
+    OleDbParameter parameter = new OleDbParameter("Description", OleDbType.VarChar, 88);  
+    parameter.Direction = ParameterDirection.Output;  
+ }  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-217">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-217">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="Precision">
+      <MemberSignature Language="C#" Value="public byte Precision { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8 Precision" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.Precision" />
+      <MemberSignature Language="VB.NET" Value="Public Property Precision As Byte" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Byte Precision { System::Byte get(); void set(System::Byte value); };" />
+      <MemberSignature Language="F#" Value="member this.Precision : byte with get, set" Usage="System.Data.OleDb.OleDbParameter.Precision" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Data.IDbDataParameter.Precision</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netframework-4.8;dotnet-plat-ext-3.0;netcore-3.0">
+          <AttributeName>System.ComponentModel.DefaultValue(0)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.Data.DataSysDescription("DbDataParameter_Precision")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-218">获取或设置用于表示 <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> 属性的最大位数。</span><span class="sxs-lookup"><span data-stu-id="81583-218">Gets or sets the maximum number of digits used to represent the <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> property.</span></span></summary>
+        <value><span data-ttu-id="81583-219">用于表示 <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> 属性的最大位数。</span><span class="sxs-lookup"><span data-stu-id="81583-219">The maximum number of digits used to represent the <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> property.</span></span> <span data-ttu-id="81583-220">默认值为 0，它表示数据提供程序设置 <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> 的精度。</span><span class="sxs-lookup"><span data-stu-id="81583-220">The default value is 0, which indicates that the data provider sets the precision for <see cref="P:System.Data.OleDb.OleDbParameter.Value" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-221">此<xref:System.Data.OleDb.OleDbParameter.Precision%2A>属性仅用于 decimal 和数值输入参数。</span><span class="sxs-lookup"><span data-stu-id="81583-221">The <xref:System.Data.OleDb.OleDbParameter.Precision%2A> property is only used for decimal and numeric input parameters.</span></span>  
+  
+ <span data-ttu-id="81583-222">在<xref:System.Data.OleDb.OleDbParameter.Precision%2A>调用`Numeric` `Decimal` <xref:System.Data.OleDb.OleDbCommand>的方法之前，只应为和参数设置属性。 <xref:System.Data.OleDb.OleDbCommand.Prepare%2A></span><span class="sxs-lookup"><span data-stu-id="81583-222">The <xref:System.Data.OleDb.OleDbParameter.Precision%2A> property should be set only for `Decimal` and `Numeric` parameters prior to calling the <xref:System.Data.OleDb.OleDbCommand.Prepare%2A> method of the <xref:System.Data.OleDb.OleDbCommand>.</span></span>  
+  
+ <span data-ttu-id="81583-223">如果将此属性设置为数据库中的值以外的值，则将取决于数据访问接口的实现，并且可能会返回错误代码、截断或舍入数据。</span><span class="sxs-lookup"><span data-stu-id="81583-223">Setting this property to a value other than the value in the database depends on the implementation of the data provider and may return an error code, truncate, or round data.</span></span>  
+  
+ <span data-ttu-id="81583-224">此`Precision`属性仅影响<xref:System.Data.OleDb.OleDbType>为`Decimal`、 `Numeric`或的参数。 `VarNumeric`</span><span class="sxs-lookup"><span data-stu-id="81583-224">The `Precision` property only affects parameters whose <xref:System.Data.OleDb.OleDbType> is `Decimal`, `Numeric`, or `VarNumeric`.</span></span> <span data-ttu-id="81583-225">对于其他数据类型， `Precision`将被忽略。</span><span class="sxs-lookup"><span data-stu-id="81583-225">For other data types, `Precision` is ignored.</span></span>  
+  
+> [!NOTE]
+>  <span data-ttu-id="81583-226">不支持使用此属性来强制传递到数据库的数据。</span><span class="sxs-lookup"><span data-stu-id="81583-226">Use of this property to coerce data passed to the database is not supported.</span></span> <span data-ttu-id="81583-227">若要在将数据传递到数据库之前对其进行舍入、截断或强制<xref:System.Math>转换，请使用`System`命名空间中的类，然后将值分配给该`Value`参数的属性。</span><span class="sxs-lookup"><span data-stu-id="81583-227">To round, truncate, or otherwise coerce data before passing it to the database, use the <xref:System.Math> class that is part of the `System` namespace prior to assigning a value to the parameter's `Value` property.</span></span>  
+  
+> [!NOTE]
+>  <span data-ttu-id="81583-228">.NET Framework 版本1.0 附带 .NET Framework 数据提供程序不验证<xref:System.Data.OleDb.OleDbParameter.Precision%2A> <xref:System.Decimal>参数值的或<xref:System.Data.OleDb.OleDbParameter.Scale%2A> 。</span><span class="sxs-lookup"><span data-stu-id="81583-228">.NET Framework data providers that are included with the .NET Framework version 1.0 do not verify the <xref:System.Data.OleDb.OleDbParameter.Precision%2A> or <xref:System.Data.OleDb.OleDbParameter.Scale%2A> of <xref:System.Decimal> parameter values.</span></span> <span data-ttu-id="81583-229">这可能会导致在数据源中插入截断的数据。</span><span class="sxs-lookup"><span data-stu-id="81583-229">This can cause truncated data to be inserted at the data source.</span></span> <span data-ttu-id="81583-230">如果使用 .NET Framework 版本1.0，请在设置参数<xref:System.Data.OleDb.OleDbParameter.Precision%2A>值<xref:System.Data.OleDb.OleDbParameter.Scale%2A>之前<xref:System.Decimal>验证和值。</span><span class="sxs-lookup"><span data-stu-id="81583-230">If you are using .NET Framework version 1.0, validate the <xref:System.Data.OleDb.OleDbParameter.Precision%2A> and <xref:System.Data.OleDb.OleDbParameter.Scale%2A> of <xref:System.Decimal> values before setting the parameter value.</span></span> <span data-ttu-id="81583-231"><xref:System.Data.OleDb.OleDbParameter.Scale%2A>超出<xref:System.Decimal>参数范围的值仍会被截断。</span><span class="sxs-lookup"><span data-stu-id="81583-231"><xref:System.Data.OleDb.OleDbParameter.Scale%2A> values that exceed the <xref:System.Decimal> parameter scale are still truncated.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-232">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-232">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+```vb  
+Public Sub CreateOleDbParameter()  
+    Dim parameter As New OleDbParameter("Price", OleDbType.Decimal)  
+    parameter.Value = 3.1416  
+    parameter.Precision = 8  
+    parameter.Scale = 4  
+End Sub 'CreateOleDbParameter  
+```  
+  
+```csharp  
+public void CreateOleDbParameter()   
+ {  
+    OleDbParameter parameter = new OleDbParameter("Price", OleDbType.Decimal);  
+    parameter.Value = 3.1416;  
+    parameter.Precision = 8;  
+    parameter.Scale = 4;  
+ }  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-233">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-233">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="ResetDbType">
+      <MemberSignature Language="C#" Value="public override void ResetDbType ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void ResetDbType() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.OleDb.OleDbParameter.ResetDbType" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub ResetDbType ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void ResetDbType();" />
+      <MemberSignature Language="F#" Value="override this.ResetDbType : unit -&gt; unit" Usage="oleDbParameter.ResetDbType " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="81583-234">重置与此 <see cref="T:System.Data.OleDb.OleDbParameter" /> 关联的类型。</span><span class="sxs-lookup"><span data-stu-id="81583-234">Resets the type associated with this <see cref="T:System.Data.OleDb.OleDbParameter" />.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-235">当执行包含参数值的命令时，代码可以显式设置参数的类型，或者该参数可以从其值推断其类型。</span><span class="sxs-lookup"><span data-stu-id="81583-235">When executing a command that includes parameter values, code can either set the type of a parameter explicitly, or the parameter can infer its type from its value.</span></span> <span data-ttu-id="81583-236">调用此方法将重置参数，使其可以再次从参数中传递的值推断其类型。</span><span class="sxs-lookup"><span data-stu-id="81583-236">Calling this method resets the parameter so that it can again infer its type from the value passed in the parameter.</span></span> <span data-ttu-id="81583-237">调用此方法会影响<xref:System.Data.OleDb.OleDbParameter.DbType%2A>的和<xref:System.Data.OleDb.OleDbParameter.OleDbType%2A>属性。 <xref:System.Data.OleDb.OleDbParameter></span><span class="sxs-lookup"><span data-stu-id="81583-237">Calling this method affects both the <xref:System.Data.OleDb.OleDbParameter.DbType%2A> and <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> properties of the <xref:System.Data.OleDb.OleDbParameter>.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Data.OleDb.OleDbParameter.ResetOleDbType" />
+        <altmember cref="P:System.Data.OleDb.OleDbParameter.DbType" />
+        <altmember cref="P:System.Data.OleDb.OleDbParameter.OleDbType" />
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-238">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-238">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="ResetOleDbType">
+      <MemberSignature Language="C#" Value="public void ResetOleDbType ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ResetOleDbType() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.OleDb.OleDbParameter.ResetOleDbType" />
+      <MemberSignature Language="VB.NET" Value="Public Sub ResetOleDbType ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void ResetOleDbType();" />
+      <MemberSignature Language="F#" Value="member this.ResetOleDbType : unit -&gt; unit" Usage="oleDbParameter.ResetOleDbType " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="81583-239">重置与此 <see cref="T:System.Data.OleDb.OleDbParameter" /> 关联的类型。</span><span class="sxs-lookup"><span data-stu-id="81583-239">Resets the type associated with this <see cref="T:System.Data.OleDb.OleDbParameter" />.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-240">当执行包含参数值的命令时，代码可以显式设置参数的类型，或者该参数可以从其值推断其类型。</span><span class="sxs-lookup"><span data-stu-id="81583-240">When executing a command that includes parameter values, code can either set the type of a parameter explicitly, or the parameter can infer its type from its value.</span></span> <span data-ttu-id="81583-241">调用此方法将重置参数，使其可以再次从参数中传递的值推断其类型。</span><span class="sxs-lookup"><span data-stu-id="81583-241">Calling this method resets the parameter so that it can again infer its type from the value passed in the parameter.</span></span> <span data-ttu-id="81583-242">调用此方法会影响<xref:System.Data.OleDb.OleDbParameter.DbType%2A>的和<xref:System.Data.OleDb.OleDbParameter.OleDbType%2A>属性。 <xref:System.Data.OleDb.OleDbParameter></span><span class="sxs-lookup"><span data-stu-id="81583-242">Calling this method affects both the <xref:System.Data.OleDb.OleDbParameter.DbType%2A> and <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> properties of the <xref:System.Data.OleDb.OleDbParameter>.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Data.OleDb.OleDbParameter.ResetDbType" />
+        <altmember cref="P:System.Data.OleDb.OleDbParameter.DbType" />
+        <altmember cref="P:System.Data.OleDb.OleDbParameter.OleDbType" />
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-243">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-243">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="Scale">
+      <MemberSignature Language="C#" Value="public byte Scale { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8 Scale" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.Scale" />
+      <MemberSignature Language="VB.NET" Value="Public Property Scale As Byte" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Byte Scale { System::Byte get(); void set(System::Byte value); };" />
+      <MemberSignature Language="F#" Value="member this.Scale : byte with get, set" Usage="System.Data.OleDb.OleDbParameter.Scale" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Data.IDbDataParameter.Scale</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netframework-4.8;dotnet-plat-ext-3.0;netcore-3.0">
+          <AttributeName>System.ComponentModel.DefaultValue(0)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.Data.DataSysDescription("DbDataParameter_Scale")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Byte</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-244">获取或设置所解析的 <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> 的小数位数。</span><span class="sxs-lookup"><span data-stu-id="81583-244">Gets or sets the number of decimal places to which <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> is resolved.</span></span></summary>
+        <value><span data-ttu-id="81583-245">所解析的 <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> 的小数位数。</span><span class="sxs-lookup"><span data-stu-id="81583-245">The number of decimal places to which <see cref="P:System.Data.OleDb.OleDbParameter.Value" /> is resolved.</span></span> <span data-ttu-id="81583-246">默认值为 0。</span><span class="sxs-lookup"><span data-stu-id="81583-246">The default is 0.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-247">在<xref:System.Data.OleDb.OleDbParameter.Scale%2A> 调用的 <xref:System.Data.OleDb.OleDbCommand> 方法并指定数值输出参数之前，属性仅用于 decimal 和数值输入参数。 <xref:System.Data.OleDb.OleDbCommand.Prepare%2A></span><span class="sxs-lookup"><span data-stu-id="81583-247">The <xref:System.Data.OleDb.OleDbParameter.Scale%2A> property is only used for decimal and numeric input parameters before calling the <xref:System.Data.OleDb.OleDbCommand.Prepare%2A> method of the <xref:System.Data.OleDb.OleDbCommand> and to specify numeric output parameters.</span></span>  
+  
+ <span data-ttu-id="81583-248">如果将此属性设置为数据库中的值以外的值，则将取决于数据访问接口的实现，并且可能会返回错误代码、截断或舍入数据。</span><span class="sxs-lookup"><span data-stu-id="81583-248">Setting this property to a value other than the value in the database depends on the implementation of the data provider and may return an error code, truncate, or round data.</span></span>  
+  
+ <span data-ttu-id="81583-249">使用 SQL Server Native Client 10 （或更高版本）绑定类型为`Decimal` `VarNumeric`、 `Numeric` `DBDate`、、或`DBTimeStamp`的参数时，必须手动指定适当的缩放值。</span><span class="sxs-lookup"><span data-stu-id="81583-249">When using SQL Server Native Client 10 (or later), to bind a parameter whose type is `Decimal`, `Numeric`, `VarNumeric`, `DBDate`, or `DBTimeStamp`, you must manually specify an appropriate scale value.</span></span>  
+  
+> [!NOTE]
+>  <span data-ttu-id="81583-250">不支持使用此属性来强制传递到数据库的数据。</span><span class="sxs-lookup"><span data-stu-id="81583-250">Use of this property to coerce data passed to the database is not supported.</span></span> <span data-ttu-id="81583-251">若要在将数据传递到数据库之前对其进行舍入、截断或强制<xref:System.Math>转换，请使用`System`命名空间中的类，然后将值分配给该`Value`参数的属性。</span><span class="sxs-lookup"><span data-stu-id="81583-251">To round, truncate, or otherwise coerce data before passing it to the database, use the <xref:System.Math> class that is part of the `System` namespace prior to assigning a value to the parameter's `Value` property.</span></span>  
+  
+> [!NOTE]
+>  <span data-ttu-id="81583-252">.NET Framework 版本1.0 附带 .NET Framework 数据提供程序不验证<xref:System.Data.OleDb.OleDbParameter.Precision%2A> <xref:System.Decimal>参数值的或<xref:System.Data.OleDb.OleDbParameter.Scale%2A> 。</span><span class="sxs-lookup"><span data-stu-id="81583-252">.NET Framework data providers that are included with the .NET Framework version 1.0 do not verify the <xref:System.Data.OleDb.OleDbParameter.Precision%2A> or <xref:System.Data.OleDb.OleDbParameter.Scale%2A> of <xref:System.Decimal> parameter values.</span></span> <span data-ttu-id="81583-253">这可能会导致在数据源中插入截断的数据。</span><span class="sxs-lookup"><span data-stu-id="81583-253">This can cause truncated data to be inserted at the data source.</span></span> <span data-ttu-id="81583-254">如果使用 .NET Framework 版本1.0，请在设置参数<xref:System.Data.OleDb.OleDbParameter.Precision%2A>值<xref:System.Data.OleDb.OleDbParameter>之前<xref:System.Decimal>验证和值。</span><span class="sxs-lookup"><span data-stu-id="81583-254">If you are using .NET Framework version 1.0, validate the <xref:System.Data.OleDb.OleDbParameter.Precision%2A> and <xref:System.Data.OleDb.OleDbParameter> of <xref:System.Decimal> values before setting the parameter value.</span></span> <span data-ttu-id="81583-255"><xref:System.Data.OleDb.OleDbParameter.Scale%2A>超出<xref:System.Decimal>参数范围的值仍会被截断。</span><span class="sxs-lookup"><span data-stu-id="81583-255"><xref:System.Data.OleDb.OleDbParameter.Scale%2A> values that exceed the <xref:System.Decimal> parameter scale are still truncated.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-256">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-256">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+```vb  
+Public Sub CreateOleDbParameter()  
+    Dim parameter As New OleDbParameter("Price", OleDbType.Decimal)  
+    parameter.Value = 3.1416  
+    parameter.Precision = 8  
+    parameter.Scale = 4  
+End Sub 'CreateOleDbParameter  
+```  
+  
+```csharp  
+public void CreateOleDbParameter()   
+ {  
+    OleDbParameter parameter = new OleDbParameter("Price", OleDbType.Decimal);  
+    parameter.Value = 3.1416;  
+    parameter.Precision = 8;  
+    parameter.Scale = 4;  
+ }  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-257">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-257">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="Size">
+      <MemberSignature Language="C#" Value="public override int Size { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Size" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.Size" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Property Size As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property int Size { int get(); void set(int value); };" />
+      <MemberSignature Language="F#" Value="member this.Size : int with get, set" Usage="System.Data.OleDb.OleDbParameter.Size" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Data.IDbDataParameter.Size</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.DefaultValue(0)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.Data.DataSysDescription("DbDataParameter_Size")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-258">获取或设置列中的数据的最大大小（以字节为单位）。</span><span class="sxs-lookup"><span data-stu-id="81583-258">Gets or sets the maximum size, in bytes, of the data within the column.</span></span></summary>
+        <value><span data-ttu-id="81583-259">列中的数据的最大大小（以字节为单位）。</span><span class="sxs-lookup"><span data-stu-id="81583-259">The maximum size, in bytes, of the data within the column.</span></span> <span data-ttu-id="81583-260">默认值将根据参数值进行推断。</span><span class="sxs-lookup"><span data-stu-id="81583-260">The default value is inferred from the parameter value.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-261"><xref:System.Data.OleDb.OleDbParameter.Size%2A>属性用于二进制和字符串类型。</span><span class="sxs-lookup"><span data-stu-id="81583-261">The <xref:System.Data.OleDb.OleDbParameter.Size%2A> property is used for binary and string types.</span></span>  
+  
+ <span data-ttu-id="81583-262">对于非字符串数据类型和 ANSI 字符串数据， <xref:System.Data.OleDb.OleDbParameter.Size%2A>属性是指字节数。</span><span class="sxs-lookup"><span data-stu-id="81583-262">For nonstring data types and ANSI string data, the <xref:System.Data.OleDb.OleDbParameter.Size%2A> property refers to the number of bytes.</span></span> <span data-ttu-id="81583-263">对于 Unicode 字符串数据， <xref:System.Data.OleDb.OleDbParameter.Size%2A>是指字符数。</span><span class="sxs-lookup"><span data-stu-id="81583-263">For Unicode string data, <xref:System.Data.OleDb.OleDbParameter.Size%2A> refers to the number of characters.</span></span> <span data-ttu-id="81583-264">字符串的计数不包括终止字符。</span><span class="sxs-lookup"><span data-stu-id="81583-264">The count for strings does not include the terminating character.</span></span>  
+  
+ <span data-ttu-id="81583-265">对于可变长度数据类型， <xref:System.Data.OleDb.OleDbParameter.Size%2A>描述要传输到服务器的最大数据量。</span><span class="sxs-lookup"><span data-stu-id="81583-265">For variable-length data types, <xref:System.Data.OleDb.OleDbParameter.Size%2A> describes the maximum amount of data to transmit to the server.</span></span> <span data-ttu-id="81583-266">例如，对于 Unicode 字符串值， <xref:System.Data.OleDb.OleDbParameter.Size%2A>可用于将发送到服务器的数据量限制为前100个字符。</span><span class="sxs-lookup"><span data-stu-id="81583-266">For example, for a Unicode string value, <xref:System.Data.OleDb.OleDbParameter.Size%2A> could be used to limit the amount of data sent to the server to the first 100 characters.</span></span>  
+  
+ <span data-ttu-id="81583-267">对于双向参数、输出参数和返回值，必须设置的值<xref:System.Data.OleDb.OleDbParameter.Size%2A>。</span><span class="sxs-lookup"><span data-stu-id="81583-267">For bidirectional and output parameters, and return values, you must set the value of <xref:System.Data.OleDb.OleDbParameter.Size%2A>.</span></span> <span data-ttu-id="81583-268">这不是输入参数所必需的，如果未显式设置，则执行参数化语句时，的值将从指定参数的实际大小推断。</span><span class="sxs-lookup"><span data-stu-id="81583-268">This is not required for input parameters, and if not explicitly set, the value of is inferred from the actual size of the specified parameter when a parameterized statement is executed.</span></span>  
+  
+ <span data-ttu-id="81583-269">可以<xref:System.Data.OleDb.OleDbParameter.DbType%2A>通过<xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> <xref:System.Data.OleDb.OleDbParameter.Size%2A>设置来推断参数的、和属性 <xref:System.Data.OleDb.OleDbParameter.Value%2A> 。</span><span class="sxs-lookup"><span data-stu-id="81583-269">The <xref:System.Data.OleDb.OleDbParameter.DbType%2A>, <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A>, and <xref:System.Data.OleDb.OleDbParameter.Size%2A> properties of a parameter can be inferred by setting <xref:System.Data.OleDb.OleDbParameter.Value%2A>.</span></span> <span data-ttu-id="81583-270">因此，您不需要指定它们。</span><span class="sxs-lookup"><span data-stu-id="81583-270">Therefore, you are not required to specify them.</span></span> <span data-ttu-id="81583-271">但是，它们不会在属性<xref:System.Data.OleDb.OleDbParameter>设置中公开。</span><span class="sxs-lookup"><span data-stu-id="81583-271">However, they are not exposed in <xref:System.Data.OleDb.OleDbParameter> property settings.</span></span> <span data-ttu-id="81583-272">例如，如果已推断出参数的大小， <xref:System.Data.OleDb.OleDbParameter.Size%2A>则不会在语句执行后包含推断值。</span><span class="sxs-lookup"><span data-stu-id="81583-272">For example, if the size of the parameter has been inferred, <xref:System.Data.OleDb.OleDbParameter.Size%2A> does not contain the inferred value after statement execution.</span></span>  
+  
+ <span data-ttu-id="81583-273">对于固定长度的数据类型，将忽略的<xref:System.Data.OleDb.OleDbParameter.Size%2A>值。</span><span class="sxs-lookup"><span data-stu-id="81583-273">For fixed-length data types, the value of <xref:System.Data.OleDb.OleDbParameter.Size%2A> is ignored.</span></span> <span data-ttu-id="81583-274">可以检索它以提供信息，并返回将参数值传输到服务器时提供程序使用的最大字节数。</span><span class="sxs-lookup"><span data-stu-id="81583-274">It can be retrieved for informational purposes, and returns the maximum amount of bytes the provider uses when transmitting the value of the parameter to the server.</span></span>  
+  
+ <span data-ttu-id="81583-275">如果<xref:System.Data.OleDb.OleDbParameter>为提供的值的大小超过指定<xref:System.Data.OleDb.OleDbParameter.Size%2A>的， <xref:System.Data.OleDb.OleDbParameter.Value%2A> <xref:System.Data.OleDb.OleDbParameter>则的将<xref:System.Data.OleDb.OleDbParameter>包含指定的值，并将截断为的大小。</span><span class="sxs-lookup"><span data-stu-id="81583-275">If the size of the value supplied for an <xref:System.Data.OleDb.OleDbParameter> exceeds the specified <xref:System.Data.OleDb.OleDbParameter.Size%2A>, the <xref:System.Data.OleDb.OleDbParameter.Value%2A> of the <xref:System.Data.OleDb.OleDbParameter> contains the specified value, truncated to the size of the <xref:System.Data.OleDb.OleDbParameter>.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-276">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-276">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+```vb  
+Public Sub CreateOleDbParameter()  
+    Dim myValue As String = "12 foot scarf - multiple colors, one previous owner"  
+    Dim parameter As New OleDbParameter("Description", OleDbType.VarChar)  
+    parameter.Direction = ParameterDirection.Output  
+    parameter.Size = myValue.Length  
+    parameter.Value = myValue  
+End Sub 'CreateOleDbParameter  
+```  
+  
+```csharp  
+public void CreateOleDbParameter()   
+ {  
+    string myValue = "12 foot scarf - multiple colors, one previous owner";  
+    OleDbParameter parameter = new OleDbParameter("Description", OleDbType.VarChar);  
+    parameter.Direction = ParameterDirection.Output;  
+    parameter.Size = myValue.Length;  
+    parameter.Value = myValue;  
+ }  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-277">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-277">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="SourceColumn">
+      <MemberSignature Language="C#" Value="public override string SourceColumn { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SourceColumn" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.SourceColumn" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Property SourceColumn As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::String ^ SourceColumn { System::String ^ get(); void set(System::String ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.SourceColumn : string with get, set" Usage="System.Data.OleDb.OleDbParameter.SourceColumn" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Data.IDataParameter.SourceColumn</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.Data.DataSysDescription("DataParameter_SourceColumn")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-278">获取或设置源列的名称，该源列映射到 <see cref="T:System.Data.DataSet" /> 并用于加载或返回 <see cref="P:System.Data.OleDb.OleDbParameter.Value" />。</span><span class="sxs-lookup"><span data-stu-id="81583-278">Gets or sets the name of the source column mapped to the <see cref="T:System.Data.DataSet" /> and used for loading or returning the <see cref="P:System.Data.OleDb.OleDbParameter.Value" />.</span></span></summary>
+        <value><span data-ttu-id="81583-279">映射到 <see cref="T:System.Data.DataSet" /> 的源列的名称。</span><span class="sxs-lookup"><span data-stu-id="81583-279">The name of the source column mapped to the <see cref="T:System.Data.DataSet" />.</span></span> <span data-ttu-id="81583-280">默认值为一个空字符串。</span><span class="sxs-lookup"><span data-stu-id="81583-280">The default is an empty string.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-281">如果<xref:System.Data.OleDb.OleDbParameter.SourceColumn%2A>将设置为空字符串以外的任何值，则会从<xref:System.Data.OleDb.OleDbParameter.SourceColumn%2A>名称为的列中检索参数的值。</span><span class="sxs-lookup"><span data-stu-id="81583-281">When <xref:System.Data.OleDb.OleDbParameter.SourceColumn%2A> is set to anything other than an empty string, the value of the parameter is retrieved from the column with the <xref:System.Data.OleDb.OleDbParameter.SourceColumn%2A> name.</span></span> <span data-ttu-id="81583-282">如果<xref:System.Data.OleDb.OleDbParameter.Direction%2A>设置为`Input`，则从中获取<xref:System.Data.DataSet>值。</span><span class="sxs-lookup"><span data-stu-id="81583-282">If <xref:System.Data.OleDb.OleDbParameter.Direction%2A> is set to `Input`, the value is taken from the <xref:System.Data.DataSet>.</span></span> <span data-ttu-id="81583-283">如果<xref:System.Data.OleDb.OleDbParameter.Direction%2A>设置为`Output`，则从数据源中获取值。</span><span class="sxs-lookup"><span data-stu-id="81583-283">If <xref:System.Data.OleDb.OleDbParameter.Direction%2A> is set to `Output`, the value is taken from the data source.</span></span> <span data-ttu-id="81583-284"><xref:System.Data.OleDb.OleDbParameter.Direction%2A> 的 `InputOutput` 是两者的组合。</span><span class="sxs-lookup"><span data-stu-id="81583-284">A <xref:System.Data.OleDb.OleDbParameter.Direction%2A> of `InputOutput` is a combination of both.</span></span>  
+  
+ <span data-ttu-id="81583-285">有关如何使用<xref:System.Data.OleDb.OleDbParameter.SourceColumn%2A>属性的详细信息，请参阅[DataAdapter 参数](~/docs/framework/data/adonet/dataadapter-parameters.md)和[使用 dataadapter 更新数据源](~/docs/framework/data/adonet/updating-data-sources-with-dataadapters.md)。</span><span class="sxs-lookup"><span data-stu-id="81583-285">For more information about how to use the <xref:System.Data.OleDb.OleDbParameter.SourceColumn%2A> property, see [DataAdapter Parameters](~/docs/framework/data/adonet/dataadapter-parameters.md) and [Updating Data Sources with DataAdapters](~/docs/framework/data/adonet/updating-data-sources-with-dataadapters.md).</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-286">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-286">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+```vb  
+Public Sub CreateOleDbParameter()  
+    Dim parameter As New OleDbParameter("Description", OleDbType.VarChar, 88)  
+    parameter.SourceColumn = "Description"  
+End Sub 'CreateOleDbParameter  
+```  
+  
+```csharp  
+public void CreateOleDbParameter()   
+ {  
+    OleDbParameter parameter = new OleDbParameter("Description", OleDbType.VarChar, 88);  
+    parameter.SourceColumn = "Description";  
+ }  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-287">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-287">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="SourceColumnNullMapping">
+      <MemberSignature Language="C#" Value="public override bool SourceColumnNullMapping { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SourceColumnNullMapping" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Property SourceColumnNullMapping As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property bool SourceColumnNullMapping { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.SourceColumnNullMapping : bool with get, set" Usage="System.Data.OleDb.OleDbParameter.SourceColumnNullMapping" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-288">设置或获取一个值，该值指示源列是否可以为 null。</span><span class="sxs-lookup"><span data-stu-id="81583-288">Sets or gets a value which indicates whether the source column is nullable.</span></span> <span data-ttu-id="81583-289">通过此操作， <see cref="T:System.Data.Common.DbCommandBuilder" /> 能够为可以为 null 的列正确地生成 Update 语句。</span><span class="sxs-lookup"><span data-stu-id="81583-289">This allows <see cref="T:System.Data.Common.DbCommandBuilder" /> to correctly generate Update statements for nullable columns.</span></span></summary>
+        <value><span data-ttu-id="81583-290">如果源列可以为 null，则为 <see langword="true" />；如果不可以为 null，则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="81583-290"><see langword="true" /> if the source column is nullable; <see langword="false" /> if it is not.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-291"><xref:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping%2A>当处理可以为<xref:System.Data.Common.DbCommandBuilder> null 的列时，将使用来正确生成更新命令。</span><span class="sxs-lookup"><span data-stu-id="81583-291"><xref:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping%2A> is used by the <xref:System.Data.Common.DbCommandBuilder> to correctly generate update commands when dealing with nullable columns.</span></span> <span data-ttu-id="81583-292">通常，使用<xref:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping%2A>仅限于从<xref:System.Data.Common.DbCommandBuilder>继承的开发人员。</span><span class="sxs-lookup"><span data-stu-id="81583-292">Generally, use of <xref:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping%2A> is limited to developers inheriting from <xref:System.Data.Common.DbCommandBuilder>.</span></span>  
+  
+ <span data-ttu-id="81583-293"><xref:System.Data.Common.DbCommandBuilder>使用此属性来确定源列是否可以为 null，如果此属性为 null `true` `false` ，则将其设置为，如果不是，则将此属性设置为。</span><span class="sxs-lookup"><span data-stu-id="81583-293"><xref:System.Data.Common.DbCommandBuilder> uses this property to determine whether the source column is nullable, and sets this property to `true` if it is nullable, and `false` if it is not.</span></span> <span data-ttu-id="81583-294">当<xref:System.Data.Common.DbCommandBuilder>生成其 Update 语句时，它会检查<xref:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping%2A>每个参数的。</span><span class="sxs-lookup"><span data-stu-id="81583-294">When <xref:System.Data.Common.DbCommandBuilder> is generating its Update statement, it examines the <xref:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping%2A> for each parameter.</span></span> <span data-ttu-id="81583-295">如果属性为`true`， <xref:System.Data.Common.DbCommandBuilder>则生成一个 WHERE 子句，如下所示（在此查询表达式中，"FieldName" 表示字段的名称）：</span><span class="sxs-lookup"><span data-stu-id="81583-295">If the property is `true`, <xref:System.Data.Common.DbCommandBuilder> generates a WHERE clauses like the following (in this query expression, "FieldName" represents the name of the field):</span></span>  
+  
+```  
+((@IsNull_FieldName = 1 AND FieldName IS NULL) OR   
+  (FieldName = @Original_FieldName))  
+```  
+  
+ <span data-ttu-id="81583-296">如果<xref:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping%2A>字段为 false， <xref:System.Data.Common.DbCommandBuilder>则生成以下 WHERE 子句：</span><span class="sxs-lookup"><span data-stu-id="81583-296">If <xref:System.Data.OleDb.OleDbParameter.SourceColumnNullMapping%2A> for the field is false, <xref:System.Data.Common.DbCommandBuilder> generates the following WHERE clause:</span></span>  
+  
+```  
+FieldName = @OriginalFieldName  
+```  
+  
+ <span data-ttu-id="81583-297">此外， @IsNull_FieldName如果源字段包含 null，则包含1，如果不包含 null，则包含0。</span><span class="sxs-lookup"><span data-stu-id="81583-297">In addition, @IsNull_FieldName contains 1 if the source field contains null, and 0 if it does not.</span></span> <span data-ttu-id="81583-298">此机制允许在 SQL Server 中进行性能优化，并提供适用于跨多个提供程序的通用代码。</span><span class="sxs-lookup"><span data-stu-id="81583-298">This mechanism allows for a performance optimization in SQL Server, and provides for common code that works across multiple providers.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-299">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-299">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="SourceVersion">
+      <MemberSignature Language="C#" Value="public override System.Data.DataRowVersion SourceVersion { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Data.DataRowVersion SourceVersion" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.SourceVersion" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Property SourceVersion As DataRowVersion" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Data::DataRowVersion SourceVersion { System::Data::DataRowVersion get(); void set(System::Data::DataRowVersion value); };" />
+      <MemberSignature Language="F#" Value="member this.SourceVersion : System.Data.DataRowVersion with get, set" Usage="System.Data.OleDb.OleDbParameter.SourceVersion" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Data.IDataParameter.SourceVersion</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.DefaultValue(Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.Data.DataSysDescription("DataParameter_SourceVersion")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Data.DataRowVersion</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-300">获取或设置在加载 <see cref="T:System.Data.DataRowVersion" /> 时使用的 <see cref="P:System.Data.OleDb.OleDbParameter.Value" />。</span><span class="sxs-lookup"><span data-stu-id="81583-300">Gets or sets the <see cref="T:System.Data.DataRowVersion" /> to use when you load <see cref="P:System.Data.OleDb.OleDbParameter.Value" />.</span></span></summary>
+        <value><span data-ttu-id="81583-301"><see cref="T:System.Data.DataRowVersion" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-301">One of the <see cref="T:System.Data.DataRowVersion" /> values.</span></span> <span data-ttu-id="81583-302">默认值为 <see langword="Current" />。</span><span class="sxs-lookup"><span data-stu-id="81583-302">The default is <see langword="Current" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-303">在更新操作过程中用于确定参数值是否设置为`Current`或 `Original` 。  <xref:System.Data.OleDb.OleDbDataAdapter.UpdateCommand%2A></span><span class="sxs-lookup"><span data-stu-id="81583-303">Used by <xref:System.Data.OleDb.OleDbDataAdapter.UpdateCommand%2A> during an update operation to determine whether the parameter value is set to `Current` or `Original`.</span></span> <span data-ttu-id="81583-304">这将允许更新主键。</span><span class="sxs-lookup"><span data-stu-id="81583-304">This lets primary keys be updated.</span></span> <span data-ttu-id="81583-305"><xref:System.Data.DataRow>此属性设置为<xref:System.Data.DataRow.Item%2A>属性使用的的版本， <xref:System.Data.DataRow>或<xref:System.Data.DataRow.GetChildRows%2A>对象的方法。</span><span class="sxs-lookup"><span data-stu-id="81583-305">This property is set to the version of the <xref:System.Data.DataRow> used by the <xref:System.Data.DataRow.Item%2A> property, or the <xref:System.Data.DataRow.GetChildRows%2A> method of the <xref:System.Data.DataRow> object.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-306">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-306">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+```vb  
+Public Sub CreateOleDbParameter()  
+    Dim parameter As New OleDbParameter("Description", OleDbType.VarChar, 88)  
+    parameter.SourceColumn = "Description"  
+    parameter.SourceVersion = DataRowVersion.Current  
+End Sub  
+```  
+  
+```csharp  
+public void CreateOleDbParameter()   
+ {  
+    OleDbParameter parameter = new OleDbParameter("Description", OleDbType.VarChar, 88);  
+    parameter.SourceColumn = "Description";  
+    parameter.SourceVersion = DataRowVersion.Current;  
+ }  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="81583-307">该属性未设置为 <see cref="T:System.Data.DataRowVersion" /> 值之一。</span><span class="sxs-lookup"><span data-stu-id="81583-307">The property was not set to one of the <see cref="T:System.Data.DataRowVersion" /> values.</span></span></exception>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-308">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-308">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="System.ICloneable.Clone">
+      <MemberSignature Language="C#" Value="object ICloneable.Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance object System.ICloneable.Clone() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.OleDb.OleDbParameter.System#ICloneable#Clone" />
+      <MemberSignature Language="VB.NET" Value="Function Clone () As Object Implements ICloneable.Clone" />
+      <MemberSignature Language="C++ CLI" Value=" virtual System::Object ^ System.ICloneable.Clone() = ICloneable::Clone;" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.ICloneable.Clone</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="81583-309">有关此成员的说明，请参见 <see cref="M:System.ICloneable.Clone" />。</span><span class="sxs-lookup"><span data-stu-id="81583-309">For a description of this member, see <see cref="M:System.ICloneable.Clone" />.</span></span></summary>
+        <returns><span data-ttu-id="81583-310">新的 <see cref="T:System.Object" /> 对象，是此实例的副本。</span><span class="sxs-lookup"><span data-stu-id="81583-310">A new <see cref="T:System.Object" /> that is a copy of this instance.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-311">此成员是显式接口成员的实现。</span><span class="sxs-lookup"><span data-stu-id="81583-311">This member is an explicit interface member implementation.</span></span> <span data-ttu-id="81583-312">它只能在 <xref:System.Data.OleDb.OleDbParameter> 实例被强制转换为 <xref:System.ICloneable> 接口时使用。</span><span class="sxs-lookup"><span data-stu-id="81583-312">It can be used only when the <xref:System.Data.OleDb.OleDbParameter> instance is cast to an <xref:System.ICloneable> interface.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.OleDb.OleDbParameter.ToString" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function ToString () As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::String ^ ToString();" />
+      <MemberSignature Language="F#" Value="override this.ToString : unit -&gt; string" Usage="oleDbParameter.ToString " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="81583-313">获取一个包含 <see cref="P:System.Data.OleDb.OleDbParameter.ParameterName" /> 的字符串。</span><span class="sxs-lookup"><span data-stu-id="81583-313">Gets a string that contains the <see cref="P:System.Data.OleDb.OleDbParameter.ParameterName" />.</span></span></summary>
+        <returns><span data-ttu-id="81583-314">一个包含 <see cref="P:System.Data.OleDb.OleDbParameter.ParameterName" /> 的字符串。</span><span class="sxs-lookup"><span data-stu-id="81583-314">A string that contains the <see cref="P:System.Data.OleDb.OleDbParameter.ParameterName" />.</span></span></returns>
+        <remarks>To be added.</remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-315">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-315">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public override object Value { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Value" />
+      <MemberSignature Language="DocId" Value="P:System.Data.OleDb.OleDbParameter.Value" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Property Value As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Object ^ Value { System::Object ^ get(); void set(System::Object ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.Value : obj with get, set" Usage="System.Data.OleDb.OleDbParameter.Value" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Data.IDataParameter.Value</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Data</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.OleDb</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netframework-4.8;dotnet-plat-ext-3.0;netcore-3.0">
+          <AttributeName>System.ComponentModel.TypeConverter(typeof(System.ComponentModel.StringConverter))</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.ComponentModel.DefaultValue(null)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-1.1">
+          <AttributeName>System.Data.DataSysDescription("DataParameter_Value")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinmac-3.0">
+          <AttributeName>System.ComponentModel.RefreshProperties(System.ComponentModel.RefreshProperties.All)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0">
+          <AttributeName>System.ComponentModel.RefreshProperties</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="81583-316">获取或设置参数的值。</span><span class="sxs-lookup"><span data-stu-id="81583-316">Gets or sets the value of the parameter.</span></span></summary>
+        <value><span data-ttu-id="81583-317">充当参数值的 <see cref="T:System.Object" />。</span><span class="sxs-lookup"><span data-stu-id="81583-317">An <see cref="T:System.Object" /> that is the value of the parameter.</span></span> <span data-ttu-id="81583-318">默认值为 null。</span><span class="sxs-lookup"><span data-stu-id="81583-318">The default value is null.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="81583-319">对于输入参数，值将绑定到<xref:System.Data.OleDb.OleDbCommand>发送到服务器的。</span><span class="sxs-lookup"><span data-stu-id="81583-319">For input parameters, the value is bound to the <xref:System.Data.OleDb.OleDbCommand> that is sent to the server.</span></span> <span data-ttu-id="81583-320">对于输出和返回值参数，值在完成<xref:System.Data.OleDb.OleDbCommand> <xref:System.Data.OleDb.OleDbDataReader>时设置，在关闭后设置。</span><span class="sxs-lookup"><span data-stu-id="81583-320">For output and return value parameters, the value is set on completion of the <xref:System.Data.OleDb.OleDbCommand> and after the <xref:System.Data.OleDb.OleDbDataReader> is closed.</span></span>  
+  
+ <span data-ttu-id="81583-321">将 null 参数值发送到服务器时，必须指定<xref:System.DBNull>，而不是 null。</span><span class="sxs-lookup"><span data-stu-id="81583-321">When you send a null parameter value to the server, you must specify <xref:System.DBNull>, not null.</span></span> <span data-ttu-id="81583-322">系统中的 null 值是一个不具有任何值的空对象。</span><span class="sxs-lookup"><span data-stu-id="81583-322">The null value in the system is an empty object that has no value.</span></span> <span data-ttu-id="81583-323"><xref:System.DBNull> 用于表示 null 值。</span><span class="sxs-lookup"><span data-stu-id="81583-323"><xref:System.DBNull> is used to represent null values.</span></span>  
+  
+ <span data-ttu-id="81583-324">如果应用程序指定了数据库类型，则当提供程序将数据发送到服务器时，绑定值将转换为该类型。</span><span class="sxs-lookup"><span data-stu-id="81583-324">If the application specifies the database type, the bound value is converted to that type when the provider sends the data to the server.</span></span> <span data-ttu-id="81583-325">如果提供程序支持<xref:System.IConvertible>接口，则会尝试转换任何类型的值。</span><span class="sxs-lookup"><span data-stu-id="81583-325">The provider tries to convert any type of value if it supports the <xref:System.IConvertible> interface.</span></span> <span data-ttu-id="81583-326">如果指定的类型与值不兼容，则可能会导致转换错误。</span><span class="sxs-lookup"><span data-stu-id="81583-326">Conversion errors may result if the specified type is not compatible with the value.</span></span>  
+  
+ <span data-ttu-id="81583-327"><xref:System.Data.OleDb.OleDbParameter.DbType%2A> 和 <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> 属性都可以通过设置值进行推断。</span><span class="sxs-lookup"><span data-stu-id="81583-327">Both the <xref:System.Data.OleDb.OleDbParameter.DbType%2A> and <xref:System.Data.OleDb.OleDbParameter.OleDbType%2A> properties can be inferred by setting the Value.</span></span>  
+  
+ <span data-ttu-id="81583-328">的<xref:System.Data.OleDb.OleDbParameter.Value%2A> 更新 <xref:System.Data.IDbDataAdapter> 方法将覆盖该属性。</span><span class="sxs-lookup"><span data-stu-id="81583-328">The <xref:System.Data.OleDb.OleDbParameter.Value%2A> property is overwritten by the Update method of <xref:System.Data.IDbDataAdapter>.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="81583-329">下面的示例创建<xref:System.Data.OleDb.OleDbParameter>并设置其一些属性。</span><span class="sxs-lookup"><span data-stu-id="81583-329">The following example creates an <xref:System.Data.OleDb.OleDbParameter> and sets some of its properties.</span></span>  
+  
+```vb  
+Public Sub CreateOleDbParameter()  
+    Dim parameter As New OleDbParameter("Description", OleDbType.VarChar, 88)  
+    parameter.Value = "garden hose"  
+End Sub 'CreateOleDbParameter  
+```  
+  
+```csharp  
+public void CreateOleDbParameter()   
+ {  
+    OleDbParameter parameter = new OleDbParameter("Description", OleDbType.VarChar, 88);  
+    parameter.Value = "garden hose";  
+ }  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/data/adonet/commands-and-parameters.md"><span data-ttu-id="81583-330">使用命令</span><span class="sxs-lookup"><span data-stu-id="81583-330">Working with Commands</span></span></related>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
