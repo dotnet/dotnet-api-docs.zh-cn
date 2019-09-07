@@ -1,0 +1,956 @@
+<Type Name="SemaphoreSecurity" FullName="System.Security.AccessControl.SemaphoreSecurity">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="dbaaedf80ead2c907ed593520cd66b949ee55078" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70414913" /></Metadata><TypeSignature Language="C#" Value="public sealed class SemaphoreSecurity : System.Security.AccessControl.NativeObjectSecurity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SemaphoreSecurity extends System.Security.AccessControl.NativeObjectSecurity" />
+  <TypeSignature Language="DocId" Value="T:System.Security.AccessControl.SemaphoreSecurity" />
+  <TypeSignature Language="VB.NET" Value="Public NotInheritable Class SemaphoreSecurity&#xA;Inherits NativeObjectSecurity" />
+  <TypeSignature Language="C++ CLI" Value="public ref class SemaphoreSecurity sealed : System::Security::AccessControl::NativeObjectSecurity" />
+  <TypeSignature Language="F#" Value="type SemaphoreSecurity = class&#xA;    inherit NativeObjectSecurity" />
+  <AssemblyInfo>
+    <AssemblyName>System.Threading.AccessControl</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.2.0</AssemblyVersion>
+    <AssemblyVersion>4.0.3.0</AssemblyVersion>
+    <AssemblyVersion>4.0.4.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Security.AccessControl.NativeObjectSecurity</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+      <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+    </Attribute>
+    <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1">
+      <AttributeName>System.Security.SecurityCritical</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>表示命名的信号量的 Windows 访问控制安全性。 此类不能被继承。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Security.AccessControl.SemaphoreSecurity>对象指定已命名的系统信号量的访问权限，并且还指定如何审核访问尝试。 对信号量的访问权限表示为规则，每个访问规则由一个<xref:System.Security.AccessControl.SemaphoreAccessRule>对象表示。 每个审核规则都由一个<xref:System.Security.AccessControl.SemaphoreAuditRule>对象表示。  
+  
+ 这会镜像底层 Windows 安全系统，其中每个安全对象最多具有一个控制对受保护对象的访问的随机访问控制列表（DACL），最多有一个指定访问权限的系统访问控制列表（SACL）审核尝试。 DACL 和 SACL 是访问控制项（ACE）的有序列表，它们指定了用户和组的访问权限和审核。 <xref:System.Security.AccessControl.SemaphoreAccessRule> 或 <xref:System.Security.AccessControl.SemaphoreAuditRule> 对象可能表示多个 ACE。  
+  
+> [!NOTE]
+>  <xref:System.Threading.Semaphore>对象可以表示本地信号量或已命名的系统信号量。 Windows 访问控制安全性仅适用于已命名的系统信号量。  
+  
+ <xref:System.Security.AccessControl.SemaphoreSecurity>、和类 <xref:System.Security.AccessControl.SemaphoreAuditRule> 隐藏 acl 和 ace 的实现细节。 <xref:System.Security.AccessControl.SemaphoreAccessRule> 它们允许你忽略17个不同的 ACE 类型以及正确保留访问权限的继承和传播的复杂性。 这些对象还旨在防止出现以下常见的访问控制错误：  
+  
+-   使用 null DACL 创建安全说明符。 对 DACL 的空引用允许任何用户向对象添加访问规则，这可能会造成拒绝服务攻击。 新<xref:System.Security.AccessControl.SemaphoreSecurity>对象始终以空的 DACL 开头，这会拒绝所有用户的所有访问。  
+  
+-   违反了 Ace 的规范排序。 如果 DACL 中的 ACE 列表不是以规范顺序保存的，则可能会无意中向用户授予对受保护对象的访问权限。 例如，拒绝的访问权限必须始终出现在允许的访问权限之前。 <xref:System.Security.AccessControl.SemaphoreSecurity>对象在内部保持正确的顺序。  
+  
+-   操作安全描述符标志，这些标志应仅限 resource manager 控件。  
+  
+-   创建 ACE 标志的无效组合。  
+  
+-   操作继承的 Ace。 继承和传播由资源管理器处理，以响应对访问和审核规则所做的更改。  
+  
+-   向 Acl 中插入无意义的 Ace。  
+  
+ .NET 安全对象不支持的唯一功能是应由大多数应用程序开发人员避免的危险活动，如下所示：  
+  
+-   通常由资源管理器执行的低级别任务。  
+  
+-   以不维护规范排序的方式添加或移除访问控制项。  
+  
+ 若要修改命名信号量的 Windows 访问控制安全性，请<xref:System.Threading.Semaphore.GetAccessControl%2A?displayProperty=nameWithType>使用方法来<xref:System.Security.AccessControl.SemaphoreSecurity>获取对象。 通过添加和删除规则修改安全对象，然后使用<xref:System.Threading.Semaphore.SetAccessControl%2A?displayProperty=nameWithType>方法将其重新附加。  
+  
+> [!IMPORTANT]
+>  对对象所做的更改不会影响已命名的信号量的访问级别，直到<xref:System.Threading.Semaphore.SetAccessControl%2A?displayProperty=nameWithType>调用方法将已更改的安全对象分配给已命名的信号量。 <xref:System.Security.AccessControl.SemaphoreSecurity>  
+  
+ 若要将访问控制安全性从一个信号量复制到另<xref:System.Threading.Semaphore.GetAccessControl%2A?displayProperty=nameWithType>一个信号量， <xref:System.Security.AccessControl.SemaphoreSecurity>请使用方法获取表示第一个<xref:System.Threading.Semaphore.SetAccessControl%2A?displayProperty=nameWithType>信号量的访问和审核规则的对象，然后使用方法或接受<xref:System.Security.AccessControl.SemaphoreSecurity>对象，将这些规则分配给第二个信号量。  
+  
+ 投资于安全描述符定义语言（SDDL）的用户可以使用<xref:System.Security.AccessControl.ObjectSecurity.SetSecurityDescriptorSddlForm%2A>方法来设置命名信号量的访问规则， <xref:System.Security.AccessControl.ObjectSecurity.GetSecurityDescriptorSddlForm%2A>并使用方法来获取表示采用 SDDL 格式的访问规则的字符串。 这不建议用于新的开发。  
+  
+> [!NOTE]
+>  Windows 98 或 Windows Millennium Edition 不支持同步对象的安全性。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示规则和<xref:System.Security.AccessControl.AccessControlType.Allow> <xref:System.Security.AccessControl.AccessControlType.Deny>规则之间的分隔，并显示兼容规则中的权限组合。 该示例创建一个<xref:System.Security.AccessControl.SemaphoreSecurity>对象，添加允许和拒绝当前用户的各种权限的规则，并显示生成的规则对。 然后，该示例允许当前用户具有新权限，并显示结果，并显示新权限与现有<xref:System.Security.AccessControl.AccessControlType.Allow>规则合并。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:System.Threading.Semaphore>对象。 可在和<xref:System.Threading.Semaphore.GetAccessControl%2A?displayProperty=nameWithType> <xref:System.Threading.Semaphore.SetAccessControl%2A?displayProperty=nameWithType>中找到附加安全对象的示例。  
+  
+ [!code-csharp[System.Security.AccessControl.SemaphoreSecurity.AddAccessRule#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.AddAccessRule/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.SemaphoreSecurity.AddAccessRule#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.AddAccessRule/VB/source.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.Security.AccessControl.SemaphoreAccessRule" />
+    <altmember cref="T:System.Security.AccessControl.SemaphoreAuditRule" />
+    <altmember cref="T:System.Security.AccessControl.SemaphoreRights" />
+    <altmember cref="M:System.Threading.Semaphore.GetAccessControl" />
+    <altmember cref="M:System.Threading.Semaphore.SetAccessControl(System.Security.AccessControl.SemaphoreSecurity)" />
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> 类的新实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SemaphoreSecurity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; SemaphoreSecurity();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>使用默认值初始化 <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 新<xref:System.Security.AccessControl.SemaphoreSecurity>对象始终以空的自由访问列表（DACL）开头，此列表拒绝所有用户的所有访问。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">Windows 98 或 Windows Millennium Edition 不支持此类。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SemaphoreSecurity (string name, System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, valuetype System.Security.AccessControl.AccessControlSections includeSections) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.#ctor(System.String,System.Security.AccessControl.AccessControlSections)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (name As String, includeSections As AccessControlSections)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; SemaphoreSecurity(System::String ^ name, System::Security::AccessControl::AccessControlSections includeSections);" />
+      <MemberSignature Language="F#" Value="new System.Security.AccessControl.SemaphoreSecurity : string * System.Security.AccessControl.AccessControlSections -&gt; System.Security.AccessControl.SemaphoreSecurity" Usage="new System.Security.AccessControl.SemaphoreSecurity (name, includeSections)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
+      </Parameters>
+      <Docs>
+        <param name="name">要检索其访问控制安全性规则的系统信号量的名称。</param>
+        <param name="includeSections">指定要检索的部分的 <see cref="T:System.Security.AccessControl.AccessControlSections" /> 标志的组合。</param>
+        <summary>使用来自具有指定名称的系统信号量的访问控制安全性规则的指定部分来初始化 <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数允许你获取已命名的系统信号量的访问控制安全性，无需<xref:System.Threading.Semaphore>首先创建对象。  
+  
+ 使用命名系统对象时必须谨慎。 如果有一个名`name`为的系统对象不是信号量，则可能会检索其控制访问安全性。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">Windows 98 或 Windows Millennium Edition 不支持此类。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AccessRightType">
+      <MemberSignature Language="C#" Value="public override Type AccessRightType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type AccessRightType" />
+      <MemberSignature Language="DocId" Value="P:System.Security.AccessControl.SemaphoreSecurity.AccessRightType" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property AccessRightType As Type" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property Type ^ AccessRightType { Type ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.AccessRightType : Type" Usage="System.Security.AccessControl.SemaphoreSecurity.AccessRightType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> 类用于表示访问规则的枚举。</summary>
+        <value>一个 <see cref="T:System.Type" /> 对象，表示 <see cref="T:System.Security.AccessControl.SemaphoreRights" /> 枚举。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 派生自<xref:System.Security.AccessControl.ObjectSecurity>类的类将<xref:System.Security.AccessControl.ObjectSecurity.AccessRightType%2A>重写属性，并返回它们用来表示访问权限的类型。 当使用包含多个类型的安全对象的数组或集合时，请使用此属性来确定要用于每个安全对象的正确枚举类型。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AccessRuleFactory">
+      <MemberSignature Language="C#" Value="public override System.Security.AccessControl.AccessRule AccessRuleFactory (System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.AccessControl.AccessRule AccessRuleFactory(class System.Security.Principal.IdentityReference identityReference, int32 accessMask, bool isInherited, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.AccessRuleFactory(System.Security.Principal.IdentityReference,System.Int32,System.Boolean,System.Security.AccessControl.InheritanceFlags,System.Security.AccessControl.PropagationFlags,System.Security.AccessControl.AccessControlType)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Security::AccessControl::AccessRule ^ AccessRuleFactory(System::Security::Principal::IdentityReference ^ identityReference, int accessMask, bool isInherited, System::Security::AccessControl::InheritanceFlags inheritanceFlags, System::Security::AccessControl::PropagationFlags propagationFlags, System::Security::AccessControl::AccessControlType type);" />
+      <MemberSignature Language="F#" Value="override this.AccessRuleFactory : System.Security.Principal.IdentityReference * int * bool * System.Security.AccessControl.InheritanceFlags * System.Security.AccessControl.PropagationFlags * System.Security.AccessControl.AccessControlType -&gt; System.Security.AccessControl.AccessRule" Usage="semaphoreSecurity.AccessRuleFactory (identityReference, accessMask, isInherited, inheritanceFlags, propagationFlags, type)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AccessRule</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="identityReference" Type="System.Security.Principal.IdentityReference" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="isInherited" Type="System.Boolean" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+        <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
+      </Parameters>
+      <Docs>
+        <param name="identityReference">一个 <see cref="T:System.Security.Principal.IdentityReference" />，用于标识此规则应用到的用户或组。</param>
+        <param name="accessMask"><see cref="T:System.Security.AccessControl.SemaphoreRights" /> 值的按位组合，用于指定允许或拒绝的访问权限，该组合将被强制转换为整数。</param>
+        <param name="isInherited">这对于命名的信号量没有意义，因为这些信号量没有层次结构。</param>
+        <param name="inheritanceFlags">这对于命名的信号量没有意义，因为这些信号量没有层次结构。</param>
+        <param name="propagationFlags">这对于命名的信号量没有意义，因为这些信号量没有层次结构。</param>
+        <param name="type"><see cref="T:System.Security.AccessControl.AccessControlType" /> 值之一，用于指定是允许还是拒绝相应权限。</param>
+        <summary>使用指定的访问权限、访问控制和标志为指定用户创建新的访问控制规则。</summary>
+        <returns>一个 <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> 对象，表示指定用户的指定权限。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 创建访问控制规则的建议方法是使用<xref:System.Security.AccessControl.SemaphoreAccessRule>类的构造函数。  
+  
+> [!NOTE]
+>  虽然继承和传播标志对于命名的信号量没有意义，但仍可以指定它们，这是不建议的，因为它不必要地使规则的维护（例如，干扰规则的组合）否则，这将是兼容的。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="accessMask" />、<paramref name="inheritanceFlags" />、<paramref name="propagationFlags" /> 或 <paramref name="type" /> 指定了一个无效值。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="identityReference" /> 为 <see langword="null" />。  
+  
+- 或 - 
+ <paramref name="accessMask" /> 为零。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="identityReference" /> 既不属于类型 <see cref="T:System.Security.Principal.SecurityIdentifier" />，也不属于可以转换为 <see cref="T:System.Security.Principal.NTAccount" /> 类型的类型（如 <see cref="T:System.Security.Principal.SecurityIdentifier" />）。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AccessRuleType">
+      <MemberSignature Language="C#" Value="public override Type AccessRuleType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type AccessRuleType" />
+      <MemberSignature Language="DocId" Value="P:System.Security.AccessControl.SemaphoreSecurity.AccessRuleType" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property AccessRuleType As Type" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property Type ^ AccessRuleType { Type ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.AccessRuleType : Type" Usage="System.Security.AccessControl.SemaphoreSecurity.AccessRuleType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> 类用于表示访问规则的类型。</summary>
+        <value>一个表示 <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> 类的 <see cref="T:System.Type" /> 对象。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 派生自<xref:System.Security.AccessControl.ObjectSecurity>类的类将<xref:System.Security.AccessControl.ObjectSecurity.AccessRuleType%2A>重写属性，并返回用于表示访问规则的类型。 当使用包含多个类型的安全对象的数组或集合时，请使用此属性来确定要用于每个安全对象的正确访问规则类型。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddAccessRule">
+      <MemberSignature Language="C#" Value="public void AddAccessRule (System.Security.AccessControl.SemaphoreAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAccessRule(class System.Security.AccessControl.SemaphoreAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.AddAccessRule(System.Security.AccessControl.SemaphoreAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub AddAccessRule (rule As SemaphoreAccessRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void AddAccessRule(System::Security::AccessControl::SemaphoreAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.AddAccessRule : System.Security.AccessControl.SemaphoreAccessRule -&gt; unit" Usage="semaphoreSecurity.AddAccessRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.SemaphoreAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要添加的访问控制规则。</param>
+        <summary>搜索可以将新规则与之合并的匹配规则。 如果未找到符合条件的规则，则添加新规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法搜索具有相同用户或组以及与`rule`相同<xref:System.Security.AccessControl.AccessControlType>的规则。 <xref:System.Security.AccessControl.SemaphoreSecurity.AddAccessRule%2A> 如果未找到， `rule`则添加。 如果找到匹配规则，则中`rule`的权限将与现有规则合并。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示规则和<xref:System.Security.AccessControl.AccessControlType.Allow> <xref:System.Security.AccessControl.AccessControlType.Deny>规则之间的分隔，并显示兼容规则中的权限组合。 该示例创建一个<xref:System.Security.AccessControl.SemaphoreSecurity>对象，添加允许和拒绝当前用户的各种权限的规则，并显示生成的规则对。 然后，该示例允许当前用户具有新权限，并显示结果，并显示新权限与现有<xref:System.Security.AccessControl.AccessControlType.Allow>规则合并。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:System.Threading.Semaphore>对象。 可在和<xref:System.Threading.Semaphore.GetAccessControl%2A?displayProperty=nameWithType> <xref:System.Threading.Semaphore.SetAccessControl%2A?displayProperty=nameWithType>中找到附加安全对象的示例。  
+  
+ [!code-csharp[System.Security.AccessControl.SemaphoreSecurity.AddAccessRule#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.AddAccessRule/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.SemaphoreSecurity.AddAccessRule#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.AddAccessRule/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AddAuditRule">
+      <MemberSignature Language="C#" Value="public void AddAuditRule (System.Security.AccessControl.SemaphoreAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAuditRule(class System.Security.AccessControl.SemaphoreAuditRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.AddAuditRule(System.Security.AccessControl.SemaphoreAuditRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub AddAuditRule (rule As SemaphoreAuditRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void AddAuditRule(System::Security::AccessControl::SemaphoreAuditRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.AddAuditRule : System.Security.AccessControl.SemaphoreAuditRule -&gt; unit" Usage="semaphoreSecurity.AddAuditRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.SemaphoreAuditRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要添加的审核规则。 由此规则指定的用户来确定搜索。</param>
+        <summary>搜索可以将新规则与之合并的审核规则。 如果未找到符合条件的规则，则添加新规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法搜索与相同用户或`rule`组的规则。 <xref:System.Security.AccessControl.SemaphoreSecurity.AddAuditRule%2A> 如果未找到， `rule`则添加。 如果找到匹配规则，则中`rule`的标志将合并到现有规则。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AuditRuleFactory">
+      <MemberSignature Language="C#" Value="public override System.Security.AccessControl.AuditRule AuditRuleFactory (System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AuditFlags flags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.AccessControl.AuditRule AuditRuleFactory(class System.Security.Principal.IdentityReference identityReference, int32 accessMask, bool isInherited, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.AuditFlags flags) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.AuditRuleFactory(System.Security.Principal.IdentityReference,System.Int32,System.Boolean,System.Security.AccessControl.InheritanceFlags,System.Security.AccessControl.PropagationFlags,System.Security.AccessControl.AuditFlags)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Security::AccessControl::AuditRule ^ AuditRuleFactory(System::Security::Principal::IdentityReference ^ identityReference, int accessMask, bool isInherited, System::Security::AccessControl::InheritanceFlags inheritanceFlags, System::Security::AccessControl::PropagationFlags propagationFlags, System::Security::AccessControl::AuditFlags flags);" />
+      <MemberSignature Language="F#" Value="override this.AuditRuleFactory : System.Security.Principal.IdentityReference * int * bool * System.Security.AccessControl.InheritanceFlags * System.Security.AccessControl.PropagationFlags * System.Security.AccessControl.AuditFlags -&gt; System.Security.AccessControl.AuditRule" Usage="semaphoreSecurity.AuditRuleFactory (identityReference, accessMask, isInherited, inheritanceFlags, propagationFlags, flags)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AuditRule</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="identityReference" Type="System.Security.Principal.IdentityReference" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="isInherited" Type="System.Boolean" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+        <Parameter Name="flags" Type="System.Security.AccessControl.AuditFlags" />
+      </Parameters>
+      <Docs>
+        <param name="identityReference">一个 <see cref="T:System.Security.Principal.IdentityReference" />，用于标识此规则应用到的用户或组。</param>
+        <param name="accessMask"><see cref="T:System.Security.AccessControl.SemaphoreRights" /> 值的按位组合，用于指定要审核的访问权限，该组合将被强制转换为整数。</param>
+        <param name="isInherited">这对于命名的等待句柄没有意义，因为这些句柄没有层次结构。</param>
+        <param name="inheritanceFlags">这对于命名的等待句柄没有意义，因为这些句柄没有层次结构。</param>
+        <param name="propagationFlags">这对于命名的等待句柄没有意义，因为这些句柄没有层次结构。</param>
+        <param name="flags"><see cref="T:System.Security.AccessControl.AuditFlags" /> 值的按位组合，它指定审核成功的访问、失败的访问还是对这两种情况都进行审核。</param>
+        <summary>新建审核规则，指定规则应用到的用户、要审核的访问权限以及触发审核规则的结果。</summary>
+        <returns>一个 <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> 对象，表示指定用户的指定审核规则。 该方法的返回类型是基类 <see cref="T:System.Security.AccessControl.AuditRule" />，但可以安全地将返回值强制转换为派生类。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 创建审核规则的建议方法是使用<xref:System.Security.AccessControl.SemaphoreAuditRule>类的构造函数。  
+  
+> [!NOTE]
+>  虽然继承和传播标志对于命名的信号量没有意义，但仍可以指定它们。 不建议这样做，因为这样做不会对规则的维护产生一定的影响，例如，妨碍与其他兼容的规则组合。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="accessMask" />、<paramref name="inheritanceFlags" />、<paramref name="propagationFlags" /> 或 <paramref name="flags" /> 指定了一个无效值。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="identityReference" /> 为 <see langword="null" />。  
+  
+- 或 - 
+ <paramref name="accessMask" /> 为零。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="identityReference" /> 既不属于类型 <see cref="T:System.Security.Principal.SecurityIdentifier" />，也不属于可以转换为 <see cref="T:System.Security.Principal.NTAccount" /> 类型的类型（如 <see cref="T:System.Security.Principal.SecurityIdentifier" />）。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AuditRuleType">
+      <MemberSignature Language="C#" Value="public override Type AuditRuleType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type AuditRuleType" />
+      <MemberSignature Language="DocId" Value="P:System.Security.AccessControl.SemaphoreSecurity.AuditRuleType" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property AuditRuleType As Type" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property Type ^ AuditRuleType { Type ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.AuditRuleType : Type" Usage="System.Security.AccessControl.SemaphoreSecurity.AuditRuleType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> 类用于表示审核规则的类型。</summary>
+        <value>一个表示 <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" /> 类的 <see cref="T:System.Type" /> 对象。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 派生自<xref:System.Security.AccessControl.ObjectSecurity>类的类将<xref:System.Security.AccessControl.ObjectSecurity.AuditRuleType%2A>重写属性，并返回用于表示审核权限的类型。 当使用包含多个类型的安全对象的数组或集合时，请使用此属性来确定要用于每个安全对象的正确审核规则类型。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAccessRule">
+      <MemberSignature Language="C#" Value="public bool RemoveAccessRule (System.Security.AccessControl.SemaphoreAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveAccessRule(class System.Security.AccessControl.SemaphoreAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRule(System.Security.AccessControl.SemaphoreAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Function RemoveAccessRule (rule As SemaphoreAccessRule) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool RemoveAccessRule(System::Security::AccessControl::SemaphoreAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAccessRule : System.Security.AccessControl.SemaphoreAccessRule -&gt; bool" Usage="semaphoreSecurity.RemoveAccessRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.SemaphoreAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">指定要搜索的用户和 <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" /> 的 <see cref="T:System.Security.AccessControl.AccessControlType" />，以及匹配规则（如果找到）必须兼容的一组继承和传播标志。 指定要从兼容规则移除的权限（如果找到）。</param>
+        <summary>搜索如下的访问控制规则：与指定的访问规则具有相同的用户和 <see cref="T:System.Security.AccessControl.AccessControlType" />（允许或拒绝），并具有兼容的继承和传播标志；如果找到，则从中移除指定访问规则中包含的权限。</summary>
+        <returns>如果找到一个兼容规则，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将搜索<xref:System.Security.AccessControl.SemaphoreSecurity>当前的规则，该规则具有相同的用户和与相同<xref:System.Security.AccessControl.AccessControlType>的值`rule`。 如果未找到此类规则，则不执行任何操作，并且该方法`false`将返回。 如果找到匹配规则，则检查其继承和兼容性标志是否与中`rule`指定的标志兼容。 如果未找到兼容的规则，则不执行任何操作，并且该方法`false`将返回。 如果找到具有兼容标志的规则，则中`rule`指定的权限将从兼容规则中删除，并且该方法将返回。 `true` 如果`rule`指定的权限不包含在兼容规则中，则不会对这些权限采取任何措施。 如果从兼容规则中删除所有权限，则将从当前<xref:System.Security.AccessControl.SemaphoreSecurity>对象中删除整个规则。  
+  
+> [!IMPORTANT]
+>  尽管可以通过使用<xref:System.Security.AccessControl.SemaphoreSecurity.AccessRuleFactory%2A>方法创建信号访问规则来指定继承和传播标志，但不建议这样做。 继承和传播对于命名的信号量没有意义，它们使访问规则的维护变得更加复杂。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用<xref:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRule%2A>方法<xref:System.Security.AccessControl.AccessControlType.Allow>从<xref:System.Security.AccessControl.SemaphoreSecurity>对象中的规则中删除权限。 它还显示中`rule`的其他权限被忽略。  
+  
+ 该示例创建一个<xref:System.Security.AccessControl.SemaphoreSecurity>对象并添加允许和拒绝当前用户的各种权限的规则。 允许的权限包括<xref:System.Security.AccessControl.SemaphoreRights.Modify>、 <xref:System.Security.AccessControl.SemaphoreRights.ReadPermissions>和<xref:System.Security.AccessControl.SemaphoreRights.Synchronize>。 然后，该示例为当前用户创建了一个新规则（ <xref:System.Security.AccessControl.SemaphoreRights.ReadPermissions>包括<xref:System.Security.AccessControl.SemaphoreRights.TakeOwnership>和权限），并将该规则<xref:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRule%2A>与<xref:System.Security.AccessControl.SemaphoreSecurity>方法结合<xref:System.Security.AccessControl.SemaphoreRights.ReadPermissions>使用， <xref:System.Security.AccessControl.AccessControlType.Allow>以便从对象的规则中删除。 <xref:System.Security.AccessControl.SemaphoreRights.TakeOwnership> 中 `rule` 的无关权限将被忽略。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:System.Threading.Semaphore>对象。 可在和<xref:System.Threading.Semaphore.GetAccessControl%2A?displayProperty=nameWithType> <xref:System.Threading.Semaphore.SetAccessControl%2A?displayProperty=nameWithType>中找到附加安全对象的示例。  
+  
+ [!code-csharp[System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRule#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.RemoveAccessRule/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRule#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.RemoveAccessRule/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAccessRuleAll">
+      <MemberSignature Language="C#" Value="public void RemoveAccessRuleAll (System.Security.AccessControl.SemaphoreAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAccessRuleAll(class System.Security.AccessControl.SemaphoreAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleAll(System.Security.AccessControl.SemaphoreAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub RemoveAccessRuleAll (rule As SemaphoreAccessRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void RemoveAccessRuleAll(System::Security::AccessControl::SemaphoreAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAccessRuleAll : System.Security.AccessControl.SemaphoreAccessRule -&gt; unit" Usage="semaphoreSecurity.RemoveAccessRuleAll rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.SemaphoreAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">一个 <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" />，指定要搜索的用户和 <see cref="T:System.Security.AccessControl.AccessControlType" />。 此规则指定的任何权限都被忽略。</param>
+        <summary>搜索与指定的规则具有相同用户和 <see cref="T:System.Security.AccessControl.AccessControlType" />（允许或拒绝）的所有访问控制规则，如果找到则将其移除。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 搜索当前<xref:System.Security.AccessControl.SemaphoreSecurity>对象，查找具有相同用户和<xref:System.Security.AccessControl.AccessControlType>值`rule`的规则。 执行此搜索时`rule` ，将忽略指定的任何权限。 如果未找到匹配规则，则不执行任何操作。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示方法将<xref:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleAll%2A>删除所有匹配用户和的规则， <xref:System.Security.AccessControl.AccessControlType>并忽略权限。  
+  
+ 该示例创建一个<xref:System.Security.AccessControl.SemaphoreSecurity>对象，添加允许和拒绝当前用户的各种权限的规则，然后将其他权限合并到该<xref:System.Security.AccessControl.AccessControlType.Allow>规则。 然后，该示例创建一个允许当前用户获取所有权的新规则，并使用该规则<xref:System.Security.AccessControl.AccessControlType.Allow> <xref:System.Security.AccessControl.SemaphoreSecurity>从对象中删除该规则。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:System.Threading.Semaphore>对象。 可在和<xref:System.Threading.Semaphore.GetAccessControl%2A?displayProperty=nameWithType> <xref:System.Threading.Semaphore.SetAccessControl%2A?displayProperty=nameWithType>中找到附加安全对象的示例。  
+  
+ [!code-csharp[System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleAll#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleAll/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleAll#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleAll/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAccessRuleSpecific">
+      <MemberSignature Language="C#" Value="public void RemoveAccessRuleSpecific (System.Security.AccessControl.SemaphoreAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAccessRuleSpecific(class System.Security.AccessControl.SemaphoreAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleSpecific(System.Security.AccessControl.SemaphoreAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub RemoveAccessRuleSpecific (rule As SemaphoreAccessRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void RemoveAccessRuleSpecific(System::Security::AccessControl::SemaphoreAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAccessRuleSpecific : System.Security.AccessControl.SemaphoreAccessRule -&gt; unit" Usage="semaphoreSecurity.RemoveAccessRuleSpecific rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.SemaphoreAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要移除的 <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" />。</param>
+        <summary>搜索与指定的规则完全匹配的访问控制规则，如果找到则将其移除。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 只有在所有详细信息（包括标志） `rule`中完全匹配时，才会删除规则。 具有相同用户和<xref:System.Security.AccessControl.AccessControlType>的其他规则不受影响。  
+  
+> [!IMPORTANT]
+>  规则表示一个或多个基础访问控制项（ACE），在修改用户的访问安全规则时，将根据需要拆分或合并这些项。 因此，在添加规则时，该规则可能不再存在于其所在的特定窗体中，在这种<xref:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleSpecific%2A>情况下，该方法将无法删除它。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示<xref:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleSpecific%2A>方法需要完全匹配才能删除规则，并且允许和拒绝权限的规则相互独立。  
+  
+ 该示例创建一个<xref:System.Security.AccessControl.SemaphoreSecurity>对象，添加允许和拒绝当前用户的各种权限的规则，然后将其他权限合并<xref:System.Security.AccessControl.AccessControlType.Allow>到访问规则中。 然后，该示例将原始<xref:System.Security.AccessControl.AccessControlType.Allow>规则传递<xref:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleSpecific%2A>给方法，并显示结果，显示不删除任何内容。 然后，该示例构造与<xref:System.Security.AccessControl.AccessControlType.Allow> <xref:System.Security.AccessControl.SemaphoreSecurity>对象中的规则匹配的规则<xref:System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleSpecific%2A> ，并成功地使用方法删除规则。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:System.Threading.Semaphore>对象。 可在和<xref:System.Threading.Semaphore.GetAccessControl%2A?displayProperty=nameWithType> <xref:System.Threading.Semaphore.SetAccessControl%2A?displayProperty=nameWithType>中找到附加安全对象的示例。  
+  
+ [!code-csharp[System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleSpecific#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleSpecific/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleSpecific#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.RemoveAccessRuleSpecific/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAuditRule">
+      <MemberSignature Language="C#" Value="public bool RemoveAuditRule (System.Security.AccessControl.SemaphoreAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveAuditRule(class System.Security.AccessControl.SemaphoreAuditRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAuditRule(System.Security.AccessControl.SemaphoreAuditRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Function RemoveAuditRule (rule As SemaphoreAuditRule) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool RemoveAuditRule(System::Security::AccessControl::SemaphoreAuditRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAuditRule : System.Security.AccessControl.SemaphoreAuditRule -&gt; bool" Usage="semaphoreSecurity.RemoveAuditRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.SemaphoreAuditRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">一个 <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" />，指定要搜索的用户以及匹配规则（如果找到）必须兼容的一组继承和传播标志。 指定要从兼容规则移除的权限（如果找到）。</param>
+        <summary>搜索以下的审核控制规则：与指定的规则具有相同的用户，并具有兼容的继承和传播标志；如果找到兼容规则，则从中移除指定的规则中包含的权限。</summary>
+        <returns>如果找到一个兼容规则，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 搜索当前<xref:System.Security.AccessControl.SemaphoreSecurity>的，其中包含与相同的`rule`用户的审核规则。 如果未找到此类规则，则不执行任何操作，并且该方法`false`将返回。 如果找到匹配规则，则检查其继承和兼容性标志是否与中`rule`指定的标志兼容。 如果未找到兼容的规则，则不执行任何操作，并且该方法`false`将返回。 如果找到具有兼容标志的规则，则中`rule`指定的权限将从兼容规则中删除，并且该方法将返回。 `true` 如果`rule`指定的权限不包含在兼容规则中，则不会对这些权限采取任何措施。 如果从兼容规则中删除所有权限，则将从当前<xref:System.Security.AccessControl.SemaphoreSecurity>对象中删除整个规则。  
+  
+> [!IMPORTANT]
+>  尽管可以通过使用<xref:System.Security.AccessControl.SemaphoreSecurity.AuditRuleFactory%2A>方法创建信号量审核规则来指定继承和传播标志，但不建议这样做。 继承和传播对于命名的信号量没有意义，它们使审核规则的维护变得更加复杂。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAuditRuleAll">
+      <MemberSignature Language="C#" Value="public void RemoveAuditRuleAll (System.Security.AccessControl.SemaphoreAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAuditRuleAll(class System.Security.AccessControl.SemaphoreAuditRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAuditRuleAll(System.Security.AccessControl.SemaphoreAuditRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub RemoveAuditRuleAll (rule As SemaphoreAuditRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void RemoveAuditRuleAll(System::Security::AccessControl::SemaphoreAuditRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAuditRuleAll : System.Security.AccessControl.SemaphoreAuditRule -&gt; unit" Usage="semaphoreSecurity.RemoveAuditRuleAll rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.SemaphoreAuditRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">指定要搜索的用户的 <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" />。 此规则指定的任何权限都被忽略。</param>
+        <summary>搜索所有使用相同用户作为指定规则的审核规则，如果找到符合条件的规则，则移除它们。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当前<xref:System.Security.AccessControl.SemaphoreSecurity>将搜索与具有相同`rule`用户的审核规则。 执行此搜索时`rule` ，将忽略指定的任何权限。 删除所有匹配规则。 如果未找到匹配规则，则不执行任何操作。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAuditRuleSpecific">
+      <MemberSignature Language="C#" Value="public void RemoveAuditRuleSpecific (System.Security.AccessControl.SemaphoreAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAuditRuleSpecific(class System.Security.AccessControl.SemaphoreAuditRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.RemoveAuditRuleSpecific(System.Security.AccessControl.SemaphoreAuditRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub RemoveAuditRuleSpecific (rule As SemaphoreAuditRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void RemoveAuditRuleSpecific(System::Security::AccessControl::SemaphoreAuditRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAuditRuleSpecific : System.Security.AccessControl.SemaphoreAuditRule -&gt; unit" Usage="semaphoreSecurity.RemoveAuditRuleSpecific rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.SemaphoreAuditRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要移除的 <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" />。</param>
+        <summary>搜索与指定的规则完全匹配的审核规则；如果找到，则移除这些规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 只有在所有详细信息（包括标志） `rule`中完全匹配时，才会删除规则。 同一用户的其他审核规则不受影响。  
+  
+> [!IMPORTANT]
+>  规则表示一个或多个基础访问控制项（ACE），在修改用户的审核安全规则时，将根据需要拆分或合并这些项。 因此，在添加规则时，该规则可能不再存在于其所在的特定窗体中，在这种<xref:System.Security.AccessControl.SemaphoreSecurity.RemoveAuditRuleSpecific%2A>情况下，该方法将无法删除它。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ResetAccessRule">
+      <MemberSignature Language="C#" Value="public void ResetAccessRule (System.Security.AccessControl.SemaphoreAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ResetAccessRule(class System.Security.AccessControl.SemaphoreAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.ResetAccessRule(System.Security.AccessControl.SemaphoreAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub ResetAccessRule (rule As SemaphoreAccessRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void ResetAccessRule(System::Security::AccessControl::SemaphoreAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.ResetAccessRule : System.Security.AccessControl.SemaphoreAccessRule -&gt; unit" Usage="semaphoreSecurity.ResetAccessRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.SemaphoreAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要添加的 <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" />。 由此规则指定的用户确定在添加此规则之前要移除的规则。</param>
+        <summary>不论 <see cref="T:System.Security.AccessControl.AccessControlType" /> 如何，移除与指定的规则具有相同用户的所有访问控制规则，然后添加指定的规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果没有用户与指定规则匹配的访问规则， `rule`则会添加。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何将<xref:System.Security.AccessControl.SemaphoreSecurity.ResetAccessRule%2A>匹配用户的所有规则替换为为匹配指定的规则。  
+  
+ 该示例创建一个<xref:System.Security.AccessControl.SemaphoreSecurity>对象并添加允许和拒绝当前用户的各种权限的规则。 然后，该示例创建一个允许当前用户 "完全控制" 的新规则，并<xref:System.Security.AccessControl.SemaphoreSecurity.ResetAccessRule%2A>使用该方法将两个现有规则替换为新规则。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:System.Threading.Semaphore>对象。 可在和<xref:System.Threading.Semaphore.GetAccessControl%2A?displayProperty=nameWithType> <xref:System.Threading.Semaphore.SetAccessControl%2A?displayProperty=nameWithType>中找到附加安全对象的示例。  
+  
+ [!code-csharp[System.Security.AccessControl.SemaphoreSecurity.ResetAccessRule#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.ResetAccessRule/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.SemaphoreSecurity.ResetAccessRule#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.ResetAccessRule/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAccessRule">
+      <MemberSignature Language="C#" Value="public void SetAccessRule (System.Security.AccessControl.SemaphoreAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessRule(class System.Security.AccessControl.SemaphoreAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.SetAccessRule(System.Security.AccessControl.SemaphoreAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub SetAccessRule (rule As SemaphoreAccessRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void SetAccessRule(System::Security::AccessControl::SemaphoreAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.SetAccessRule : System.Security.AccessControl.SemaphoreAccessRule -&gt; unit" Usage="semaphoreSecurity.SetAccessRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.SemaphoreAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要添加的 <see cref="T:System.Security.AccessControl.SemaphoreAccessRule" />。 由此规则的用户和 <see cref="T:System.Security.AccessControl.AccessControlType" /> 确定在添加此规则之前要移除的规则。</param>
+        <summary>移除与指定的规则具有相同用户和 <see cref="T:System.Security.AccessControl.AccessControlType" />（允许或拒绝）的所有控制规则，然后添加指定的规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果指定的规则具有<xref:System.Security.AccessControl.AccessControlType.Allow>，则此方法的作用是移除指定用户<xref:System.Security.AccessControl.AccessControlType.Allow>的所有规则，并将其替换为指定的规则。 如果指定的规则具有<xref:System.Security.AccessControl.AccessControlType.Deny>，则<xref:System.Security.AccessControl.AccessControlType.Deny>指定用户的所有规则都将替换为指定的规则。  
+  
+ 如果没有规则的用户和<xref:System.Security.AccessControl.AccessControlType>匹配指定的规则， `rule`则添加。  
+  
+   
+  
+## Examples  
+ 下面的代码示例<xref:System.Security.AccessControl.SemaphoreSecurity.SetAccessRule%2A>演示如何删除与的用户和的所有匹配的`rule`规则，并<xref:System.Security.AccessControl.AccessControlType>将其替换为`rule`。  
+  
+ 该示例创建一个<xref:System.Security.AccessControl.SemaphoreSecurity>对象并添加允许和拒绝当前用户的各种权限的规则。 然后，该示例创建一个允许当前用户 "完全控制" 的新规则，并<xref:System.Security.AccessControl.SemaphoreSecurity.SetAccessRule%2A>使用该方法将现有允许规则替换为新规则。 拒绝访问的规则不受影响。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:System.Threading.Semaphore>对象。 可在和<xref:System.Threading.Semaphore.GetAccessControl%2A?displayProperty=nameWithType> <xref:System.Threading.Semaphore.SetAccessControl%2A?displayProperty=nameWithType>中找到附加安全对象的示例。  
+  
+ [!code-csharp[System.Security.AccessControl.SemaphoreSecurity.SetAccessRule#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.SetAccessRule/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.SemaphoreSecurity.SetAccessRule#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.SemaphoreSecurity.SetAccessRule/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAuditRule">
+      <MemberSignature Language="C#" Value="public void SetAuditRule (System.Security.AccessControl.SemaphoreAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAuditRule(class System.Security.AccessControl.SemaphoreAuditRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.SemaphoreSecurity.SetAuditRule(System.Security.AccessControl.SemaphoreAuditRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub SetAuditRule (rule As SemaphoreAuditRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void SetAuditRule(System::Security::AccessControl::SemaphoreAuditRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.SetAuditRule : System.Security.AccessControl.SemaphoreAuditRule -&gt; unit" Usage="semaphoreSecurity.SetAuditRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+        <AssemblyVersion>4.0.3.0</AssemblyVersion>
+        <AssemblyVersion>4.0.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.SemaphoreAuditRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要添加的 <see cref="T:System.Security.AccessControl.SemaphoreAuditRule" />。 由此规则指定的用户确定在添加此规则之前要移除的规则。</param>
+        <summary>不论 <see cref="T:System.Security.AccessControl.AuditFlags" /> 的值如何，移除与指定的规则具有相同用户的所有审核规则，然后添加指定的规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果没有与指定规则匹配的审核规则， `rule`则会添加。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

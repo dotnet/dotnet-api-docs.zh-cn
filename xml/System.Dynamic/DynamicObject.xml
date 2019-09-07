@@ -1,0 +1,1056 @@
+<Type Name="DynamicObject" FullName="System.Dynamic.DynamicObject">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="403111ea96a944cbf2b6adc84b6c3caf3ed6e344" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70548108" /></Metadata><TypeSignature Language="C#" Value="public class DynamicObject : System.Dynamic.IDynamicMetaObjectProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit DynamicObject extends System.Object implements class System.Dynamic.IDynamicMetaObjectProvider" />
+  <TypeSignature Language="DocId" Value="T:System.Dynamic.DynamicObject" />
+  <TypeSignature Language="VB.NET" Value="Public Class DynamicObject&#xA;Implements IDynamicMetaObjectProvider" />
+  <TypeSignature Language="C++ CLI" Value="public ref class DynamicObject : System::Dynamic::IDynamicMetaObjectProvider" />
+  <TypeSignature Language="F#" Value="type DynamicObject = class&#xA;    interface IDynamicMetaObjectProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Linq.Expressions</AssemblyName>
+    <AssemblyVersion>4.2.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Dynamic.IDynamicMetaObjectProvider</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
+      <AttributeName>System.Serializable</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>提供用于指定运行时的动态行为的基类。 必须继承此类；不能直接实例化此类。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 利用`DynamicObject`类，您可以定义可对动态对象执行哪些操作，以及如何执行这些操作。 例如，你可以定义当你尝试获取或设置对象属性、调用方法或执行标准数学运算（如加法和乘法）时所发生的情况。  
+  
+ 如果要为库创建更方便的协议，此类会很有用。 例如，如果你的库用户必须使用类似`Scriptobj.SetProperty("Count", 1)`的语法，则可以提供使用更简单的语法，如。 `scriptobj.Count = 1`  
+  
+ 不能直接创建`DynamicObject`类的实例。 若要实现动态行为，你可能想要从`DynamicObject`类继承并重写必要的方法。 例如，如果只需要用于设置和获取属性的操作，则可以只<xref:System.Dynamic.DynamicObject.TrySetMember%2A>重写和<xref:System.Dynamic.DynamicObject.TryGetMember%2A>方法。  
+  
+ 在C#中，若要为从`DynamicObject`类派生的类的实例启用动态行为，必须使用`dynamic`关键字。 有关更多信息，请参见[使用类型 dynamic](~/docs/csharp/programming-guide/types/using-type-dynamic.md)。  
+  
+ 在 Visual Basic 中，后期绑定支持动态操作。 有关详细信息，请参阅[早期和后期绑定](https://msdn.microsoft.com/library/d6ff7f1e-b94f-4205-ab8d-5cfa91758724)。  
+  
+ 下面的代码示例演示如何创建派生自`DynamicObject`类的类的实例。  
+  
+```csharp  
+public class SampleDynamicObject : DynamicObject {}  
+//...  
+dynamic sampleObject = new SampleDynamicObject ();  
+```  
+  
+```vb  
+Public Class SampleDynamicObject   
+    Inherits DynamicObject  
+'...  
+Dim sampleObject As Object = New SampleDynamicObject()  
+```  
+  
+ 你还可以将自己的成员添加到从`DynamicObject`类派生的类。 如果你的类定义了属性，并且<xref:System.Dynamic.DynamicObject.TrySetMember%2A>还重写了方法，则动态语言运行时（DLR）首先使用语言联编程序在类中查找属性的静态定义。 如果没有此类属性，则 DLR 会调用<xref:System.Dynamic.DynamicObject.TrySetMember%2A>方法。  
+  
+ 类实现 dlr 接口<xref:System.Dynamic.IDynamicMetaObjectProvider>，使你`DynamicObject`能够在支持 DLR 互操作性模型的语言之间共享类的实例。 `DynamicObject` 例如，可以在中`DynamicObject` C#创建类的实例，然后将其传递给 IronPython 函数。 有关详细信息，请参阅[动态语言运行时概述](~/docs/framework/reflection-and-codedom/dynamic-language-runtime-overview.md)。  
+  
+> [!NOTE]
+>  如果你有一个简单的方案，在此方案中，你需要一个仅可在运行时添加和删除成员的对象，但这不需要定义特定操作，并且没有静态成员<xref:System.Dynamic.ExpandoObject> ，请使用类。  
+>   
+>  如果你有一个更高级的方案，在此方案中，需要定义动态对象如何参与互操作性协议，或者需要管理 DLR 快速动态调度缓存，请创建你自己的<xref:System.Dynamic.IDynamicMetaObjectProvider>接口实现。  
+  
+   
+  
+## Examples  
+ 假设你想要提供用于访问字典中的值的替代语法，以便可以编写`sampleDictionary["Text"] = "Sample text"` `sampleDictionary.Text = "Sample text"`，而不`sampleDictionary("Text") = "Sample text"`是编写（在 Visual Basic 中）。 此外，您希望此语法不区分大小写，因此`sampleDictionary.Text`与`sampleDictionary.text`等效。  
+  
+ 下面的代码示例演示`DynamicDictionary`类，该类派生`DynamicObject`自类。 `Dictionary<string, object>` `Dictionary(Of String, Object)` 类包含 <xref:System.Dynamic.DynamicObject.TrySetMember%2A> 用于存储键/值对的类型（在 Visual Basic 中）的对象，并重写和<xref:System.Dynamic.DynamicObject.TryGetMember%2A>方法以支持新的语法。 `DynamicDictionary` 它还提供了`Count`一个属性，该属性显示字典包含的动态属性的数目。  
+  
+ [!code-csharp[System.Dynamic.DynamicObject#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.dynamic.dynamicobject/cs/program.cs#1)]
+ [!code-vb[System.Dynamic.DynamicObject#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.dynamic.dynamicobject/vb/module1.vb#1)]  
+  
+ 有关更多示例，请参阅C#常见问题博客上的[创建包含 DynamicObject 的包装](https://devblogs.microsoft.com/csharpfaq/dynamic-in-c-4-0-creating-wrappers-with-dynamicobject/)。  
+ 
+ 
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected DynamicObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; DynamicObject();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters />
+      <Docs>
+        <summary>使派生的类型可以初始化 <see cref="T:System.Dynamic.DynamicObject" /> 类型的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 不能直接创建<xref:System.Dynamic.DynamicObject>类的实例。 若要实现动态行为，必须从<xref:System.Dynamic.DynamicObject>类继承并重写必要的方法。  
+  
+ 在C#中，若要为从<xref:System.Dynamic.DynamicObject>类派生的类的实例启用动态行为，必须使用`dynamic`关键字。 有关更多信息，请参见[使用类型 dynamic](~/docs/csharp/programming-guide/types/using-type-dynamic.md)。  
+  
+ 在 Visual Basic 中，后期绑定支持动态操作。 有关详细信息，请参阅[早期和后期绑定](https://msdn.microsoft.com/library/d6ff7f1e-b94f-4205-ab8d-5cfa91758724)。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何创建派生自<xref:System.Dynamic.DynamicObject>类的类的实例。  
+  
+```csharp  
+public class SampleDynamicObject : DynamicObject {}  
+//...  
+dynamic sampleObject = new SampleDynamicObject ();  
+```  
+  
+```vb  
+Public Class SampleDynamicObject   
+    Inherits DynamicObject  
+'...  
+Dim sampleObject As Object = New SampleDynamicObject()  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDynamicMemberNames">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.Generic.IEnumerable&lt;string&gt; GetDynamicMemberNames ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;string&gt; GetDynamicMemberNames() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.GetDynamicMemberNames" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetDynamicMemberNames () As IEnumerable(Of String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Collections::Generic::IEnumerable&lt;System::String ^&gt; ^ GetDynamicMemberNames();" />
+      <MemberSignature Language="F#" Value="abstract member GetDynamicMemberNames : unit -&gt; seq&lt;string&gt;&#xA;override this.GetDynamicMemberNames : unit -&gt; seq&lt;string&gt;" Usage="dynamicObject.GetDynamicMemberNames " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>返回所有动态成员名称的枚举。</summary>
+        <returns>一个包含动态成员名称的序列。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法仅用于调试目的。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMetaObject">
+      <MemberSignature Language="C#" Value="public virtual System.Dynamic.DynamicMetaObject GetMetaObject (System.Linq.Expressions.Expression parameter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Dynamic.DynamicMetaObject GetMetaObject(class System.Linq.Expressions.Expression parameter) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.GetMetaObject(System.Linq.Expressions.Expression)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetMetaObject (parameter As Expression) As DynamicMetaObject" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Dynamic::DynamicMetaObject ^ GetMetaObject(System::Linq::Expressions::Expression ^ parameter);" />
+      <MemberSignature Language="F#" Value="abstract member GetMetaObject : System.Linq.Expressions.Expression -&gt; System.Dynamic.DynamicMetaObject&#xA;override this.GetMetaObject : System.Linq.Expressions.Expression -&gt; System.Dynamic.DynamicMetaObject" Usage="dynamicObject.GetMetaObject parameter" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Dynamic.IDynamicMetaObjectProvider.GetMetaObject(System.Linq.Expressions.Expression)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Dynamic.DynamicMetaObject</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameter" Type="System.Linq.Expressions.Expression" />
+      </Parameters>
+      <Docs>
+        <param name="parameter">表示要调度到动态虚方法的 <see cref="T:System.Dynamic.DynamicMetaObject" /> 的表达式。</param>
+        <summary>提供调度到动态虚方法的 <see cref="T:System.Dynamic.DynamicMetaObject" />。 可以将该对象封装到另一个 <see cref="T:System.Dynamic.DynamicMetaObject" /> 中，以便为各个不同操作提供自定义行为。 此方法支持语言实现器的动态语言运行时基础结构，不应从代码直接使用。</summary>
+        <returns><see cref="T:System.Dynamic.DynamicMetaObject" /> 类型的对象。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryBinaryOperation">
+      <MemberSignature Language="C#" Value="public virtual bool TryBinaryOperation (System.Dynamic.BinaryOperationBinder binder, object arg, out object result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryBinaryOperation(class System.Dynamic.BinaryOperationBinder binder, object arg, [out] object&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TryBinaryOperation(System.Dynamic.BinaryOperationBinder,System.Object,System.Object@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TryBinaryOperation (binder As BinaryOperationBinder, arg As Object, ByRef result As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TryBinaryOperation(System::Dynamic::BinaryOperationBinder ^ binder, System::Object ^ arg, [Runtime::InteropServices::Out] System::Object ^ % result);" />
+      <MemberSignature Language="F#" Value="abstract member TryBinaryOperation : System.Dynamic.BinaryOperationBinder * obj *  -&gt; bool&#xA;override this.TryBinaryOperation : System.Dynamic.BinaryOperationBinder * obj *  -&gt; bool" Usage="dynamicObject.TryBinaryOperation (binder, arg, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.BinaryOperationBinder" />
+        <Parameter Name="arg" Type="System.Object" />
+        <Parameter Name="result" Type="System.Object" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关二元运算的信息。 <c>binder.Operation</c> 属性返回 <see cref="T:System.Linq.Expressions.ExpressionType" /> 对象。 例如，对于 <c>sum = first + second</c> 语句（其中，<c>first</c> 和 <c>second</c> 派生自 <see langword="DynamicObject" /> 类），<c>binder.Operation</c> 返回 <c>ExpressionType.Add</c>。</param>
+        <param name="arg">二元运算的右操作数。 例如，对于 <c>sum = first + second</c> 语句（其中 <c>first</c> 和 <c>second</c> 派生自 <see langword="DynamicObject" /> 类），<paramref name="arg" /> 等于 <c>second</c>。</param>
+        <param name="result">二元运算的结果。</param>
+        <summary>提供二元运算的实现。 从 <see cref="T:System.Dynamic.DynamicObject" /> 类派生的类可以重写此方法，以便为诸如加法和乘法这样的运算指定动态行为。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发语言特定的运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Dynamic.DynamicObject>类派生的类可以重写此方法，以指定应如何对动态对象执行二元运算。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发语言特定的运行时异常。）  
+  
+ 当你有二元运算（例如加法或乘法）时，将调用此方法。 <xref:System.Dynamic.DynamicObject.TryBinaryOperation%2A>例如，如果方法被重写，则会自动为`multiply = first*second` `sum = first + second`或等语句调用，其中`first`派生自`DynamicObject`类。  
+  
+ 可以通过使用`Operation` `binder`参数的属性来获取有关二元运算类型的信息。  
+  
+ 如果动态对象仅用于C#和 Visual Basic，则该`binder.Operation`属性可以是<xref:System.Linq.Expressions.ExpressionType>枚举中的以下值之一。 但是，在其他语言（如 IronPython 或 IronRuby）中，可以具有其他值。
+  
+|值|说明|C#|Visual Basic|  
+|-----------|-----------------|---------|------------------|  
+|`Add`|对于数值操作数，不进行溢出检查的加法运算。|`a + b`|`a + b`|  
+|`AddAssign`|加法复合赋值运算，不对数值操作数进行溢出检查。|`a += b`|不支持。|  
+|`And`|按位`AND`运算。|`a & b`|`a And b`|  
+|`AndAssign`|按位`AND`复合赋值运算。|`a &= b`|不支持。|  
+|`Divide`|算术除法运算。|`a / b`|`a / b`|  
+|`DivideAssign`|算术除法复合赋值运算。|`a /= b`|不支持。|  
+|`ExclusiveOr`|按位`XOR`运算。|`a ^ b`|`a Xor b`|  
+|`ExclusiveOrAssign`|按位`XOR`复合赋值运算。|`a ^= b`|不支持。|  
+|`GreaterThan`|"大于" 比较。|`a > b`|`a > b`|  
+|`GreaterThanOrEqual`|"大于或等于" 比较。|`a >= b`|不支持。|  
+|`LeftShift`|按位左移运算。|`a << b`|`a << b`|  
+|`LeftShiftAssign`|按位左移复合赋值运算。|`a <<= b`|不支持。|  
+|`LessThan`|"小于" 比较。|`a < b`|`a < b`|  
+|`LessThanOrEqual`|"小于或等于" 比较。|`a <= b`|不支持。|  
+|`Modulo`|算术余数运算。|`a % b`|`a Mod b`|  
+|`ModuloAssign`|算术余数复合赋值运算。|`a %= b`|不支持。|  
+|`Multiply`|对于数值操作数，不进行溢出检查的乘法运算。|`a * b`|`a * b`|  
+|`MultiplyAssign`|对于数值操作数，不进行溢出检查的乘法复合赋值运算。|`a *= b`|不支持。|  
+|`NotEqual`|不相等比较。|`a != b`|`a <> b`|  
+|`Or`|按位或逻辑`OR`运算。|`a &#124; b`|`a Or b`|  
+|`OrAssign`|按位或逻辑`OR`复合赋值。|`a &#124;= b`|不支持。|  
+|`Power`|对数字进行幂运算的数学运算。|不支持。|`a ^ b`|  
+|`RightShift`|按位右移运算。|`a >> b`|`a >> b`|  
+|`RightShiftAssign`|按位右移复合赋值运算。|`a >>= b`|不支持。|  
+|`Subtract`|对于数值操作数，不进行溢出检查的减法运算。|`a - b`|`a - b`|  
+|`SubtractAssign`|对于数值操作数，不进行溢出检查的减法复合赋值运算。|`a -= b`|不支持。|  
+  
+> [!NOTE]
+>  若要`OrElse`在`a || b`中C#为`AndAlso`  `a && b` 动态对象实现（）和（）操作，你可能希望同时<xref:System.Dynamic.DynamicObject.TryBinaryOperation%2A>实现方法和方法。 <xref:System.Dynamic.DynamicObject.TryUnaryOperation%2A>  
+>   
+>  操作包含一元`IsTrue`运算和二元`Or`运算。 `OrElse` 仅`Or`当`IsTrue`操作的结果为时`false`，才执行该操作。  
+>   
+>  操作包含一元`IsFalse`运算和二元`And`运算。 `AndAlso` 仅`And`当`IsFalse`操作的结果为时`false`，才执行该操作。  
+  
+   
+  
+## Examples  
+ 假设您需要一个数据结构来存储数字的文本和数值表示形式，并且您想要为此类数据定义基本的数学运算，如加法和减法。  
+  
+ 下面的代码示例演示`DynamicNumber`类，该类派生<xref:System.Dynamic.DynamicObject>自类。 `DynamicNumber`重写<xref:System.Dynamic.DynamicObject.TryBinaryOperation%2A>方法以启用数学运算。 它还会重<xref:System.Dynamic.DynamicObject.TrySetMember%2A>写<xref:System.Dynamic.DynamicObject.TryGetMember%2A>和方法，以启用对元素的访问。  
+  
+ 在此示例中，仅支持加法和减法操作。 如果尝试编写类似`resultNumber = firstNumber*secondNumber`的语句，则会引发运行时异常。  
+  
+ [!code-csharp[System.Dynamic.DynamicObject#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.dynamic.dynamicobject/cs/program.cs#2)]
+ [!code-vb[System.Dynamic.DynamicObject#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.dynamic.dynamicobject/vb/module1.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryConvert">
+      <MemberSignature Language="C#" Value="public virtual bool TryConvert (System.Dynamic.ConvertBinder binder, out object result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryConvert(class System.Dynamic.ConvertBinder binder, [out] object&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TryConvert(System.Dynamic.ConvertBinder,System.Object@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TryConvert (binder As ConvertBinder, ByRef result As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TryConvert(System::Dynamic::ConvertBinder ^ binder, [Runtime::InteropServices::Out] System::Object ^ % result);" />
+      <MemberSignature Language="F#" Value="abstract member TryConvert : System.Dynamic.ConvertBinder *  -&gt; bool&#xA;override this.TryConvert : System.Dynamic.ConvertBinder *  -&gt; bool" Usage="dynamicObject.TryConvert (binder, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.ConvertBinder" />
+        <Parameter Name="result" Type="System.Object" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关转换运算的信息。 <c>binder.Type</c> 属性提供必须将对象转换为的类型。 例如，对于 C# 中的 <c>(String)sampleObject</c> 语句（在 Visual Basic 中为 <c>CType(sampleObject, Type)</c>，其中 <c>sampleObject</c> 是派生自 <see cref="T:System.Dynamic.DynamicObject" /> 类的类的实例），<c>binder.Type</c> 返回 <see cref="T:System.String" /> 类型。 <c>binder.Explicit</c> 属性提供有关所发生转换的类型的信息。 对于显式转换，它返回 <see langword="true" />；对于隐式转换，它返回 <see langword="false" />。</param>
+        <param name="result">类型转换运算的结果。</param>
+        <summary>提供类型转换运算的实现。 从 <see cref="T:System.Dynamic.DynamicObject" /> 类派生的类可以重写此方法，以便为将某个对象从一种类型转换为另一种类型的运算指定动态行为。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发语言特定的运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Dynamic.DynamicObject>类派生的类可以重写此方法，以指定应如何对动态对象执行类型转换。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发语言特定的运行时异常。）  
+  
+ 在C#中，如果重写此方法，则会在你具有显式或隐式转换时自动调用，如下面的代码示例中所示。  
+  
+ 在 Visual Basic 中，仅支持显式转换。 如果重写此方法，则可以使用<xref:Microsoft.VisualBasic.Conversion.CTypeDynamic%2A>或<xref:Microsoft.VisualBasic.Conversion.CTypeDynamic%2A>函数调用它。  
+  
+```csharp  
+// Explicit conversion.  
+String sampleExplicit = (String)sampleObject;  
+// Implicit conversion.  
+String sampleImplicit = sampleObject;  
+```  
+  
+```vb  
+// Explicit conversion - first variant.  
+Dim testExplicit1 = CTypeDynamic(Of String)(sampleObject)  
+// Explicit conversion - second variant.  
+Dim testExplicit2 = CTypeDynamic(sampleObject, GetType(String))  
+```  
+  
+   
+  
+## Examples  
+ 假设您需要一个数据结构来存储数字的文本和数值表示形式，并且您希望将此数据结构的转换定义为字符串和整数。  
+  
+ 下面的代码示例演示`DynamicNumber`类，该类派生<xref:System.Dynamic.DynamicObject>自类。 `DynamicNumber`重写<xref:System.Dynamic.DynamicObject.TryConvert%2A>方法以启用类型转换。 它还会重<xref:System.Dynamic.DynamicObject.TrySetMember%2A>写<xref:System.Dynamic.DynamicObject.TryGetMember%2A>和方法，以启用对数据元素的访问。  
+  
+ 在此示例中，仅支持转换为字符串和整数。 如果尝试将对象转换为其他任何类型，则会引发运行时异常。  
+  
+ [!code-csharp[System.Dynamic.DynamicObject#3](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.dynamic.dynamicobject/cs/program.cs#3)]
+ [!code-vb[System.Dynamic.DynamicObject#3](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.dynamic.dynamicobject/vb/module1.vb#3)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryCreateInstance">
+      <MemberSignature Language="C#" Value="public virtual bool TryCreateInstance (System.Dynamic.CreateInstanceBinder binder, object[] args, out object result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryCreateInstance(class System.Dynamic.CreateInstanceBinder binder, object[] args, [out] object&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TryCreateInstance(System.Dynamic.CreateInstanceBinder,System.Object[],System.Object@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TryCreateInstance (binder As CreateInstanceBinder, args As Object(), ByRef result As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TryCreateInstance(System::Dynamic::CreateInstanceBinder ^ binder, cli::array &lt;System::Object ^&gt; ^ args, [Runtime::InteropServices::Out] System::Object ^ % result);" />
+      <MemberSignature Language="F#" Value="abstract member TryCreateInstance : System.Dynamic.CreateInstanceBinder * obj[] *  -&gt; bool&#xA;override this.TryCreateInstance : System.Dynamic.CreateInstanceBinder * obj[] *  -&gt; bool" Usage="dynamicObject.TryCreateInstance (binder, args, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.CreateInstanceBinder" />
+        <Parameter Name="args" Type="System.Object[]" />
+        <Parameter Name="result" Type="System.Object" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关初始化操作的信息。</param>
+        <param name="args">初始化期间传递给对象的参数。 例如，对于 <c>new SampleType(100)</c>（其中 <c>SampleType</c> 是派生自 <see cref="T:System.Dynamic.DynamicObject" /> 类的类型），<c>args[0]</c> 等于 100。</param>
+        <param name="result">初始化的结果。</param>
+        <summary>为初始化动态对象的新实例的操作提供实现。 不应将此方法用于 C# 或 Visual Basic。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发语言特定的运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Dynamic.DynamicObject>类派生的类可以重写此方法，以指定如何初始化动态对象的新实例。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发语言特定的运行时异常。）  
+  
+ C#和 Visual Basic 编译器从不发出代码来使用此方法，因为它们不支持第一类类型。 此方法适用于支持通过使用语法（如`dynamic new`）初始化动态对象的语言。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryDeleteIndex">
+      <MemberSignature Language="C#" Value="public virtual bool TryDeleteIndex (System.Dynamic.DeleteIndexBinder binder, object[] indexes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryDeleteIndex(class System.Dynamic.DeleteIndexBinder binder, object[] indexes) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TryDeleteIndex(System.Dynamic.DeleteIndexBinder,System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TryDeleteIndex (binder As DeleteIndexBinder, indexes As Object()) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TryDeleteIndex(System::Dynamic::DeleteIndexBinder ^ binder, cli::array &lt;System::Object ^&gt; ^ indexes);" />
+      <MemberSignature Language="F#" Value="abstract member TryDeleteIndex : System.Dynamic.DeleteIndexBinder * obj[] -&gt; bool&#xA;override this.TryDeleteIndex : System.Dynamic.DeleteIndexBinder * obj[] -&gt; bool" Usage="dynamicObject.TryDeleteIndex (binder, indexes)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.DeleteIndexBinder" />
+        <Parameter Name="indexes" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关删除的信息。</param>
+        <param name="indexes">要删除的索引。</param>
+        <summary>为按索引删除对象的操作提供实现。 不应将此方法用于 C# 或 Visual Basic。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发语言特定的运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Dynamic.DynamicObject>类派生的类可以重写此方法，以指定应如何删除具有指定索引的值。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发语言特定的运行时异常。）  
+  
+ C#并且 Visual Basic 编译器从不发出代码来使用此方法，因为它们不支持这种操作。 此方法适用于支持按索引删除对象的语法，如`del sampleObject[1,2]`在 Python 中的语言。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryDeleteMember">
+      <MemberSignature Language="C#" Value="public virtual bool TryDeleteMember (System.Dynamic.DeleteMemberBinder binder);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryDeleteMember(class System.Dynamic.DeleteMemberBinder binder) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TryDeleteMember(System.Dynamic.DeleteMemberBinder)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TryDeleteMember (binder As DeleteMemberBinder) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TryDeleteMember(System::Dynamic::DeleteMemberBinder ^ binder);" />
+      <MemberSignature Language="F#" Value="abstract member TryDeleteMember : System.Dynamic.DeleteMemberBinder -&gt; bool&#xA;override this.TryDeleteMember : System.Dynamic.DeleteMemberBinder -&gt; bool" Usage="dynamicObject.TryDeleteMember binder" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.DeleteMemberBinder" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关删除的信息。</param>
+        <summary>为删除对象成员的操作提供实现。 不应将此方法用于 C# 或 Visual Basic。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发语言特定的运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从类派生的<xref:System.Dynamic.DynamicObject>类可以重写此方法，以指定如何删除对象成员。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发语言特定的运行时异常。）  
+  
+ C#并且 Visual Basic 编译器从不发出代码来使用此方法，因为它们不支持这种操作。 此方法适用于支持删除成员的语法的语言，如`del sampleObject.SampleMember`在 Python 中。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryGetIndex">
+      <MemberSignature Language="C#" Value="public virtual bool TryGetIndex (System.Dynamic.GetIndexBinder binder, object[] indexes, out object result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryGetIndex(class System.Dynamic.GetIndexBinder binder, object[] indexes, [out] object&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TryGetIndex(System.Dynamic.GetIndexBinder,System.Object[],System.Object@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TryGetIndex (binder As GetIndexBinder, indexes As Object(), ByRef result As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TryGetIndex(System::Dynamic::GetIndexBinder ^ binder, cli::array &lt;System::Object ^&gt; ^ indexes, [Runtime::InteropServices::Out] System::Object ^ % result);" />
+      <MemberSignature Language="F#" Value="abstract member TryGetIndex : System.Dynamic.GetIndexBinder * obj[] *  -&gt; bool&#xA;override this.TryGetIndex : System.Dynamic.GetIndexBinder * obj[] *  -&gt; bool" Usage="dynamicObject.TryGetIndex (binder, indexes, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.GetIndexBinder" />
+        <Parameter Name="indexes" Type="System.Object[]" />
+        <Parameter Name="result" Type="System.Object" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关该操作的信息。</param>
+        <param name="indexes">该操作中使用的索引。 例如，对于 C# 中的 <c>sampleObject[3]</c> 操作（在 Visual Basic 中为 <c>sampleObject(3)</c>，其中 <c>sampleObject</c> 派生自 <see langword="DynamicObject" /> 类），<c>indexes[0]</c> 等于 3。</param>
+        <param name="result">索引操作的结果。</param>
+        <summary>为按索引获取值的操作提供实现。 从 <see cref="T:System.Dynamic.DynamicObject" /> 类派生的类可以重写此方法，以便为索引操作指定动态行为。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Dynamic.DynamicObject>类派生的类可以重写此方法，以指定应该如何为动态对象执行按索引获取值。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发运行时异常。）  
+  
+ 如果重写此方法，则当你的操作如`sampleObject[3]`中C#的或`sampleObject(3)` <xref:System.Dynamic.DynamicObject> Visual Basic （其中`sampleObject`派生自类）时，将自动调用此方法。  
+  
+   
+  
+## Examples  
+ 假设你想要创建一个对象，在该对象中，可以通过`Property0`等名称`Property1`（如、等）或索引访问属性，以便例如`sampleObject.Property0` ，在C#或`sampleObject(0)`中等效于`sampleObject[0]`Visual Basic。  
+  
+ 下面的代码示例演示`SampleDynamicObject`类，该类派生<xref:System.Dynamic.DynamicObject>自类。 类包含用于存储键/值`Dictionary<string, object>`对的`Dictionary(Of String, Object)`类型（在 Visual Basic 中）的对象。 `SampleDynamicObject` `SampleDynamicObject`重写<xref:System.Dynamic.DynamicObject.TryGetIndex%2A>和方法，以启用按索引进行访问。 <xref:System.Dynamic.DynamicObject.TrySetIndex%2A> 它重写<xref:System.Dynamic.DynamicObject.TrySetMember%2A>和<xref:System.Dynamic.DynamicObject.TryGetMember%2A>方法，以通过属性名称启用访问。  
+  
+ [!code-csharp[System.Dynamic.DynamicObject#4](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.dynamic.dynamicobject/cs/program.cs#4)]
+ [!code-vb[System.Dynamic.DynamicObject#4](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.dynamic.dynamicobject/vb/module1.vb#4)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryGetMember">
+      <MemberSignature Language="C#" Value="public virtual bool TryGetMember (System.Dynamic.GetMemberBinder binder, out object result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryGetMember(class System.Dynamic.GetMemberBinder binder, [out] object&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TryGetMember(System.Dynamic.GetMemberBinder,System.Object@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TryGetMember (binder As GetMemberBinder, ByRef result As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TryGetMember(System::Dynamic::GetMemberBinder ^ binder, [Runtime::InteropServices::Out] System::Object ^ % result);" />
+      <MemberSignature Language="F#" Value="abstract member TryGetMember : System.Dynamic.GetMemberBinder *  -&gt; bool&#xA;override this.TryGetMember : System.Dynamic.GetMemberBinder *  -&gt; bool" Usage="dynamicObject.TryGetMember (binder, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.GetMemberBinder" />
+        <Parameter Name="result" Type="System.Object" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关调用了动态操作的对象的信息。 <c>binder.Name</c> 属性提供针对其执行动态操作的成员的名称。 例如，对于<c>Console.WriteLine(sampleObject.SampleProperty)</c> 语句（其中 <c>sampleObject</c> 是派生自 <see cref="T:System.Dynamic.DynamicObject" /> 类的类的实例），<c>binder.Name</c> 返回“SampleProperty”。 <c>binder.IgnoreCase</c> 属性指定成员名称是否区分大小写。</param>
+        <param name="result">获取操作的结果。 例如，如果为某个属性调用该方法，则可以为 <paramref name="result" /> 指派该属性值。</param>
+        <summary>为获取成员值的操作提供实现。 从 <see cref="T:System.Dynamic.DynamicObject" /> 类派生的类可以重写此方法，以便为诸如获取属性值这样的操作指定动态行为。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Dynamic.DynamicObject>类派生的类可以重写此方法，以指定如何为动态对象执行获取成员值的操作。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发运行时异常。）  
+  
+ 当你具有类似`Console.WriteLine(sampleObject.SampleProperty)`的语句时调用此方法，其中`sampleObject`是派生自<xref:System.Dynamic.DynamicObject>类的类的实例。  
+  
+ 你还可以将自己的成员添加到从`DynamicObject`类派生的类。 如果你的类定义了属性，并且<xref:System.Dynamic.DynamicObject.TrySetMember%2A>还重写了方法，则动态语言运行时（DLR）首先使用语言联编程序在类中查找属性的静态定义。 如果没有此类属性，则 DLR 会调用<xref:System.Dynamic.DynamicObject.TrySetMember%2A>方法。  
+  
+   
+  
+## Examples  
+ 假设你想要提供用于访问字典中的值的替代语法，以便可以编写`sampleDictionary["Text"] = "Sample text"` `sampleDictionary.Text = "Sample text"`，而不`sampleDictionary("Text") = "Sample text"`是编写（在 Visual Basic 中）。 此外，此语法必须不区分大小写，因此`sampleDictionary.Text`等效于。 `sampleDictionary.text`  
+  
+ 下面的代码示例演示`DynamicDictionary`类，该类派生<xref:System.Dynamic.DynamicObject>自类。 `Dictionary<string, object>` `Dictionary(Of String, Object)` 类包含 <xref:System.Dynamic.DynamicObject.TrySetMember%2A> 用于存储键/值对的类型（在 Visual Basic 中）的对象，并重写和<xref:System.Dynamic.DynamicObject.TryGetMember%2A>方法以支持新的语法。 `DynamicDictionary` 它还提供了`Count`一个属性，该属性显示字典包含的动态属性的数目。  
+  
+ [!code-csharp[System.Dynamic.DynamicObject#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.dynamic.dynamicobject/cs/program.cs#1)]
+ [!code-vb[System.Dynamic.DynamicObject#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.dynamic.dynamicobject/vb/module1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryInvoke">
+      <MemberSignature Language="C#" Value="public virtual bool TryInvoke (System.Dynamic.InvokeBinder binder, object[] args, out object result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryInvoke(class System.Dynamic.InvokeBinder binder, object[] args, [out] object&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TryInvoke(System.Dynamic.InvokeBinder,System.Object[],System.Object@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TryInvoke (binder As InvokeBinder, args As Object(), ByRef result As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TryInvoke(System::Dynamic::InvokeBinder ^ binder, cli::array &lt;System::Object ^&gt; ^ args, [Runtime::InteropServices::Out] System::Object ^ % result);" />
+      <MemberSignature Language="F#" Value="abstract member TryInvoke : System.Dynamic.InvokeBinder * obj[] *  -&gt; bool&#xA;override this.TryInvoke : System.Dynamic.InvokeBinder * obj[] *  -&gt; bool" Usage="dynamicObject.TryInvoke (binder, args, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.InvokeBinder" />
+        <Parameter Name="args" Type="System.Object[]" />
+        <Parameter Name="result" Type="System.Object" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关调用操作的信息。</param>
+        <param name="args">调用操作期间传递给对象的参数。 例如，对于 <c>sampleObject(100)</c> 操作（其中 <c>sampleObject</c> 派生自 <see cref="T:System.Dynamic.DynamicObject" /> 类），<c>args[0]</c> 等于 100。</param>
+        <param name="result">对象调用的结果。</param>
+        <summary>为调用对象的操作提供实现。 从 <see cref="T:System.Dynamic.DynamicObject" /> 类派生的类可以重写此方法，以便为诸如调用对象或委托这样的操作指定动态行为。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发语言特定的运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Dynamic.DynamicObject>类派生的类可以重写此方法，以指定如何为动态对象执行调用对象的操作。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发运行时异常。）  
+  
+ 如果重写此方法，则当你具有类似`sampleObject(100)`的操作（其中`sampleObject`派生自<xref:System.Dynamic.DynamicObject>类）时，将自动调用此方法。  
+  
+ 在 Visual Basic 中C#支持调用对象的操作。 Visual Basic 编译器从不发出代码以使用此方法，并且 Visual Basic 语言不支持类似`sampleObject(100)`的语法。  
+  
+   
+  
+## Examples  
+ 假设您需要一个数据结构来存储数字的文本和数值表示形式。 您希望能够分别为每个属性指定值，还可以在单个语句中初始化所有属性。  
+  
+ 下面的代码示例演示`DynamicNumber`类，该类派生<xref:System.Dynamic.DynamicObject>自类。 `DynamicNumber`重写<xref:System.Dynamic.DynamicObject.TryInvoke%2A>方法以同时启用所有属性的初始化。 它还重写<xref:System.Dynamic.DynamicObject.TrySetMember%2A>和<xref:System.Dynamic.DynamicObject.TryGetMember%2A>方法，以启用对单个对象属性的访问。  
+  
+ [!code-csharp[System.Dynamic.DynamicObject#5](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.dynamic.dynamicobject/cs/program.cs#5)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryInvokeMember">
+      <MemberSignature Language="C#" Value="public virtual bool TryInvokeMember (System.Dynamic.InvokeMemberBinder binder, object[] args, out object result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryInvokeMember(class System.Dynamic.InvokeMemberBinder binder, object[] args, [out] object&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TryInvokeMember(System.Dynamic.InvokeMemberBinder,System.Object[],System.Object@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TryInvokeMember (binder As InvokeMemberBinder, args As Object(), ByRef result As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TryInvokeMember(System::Dynamic::InvokeMemberBinder ^ binder, cli::array &lt;System::Object ^&gt; ^ args, [Runtime::InteropServices::Out] System::Object ^ % result);" />
+      <MemberSignature Language="F#" Value="abstract member TryInvokeMember : System.Dynamic.InvokeMemberBinder * obj[] *  -&gt; bool&#xA;override this.TryInvokeMember : System.Dynamic.InvokeMemberBinder * obj[] *  -&gt; bool" Usage="dynamicObject.TryInvokeMember (binder, args, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.InvokeMemberBinder" />
+        <Parameter Name="args" Type="System.Object[]" />
+        <Parameter Name="result" Type="System.Object" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关动态操作的信息。 <c>binder.Name</c> 属性提供针对其执行动态操作的成员的名称。 例如，对于 <c>sampleObject.SampleMethod(100)</c>语句（其中 <c>sampleObject</c> 是派生自 <see cref="T:System.Dynamic.DynamicObject" /> 类的类的实例），<c>binder.Name</c> 返回“SampleMethod”。 <c>binder.IgnoreCase</c> 属性指定成员名称是否区分大小写。</param>
+        <param name="args">调用操作期间传递给对象成员的参数。 例如，对于 <c>sampleObject.SampleMethod(100)</c>语句（其中 <c>sampleObject</c> 派生自 <see cref="T:System.Dynamic.DynamicObject" /> 类），<c>args[0]</c> 等于 100。</param>
+        <param name="result">成员调用的结果。</param>
+        <summary>为调用成员的操作提供实现。 从 <see cref="T:System.Dynamic.DynamicObject" /> 类派生的类可以重写此方法，以便为诸如调用方法这样的操作指定动态行为。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发语言特定的运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Dynamic.DynamicObject>类派生的类可以重写此方法，以指定如何为动态对象执行调用对象成员的操作。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发语言特定的运行时异常。）  
+  
+ 如果重写此方法，则在执行类似`sampleObject.SampleMethod(100)`的操作（其中`sampleObject`派生自`DynamicObject`类）时，将自动调用此方法。  
+  
+ 你还可以将自己的方法添加到派生自<xref:System.Dynamic.DynamicObject>类的类。 例如，如果重写<xref:System.Dynamic.DynamicObject.TryInvokeMember%2A>方法，动态调度系统将首先尝试确定指定方法是否存在于类中。 如果未找到方法，则使用该<xref:System.Dynamic.DynamicObject.TryInvokeMember%2A>实现。  
+  
+ 此方法不支持`ref`和`out`参数。 数组中的`args`所有参数都通过值传递。  
+  
+   
+  
+## Examples  
+ 假设你想要提供用于访问字典中的值的替代语法，以便可以编写`sampleDictionary["Text"] = "Sample text"` `sampleDictionary.Text = "Sample text"`，而不`sampleDictionary("Text") = "Sample text"`是编写（在 Visual Basic 中）。 此外，你还希望能够对此字典调用所有标准字典方法。  
+  
+ 下面的代码示例演示`DynamicDictionary`类，该类派生<xref:System.Dynamic.DynamicObject>自类。 类包含用于存储键/值`Dictionary<string, object>`对的`Dictionary(Of String, Object)`类型（在 Visual Basic 中）的对象。 `DynamicDictionary` 它重写<xref:System.Dynamic.DynamicObject.TryInvokeMember%2A>方法以支持<xref:System.Collections.Generic.Dictionary%602>类的方法，并重写<xref:System.Dynamic.DynamicObject.TrySetMember%2A>和<xref:System.Dynamic.DynamicObject.TryGetMember%2A>方法来支持新的语法。 它还提供了`Print`一种方法，用于输出所有字典键和值。  
+  
+ [!code-csharp[System.Dynamic.DynamicObject#6](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.dynamic.dynamicobject/cs/program.cs#6)]
+ [!code-vb[System.Dynamic.DynamicObject#6](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.dynamic.dynamicobject/vb/module1.vb#6)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TrySetIndex">
+      <MemberSignature Language="C#" Value="public virtual bool TrySetIndex (System.Dynamic.SetIndexBinder binder, object[] indexes, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TrySetIndex(class System.Dynamic.SetIndexBinder binder, object[] indexes, object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TrySetIndex(System.Dynamic.SetIndexBinder,System.Object[],System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TrySetIndex (binder As SetIndexBinder, indexes As Object(), value As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TrySetIndex(System::Dynamic::SetIndexBinder ^ binder, cli::array &lt;System::Object ^&gt; ^ indexes, System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="abstract member TrySetIndex : System.Dynamic.SetIndexBinder * obj[] * obj -&gt; bool&#xA;override this.TrySetIndex : System.Dynamic.SetIndexBinder * obj[] * obj -&gt; bool" Usage="dynamicObject.TrySetIndex (binder, indexes, value)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.SetIndexBinder" />
+        <Parameter Name="indexes" Type="System.Object[]" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关该操作的信息。</param>
+        <param name="indexes">该操作中使用的索引。 例如，对于 C# 中的 <c>sampleObject[3] = 10</c>操作（Visual Basic 中为 <c>sampleObject(3) = 10</c>，其中 <c>sampleObject</c> 派生自 <see cref="T:System.Dynamic.DynamicObject" /> 类），<c>indexes[0]</c> 等于 3。</param>
+        <param name="value">要为具有指定索引的对象设置的值。 例如，对于 C# 中的 <c>sampleObject[3] = 10</c> 操作（Visual Basic 中为 <c>sampleObject(3) = 10</c>），其中 <c>sampleObject</c> 派生自 <see cref="T:System.Dynamic.DynamicObject" /> 类，<paramref name="value" /> 等于 10。</param>
+        <summary>为按索引设置值的操作提供实现。 从 <see cref="T:System.Dynamic.DynamicObject" /> 类派生的类可以重写此方法，以便为按指定索引访问对象的操作指定动态行为。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发语言特定的运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Dynamic.DynamicObject>类派生的类可以重写此方法，以指定应该如何为动态对象执行通过索引访问对象的操作。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发语言特定的运行时异常。）  
+  
+ 如果重写此方法，则当你的操作如`sampleObject[3] = 10`中C#的或`sampleObject(3) = 10` <xref:System.Dynamic.DynamicObject> Visual Basic （其中`sampleObject`派生自类）时，将自动调用此方法。  
+  
+   
+  
+## Examples  
+ 假设你想要创建一个对象，在该对象中，可以通过`Property0`等名称`Property1`（如、等）或索引访问属性，以便例如`sampleObject.Property0` ，在C#或`sampleObject(0)`中等效于`sampleObject[0]`Visual Basic。  
+  
+ 下面的代码示例演示`SampleDynamicObject`类，该类派生<xref:System.Dynamic.DynamicObject>自类。 类包含用于存储键/值`Dictionary<string, object>`对的`Dictionary(Of String, Object)`类型（在 Visual Basic 中）的对象。 `SampleDynamicObject` `SampleDynamicObject`重写<xref:System.Dynamic.DynamicObject.TryGetIndex%2A>和方法，以启用按索引进行访问。 <xref:System.Dynamic.DynamicObject.TrySetIndex%2A> 它重写<xref:System.Dynamic.DynamicObject.TrySetMember%2A>和<xref:System.Dynamic.DynamicObject.TryGetMember%2A>方法，以通过属性名称启用访问。  
+  
+ [!code-csharp[System.Dynamic.DynamicObject#4](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.dynamic.dynamicobject/cs/program.cs#4)]
+ [!code-vb[System.Dynamic.DynamicObject#4](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.dynamic.dynamicobject/vb/module1.vb#4)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TrySetMember">
+      <MemberSignature Language="C#" Value="public virtual bool TrySetMember (System.Dynamic.SetMemberBinder binder, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TrySetMember(class System.Dynamic.SetMemberBinder binder, object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TrySetMember(System.Dynamic.SetMemberBinder,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TrySetMember (binder As SetMemberBinder, value As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TrySetMember(System::Dynamic::SetMemberBinder ^ binder, System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="abstract member TrySetMember : System.Dynamic.SetMemberBinder * obj -&gt; bool&#xA;override this.TrySetMember : System.Dynamic.SetMemberBinder * obj -&gt; bool" Usage="dynamicObject.TrySetMember (binder, value)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.SetMemberBinder" />
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关调用了动态操作的对象的信息。 <c>binder.Name</c> 属性提供将该值分配到的成员的名称。 例如，对于 <c>sampleObject.SampleProperty = "Test"</c> 语句（其中 <c>sampleObject</c> 是派生自 <see cref="T:System.Dynamic.DynamicObject" /> 类的类的实例），<c>binder.Name</c> 返回“SampleProperty”。 <c>binder.IgnoreCase</c> 属性指定成员名称是否区分大小写。</param>
+        <param name="value">要为成员设置的值。 例如，对于 <c>sampleObject.SampleProperty = "Test"</c> 语句（其中 <c>sampleObject</c> 是派生自 <see cref="T:System.Dynamic.DynamicObject" /> 类的类的实例），<paramref name="value" /> 为 "Test"。</param>
+        <summary>为设置成员值的操作提供实现。 从 <see cref="T:System.Dynamic.DynamicObject" /> 类派生的类可以重写此方法，以便为诸如设置属性值这样的操作指定动态行为。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发语言特定的运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Dynamic.DynamicObject>类派生的类可以重写此方法，以指定如何为动态对象执行将值设置为成员的操作。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发语言特定的运行时异常。）  
+  
+ 当你具有类似`sampleObject.SampleProperty = "Test"`的语句时调用此方法，其中`sampleObject`是派生自<xref:System.Dynamic.DynamicObject>类的类的实例。  
+  
+ 你还可以将自己的成员添加到从`DynamicObject`类派生的类。 如果你的类定义了属性，并且<xref:System.Dynamic.DynamicObject.TrySetMember%2A>还重写了方法，则动态语言运行时（DLR）首先使用语言联编程序在类中查找属性的静态定义。 如果没有此类属性，则 DLR 会调用<xref:System.Dynamic.DynamicObject.TrySetMember%2A>方法。  
+  
+   
+  
+## Examples  
+ 假设你想要提供用于访问字典中的值的替代语法，以便可以编写`sampleDictionary["Text"] = "Sample text"` `sampleDictionary.Text = "Sample text"`，而不`sampleDictionary("Text") = "Sample text"`是编写（在 Visual Basic 中）。 此外，此语法必须不区分大小写，因此`sampleDictionary.Text`等效于。 `sampleDictionary.text`  
+  
+ 下面的代码示例演示`DynamicDictionary`类，该类派生<xref:System.Dynamic.DynamicObject>自类。 `Dictionary<string, object>` `Dictionary(Of String, Object)` 类包含 <xref:System.Dynamic.DynamicObject.TrySetMember%2A> 用于存储键/值对的类型（在 Visual Basic 中）的对象，并重写和<xref:System.Dynamic.DynamicObject.TryGetMember%2A>方法以支持新的语法。 `DynamicDictionary` 它还提供了`Count`一个属性，该属性显示字典包含的动态属性的数目。  
+  
+ [!code-csharp[System.Dynamic.DynamicObject#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.dynamic.dynamicobject/cs/program.cs#1)]
+ [!code-vb[System.Dynamic.DynamicObject#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.dynamic.dynamicobject/vb/module1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryUnaryOperation">
+      <MemberSignature Language="C#" Value="public virtual bool TryUnaryOperation (System.Dynamic.UnaryOperationBinder binder, out object result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool TryUnaryOperation(class System.Dynamic.UnaryOperationBinder binder, [out] object&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Dynamic.DynamicObject.TryUnaryOperation(System.Dynamic.UnaryOperationBinder,System.Object@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function TryUnaryOperation (binder As UnaryOperationBinder, ByRef result As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool TryUnaryOperation(System::Dynamic::UnaryOperationBinder ^ binder, [Runtime::InteropServices::Out] System::Object ^ % result);" />
+      <MemberSignature Language="F#" Value="abstract member TryUnaryOperation : System.Dynamic.UnaryOperationBinder *  -&gt; bool&#xA;override this.TryUnaryOperation : System.Dynamic.UnaryOperationBinder *  -&gt; bool" Usage="dynamicObject.TryUnaryOperation (binder, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Dynamic.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="binder" Type="System.Dynamic.UnaryOperationBinder" />
+        <Parameter Name="result" Type="System.Object" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="binder">提供有关一元运算的信息。 <c>binder.Operation</c> 属性返回 <see cref="T:System.Linq.Expressions.ExpressionType" /> 对象。 例如，对于 <c>negativeNumber = -number</c> 语句（其中 <c>number</c> 派生自 <see langword="DynamicObject" /> 类），<c>binder.Operation</c> 返回“Negate”。</param>
+        <param name="result">一元运算的结果。</param>
+        <summary>提供一元运算的实现。 从 <see cref="T:System.Dynamic.DynamicObject" /> 类派生的类可以重写此方法，以便为诸如求反、递增、递减这样的运算指定动态行为。</summary>
+        <returns>如果操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果此方法返回 <see langword="false" />，则该语言的运行时联编程序将决定行为。 （大多数情况下，将引发语言特定的运行时异常。）</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Dynamic.DynamicObject>类派生的类可以重写此方法，以指定应如何对动态对象执行一元运算。 如果未重写此方法，则该语言的运行时联编程序将确定行为。 （大多数情况下，将引发语言特定的运行时异常。）  
+  
+ 当你有一元运算，如求反、递增或递减时，将调用此方法。 例如，如果<xref:System.Dynamic.DynamicObject.TryUnaryOperation%2A>方法被重写，则会自动为（如`negativeNumber = -number`）调用此方法， `number` <xref:System.Dynamic.DynamicObject>其中派生自类。  
+  
+ 可以通过使用`Operation` `binder`参数的属性来获取有关一元运算类型的信息。  
+  
+ 如果动态对象仅用于C#和 Visual Basic，则该`binder.Operation`属性可以是<xref:System.Linq.Expressions.ExpressionType>枚举中的以下值之一。 但是，在其他语言（如 IronPython 或 IronRuby）中，可以具有其他值。
+  
+|值|说明|C#|Visual Basic|  
+|-----------|-----------------|---------|------------------|  
+|`Decrement`|一元减量运算。|`a--`|不支持。|  
+|`Increment`|一元增量运算。|`a++`|不支持。|  
+|`Negate`|算术反运算。|`-a`|`-a`|  
+|`Not`|逻辑求反。|`!a`|`Not a`|  
+|`OnesComplement`|二进制反码。|`~a`|不支持。|  
+|`IsFalse`|错误条件值。|`a && b`|不支持。|  
+|`IsTrue`|True 条件值。|`a &#124;&#124; b`|不支持。|  
+|`UnaryPlus`|一元加。|`+a`|`+a`|  
+  
+> [!NOTE]
+>  若要`OrElse`在`a || b`中C#为`AndAlso`  `a && b` 动态对象实现（）和（）操作，你可能希望同时<xref:System.Dynamic.DynamicObject.TryBinaryOperation%2A>实现方法和方法。 <xref:System.Dynamic.DynamicObject.TryUnaryOperation%2A>  
+>   
+>  操作包含一元`IsTrue`运算和二元`Or`运算。 `OrElse` 仅`Or`当`IsTrue`操作的结果为时`false`，才执行该操作。  
+>   
+>  操作包含一元`IsFalse`运算和二元`And`运算。 `AndAlso` 仅`And`当`IsFalse`操作的结果为时`false`，才执行该操作。  
+  
+   
+  
+## Examples  
+ 假设您需要一个数据结构来存储数字的文本和数值表示形式，并且您想要为此类数据定义数学求反运算。  
+  
+ 下面的代码示例演示`DynamicNumber`类，该类派生<xref:System.Dynamic.DynamicObject>自类。 `DynamicNumber`重写<xref:System.Dynamic.DynamicObject.TryUnaryOperation%2A>方法以启用数学求反运算。 还将重写<xref:System.Dynamic.DynamicObject.TrySetMember%2A>和<xref:System.Dynamic.DynamicObject.TryGetMember%2A>方法，以启用对元素的访问。  
+  
+ 在此示例中，仅支持数学求反运算。 如果尝试编写类似`negativeNumber = +number`的语句，则会发生运行时异常。  
+  
+ [!code-csharp[System.Dynamic.DynamicObject#7](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.dynamic.dynamicobject/cs/program.cs#7)]
+ [!code-vb[System.Dynamic.DynamicObject#7](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.dynamic.dynamicobject/vb/module1.vb#7)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,472 @@
+<Type Name="EntityContainer" FullName="System.Data.Metadata.Edm.EntityContainer">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="698936653f87abb9205380e84337e2a1d5d8302b" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70432163" /></Metadata><TypeSignature Language="C#" Value="public sealed class EntityContainer : System.Data.Metadata.Edm.GlobalItem" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit EntityContainer extends System.Data.Metadata.Edm.GlobalItem" />
+  <TypeSignature Language="DocId" Value="T:System.Data.Metadata.Edm.EntityContainer" />
+  <TypeSignature Language="VB.NET" Value="Public NotInheritable Class EntityContainer&#xA;Inherits GlobalItem" />
+  <TypeSignature Language="C++ CLI" Value="public ref class EntityContainer sealed : System::Data::Metadata::Edm::GlobalItem" />
+  <TypeSignature Language="F#" Value="type EntityContainer = class&#xA;    inherit GlobalItem" />
+  <AssemblyInfo>
+    <AssemblyName>System.Data.Entity</AssemblyName>
+    <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Data.Metadata.Edm.GlobalItem</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>表示概念模型中的实体容器。 <see cref="T:System.Data.Metadata.Edm.EntityContainer" /> 是实体集和关联集的逻辑分组。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在概念级别上，<xref:System.Data.Metadata.Edm.EntityContainer> 类表示将映射到存储元数据架构中的数据库对象的容器。 在存储级别上，<xref:System.Data.Metadata.Edm.EntityContainer> 类描述了为基于模型构建的应用程序持久保存数据的表和/或键关系。 有关概念模型中的实体容器的详细信息，请参阅[实体容器（EDM）](https://msdn.microsoft.com/library/9afa762f-59b8-4a70-b76d-89d90760144c)。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何利用连接获取元数据工作区，然后使用该元数据工作区在指定的数据模型中检索有关实体容器的信息。 请注意，元数据工作区是一个为检索元数据提供支持的运行时服务组件。  
+  
+ 该代码示例使用 <xref:System.Data.Metadata.Edm.DataSpace.CSpace> 和 <xref:System.Data.Metadata.Edm.DataSpace.SSpace> 指定模型。 <xref:System.Data.Metadata.Edm.DataSpace.CSpace> 表示概念性模型的默认名称。 <xref:System.Data.Metadata.Edm.DataSpace.SSpace> 表示存储模型的默认名称。  
+  
+ `GetEntityContainers`方法获取实体容器的集合，然后循环访问该集合以获取指定容器中的每个实体集和关联集。 此代码示例使用在[艾德作品模型（EDM）](https://msdn.microsoft.com/library/da87d29e-8c89-4310-bbac-5cbd062930a7)主题中提供的 AdventureWorks 模型。 有关应用程序配置文件的示例，请参阅[应用程序中的艾德公司对象模型（EDM）](https://msdn.microsoft.com/library/84c01270-90ba-467b-ad24-df10c1ca8f45)。  
+  
+```csharp  
+using System;  
+using System.Data;  
+using System.Data.EntityClient;  
+using System.Data.Metadata.Edm;  
+using System.Collections.ObjectModel;  
+  
+class GetEntityContainerExample  
+{  
+  static void Main()  
+  {  
+    try  
+    {  
+       // Establish a connection to the underlying data provider by   
+       // using the connection string specified in the config file.  
+       using (EntityConnection connection =  
+          new EntityConnection("Name=AdventureWorksEntities"))  
+       {  
+         // Open the connection.  
+         connection.Open();  
+  
+         // Access the metadata workspace.  
+         MetadataWorkspace workspace =   
+            connection.GetMetadataWorkspace();  
+  
+         // Get the entity containers in the conceptual model.  
+         GetEntityContainers(workspace, DataSpace.CSpace);  
+  
+         // Get the entity containers in the storage model.  
+             GetEntityContainers(workspace, DataSpace.SSpace);  
+       }  
+    }  
+    catch (MetadataException exceptionMetadata)  
+    {  
+      Console.WriteLine("MetadataException: {0}",   
+                       exceptionMetadata.Message);  
+    }  
+    catch (System.Data.MappingException exceptionMapping)  
+    {  
+      Console.WriteLine("MappingException: {0}",  
+                       exceptionMapping.Message);  
+    }  
+  }  
+  
+  public static void GetEntityContainers(  
+      MetadataWorkspace workspace, DataSpace model)  
+  {  
+    // Get a collection of the entity containers.  
+    ReadOnlyCollection<EntityContainer> containers =   
+         workspace.GetItems<EntityContainer>(model);  
+  
+    // Iterate through the collection to get each entity container.  
+    foreach (EntityContainer container in containers)  
+    {  
+       Console.WriteLine("EntityContainer Name: {0} ",   
+                        container.Name);  
+  
+       // EntitySetBase is a super type for   
+       // EntitySets and RelationshipSets.   
+       // Iterate through the collection to get each EntitySetBase.  
+       foreach (EntitySetBase baseSet in container.BaseEntitySets)  
+       {  
+          // Check if this instance is an EntitySet.  
+          if (baseSet is EntitySet)  
+          {  
+             Console.WriteLine(  
+                "  EntitySet Name: {0} , EntityType Name: {1} ",  
+                baseSet.Name, baseSet.ElementType.FullName);  
+          }  
+  
+         // RelationshipSet is a super type for AssociationSet.  
+         // Check if this instance is an AssociationSet.  
+         if (baseSet is AssociationSet)  
+         {  
+            Console.WriteLine(  
+               "  AssociationSet Name: {0} , " +  
+               "AssociationType Name: {1} ",  
+                baseSet.Name, baseSet.ElementType.FullName);  
+  
+            // Get the AssociationSet.  
+            AssociationSet associationSet =   
+                  baseSet as AssociationSet;  
+  
+            // Iterate through the collection to get   
+            // each AssociatedSetEnd.  
+            foreach (AssociationSetEnd end in   
+               associationSet.AssociationSetEnds)  
+            {  
+               Console.WriteLine(  
+                  "   EntitySet Name: {0} , Name: {1} ",  
+                  end.EntitySet, end.Name);  
+            }  
+         }  
+      }  
+    }  
+  }  
+}  
+```  
+  
+```vb  
+Imports System  
+Imports System.Collections.ObjectModel  
+Imports System.Data  
+Imports System.Data.EntityClient  
+Imports System.Data.Metadata.Edm  
+  
+Class GetEntityContainerExample  
+  Public Shared Sub Main()  
+    Try  
+      ' Establish a connection to the underlying data provider by   
+      ' using the connection string specified in the config file.  
+      Using connection As EntityConnection = _  
+        New EntityConnection("Name=AdventureWorksEntities")  
+  
+        ' Open the connection.  
+        connection.Open()  
+  
+        ' Access the metadata workspace.  
+        Dim workspace As MetadataWorkspace = _  
+           connection.GetMetadataWorkspace  
+  
+        ' Get the entity containers in the conceptual model.  
+        GetEntityContainers(workspace, DataSpace.CSpace)  
+  
+        ' Get the entity containers in the storage model.  
+        GetEntityContainers(workspace, DataSpace.SSpace)  
+      End Using  
+    Catch exceptionMetadata As MetadataException  
+       Console.WriteLine("MetadataException: {0}", _  
+          exceptionMetadata.Message)  
+    Catch exceptionMapping As MappingException  
+       Console.WriteLine("MappingException: {0}", _  
+          exceptionMapping.Message)  
+     End Try  
+  End Sub  
+  
+  Public Shared Sub GetEntityContainers( _  
+    ByVal workspace As MetadataWorkspace, ByVal model As DataSpace)  
+  
+    ' Get a collection of the entity containers.  
+    Dim containers As ReadOnlyCollection(Of EntityContainer) = _  
+       workspace.GetItems(Of EntityContainer)(model)  
+  
+    ' Iterate through the collection to get each entity container.  
+    Dim container As EntityContainer  
+    For Each container In containers  
+      Console.WriteLine("EntityContainer Name: {0} ", container.Name)  
+  
+      ' EntitySetBase is a super type for   
+      ' EntitySets and RelationshipSets.   
+      ' Iterate through the collection to get each EntitySetBase.  
+      Dim baseSet As EntitySetBase  
+      For Each baseSet In container.BaseEntitySets  
+         ' Check if this instance is an EntitySet.  
+         If TypeOf baseSet Is EntitySet Then  
+           Console.WriteLine( _  
+              "  EntitySet Name: {0} , EntityType Name: {1} ", _  
+              baseSet.Name, baseSet.ElementType.FullName)  
+          End If  
+  
+          ' RelationshipSet is a super type for AssociationSet.  
+          ' Check if this instance is an AssociationSet.  
+          If TypeOf baseSet Is AssociationSet Then  
+            Console.WriteLine( _  
+              "  AssociationSet Name: {0} , " + _  
+              "AssociationType Name: {1} ", _  
+              baseSet.Name, baseSet.ElementType.FullName)  
+  
+            ' Get the AssociationSet.  
+            Dim associationSet As AssociationSet = _  
+               TryCast(baseSet, AssociationSet)  
+  
+            ' Iterate through the collection to get   
+            '  each AssociatedSetEnd.  
+            Dim endMember As AssociationSetEnd  
+            For Each endMember In associationSet.AssociationSetEnds  
+              Console.WriteLine( _  
+                 "   EntitySet Name: {0} , Name: {1} ", _  
+                 endMember.EntitySet, endMember.Name)  
+            Next  
+          End If  
+      Next  
+    Next  
+  End Sub  
+End Class  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="BaseEntitySets">
+      <MemberSignature Language="C#" Value="public System.Data.Metadata.Edm.ReadOnlyMetadataCollection&lt;System.Data.Metadata.Edm.EntitySetBase&gt; BaseEntitySets { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Data.Metadata.Edm.ReadOnlyMetadataCollection`1&lt;class System.Data.Metadata.Edm.EntitySetBase&gt; BaseEntitySets" />
+      <MemberSignature Language="DocId" Value="P:System.Data.Metadata.Edm.EntityContainer.BaseEntitySets" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property BaseEntitySets As ReadOnlyMetadataCollection(Of EntitySetBase)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Data::Metadata::Edm::ReadOnlyMetadataCollection&lt;System::Data::Metadata::Edm::EntitySetBase ^&gt; ^ BaseEntitySets { System::Data::Metadata::Edm::ReadOnlyMetadataCollection&lt;System::Data::Metadata::Edm::EntitySetBase ^&gt; ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.BaseEntitySets : System.Data.Metadata.Edm.ReadOnlyMetadataCollection&lt;System.Data.Metadata.Edm.EntitySetBase&gt;" Usage="System.Data.Metadata.Edm.EntityContainer.BaseEntitySets" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.Entity</AssemblyName>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Data.Metadata.Edm.ReadOnlyMetadataCollection&lt;System.Data.Metadata.Edm.EntitySetBase&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取此 <see cref="T:System.Data.Metadata.Edm.EntityContainer" /> 包括的实体集和关联集的列表。</summary>
+        <value>一个 <see cref="T:System.Data.Metadata.Edm.ReadOnlyMetadataCollection`1" /> 对象，其中包含此 <see cref="T:System.Data.Metadata.Edm.EntityContainer" /> 包括的实体集和关联集的列表。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BuiltInTypeKind">
+      <MemberSignature Language="C#" Value="public override System.Data.Metadata.Edm.BuiltInTypeKind BuiltInTypeKind { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Data.Metadata.Edm.BuiltInTypeKind BuiltInTypeKind" />
+      <MemberSignature Language="DocId" Value="P:System.Data.Metadata.Edm.EntityContainer.BuiltInTypeKind" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property BuiltInTypeKind As BuiltInTypeKind" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Data::Metadata::Edm::BuiltInTypeKind BuiltInTypeKind { System::Data::Metadata::Edm::BuiltInTypeKind get(); };" />
+      <MemberSignature Language="F#" Value="member this.BuiltInTypeKind : System.Data.Metadata.Edm.BuiltInTypeKind" Usage="System.Data.Metadata.Edm.EntityContainer.BuiltInTypeKind" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.Entity</AssemblyName>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.Metadata.Edm.BuiltInTypeKind</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取此 <see cref="T:System.Data.Metadata.Edm.EntityContainer" /> 的内置类型种类。</summary>
+        <value>一个 <see cref="T:System.Data.Metadata.Edm.BuiltInTypeKind" /> 对象，表示此 <see cref="T:System.Data.Metadata.Edm.EntityContainer" /> 的内置类型种类。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FunctionImports">
+      <MemberSignature Language="C#" Value="public System.Data.Metadata.Edm.ReadOnlyMetadataCollection&lt;System.Data.Metadata.Edm.EdmFunction&gt; FunctionImports { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Data.Metadata.Edm.ReadOnlyMetadataCollection`1&lt;class System.Data.Metadata.Edm.EdmFunction&gt; FunctionImports" />
+      <MemberSignature Language="DocId" Value="P:System.Data.Metadata.Edm.EntityContainer.FunctionImports" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property FunctionImports As ReadOnlyMetadataCollection(Of EdmFunction)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Data::Metadata::Edm::ReadOnlyMetadataCollection&lt;System::Data::Metadata::Edm::EdmFunction ^&gt; ^ FunctionImports { System::Data::Metadata::Edm::ReadOnlyMetadataCollection&lt;System::Data::Metadata::Edm::EdmFunction ^&gt; ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.FunctionImports : System.Data.Metadata.Edm.ReadOnlyMetadataCollection&lt;System.Data.Metadata.Edm.EdmFunction&gt;" Usage="System.Data.Metadata.Edm.EntityContainer.FunctionImports" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.Entity</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Data.Metadata.Edm.ReadOnlyMetadataCollection&lt;System.Data.Metadata.Edm.EdmFunction&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>指定 <see cref="T:System.Data.Metadata.Edm.EdmFunction" /> 元素的集合。 每个函数都包含映射到实体及其属性的数据库或等效 <c>CommandText</c> 中存在的存储过程的详细信息。</summary>
+        <value>一个 <see cref="T:System.Data.Metadata.Edm.ReadOnlyMetadataCollection`1" />，其中包含 <see cref="T:System.Data.Metadata.Edm.EdmFunction" /> 元素。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEntitySetByName">
+      <MemberSignature Language="C#" Value="public System.Data.Metadata.Edm.EntitySet GetEntitySetByName (string name, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Data.Metadata.Edm.EntitySet GetEntitySetByName(string name, bool ignoreCase) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.Metadata.Edm.EntityContainer.GetEntitySetByName(System.String,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetEntitySetByName (name As String, ignoreCase As Boolean) As EntitySet" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Data::Metadata::Edm::EntitySet ^ GetEntitySetByName(System::String ^ name, bool ignoreCase);" />
+      <MemberSignature Language="F#" Value="member this.GetEntitySetByName : string * bool -&gt; System.Data.Metadata.Edm.EntitySet" Usage="entityContainer.GetEntitySetByName (name, ignoreCase)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.Entity</AssemblyName>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.Metadata.Edm.EntitySet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ignoreCase" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="name">要搜索的实体集的名称。</param>
+        <param name="ignoreCase">如果执行不区分大小写的搜索，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>使用实体集的指定名称返回一个 <see cref="T:System.Data.Metadata.Edm.EntitySet" /> 对象。</summary>
+        <returns>一个 <see cref="T:System.Data.Metadata.Edm.EntitySet" /> 对象，表示具有指定名称的实体集。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetRelationshipSetByName">
+      <MemberSignature Language="C#" Value="public System.Data.Metadata.Edm.RelationshipSet GetRelationshipSetByName (string name, bool ignoreCase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Data.Metadata.Edm.RelationshipSet GetRelationshipSetByName(string name, bool ignoreCase) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.Metadata.Edm.EntityContainer.GetRelationshipSetByName(System.String,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetRelationshipSetByName (name As String, ignoreCase As Boolean) As RelationshipSet" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Data::Metadata::Edm::RelationshipSet ^ GetRelationshipSetByName(System::String ^ name, bool ignoreCase);" />
+      <MemberSignature Language="F#" Value="member this.GetRelationshipSetByName : string * bool -&gt; System.Data.Metadata.Edm.RelationshipSet" Usage="entityContainer.GetRelationshipSetByName (name, ignoreCase)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.Entity</AssemblyName>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Data.Metadata.Edm.RelationshipSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ignoreCase" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="name">要搜索的关系集的名称。</param>
+        <param name="ignoreCase">如果执行不区分大小写的搜索，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>使用关系集的指定名称返回一个 <see cref="T:System.Data.Metadata.Edm.RelationshipSet" /> 对象。</summary>
+        <returns>一个 <see cref="T:System.Data.Metadata.Edm.RelationshipSet" /> 对象，表示具有指定名称的关系集。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberSignature Language="DocId" Value="P:System.Data.Metadata.Edm.EntityContainer.Name" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Name As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ Name { System::String ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Name : string" Usage="System.Data.Metadata.Edm.EntityContainer.Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.Entity</AssemblyName>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取此 <see cref="T:System.Data.Metadata.Edm.EntityContainer" /> 的名称。</summary>
+        <value>此 <see cref="T:System.Data.Metadata.Edm.EntityContainer" /> 的名称。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.Metadata.Edm.EntityContainer.ToString" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function ToString () As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::String ^ ToString();" />
+      <MemberSignature Language="F#" Value="override this.ToString : unit -&gt; string" Usage="entityContainer.ToString " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.Entity</AssemblyName>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>返回此 <see cref="T:System.Data.Metadata.Edm.EntityContainer" /> 的名称。</summary>
+        <returns>此 <see cref="T:System.Data.Metadata.Edm.EntityContainer" /> 的名称。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryGetEntitySetByName">
+      <MemberSignature Language="C#" Value="public bool TryGetEntitySetByName (string name, bool ignoreCase, out System.Data.Metadata.Edm.EntitySet entitySet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryGetEntitySetByName(string name, bool ignoreCase, [out] class System.Data.Metadata.Edm.EntitySet&amp; entitySet) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.Metadata.Edm.EntityContainer.TryGetEntitySetByName(System.String,System.Boolean,System.Data.Metadata.Edm.EntitySet@)" />
+      <MemberSignature Language="VB.NET" Value="Public Function TryGetEntitySetByName (name As String, ignoreCase As Boolean, ByRef entitySet As EntitySet) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool TryGetEntitySetByName(System::String ^ name, bool ignoreCase, [Runtime::InteropServices::Out] System::Data::Metadata::Edm::EntitySet ^ % entitySet);" />
+      <MemberSignature Language="F#" Value="member this.TryGetEntitySetByName : string * bool *  -&gt; bool" Usage="entityContainer.TryGetEntitySetByName (name, ignoreCase, entitySet)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.Entity</AssemblyName>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ignoreCase" Type="System.Boolean" />
+        <Parameter Name="entitySet" Type="System.Data.Metadata.Edm.EntitySet" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="name">要搜索的实体集的名称。</param>
+        <param name="ignoreCase">如果执行不区分大小写的搜索，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <param name="entitySet">此方法返回时将包含一个 <see cref="T:System.Data.Metadata.Edm.EntitySet" /> 对象。 如果没有实体集，则此输出参数包含 null。</param>
+        <summary>使用实体集的指定名称返回一个 <see cref="T:System.Data.Metadata.Edm.EntitySet" /> 对象。</summary>
+        <returns>如果存在符合搜索条件的实体集，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryGetRelationshipSetByName">
+      <MemberSignature Language="C#" Value="public bool TryGetRelationshipSetByName (string name, bool ignoreCase, out System.Data.Metadata.Edm.RelationshipSet relationshipSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryGetRelationshipSetByName(string name, bool ignoreCase, [out] class System.Data.Metadata.Edm.RelationshipSet&amp; relationshipSet) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Data.Metadata.Edm.EntityContainer.TryGetRelationshipSetByName(System.String,System.Boolean,System.Data.Metadata.Edm.RelationshipSet@)" />
+      <MemberSignature Language="VB.NET" Value="Public Function TryGetRelationshipSetByName (name As String, ignoreCase As Boolean, ByRef relationshipSet As RelationshipSet) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool TryGetRelationshipSetByName(System::String ^ name, bool ignoreCase, [Runtime::InteropServices::Out] System::Data::Metadata::Edm::RelationshipSet ^ % relationshipSet);" />
+      <MemberSignature Language="F#" Value="member this.TryGetRelationshipSetByName : string * bool *  -&gt; bool" Usage="entityContainer.TryGetRelationshipSetByName (name, ignoreCase, relationshipSet)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.Entity</AssemblyName>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="ignoreCase" Type="System.Boolean" />
+        <Parameter Name="relationshipSet" Type="System.Data.Metadata.Edm.RelationshipSet" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="name">要搜索的关系集的名称。</param>
+        <param name="ignoreCase">如果执行不区分大小写的搜索，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <param name="relationshipSet">此方法返回时将包含一个 <see cref="T:System.Data.Metadata.Edm.RelationshipSet" /> 对象。</param>
+        <summary>使用关系集的指定名称返回一个 <see cref="T:System.Data.Metadata.Edm.RelationshipSet" /> 对象。</summary>
+        <returns>如果存在符合搜索条件的关系集，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
