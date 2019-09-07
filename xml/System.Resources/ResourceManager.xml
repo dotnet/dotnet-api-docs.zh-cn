@@ -1,0 +1,2100 @@
+<Type Name="ResourceManager" FullName="System.Resources.ResourceManager">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="c2af727cfa7f4a9d19d9fec485a0fdff47ea4437" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70496893" /></Metadata><TypeSignature Language="C#" Value="public class ResourceManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit ResourceManager extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Resources.ResourceManager" />
+  <TypeSignature Language="VB.NET" Value="Public Class ResourceManager" />
+  <TypeSignature Language="C++ CLI" Value="public ref class ResourceManager" />
+  <TypeSignature Language="F#" Value="type ResourceManager = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netstandard-1.0;netstandard-1.1;netcore-2.2;dotnet-uwp-10.0;netcore-3.0">
+      <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+    </Attribute>
+    <Attribute FrameworkAlternate="netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
+      <AttributeName>System.Serializable</AttributeName>
+    </Attribute>
+    <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6">
+      <AttributeName>System.ComponentModel.EditorBrowsable</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>表示资源管理器，其可在运行时提供对于特定文化资源的便利访问</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+
+[!INCLUDE [untrusted-data-class-note](~/includes/untrusted-data-class-note.md)]
+
+ <xref:System.Resources.ResourceManager>类从嵌入在程序集或独立 .resources 文件中的二进制 .resources 文件中检索资源。 如果已在[附属程序集中](~/docs/framework/resources/creating-satellite-assemblies-for-desktop-apps.md)部署了已本地化和已本地化的资源，则该应用程序会查找特定于区域性的资源，在已本地化的资源不存在时提供资源回退，并支持资源序列化。  
+  
+ 有关在桌面应用和[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中创建和管理资源的详细信息，请参阅以下部分：  
+  
+-   [桌面应用](#desktop)  
+  
+    -   [创建资源](#creating_resources)  
+  
+    -   [实例化 ResourceManager 对象](#instantiating)  
+  
+    -   [ResourceManager 和特定于区域性的资源](#CultureSpecific)  
+  
+    -   [检索资源](#retrieving)  
+  
+    -   [处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常](#exception)  
+  
+    -   [资源版本控制](#versioning)  
+  
+    -   [\<satelliteassemblies > 配置文件节点](#config)  
+  
+-   [Windows 应用商店应用](#ws)  
+  
+<a name="desktop"></a>   
+## <a name="desktop-apps"></a>桌面应用  
+ 对于桌面应用程序， <xref:System.Resources.ResourceManager>类从二进制资源（.resources）文件中检索资源。 通常，语言编译器或[程序集链接器（al.exe）](~/docs/framework/tools/al-exe-assembly-linker.md)将这些资源文件嵌入到程序集中。 <xref:System.Resources.ResourceManager> 通过 <xref:System.Resources.ResourceManager.CreateFileBasedResourceManager%2A> 调用方法，还可以使用对象直接从未嵌入到程序集的 .resources 文件中检索资源。  
+  
+> [!CAUTION]
+>  使用 ASP.NET 应用程序中的独立 .resources 文件将中断 XCOPY 部署，因为在<xref:System.Resources.ResourceManager.ReleaseAllResources%2A>方法显式释放资源之前，这些资源将一直保持锁定状态。 如果要将资源与 ASP.NET 应用程序一起部署，应将 .resources 文件编译为附属程序集。  
+  
+ 在基于资源的应用程序中，一个 .resources 文件包含默认区域性的资源，如果找不到特定于区域性的资源，则使用其资源。 例如，如果应用的默认区域性为英语（en），则当找不到特定区域性的本地化资源（例如英语（美国）（en-us）或法语（法国）（fr））时，将使用英语资源。 通常，默认区域性的资源嵌入主应用程序集中，其他本地化的区域性的资源嵌入在附属程序集中。 附属程序集只包含资源。 它们与主程序集具有相同的根文件名，扩展名为 .resources。 对于其程序集未在全局程序集缓存中注册的应用程序，附属程序集存储在其名称与程序集的区域性相对应的应用程序子目录中。  
+  
+<a name="creating_resources"></a>   
+### <a name="creating-resources"></a>创建资源  
+ 开发基于资源的应用时，会将资源信息存储在文本文件（扩展名为 .txt 或 .restext 的文件）或 XML 文件（扩展名为 .resx 的文件）中。 然后，使用[资源文件生成器（resgen.exe）](~/docs/framework/tools/resgen-exe-resource-file-generator.md)编译文本或 XML 文件，以创建二进制 .resources 文件。 然后，可以通过使用编译器选项（如） `/resources` C#和 Visual Basic 编译器将生成的 .resources 文件嵌入到可执行文件或库中，也可以使用将其嵌入到附属程序集中。 如果你在 Visual Studio 项目中包含 .resx 文件，则 Visual Studio 将在生成过程中自动处理默认值和本地化资源的编译和嵌入。  
+  
+ 理想情况下，应为应用支持的每种语言创建资源，或至少为每种语言的有意义的子集创建资源。 二进制 .resources 文件名称遵循命名约定*basename*。*cultureName*，其中*basename*是应用的名称或类的名称，具体取决于所需的详细程度。 属性用于确定*cultureName。* <xref:System.Globalization.CultureInfo.Name%2A?displayProperty=nameWithType> 应用的默认区域性的资源应命名为*basename*。  
+  
+ 例如，假设程序集在资源文件中有多个资源，而该资源文件的基名称为 MyResources。 这些资源文件的名称应为日本（日本）区域性的 "MyResources"、"德语"、"MyResources"、"zh-chs"、"简体中文" 和 "MyResources" 等资源。MyResources.fr 法语（比利时）区域性的资源。 默认的资源文件应命名为 MyResources。 区域性特定的资源文件通常打包在每个区域性的附属程序集中。 默认资源文件应该嵌入应用程序的主程序集中。  
+  
+ 请注意，[程序集链接器](~/docs/framework/tools/al-exe-assembly-linker.md)允许将资源标记为私有，但应始终将其标记为公共，以便其他程序集可以访问这些资源。 （因为附属程序集不包含任何代码，所以标记为私有的资源对您的应用程序无法通过任何机制使用。）  
+  
+ 有关创建、打包和部署资源的详细信息，请参阅文章[创建资源文件](~/docs/framework/resources/creating-resource-files-for-desktop-apps.md)、[创建附属程序集](~/docs/framework/resources/creating-satellite-assemblies-for-desktop-apps.md)以及[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)。  
+  
+<a name="instantiating"></a>   
+### <a name="instantiating-a-resourcemanager-object"></a>实例化 ResourceManager 对象  
+ 可以实例化<xref:System.Resources.ResourceManager>一个对象，该对象通过调用其类构造函数重载之一从嵌入的 .resources 文件中检索资源。 这会将<xref:System.Resources.ResourceManager>对象与特定 .resources 文件和附属程序集中任何关联的本地化 .resources 文件紧密耦合在一起。  
+  
+ 最常调用的两个构造函数为：  
+  
+-   <xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29>基于您提供的两个信息段查找资源： .resources 文件的基名称和默认 .resources 文件所在的程序集。 基名称包含 .resources 文件的命名空间和根名称，而不包含其区域性或扩展名。 请注意，从命令行编译的资源文件通常不包括命名空间名称，而在 Visual Studio 环境中创建的资源文件则执行此操作。 例如，如果资源文件命名为 MyCompany，并且<xref:System.Resources.ResourceManager>构造函数是从名为`Example.Main`的静态方法调用的，则下面的代码将实例化一个<xref:System.Resources.ResourceManager>可以从中检索资源的对象。资源文件：  
+  
+     [!code-csharp[Conceptual.Resources.Retrieving#1](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/ctor1.cs#1)]
+     [!code-vb[Conceptual.Resources.Retrieving#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/ctor1.vb#1)]  
+  
+-   <xref:System.Resources.ResourceManager.%23ctor%28System.Type%29>基于类型对象中的信息在附属程序集内查找资源。 该类型的完全限定名对应于 .resources 文件的基名称，而不包含其文件扩展名。 在使用 Visual Studio 资源设计器创建的桌面应用程序中，Visual Studio 会创建一个包装类，它的完全限定名与 .resources 文件的根名称相同。 例如，如果资源文件命名为 MyCompany，并且有一个名为`MyCompany.StringResources`的包装器类，则以下代码将实例化一个<xref:System.Resources.ResourceManager>可以从 .resources 文件中检索资源的对象：  
+  
+     [!code-csharp[Conceptual.Resources.Retrieving#2](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/ctor1.cs#2)]
+     [!code-vb[Conceptual.Resources.Retrieving#2](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/ctor1.vb#2)]  
+  
+ 如果找不到合适的资源，则构造函数调用会创建<xref:System.Resources.ResourceManager>一个有效的对象。 不过，尝试检索资源会引发<xref:System.Resources.MissingManifestResourceException>异常。 有关处理异常的信息，请参阅本文后面的 "[处理 MissingManifestResourceException 和 MissingSatelliteAssembly 异常](#exception)" 一节。  
+  
+ 下面的示例演示如何实例化<xref:System.Resources.ResourceManager>对象。 它包含名为 ShowTime 的可执行文件的源代码。 它还包括以下名为 Strings 的文本文件， `TimeHeader`其中包含单个字符串资源：  
+  
+```  
+TimeHeader=The current time is  
+```  
+  
+ 可以使用批处理文件生成资源文件，并将其嵌入到可执行文件中。 下面是使用C#编译器生成可执行文件的批处理文件：  
+  
+```  
+  
+resgen strings.txt  
+csc ShowTime.cs /resource:strings.resources  
+  
+```  
+  
+ 对于 Visual Basic 编译器，可以使用以下批处理文件：  
+  
+```  
+  
+resgen strings.txt  
+vbc ShowTime.vb /resource:strings.resources  
+  
+```  
+  
+ [!code-csharp[System.Resources.ResourceManager.Class#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.class/cs/showtime.cs#1)]
+ [!code-vb[System.Resources.ResourceManager.Class#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.class/vb/showtime.vb#1)]  
+  
+<a name="CultureSpecific"></a>   
+### <a name="resourcemanager-and-culture-specific-resources"></a>ResourceManager 和特定于区域性的资源  
+ 本地化应用需要部署资源，如[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)一文中所述。 如果正确配置了程序集，则资源管理器会根据当前线程的<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性来确定要检索的资源。 （该属性还返回当前线程的 UI 区域性。）例如，如果某个应用使用主程序集中的默认英语资源进行编译，并且在两个附属程序集中使用法语和俄语语言资源，并且该<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性设置为 fr-fr，则资源管理器将检索法语中心.  
+  
+ 可以显式或隐<xref:System.Globalization.CultureInfo.CurrentUICulture%2A>式设置属性。 设置此方法的方式决定了<xref:System.Resources.ResourceManager>对象如何根据区域性检索资源：  
+  
+-   如果将<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性显式设置为特定区域性，则资源管理器始终会检索该区域性的资源，而不考虑用户的浏览器或操作系统语言。 假设某个应用使用默认的英语资源和三个附属程序集进行编译，其中包含英语（美国）、法语（法国）和俄语（俄罗斯）的资源。 如果将<xref:System.Resources.ResourceManager>属性设置为 fr-fr，则对象将始终检索法语（法国）资源，即使用户的操作系统语言不是法语。 <xref:System.Globalization.CultureInfo.CurrentUICulture%2A> 在显式设置属性之前，请确保这是所需的行为。  
+  
+     在 ASP.NET apps 中，必须显式设置<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性，因为服务器上的设置可能不会与传入的客户端请求匹配。 ASP.NET 应用可以将<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性显式设置为用户的浏览器接受语言。  
+  
+     显式设置<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性可定义该线程的当前 UI 区域性。 它不会影响应用程序中任何其他线程的当前 UI 区域性。  
+  
+-   可以通过将表示区域性的<xref:System.Globalization.CultureInfo>对象分配给静态<xref:System.Globalization.CultureInfo.DefaultThreadCurrentUICulture%2A?displayProperty=nameWithType>属性，来设置应用程序域中所有线程的 UI 区域性。  
+  
+-   如果未显式设置当前 UI 区域性并且未定义当前应用程序域的默认区域性，则 Windows <xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType> `GetUserDefaultUILanguage`函数将隐式设置该属性。 此函数由多语言用户界面（MUI）提供，使用户能够设置默认语言。 如果用户未设置 UI 语言，则默认为系统安装的语言，这是操作系统资源的语言。  
+  
+ 以下简单的 "Hello world" 示例显式设置了当前 UI 区域性。 它包含三个区域性的资源：英语（美国）或 en-us、法语（法国）或 fr-fr、俄语（俄罗斯）或 ru。 En-us 资源包含在名为 "问候" 的文本文件中：  
+  
+```  
+HelloString=Hello world!  
+```  
+  
+ Fr-fr 资源包含在名为 Greetings.fr-FR.TXT 的文本文件中：  
+  
+```  
+HelloString=Salut tout le monde!  
+```  
+  
+ Ru-RU 资源包含在名为 Greetings.ru-RU.TXT 的文本文件中：  
+  
+```  
+HelloString=Всем привет!  
+```  
+  
+ 下面是此示例的源代码（示例 .vb 适用于该C#版本的 Visual Basic 版本或 Example.cs）：  
+  
+ [!code-csharp[Conceptual.Resources.CurrentCulture#1](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.currentculture/cs/example.cs#1)]
+ [!code-vb[Conceptual.Resources.CurrentCulture#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.currentculture/vb/example.vb#1)]  
+  
+ 若要编译此示例，请创建一个包含以下命令的批处理（.bat）文件，并从命令提示符运行该文件。 C#如果使用的是，请`csc`指定而`vbc`不`Example.cs`是和`Example.vb`而不是。  
+  
+```  
+resgen Greetings.txt   
+vbc Example.vb /resource:Greetings.resources  
+  
+resgen Greetings.fr-FR.txt  
+Md fr-FR  
+al /embed:Greetings.fr-FR.resources /culture:fr-FR /out:fr-FR\Example.resources.dll  
+  
+resgen Greetings.ru-RU.txt  
+Md ru-RU  
+al /embed:Greetings.ru-RU.resources /culture:ru-RU /out:ru-RU\Example.resources.dll  
+```  
+  
+<a name="retrieving"></a>   
+### <a name="retrieving-resources"></a>检索资源  
+ 调用<xref:System.Resources.ResourceManager.GetObject%28System.String%29> 和 <xref:System.Resources.ResourceManager.GetString%28System.String%29> 方法来访问特定资源。 还可以调用<xref:System.Resources.ResourceManager.GetStream%28System.String%29>方法以将非字符串资源作为字节数组来检索。 默认情况下，在已本地化资源的应用程序中，这些方法返回由进行调用的线程的当前 UI 区域性确定的区域性的资源。 有关如何定义线程的当前 UI 区域性的详细信息，请参阅上一节： [ResourceManager 和特定于区域性的资源](#CultureSpecific)。 如果资源管理器找不到当前线程的 UI 区域性的资源，它将使用回退进程来检索指定的资源。 如果资源管理器找不到任何已本地化的资源，它将使用默认区域性的资源。 有关资源回退规则的详细信息，请参阅[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)一文中的 "资源回退进程" 一节。  
+  
+> [!NOTE]
+>  如果找不到<xref:System.Resources.ResourceManager>类构造函数中指定的 .resources 文件，尝试检索资源会<xref:System.Resources.MissingManifestResourceException>引发或<xref:System.Resources.MissingSatelliteAssemblyException>异常。 有关处理异常的信息，请参阅本主题后面的 "[处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常](#exception)" 一节。  
+  
+ 下面的示例使用<xref:System.Resources.ResourceManager.GetString%2A>方法检索特定于区域性的资源。 它包含从 .txt 文件中编译的、英语（en）、法语（法国）（fr）和俄语（俄罗斯）（ru）区域性的资源。 该示例将当前区域性和当前 UI 区域性更改为英语（美国）、法语（法国）、俄语（俄罗斯）和瑞典语（瑞典）。 然后，它调用<xref:System.Resources.ResourceManager.GetString%2A>方法来检索本地化字符串，该字符串与当前日期和月份一起显示。 请注意，输出将显示适当的本地化字符串，除非当前 UI 区域性为 "瑞典语（瑞典）"。 由于瑞典语资源不可用，因此应用会改用默认区域性的资源，即英语。  
+  
+ 该示例需要下表中列出的基于文本的资源文件。 每个都有一个名为`DateStart`的字符串资源。  
+  
+|culture|文件名|资源名称|资源值|  
+|-------------|---------------|-------------------|--------------------|  
+|en-US|DateStrings .txt|`DateStart`|今天是|  
+|fr-FR|DateStrings.fr-FR.TXT|`DateStart`|Aujourd'hui，c'est le|  
+|ru-RU|DateStrings.ru-RU.TXT|`DateStart`|Сегодня|  
+  
+ 下面是示例的源代码（适用于 Visual Basic 版本的 ShowDate 或代码C#版本的 ShowDate.cs）。  
+  
+ [!code-csharp[System.Resources.ResourceManager.Class#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.class/cs/showdate.cs#2)]
+ [!code-vb[System.Resources.ResourceManager.Class#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.class/vb/showdate.vb#2)]  
+  
+ 若要编译此示例，请创建一个包含以下命令的批处理文件，并从命令提示符运行该文件。 C#如果使用的是，请`csc`指定而`vbc`不`showdate.cs`是和`showdate.vb`而不是。  
+  
+```  
+  
+resgen DateStrings.txt  
+vbc showdate.vb /resource:DateStrings.resources  
+  
+md fr-FR  
+resgen DateStrings.fr-FR.txt  
+al /out:fr-FR\Showdate.resources.dll /culture:fr-FR /embed:DateStrings.fr-FR.resources   
+  
+md ru-RU  
+resgen DateStrings.ru-RU.txt  
+al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.resources  
+  
+```  
+  
+ 可以通过两种方法来检索当前 UI 区域性以外的特定区域性的资源：  
+  
+-   可以调用<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>、 <xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29>或<xref:System.Resources.ResourceManager.GetStream%28System.String%2CSystem.Globalization.CultureInfo%29>方法来检索特定区域性的资源。 如果找不到本地化的资源，资源管理器将使用资源回退进程来查找适当的资源。  
+  
+-   可以调用<xref:System.Resources.ResourceManager.GetResourceSet%2A>方法来<xref:System.Resources.ResourceSet>获取表示特定区域性的资源的对象。 在方法调用中，如果资源管理器找不到已本地化的资源，或者是否只是回退到默认区域性的资源，则可以确定资源管理器是否对父区域性进行探测。 然后，可以使用这些<xref:System.Resources.ResourceSet>方法通过名称访问资源（针对该区域性进行了本地化）或枚举集中的资源。  
+  
+<a name="exception"></a>   
+### <a name="handling-missingmanifestresourceexception-and-missingsatelliteassemblyexception-exceptions"></a>处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常  
+ 如果尝试检索特定资源，但资源管理器找不到该资源，或者未定义默认区域性，或者无法定位默认区域性的资源，则资源管理器将引发<xref:System.Resources.MissingManifestResourceException>异常。<xref:System.Resources.MissingSatelliteAssemblyException>如果需要在附属程序集中查找资源，则应查找主程序集中的资源或。 请注意，当您调用资源检索方法（如<xref:System.Resources.ResourceManager.GetString%2A>或<xref:System.Resources.ResourceManager.GetObject%2A>），而<xref:System.Resources.ResourceManager>不是实例化对象时，将引发异常。  
+  
+ 通常，在下列情况下会引发异常：  
+  
+-   适当的资源文件或附属程序集不存在。 如果资源管理器希望在主应用程序集中嵌入应用的默认资源，则这些资源不存在。 如果该<xref:System.Resources.NeutralResourcesLanguageAttribute>特性指示应用程序的默认资源位于附属程序集中，则找不到该程序集。 在编译应用程序时，请确保将资源嵌入到主程序集中，或者生成必要的附属程序集并正确命名。 其名称应采用*appName*. .resources 格式，并应位于以其所包含资源的区域性命名的目录中。  
+  
+-   应用未定义默认或非特定区域性。 将特性添加到源代码文件或项目信息文件（AssemblyInfo 应用程序的 Visual Basic 或C#应用程序的 AssemblyInfo.cs）文件。 <xref:System.Resources.NeutralResourcesLanguageAttribute>  
+  
+-   构造 <xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29> 函数中的`baseName`参数未指定 .resources 文件的名称。 名称应包括资源文件的完全限定命名空间，但不包括其文件扩展名。 通常，在 Visual Studio 中创建的资源文件包含命名空间名称，但是在命令提示符处创建和编译的资源文件不会包含在内。 可以通过编译并运行以下实用工具来确定嵌入 .resources 文件的名称。 这是一个控制台应用，它接受主程序集或附属程序集的名称作为命令行参数。 它显示应作为`baseName`参数提供的字符串，以便资源管理器可以正确地识别资源。  
+  
+     [!code-csharp[System.Resources.ResourceManager.Class#4](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.class/cs/resourcenames.cs#4)]
+     [!code-vb[System.Resources.ResourceManager.Class#4](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.class/vb/resourcenames.vb#4)]  
+  
+ 如果要显式更改应用程序的当前区域性，还应记住，资源管理器将基于<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性的值而<xref:System.Globalization.CultureInfo.CurrentCulture%2A?displayProperty=nameWithType>不是属性来检索资源集。 通常情况下，如果更改一个值，则还应更改另一个值。  
+  
+<a name="versioning"></a>   
+### <a name="resource-versioning"></a>资源版本控制  
+ 由于包含应用的默认资源的主程序集是独立于应用程序的附属程序集，因此，您可以在不重新部署附属程序集的情况下发布主程序集的新版本。 使用<xref:System.Resources.SatelliteContractVersionAttribute>特性可使用现有附属程序集，并指示资源管理器不要使用新版本的主程序集重新部署它们。  
+  
+ 有关对附属程序集的版本控制支持的详细信息，请参阅文章[检索资源](~/docs/framework/resources/retrieving-resources-in-desktop-apps.md)。  
+  
+<a name="config"></a>   
+### <a name="satelliteassemblies-configuration-file-node"></a>\<satelliteassemblies > 配置文件节点  
+ 对于从网站（HREF 文件）部署和运行的可执行文件，该<xref:System.Resources.ResourceManager>对象可能会通过 web 探测附属程序集，这可能会损害应用程序的性能。 若要消除性能问题，可以将此探测范围限制为已与应用一起部署的附属程序集。 为此，请在应用程序`<satelliteassemblies>`的配置文件中创建一个节点，以指定已为应用程序部署了一组特定的区域性，并且<xref:System.Resources.ResourceManager>该对象不应尝试探测该节点中未列出的任何区域性。  
+  
+> [!NOTE]
+>  创建`<satelliteassemblies>`节点的首选替代方法是使用[ClickOnce 部署清单](https://msdn.microsoft.com/library/8457e615-e3b6-4990-8dcf-11bc590e4e9b)功能。  
+  
+ 在应用的配置文件中，创建如下所示的部分：  
+  
+```  
+<?xml version ="1.0"?>  
+<configuration>  
+    <satelliteassemblies>  
+        <assembly name="MainAssemblyName, Version=versionNumber, Culture=neutral, PublicKeyToken=null|yourPublicKeyToken">  
+            <culture>cultureName1</culture>  
+            <culture>cultureName2</culture>  
+            <culture>cultureName3</culture>  
+        </assembly>  
+    </satelliteassemblies>  
+</configuration>  
+```  
+  
+ 按如下所示编辑此配置信息：  
+  
+-   为部署的每`<assembly>`个主程序集指定一个或多个节点，其中每个节点指定完全限定的程序集名称。 指定主程序集的名称代替*MainAssemblyName*，并指定`Version`、 `PublicKeyToken`和`Culture`属性值，这些值对应于主程序集。  
+  
+     对于 " `Version`属性"，请指定程序集的版本号。 例如，程序集的第一个版本可能是版本号1.0.0.0。  
+  
+     对于属性，如果尚未使用强`null`名称对程序集进行签名，则指定关键字; 如果已对程序集进行签名，则指定公钥标记。 `PublicKeyToken`  
+  
+     对于特性，指定关键字`neutral`以指定<xref:System.Resources.ResourceManager>主程序集，并使类只对`<culture>`节点中列出的区域性进行探测。 `Culture`  
+  
+     有关完全限定的程序集名称的详细信息，请参阅[程序集名称](~/docs/framework/app-domains/assembly-names.md)一文。 有关强名称程序集的详细信息，请参阅[创建和使用具有强名称的程序集](~/docs/framework/app-domains/create-and-use-strong-named-assemblies.md)一文。  
+  
+-   指定一个或多`<culture>`个具有特定区域性名称（如 "fr"）或非特定区域性名称（如 "fr"）的节点。  
+  
+ 如果`<satelliteassemblies>`节点中未列出的任何程序集需要资源，则<xref:System.Resources.ResourceManager>该类使用标准探测规则探测区域性。  
+  
+<a name="ws"></a>   
+## <a name="includewin8_appname_longincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
+  
+> [!IMPORTANT]
+>  尽管此<xref:System.Resources.ResourceManager>类在应用中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]受支持，但我们不建议使用它。 仅当你开发[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]用于应用程序的项目时，才使用此类。 若要从[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中检索资源，请改用[windows.applicationmodel.resources.core. windows.applicationmodel.resources.resourceloader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
+  
+ 对于[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用 <xref:System.Resources.ResourceManager>  ，类从包资源索引（PRI）文件中检索资源。 单个 PRI 文件（应用程序包 PRI 文件）包含默认区域性和任何已本地化的区域性的资源。 使用 Makepri.exe 实用工具，可以从一个或多个 XML 资源文件（.resw）格式创建 PRI 文件。 对于包含在 Visual Studio 项目中的资源，Visual Studio 会自动处理创建和打包 PRI 文件的过程。 然后，可以使用 .NET Framework <xref:System.Resources.ResourceManager>类访问应用程序或库的资源。  
+  
+ 可以采用与桌面<xref:System.Resources.ResourceManager>应用相同的[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]方式来实例化应用程序的对象。  
+  
+ 然后，你可以通过传递要检索到<xref:System.Resources.ResourceManager.GetString%28System.String%29>方法的资源的名称，来访问特定区域性的资源。 默认情况下，此方法返回由进行调用的线程的当前 UI 区域性确定的区域性的资源。 你还可以通过传递资源的名称和<xref:System.Globalization.CultureInfo>表示其资源要检索<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>到方法的区域性的对象来检索特定区域性的资源。 如果找不到当前 UI 区域性或指定区域性的资源，资源管理器将使用 UI 语言回退列表定位合适的资源。  
+  
+   
+  
+## Examples  
+ 下面的示例演示如何使用显式区域性和隐式当前 UI 区域性从主程序集和附属程序集获取字符串资源。 有关详细信息，请参阅[创建附属程序集](~/docs/framework/resources/creating-satellite-assemblies-for-desktop-apps.md)主题的 "不在全局程序集缓存中安装附属程序集的目录位置" 部分。  
+  
+ 若要运行此示例：  
+  
+1.  在应用目录中，创建一个名为 rmc 的文件，其中包含以下资源字符串：  
+  
+    ```  
+  
+    day=Friday  
+    year=2006  
+    holiday="Cinco de Mayo"  
+  
+    ```  
+  
+2.  使用[资源文件生成器](~/docs/framework/tools/resgen-exe-resource-file-generator.md)，按如下所示从 rmc 输入文件生成 rmc 资源文件：  
+  
+    ```  
+    resgen rmc.txt  
+    ```  
+  
+3.  创建应用程序目录的子目录，并将其命名为 "es-MX"。 这是将在接下来的三个步骤中创建的附属程序集的区域性名称。  
+  
+4.  在包含以下资源字符串的 rmc.es 目录中创建一个名为-MX 的文件：  
+  
+    ```  
+  
+    day=Viernes  
+    year=2006  
+    holiday="Cinco de Mayo"  
+  
+    ```  
+  
+5.  使用[资源文件生成器](~/docs/framework/tools/resgen-exe-resource-file-generator.md)生成 rmc.es-mx 输入文件中的 rmc.es 资源文件，如下所示：  
+  
+    ```  
+    resgen rmc.es-MX.txt  
+    ```  
+  
+6.  假设此示例的文件名为 rmc 或 rmc.cs。 将以下源代码复制到一个文件中。 然后对其进行编译，并在可执行程序集中嵌入主程序集资源文件 rmc。 如果使用 Visual Basic 编译器，则语法为：  
+  
+    ```  
+    vbc rmc.vb /resource:rmc.resources  
+    ```  
+  
+     C#编译器的相应语法为：  
+  
+    ```  
+    csc /resource:rmc.resources rmc.cs  
+    ```  
+  
+7.  使用[程序集链接器](~/docs/framework/tools/al-exe-assembly-linker.md)创建附属程序集。 如果应用的基名称是 rmc，则附属程序集名称必须为 rmc。 应在 es MX 目录中创建附属程序集。 如果是当前目录，请使用以下命令：  
+  
+    ```  
+    al /embed:rmc.es-MX.resources /c:es-MX /out:rmc.resources.dll   
+    ```  
+  
+8.  运行 rmc 以获取并显示嵌入的资源字符串。  
+  
+ [!code-csharp[ResourceManager_Class#1](~/samples/snippets/csharp/VS_Snippets_CLR/ResourceManager_Class/cs/rmc.cs#1)]
+ [!code-vb[ResourceManager_Class#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/ResourceManager_Class/vb/rmc.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <threadsafe>此类型是线程安全的。</threadsafe>
+    <altmember cref="T:System.Globalization.CultureInfo" />
+    <altmember cref="P:System.Globalization.CultureInfo.CurrentUICulture" />
+    <altmember cref="T:System.Resources.SatelliteContractVersionAttribute" />
+    <related type="Article" href="https://msdn.microsoft.com/library/8ad495d4-2941-40cf-bf64-e82e85825890">应用程序中的资源</related>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Resources.ResourceManager" /> 类的新实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ResourceManager ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; ResourceManager();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>使用默认值初始化 <see cref="T:System.Resources.ResourceManager" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 仅当您编写自己的派生自<xref:System.Resources.ResourceManager>类的类时，此构造函数才有用。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ResourceManager (Type resourceSource);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type resourceSource) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.#ctor(System.Type)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (resourceSource As Type)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; ResourceManager(Type ^ resourceSource);" />
+      <MemberSignature Language="F#" Value="new System.Resources.ResourceManager : Type -&gt; System.Resources.ResourceManager" Usage="new System.Resources.ResourceManager resourceSource" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="resourceSource" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="resourceSource">一个类型，从资源管理器中派生所有用于查找 .resources 文件的信息。</param>
+        <summary>它根据指定的对象中的信息在附属程序集内查找资源来初始化 <see cref="T:System.Resources.ResourceManager" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+## <a name="desktop-apps"></a>桌面应用  
+ 在桌面应用中，资源管理器使用`resourceSource`参数加载特定的资源文件，如下所示：  
+  
+-   如果未使用特性指示默认区域性的资源位于附属程序集中，则资源管理器将假定在与指定的类型相同的程序集中找到默认区域性的资源文件。 <xref:System.Resources.NeutralResourcesLanguageAttribute> `resourceSource`参数。  
+  
+-   资源管理器假定默认资源文件的基名称与`resourceSource`参数指定的类型相同。  
+  
+-   资源管理器使用默认<xref:System.Resources.ResourceSet>类处理资源文件。  
+  
+ 例如，假设有一个名为 MyCompany. MyProduct 的类型，则资源管理器会在定义 MyProduct 的程序集内查找名为 MyCompany. MyType. MyType..。  
+  
+ 在 Visual Studio 中，资源设计器会自动生成代码， `internal`该代码C#定义了`Friend` （在中）或（在 Visual Basic）类，其名称与默认区域性的 .resources 文件的基名称相同。 这样一来，就可以通过<xref:System.Resources.ResourceManager>获取名称与资源名称对应的类型对象来实例化对象并将其与特定的一组资源相结合，因为只要类对编译器可见，资源就必须为这样. 例如，如果 .resources 文件命名为 resource1.resx，则以下语句将实例化一个<xref:System.Resources.ResourceManager>对象来管理名为 resource1.resx 的 .resources 文件：  
+  
+ [!code-csharp[System.Resources.ResourceManager.ctor#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.ctor/cs/ctor1.cs#2)]  
+  
+ 如果未使用 Visual Studio，则可以创建一个类，其中没有命名空间和名称与默认 .resources 文件相同的成员。 说明如示例所示。  
+  
+## <a name="includewin8_appname_longincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
+  
+> [!IMPORTANT]
+>  尽管此<xref:System.Resources.ResourceManager>类在应用中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]受支持，但我们不建议使用它。 仅当你开发[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]用于应用程序的项目时，才使用此类。 若要从[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中检索资源，请改用[windows.applicationmodel.resources.core. windows.applicationmodel.resources.resourceloader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
+  
+ 在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序<xref:System.Resources.ResourceManager>中， `resourceSource`使用参数来推断程序集、基名称和命名空间，其中的资源项可位于应用的包资源索引（PRI）文件中。 例如，如果在中`MyAssembly`定义了一个名为 MyCompany. MyProduct. MyType 的类型，则资源管理器将查找名为 MyAssembly 的资源集标识符，并在该资源集内查找作用域 MyCompany. MyProduct。 资源管理器在此范围内搜索默认上下文（当前区域性、当前高对比度设置等）下的资源项。  
+  
+   
+  
+## Examples  
+ 下面的示例使用<xref:System.Resources.ResourceManager.%23ctor%28System.Type%29>构造函数<xref:System.Resources.ResourceManager>实例化对象。 它包含从 .txt 文件中编译的、英语（en）、法语（法国）（fr）和俄语（俄罗斯）（ru）区域性的资源。 该示例将当前区域性和当前 UI 区域性更改为英语（美国）、法语（法国）、俄语（俄罗斯）和瑞典语（瑞典）。 然后，它会<xref:System.Resources.ResourceManager.GetString%28System.String%29>调用方法来检索已本地化的字符串，该字符串将显示依赖于当天的时间的问候语。  
+  
+ 该示例需要三个基于文本的资源文件，如下表所示。 每个文件都包含名`Morning`为`Afternoon`、和`Evening`的字符串资源。  
+  
+|culture|文件名|资源名称|资源值|  
+|-------------|---------------|-------------------|--------------------|  
+|en-US|Greetingresources.resources .txt|`Morning`|早上好|  
+|en-US|Greetingresources.resources .txt|`Afternoon`|下午好|  
+|en-US|Greetingresources.resources .txt|`Evening`|晚上好|  
+|fr-FR|GreetingResources.fr-FR.TXT|`Morning`|Bonjour|  
+|fr-FR|GreetingResources.fr-FR.TXT|`Afternoon`|Bonjour|  
+|fr-FR|GreetingResources.fr-FR.TXT|`Evening`|Bonsoir|  
+|ru-RU|GreetingResources.ru-RU.TXT|`Morning`|Доброе утро|  
+|ru-RU|GreetingResources.ru-RU.TXT|`Afternoon`|Добрый день|  
+|ru-RU|GreetingResources.ru-RU.TXT|`Evening`|Добрый вечер|  
+  
+ 您可以使用以下批处理文件编译 Visual Basic 示例并创建一个名为 Fibonacci 的可执行文件。 若要用C#编译，请将编译器的`vbc`名称`csc`从更改为，并`.vb`将`.cs`文件扩展名从更改为。  
+  
+```  
+  
+resgen GreetingResources.txt  
+vbc Greet.vb /resource: GreetingResources.resources  
+  
+md fr-FR  
+resgen GreetingResources.fr-FR.txt  
+al /out:fr-FR\Greet.resources.dll /culture:fr-FR /embed: GreetingResources.fr-FR.resources   
+  
+md ru-RU  
+resgen GreetingResources.ru-RU.txt  
+al /out:ru-RU\Greet.resources.dll /culture:ru-RU /embed: GreetingResources.ru-RU.resources  
+  
+```  
+  
+ 下面是示例的源代码（适用于 Visual Basic 版本的 ShowDate 或代码C#版本的 ShowDate.cs）。  
+  
+ [!code-csharp[System.Resources.ResourceManager.Ctor#3](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.ctor/cs/greet.cs#3)]
+ [!code-vb[System.Resources.ResourceManager.Ctor#3](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.ctor/vb/greet.vb#3)]  
+  
+ 除了定义名为`Example`的应用类之外，源代码还定义了一个内部类，其`GreetingResources`名称与资源文件的基名称相同。 这样就可以通过<xref:System.Resources.ResourceManager> <xref:System.Resources.ResourceManager.%23ctor%28System.Type%29>调用构造函数来成功地实例化对象。  
+  
+ 请注意，输出会显示相应的本地化字符串，除非当前 UI 区域性为瑞典语（瑞典），在这种情况下，它使用英语资源。 由于瑞典语的资源不可用，因此应用程序将使用由<xref:System.Resources.NeutralResourcesLanguageAttribute>特性定义的默认区域性的资源。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="resourceSource" /> 参数为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ResourceManager (string baseName, System.Reflection.Assembly assembly);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string baseName, class System.Reflection.Assembly assembly) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.#ctor(System.String,System.Reflection.Assembly)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; ResourceManager(System::String ^ baseName, System::Reflection::Assembly ^ assembly);" />
+      <MemberSignature Language="F#" Value="new System.Resources.ResourceManager : string * System.Reflection.Assembly -&gt; System.Resources.ResourceManager" Usage="new System.Resources.ResourceManager (baseName, assembly)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="baseName" Type="System.String" />
+        <Parameter Name="assembly" Type="System.Reflection.Assembly" />
+      </Parameters>
+      <Docs>
+        <param name="baseName">资源文件的根名称，没有其扩展名但是包含所有完全限定的命名空间名称。 例如，名为 MyApplication.MyResource.en-US.resources 的资源文件的根名称为 MyApplication.MyResource。</param>
+        <param name="assembly">资源的主程序集。</param>
+        <summary>初始化 <see cref="T:System.Resources.ResourceManager" /> 类的新实例，该实例在给定的程序集中查找从指定根名称导出的文件中包含的资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+## <a name="desktop-apps"></a>桌面应用  
+ 在桌面应用中，每个特定于区域性的资源文件应包含在附属程序集中，并且默认区域性的资源文件应包含在主程序集中。 假设附属程序集包含该程序集清单中指定的单个区域性的资源，并在必要时进行加载。  
+  
+> [!NOTE]
+>  若要直接从 .resources 文件检索资源而不是从程序集检索资源，则必须<xref:System.Resources.ResourceManager.CreateFileBasedResourceManager%2A>改为调用方法来<xref:System.Resources.ResourceManager>实例化对象。  
+  
+ 如果在中`assembly`找不到`baseName`标识的资源文件<xref:System.Resources.ResourceManager> ，则该方法将实例化对象，但检索特定资源的尝试通常<xref:System.Resources.MissingManifestResourceException>会引发异常。 有关诊断引发异常的原因的信息，请参阅<xref:System.Resources.ResourceManager>类主题中的 "处理 MissingManifestResourceException 异常" 一节。  
+  
+## <a name="includewin8_appname_longincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
+  
+> [!IMPORTANT]
+>  尽管此<xref:System.Resources.ResourceManager>类在应用中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]受支持，但我们不建议使用它。 仅当你开发[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]用于应用程序的项目时，才使用此类。 若要从[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中检索资源，请改用[windows.applicationmodel.resources.core. windows.applicationmodel.resources.resourceloader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
+  
+ 在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序中，资源管理器使用`assembly`参数的简单名称在应用的包资源索引（PRI）文件中查找匹配的资源集。 `baseName`参数用于查找资源集内的资源项。 例如，PortableLibrary1.Resource1.de 的根名称为 PortableLibrary1. Resource1.resx。  
+  
+   
+  
+## Examples  
+ 下面的示例使用简单的非本地化 "Hello World" 应用程序来说明<xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29>构造函数。 下面显示了一个名为 ExampleResources 的文本文件的内容。 在编译应用程序时，会将资源嵌入主应用程序集中。  
+  
+```  
+Greeting=Hello  
+```  
+  
+ 在命令提示符下，可以使用[资源文件生成器（resgen.exe）](~/docs/framework/tools/resgen-exe-resource-file-generator.md)将文本文件转换为二进制资源文件，如下所示：  
+  
+```  
+resgen ExampleResources.txt  
+```  
+  
+ 下面的示例提供了实例化<xref:System.Resources.ResourceManager>对象的可执行代码，并提示用户输入名称并显示问候语。  
+  
+ [!code-csharp[System.Resources.ResourceManager.ctor#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.ctor/cs/example.cs#1)]
+ [!code-vb[System.Resources.ResourceManager.ctor#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.ctor/vb/example.vb#1)]  
+  
+ 可以在 Visual Basic 中使用以下命令编译该方法：  
+  
+```  
+vbc Example.vb /resource:ExampleResources.resources  
+```  
+  
+ 或使用中C#的以下命令：  
+  
+```  
+csc Example.cs /resource:ExampleResources.resources  
+```  
+  
+ 请注意，该示例通过将该程序集中定义的类型传递给`typeof`函数（在中C#）或`GetType`函数（在 Visual Basic 中）并检索其<xref:System.Type.Assembly%2A?displayProperty=nameWithType>属性。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="baseName" /> 或 <paramref name="assembly" /> 参数为 <see langword="null" />。</exception>
+        <block subset="none" type="overrides"><para>此构造函数使用系统提供<see cref="T:System.Resources.ResourceSet" />的实现。 若要使用自定义资源文件<see cref="T:System.Resources.ResourceSet" />格式，应从类派生， <see cref="M:System.Resources.ResourceSet.GetDefaultReader" />重写和<see cref="M:System.Resources.ResourceSet.GetDefaultWriter" /> <see cref="M:System.Resources.ResourceManager.#ctor(System.String,System.Reflection.Assembly,System.Type)" />方法，然后将该类型传递给构造函数。 使用自定义<see cref="T:System.Resources.ResourceSet" />对于控制资源缓存策略或支持您自己的资源文件格式非常有用，但通常不是必需的。</para></block>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ResourceManager (string baseName, System.Reflection.Assembly assembly, Type usingResourceSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string baseName, class System.Reflection.Assembly assembly, class System.Type usingResourceSet) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.#ctor(System.String,System.Reflection.Assembly,System.Type)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; ResourceManager(System::String ^ baseName, System::Reflection::Assembly ^ assembly, Type ^ usingResourceSet);" />
+      <MemberSignature Language="F#" Value="new System.Resources.ResourceManager : string * System.Reflection.Assembly * Type -&gt; System.Resources.ResourceManager" Usage="new System.Resources.ResourceManager (baseName, assembly, usingResourceSet)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="baseName" Type="System.String" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="assembly" Type="System.Reflection.Assembly" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="usingResourceSet" Type="System.Type" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="baseName">资源文件的根名称，没有其扩展名但是包含所有完全限定的命名空间名称。 例如，名为 MyApplication.MyResource.en-US.resources 的资源文件的根名称为 MyApplication.MyResource。</param>
+        <param name="assembly">资源的主程序集。</param>
+        <param name="usingResourceSet">要使用的自定义 <see cref="T:System.Resources.ResourceSet" /> 的类型。 如果为 <see langword="null" />，则使用默认的运行时 <see cref="T:System.Resources.ResourceSet" /> 对象。</param>
+        <summary>初始化使用指定 <see cref="T:System.Resources.ResourceManager" /> 的 <see cref="T:System.Resources.ResourceSet" /> 类的新实例，该实例在给定的程序集中的指定根名称类的文件中查找资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 单个区域性特定的资源文件应包含在附属程序集中，并且默认区域性的资源文件应包含在主程序集中。 假设附属程序集包含该程序集清单中指定的单个区域性的资源，并在必要时进行加载。  
+  
+> [!NOTE]
+>  若要直接从 .resources 文件检索资源而不是从程序集检索资源，则必须<xref:System.Resources.ResourceManager.CreateFileBasedResourceManager%2A>改为调用方法来<xref:System.Resources.ResourceManager>实例化对象。  
+  
+ 如果在中`assembly`找不到`baseName`标识的资源文件<xref:System.Resources.ResourceManager> ，则该方法将实例化对象，但检索特定资源的尝试通常<xref:System.Resources.MissingManifestResourceException>会引发异常。 有关诊断引发异常的原因的信息，请参阅<xref:System.Resources.ResourceManager>类主题中的 "处理 MissingManifestResourceException 异常" 一节。  
+  
+> [!NOTE]
+>  参数用于支持您自己的资源格式，通常为 `null` 。  `usingResourceSet` 这不同于只采用的<xref:System.Type>构造函数。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="usingResourceset" /> 不是 <see cref="T:System.Resources.ResourceSet" /> 的派生类。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="baseName" /> 或 <paramref name="assembly" /> 参数为 <see langword="null" />。</exception>
+        <block subset="none" type="usage"><para>此构造函数允许指定<see cref="T:System.Resources.ResourceSet" />实现。 如果你<see cref="T:System.Resources.ResourceSet" />不想使用特定的实现，但想要使用自定义资源文件格式，则应该<see cref="T:System.Resources.ResourceSet" />从类派生，重写<see cref="M:System.Resources.ResourceSet.GetDefaultReader" />和<see cref="M:System.Resources.ResourceSet.GetDefaultWriter" />方法，然后将该类型传递给此构造函数。</para></block>
+      </Docs>
+    </Member>
+    <Member MemberName="BaseName">
+      <MemberSignature Language="C#" Value="public virtual string BaseName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string BaseName" />
+      <MemberSignature Language="DocId" Value="P:System.Resources.ResourceManager.BaseName" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable ReadOnly Property BaseName As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::String ^ BaseName { System::String ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.BaseName : string" Usage="System.Resources.ResourceManager.BaseName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 <see cref="T:System.Resources.ResourceManager" /> 从其中搜索资源的资源文件的根名称。</summary>
+        <value><see cref="T:System.Resources.ResourceManager" /> 从其中搜索资源的资源文件的根名称。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Resources.ResourceManager.BaseName%2A>属性反映了资源文件的完全限定的命名空间名称和根资源名称，没有其区域性或文件扩展名。 例如，如果应用的默认资源文件命名`SampleApps.StringResources.resources`为，则<xref:System.Resources.ResourceManager.BaseName%2A>属性的值为 "SampleApps. stringresources.resources"。 如果应用的默认资源文件已命名`SampleApps.StringResources.en-US.resources`并且嵌入到附属程序集中，则该<xref:System.Resources.ResourceManager.BaseName%2A>属性的值仍为 "SampleApps. stringresources.resources"。  
+  
+> [!IMPORTANT]
+>  从<xref:System.Resources.ResourceManager.BaseName%2A>命令行编译和嵌入的资源文件的属性值不包含命名空间名称，除非在编译文件时显式包含一个命名空间名称。 另一方面，在 Visual Studio 环境<xref:System.Resources.ResourceManager.BaseName%2A>中编译和嵌入的资源文件的属性值通常包括默认的命名空间名称。  
+  
+ 在实例化实例时， <xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29> <xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%2CSystem.Type%29> <xref:System.Resources.ResourceManager.BaseName%2A> <xref:System.Resources.ResourceManager>属性值与传递给或构造函数的字符串相同。  
+  
+   
+  
+## Examples  
+ 可以通过编译并运行以下实用工具来确定嵌入 .resources 文件的名称。 这是一个控制台应用，它接受主程序集或附属程序集的名称作为命令行参数。 它显示应作为`baseName` <xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29>或<xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%2CSystem.Type%29>构造函数的参数提供的字符串，以便资源管理器可以正确地识别资源。  
+  
+ [!code-csharp[System.Resources.ResourceManager.Class#4](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.class/cs/resourcenames.cs#4)]
+ [!code-vb[System.Resources.ResourceManager.Class#4](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.class/vb/resourcenames.vb#4)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BaseNameField">
+      <MemberSignature Language="C#" Value="protected string BaseNameField;" />
+      <MemberSignature Language="ILAsm" Value=".field family string BaseNameField" />
+      <MemberSignature Language="DocId" Value="F:System.Resources.ResourceManager.BaseNameField" />
+      <MemberSignature Language="VB.NET" Value="Protected BaseNameField As String " />
+      <MemberSignature Language="C++ CLI" Value="protected: System::String ^ BaseNameField;" />
+      <MemberSignature Language="F#" Value="val mutable BaseNameField : string" Usage="System.Resources.ResourceManager.BaseNameField" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>指定 <see cref="T:System.Resources.ResourceManager" /> 在其中搜索资源的资源文件的根名称。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 仅<xref:System.Resources.ResourceManager.BaseNameField>当您编写自己的派生<xref:System.Resources.ResourceManager>自类的类时，此字段才有用。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFileBasedResourceManager">
+      <MemberSignature Language="C#" Value="public static System.Resources.ResourceManager CreateFileBasedResourceManager (string baseName, string resourceDir, Type usingResourceSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Resources.ResourceManager CreateFileBasedResourceManager(string baseName, string resourceDir, class System.Type usingResourceSet) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.CreateFileBasedResourceManager(System.String,System.String,System.Type)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function CreateFileBasedResourceManager (baseName As String, resourceDir As String, usingResourceSet As Type) As ResourceManager" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Resources::ResourceManager ^ CreateFileBasedResourceManager(System::String ^ baseName, System::String ^ resourceDir, Type ^ usingResourceSet);" />
+      <MemberSignature Language="F#" Value="static member CreateFileBasedResourceManager : string * string * Type -&gt; System.Resources.ResourceManager" Usage="System.Resources.ResourceManager.CreateFileBasedResourceManager (baseName, resourceDir, usingResourceSet)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Resources.ResourceManager</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="baseName" Type="System.String" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="resourceDir" Type="System.String" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="usingResourceSet" Type="System.Type" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="baseName">资源的根名称。 例如，名为“MyResource.en-US.resources”的资源文件的根名称为“MyResource”。</param>
+        <param name="resourceDir">要在其中搜索资源的目录的名称。 <paramref name="resourceDir" /> 可以是绝对路径或应用程序目录中的相对路径。</param>
+        <param name="usingResourceSet">要使用的自定义 <see cref="T:System.Resources.ResourceSet" /> 的类型。 如果为 <see langword="null" />，则使用默认的运行时 <see cref="T:System.Resources.ResourceSet" /> 对象。</param>
+        <summary>返回一个 <see cref="T:System.Resources.ResourceManager" /> 对象，它在特定的目录中而不在资源的程序集清单。</summary>
+        <returns>搜索指定目录而不是资源的程序集清单的资源管理器的新实例。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法返回一个资源管理器，该管理器从未嵌入到程序集的 .resources 文件中检索资源。 您可以使用此<xref:System.Resources.ResourceManager>对象加载 ASP.NET 页的资源或<xref:System.Resources.ResourceSet>测试实现。  有关从独立 .resources 文件检索资源的示例，请参阅[检索资源](~/docs/framework/resources/retrieving-resources-in-desktop-apps.md)一文。  
+  
+ 此方法允许您指定<xref:System.Resources.ResourceSet>实现。 如果<xref:System.Resources.ResourceSet>不需要特定的实现，但想要使用自定义资源文件格式，应<xref:System.Resources.ResourceSet>从类派生，重写<xref:System.Resources.ResourceSet.GetDefaultReader%2A>和<xref:System.Resources.ResourceSet.GetDefaultWriter%2A>方法，并将该类型传递给此构造函数。  
+  
+> [!CAUTION]
+>  使用 ASP.NET 应用程序中的独立 .resources 文件将中断 XCOPY 部署，因为在<xref:System.Resources.ResourceManager.ReleaseAllResources%2A>方法显式释放资源之前，这些资源将一直保持锁定状态。 如果要将资源与 ASP.NET 应用程序一起部署，请将 .resources 文件编译为附属程序集。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="baseName" /> 或 <paramref name="resourceDir" /> 参数为 <see langword="null" />。</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="FallbackLocation">
+      <MemberSignature Language="C#" Value="protected System.Resources.UltimateResourceFallbackLocation FallbackLocation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Resources.UltimateResourceFallbackLocation FallbackLocation" />
+      <MemberSignature Language="DocId" Value="P:System.Resources.ResourceManager.FallbackLocation" />
+      <MemberSignature Language="VB.NET" Value="Protected Property FallbackLocation As UltimateResourceFallbackLocation" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; property System::Resources::UltimateResourceFallbackLocation FallbackLocation { System::Resources::UltimateResourceFallbackLocation get(); void set(System::Resources::UltimateResourceFallbackLocation value); };" />
+      <MemberSignature Language="F#" Value="member this.FallbackLocation : System.Resources.UltimateResourceFallbackLocation with get, set" Usage="System.Resources.ResourceManager.FallbackLocation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Resources.UltimateResourceFallbackLocation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置检索默认回退资源的位置。</summary>
+        <value>指定资源管理器能查找回退资源的位置的某个枚举值。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 仅<xref:System.Resources.ResourceManager.FallbackLocation%2A>当您编写自己的派生<xref:System.Resources.ResourceManager>自类的类时，属性才有用。  
+  
+ 您可以使用<xref:System.Resources.NeutralResourcesLanguageAttribute>属性来通知资源管理器查找应用程序的默认区域性的位置：在主程序集（默认）中或在附属程序集中。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Resources.UltimateResourceFallbackLocation" />
+        <altmember cref="T:System.Resources.NeutralResourcesLanguageAttribute" />
+        <related type="Article" href="~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md">打包和部署资源</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetNeutralResourcesLanguage">
+      <MemberSignature Language="C#" Value="protected static System.Globalization.CultureInfo GetNeutralResourcesLanguage (System.Reflection.Assembly a);" />
+      <MemberSignature Language="ILAsm" Value=".method familystatic hidebysig class System.Globalization.CultureInfo GetNeutralResourcesLanguage(class System.Reflection.Assembly a) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.GetNeutralResourcesLanguage(System.Reflection.Assembly)" />
+      <MemberSignature Language="VB.NET" Value="Protected Shared Function GetNeutralResourcesLanguage (a As Assembly) As CultureInfo" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; static System::Globalization::CultureInfo ^ GetNeutralResourcesLanguage(System::Reflection::Assembly ^ a);" />
+      <MemberSignature Language="F#" Value="static member GetNeutralResourcesLanguage : System.Reflection.Assembly -&gt; System.Globalization.CultureInfo" Usage="System.Resources.ResourceManager.GetNeutralResourcesLanguage a" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CultureInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Reflection.Assembly" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="a">要返回其的区域性特定的信息的程序集。</param>
+        <summary>通过检索指定程序及上的 <see cref="T:System.Resources.NeutralResourcesLanguageAttribute" /> 特性为主程序集的默认资源返回区域性特定的信息。</summary>
+        <returns>如果找到的话，则为 <see cref="T:System.Resources.NeutralResourcesLanguageAttribute" /> 中的特性；否则为固定区域性性。</returns>
+        <remarks>To be added.</remarks>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联的枚举<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />：。</permission>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="GetObject">
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>返回为当前区域性的指定非字符串资源的值。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="GetObject">
+      <MemberSignature Language="C#" Value="public virtual object GetObject (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetObject(string name) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.GetObject(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetObject (name As String) As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Object ^ GetObject(System::String ^ name);" />
+      <MemberSignature Language="F#" Value="abstract member GetObject : string -&gt; obj&#xA;override this.GetObject : string -&gt; obj" Usage="resourceManager.GetObject name" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="name">要获取的资源名。</param>
+        <summary>返回指定的非字符串资源的值。</summary>
+        <returns>针对调用方的当前区域性设置而本地化的资源的值。 如果相应的资源集存在，但无法找到 <paramref name="name" />，该方法返回 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Resources.ResourceManager.GetObject%2A>方法用于检索非字符串资源。 其中包括属于基元数据类型<xref:System.Int32> （例如或<xref:System.Double>）、 <xref:System.Drawing.Bitmap?displayProperty=nameWithType>位图（如对象）或自定义序列化对象的值。 通常情况下，必须将返回的对象强制C#转换（在中）或转换（Visual Basic）为适当类型的对象。  
+  
+ 返回的资源针对当前线程的 UI 区域性进行了本地化，后者由<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性定义。 如果没有为此区域性本地化该资源，资源管理器将使用回退规则加载相应的资源。 如果未找到可用的本地化资源集，则<xref:System.Resources.ResourceManager>回退到默认区域性的资源。 如果找不到默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
+  
+ 属性确定`name`与资源名称的比较是否不区分大小写或是否区分大小写（默认值）。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
+  
+> [!CAUTION]
+>  此方法可能会引发比列出的更多异常。 出现这种情况的原因之一是，此方法调用的方法会引发异常。  例如， <xref:System.IO.FileLoadException>如果在部署或安装附属程序集时出错，则可能会引发异常; 如果在反<xref:System.Runtime.Serialization.SerializationException>序列化类型时用户定义的类型引发用户定义的异常，则可能引发异常。  
+  
+## <a name="performance-considerations"></a>性能注意事项  
+ 如果使用同一个<xref:System.Resources.ResourceManager.GetObject%2A> `name`参数多次调用方法，则不依赖于每次调用返回对同一对象的引用的方法。 这是因为<xref:System.Resources.ResourceManager.GetObject%2A>方法可以返回对缓存中现有资源对象的引用，也可以重新加载资源并返回对新资源对象的引用。  
+  
+   
+  
+## Examples  
+ 下面的示例使用 <xref:System.Resources.ResourceManager.GetObject%28System.String%29> 方法反序列化一个自定义对象。 该示例包含一个名为 UIElements.cs （UIElements）的源代码文件，如果使用 Visual Basic）来定义以下名为`PersonTable`的结构。 此结构应由显示表列的本地化名称的常规表显示例程使用。 请注意， `PersonTable` 结构标有 <xref:System.SerializableAttribute> 属性。  
+  
+ [!code-csharp[Conceptual.Resources.Retrieving#6](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/example.cs#6)]
+ [!code-vb[Conceptual.Resources.Retrieving#6](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/example.vb#6)]  
+  
+ 下面的代码来自名为 CreateResources.cs（对于 Visual Basic 则为 CreateResources.vb）的文件，该代码创建一个名为 UIResources.resx 的 XML 资源文件，该文件存储有表标题和包含已针对英语语言本地化的应用的信息的 `PersonTable` 对象。  
+  
+ [!code-csharp[Conceptual.Resources.Retrieving#7](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/example1.cs#7)]
+ [!code-vb[Conceptual.Resources.Retrieving#7](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/example.vb#7)]  
+  
+ 下面的代码位于名为 GetObject.cs (GetObject.vb) 的源代码文件中，然后检索资源并将其显示在控制台上。  
+  
+ [!code-csharp[Conceptual.Resources.Retrieving#8](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/example2.cs#8)]
+ [!code-vb[Conceptual.Resources.Retrieving#8](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/example2.vb#8)]  
+  
+ 可以生成必要的资源文件和程序集，并通过执行以下批处理文件运行该应用。 必须使用 `/r` 选项提供具有对 UIElements.dll 的引用的 Resgen.exe，以便其能够访问有关 `PersonTable` 结构的信息。 如果使用 C#，请将 `vbc` 编译器名称替换为 `csc`，并将 `.vb` 扩展名替换为 `.cs`。  
+  
+```  
+  
+vbc /t:library UIElements.vb  
+vbc CreateResources.vb /r:UIElements.dll  
+CreateResources  
+  
+resgen UIResources.resx  /r:UIElements.dll  
+vbc GetObject.vb /r:UIElements.dll /resource:UIResources.resources  
+  
+GetObject.exe  
+  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的本地资源集，并且没有默认区域性资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <altmember cref="M:System.Resources.ResourceManager.GetStream(System.String)" />
+        <related type="Article" href="~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md">打包和部署资源</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetObject">
+      <MemberSignature Language="C#" Value="public virtual object GetObject (string name, System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetObject(string name, class System.Globalization.CultureInfo culture) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.GetObject(System.String,System.Globalization.CultureInfo)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetObject (name As String, culture As CultureInfo) As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Object ^ GetObject(System::String ^ name, System::Globalization::CultureInfo ^ culture);" />
+      <MemberSignature Language="F#" Value="abstract member GetObject : string * System.Globalization.CultureInfo -&gt; obj&#xA;override this.GetObject : string * System.Globalization.CultureInfo -&gt; obj" Usage="resourceManager.GetObject (name, culture)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="name">要获取的资源名。</param>
+        <param name="culture">要针对其本地化资源的区域性。 如果资源未本地化为此区域性，则资源管理器使用回退规则找到适当的资源。  
+  
+如果此值为 <see langword="null" />，则 <see cref="T:System.Globalization.CultureInfo" /> 对象使用 <see cref="P:System.Globalization.CultureInfo.CurrentUICulture" /> 属性来获取。</param>
+        <summary>获取为指定区域性本地化的指定非字符串资源的值。</summary>
+        <returns>为指定区域性本地化的资源的值。 如果相应的资源集存在，但无法找到 <paramref name="name" />，该方法返回 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29>方法用于检索非字符串资源。 其中包括属于基元数据类型<xref:System.Int32> （例如或<xref:System.Double>）、 <xref:System.Drawing.Bitmap?displayProperty=nameWithType>位图（如对象）或自定义序列化对象的值。 通常情况下，必须将返回的对象强制C#转换（在中）或转换（Visual Basic）为适当类型的对象。  
+  
+ 返回的资源`culture`针对指定的区域性进行了本地化; 如果`culture`为`null`，则为<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性所指定的区域性。 如果没有为此区域性本地化该资源，资源管理器将使用回退规则加载相应的资源。 如果未找到可用的本地化资源集，资源管理器将回退到默认区域性的资源。 如果找不到默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
+  
+ 属性确定`name`与资源名称的比较是否不区分大小写（默认值）或区分大小写。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
+  
+> [!CAUTION]
+>  此方法可能会引发比列出的更多异常。 出现这种情况的原因之一是，此方法调用的方法会引发异常。  例如， <xref:System.IO.FileLoadException>如果在部署或安装附属程序集时出错，则可能会引发异常; 如果在反<xref:System.Runtime.Serialization.SerializationException>序列化类型时用户定义的类型引发用户定义的异常，则可能引发异常。  
+  
+## <a name="performance-considerations"></a>性能注意事项  
+ 如果使用同一个<xref:System.Resources.ResourceManager.GetObject%2A> `name`参数多次调用方法，则不依赖于每次调用返回对同一对象的引用的方法。 这是因为<xref:System.Resources.ResourceManager.GetObject%2A>方法可以返回对缓存中现有资源对象的引用，也可以重新加载资源并返回对新资源对象的引用。  
+  
+   
+  
+## Examples  
+ 下面的示例使用 <xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29> 方法反序列化一个自定义对象。 该示例包含一个名为 NumberInfo.cs （NumberInfo）的源代码文件，如果使用 Visual Basic）来定义以下名为`Numbers`的结构。 此结构旨在供简单的教育应用程序使用，此应用程序讲授非英语的学生，使其以英语计算为10。 请注意， `Numbers`类是<xref:System.SerializableAttribute>用特性标记的。  
+  
+ [!code-csharp[System.Resources.ResourceManager.GetObject#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/cs/numberinfo.cs#1)]
+ [!code-vb[System.Resources.ResourceManager.GetObject#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/vb/numberinfo.vb#1)]  
+  
+ 以下来自名为 CreateResources.cs 的文件（用于 Visual Basic 的位于）的源代码将为默认英语语言创建 XML 资源文件，以及法语、葡萄牙语和俄语。  
+  
+ [!code-csharp[System.Resources.ResourceManager.GetObject#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/cs/createresources.cs#2)]
+ [!code-vb[System.Resources.ResourceManager.GetObject#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/vb/createresources.vb#2)]  
+  
+ 以下应用使用资源，这会将当前 UI 区域性设置为法语（法国）、葡萄牙语（巴西）或俄语（俄罗斯）。 它调用<xref:System.Resources.ResourceManager.GetObject%28System.String%29>方法来`Numbers`获取<xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29>包含本地化数字的对象，并调用方法来获取`Numbers`包含英文数字的对象。 然后，它使用当前 UI 区域性和英语显示奇数。 源代码文件的名称为 ShowNumbers.cs （ShowNumbers）。  
+  
+ [!code-csharp[System.Resources.ResourceManager.GetObject#3](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/cs/shownumbers.cs#3)]
+ [!code-vb[System.Resources.ResourceManager.GetObject#3](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/vb/shownumbers.vb#3)]  
+  
+ 您可以使用以下批处理文件生成并执行该示例的 Visual Basic 版本。 C#如果使用的是，请`vbc`将`csc`替换为，并`.vb`将扩展名`.cs`替换为。  
+  
+```  
+  
+vbc /t:library NumberInfo.vb  
+  
+vbc CreateResources.vb /r:NumberInfo.dll  
+CreateResources  
+  
+resgen NumberResources.resx /r:NumberInfo.dll  
+  
+resgen NumberResources.fr.resx /r:Numberinfo.dll  
+Md fr  
+al /embed:NumberResources.fr.resources /culture:fr /t:lib /out:fr\ShowNumbers.resources.dll  
+  
+resgen NumberResources.pt.resx  /r:Numberinfo.dll  
+Md pt  
+al /embed:NumberResources.pt.resources /culture:pt /t:lib /out:pt\ShowNumbers.resources.dll  
+  
+resgen NumberResources.ru.resx /r:Numberinfo.dll  
+Md ru  
+al /embed:NumberResources.ru.resources /culture:ru /t:lib /out:ru\ShowNumbers.resources.dll  
+  
+vbc ShowNumbers.vb /r:NumberInfo.dll /resource:NumberResources.resources  
+ShowNumbers.exe  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的资源集，并且没有默认区域性的资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联的枚举<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />：。</permission>
+        <threadsafe>方法<see cref="M:System.Resources.ResourceManager.GetObject(System.String,System.Globalization.CultureInfo)" />是线程安全的。</threadsafe>
+        <altmember cref="M:System.Resources.ResourceManager.GetStream(System.String,System.Globalization.CultureInfo)" />
+        <altmember cref="T:System.Globalization.CultureInfo" />
+        <related type="Article" href="~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md">打包和部署资源</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetResourceFileName">
+      <MemberSignature Language="C#" Value="protected virtual string GetResourceFileName (System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance string GetResourceFileName(class System.Globalization.CultureInfo culture) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.GetResourceFileName(System.Globalization.CultureInfo)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Function GetResourceFileName (culture As CultureInfo) As String" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual System::String ^ GetResourceFileName(System::Globalization::CultureInfo ^ culture);" />
+      <MemberSignature Language="F#" Value="abstract member GetResourceFileName : System.Globalization.CultureInfo -&gt; string&#xA;override this.GetResourceFileName : System.Globalization.CultureInfo -&gt; string" Usage="resourceManager.GetResourceFileName culture" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="culture">构造资源文件名的区域性对象。</param>
+        <summary>生成给定的 <see cref="T:System.Globalization.CultureInfo" /> 对象的资源文件的名称。</summary>
+        <returns>可用于给定的 <see cref="T:System.Globalization.CultureInfo" /> 对象的资源文件的名称。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 仅<xref:System.Resources.ResourceManager.GetResourceFileName%2A>当您编写自己的派生<xref:System.Resources.ResourceManager>自类的类时，方法才有用。  
+  
+ 此方法使用<xref:System.Globalization.CultureInfo.Name%2A?displayProperty=nameWithType>属性作为除固定区域性以外的所有区域性的文件名的一部分。 此方法不会在程序集的清单中查找或触摸磁盘，只用于构造资源文件名（适用于传递到<xref:System.Resources.ResourceReader>构造函数）或清单资源 blob 名称。  
+  
+ 派生类可以重写此方法，以便查找其他扩展，例如 ""。ResX "，或用于命名资源文件的完全不同的方案。 请注意，可以使用方法自定义附属程序集中的资源文件的名称，而不是自定义附属程序集本身的名称。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <altmember cref="T:System.Globalization.CultureInfo" />
+        <related type="Article" href="~/docs/standard/globalization-localization/index.md">对 .NET 应用程序进行全球化和本地化</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetResourceSet">
+      <MemberSignature Language="C#" Value="public virtual System.Resources.ResourceSet GetResourceSet (System.Globalization.CultureInfo culture, bool createIfNotExists, bool tryParents);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Resources.ResourceSet GetResourceSet(class System.Globalization.CultureInfo culture, bool createIfNotExists, bool tryParents) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.GetResourceSet(System.Globalization.CultureInfo,System.Boolean,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetResourceSet (culture As CultureInfo, createIfNotExists As Boolean, tryParents As Boolean) As ResourceSet" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Resources::ResourceSet ^ GetResourceSet(System::Globalization::CultureInfo ^ culture, bool createIfNotExists, bool tryParents);" />
+      <MemberSignature Language="F#" Value="abstract member GetResourceSet : System.Globalization.CultureInfo * bool * bool -&gt; System.Resources.ResourceSet&#xA;override this.GetResourceSet : System.Globalization.CultureInfo * bool * bool -&gt; System.Resources.ResourceSet" Usage="resourceManager.GetResourceSet (culture, createIfNotExists, tryParents)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Resources.ResourceSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="createIfNotExists" Type="System.Boolean" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="tryParents" Type="System.Boolean" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="culture">将要检索资源的区域性。</param>
+        <param name="createIfNotExists">如果尚未加载，<see langword="true" /> 要加载资源集；否则为 <see langword="false" />。</param>
+        <param name="tryParents"><see langword="true" /> 表示使用资源回退加载相应资源（如果找不到资源）；<see langword="false" /> 表示绕过资源回退进程。</param>
+        <summary>检索特定区域性的资源集合。</summary>
+        <returns>指定区域性的资源集。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 返回的资源集表示针对指定区域性进行了本地化的资源。 如果尚未为此区域性`tryParents`本地化资源， <xref:System.Resources.ResourceManager.GetResourceSet%2A>则`true`使用资源回退规则加载相应的资源。 如果`tryParents` `null`为`false` ，并且找不到特定于区域性的资源集，则该方法返回。 有关资源回退的详细信息，请参阅[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)一文中的 "资源回退进程" 一节。  
+  
+   
+  
+## Examples  
+ 下面的示例调用<xref:System.Resources.ResourceManager.GetResourceSet%2A>方法来检索法语（法国）区域性的区域性特定资源。 然后枚举资源集中的所有资源。 它包含名为 ShowNumbers 的可执行文件的源代码。 它还包括以下包含数字名称的两个文本文件。 第一种是 NumberResources，其中包含英语中一到十个数字的名称：  
+  
+```  
+  
+one=one  
+two=two  
+three=three  
+four=four  
+five=five  
+six=six  
+seven=seven  
+eight=eight  
+nine=nine  
+ten=ten  
+  
+```  
+  
+ 第二个 NumberResources.fr-FR.TXT 包含法语中的数字的名称，采用法语：  
+  
+```  
+  
+one=un  
+two=deux  
+three=trois  
+four=quatre  
+  
+```  
+  
+ 您可以使用批处理文件生成资源文件，将英语资源文件嵌入到可执行文件中，并为法语资源创建附属程序集。 下面是使用 Visual Basic 编译器生成可执行文件的批处理文件：  
+  
+```  
+  
+resgen NumberResources.txt  
+vbc shownumbers.vb /resource:NumberResources.resources  
+  
+md fr-FR  
+resgen NumberResources.fr-FR.txt  
+al /out:fr-FR\ShowNumbers.resources.dll /culture:fr-FR /embed:NumberResources.fr-FR.resources  
+```  
+  
+ 对于C#编译器，可以使用以下批处理文件：  
+  
+```  
+  
+resgen NumberResources.txt  
+csc shownumbers.cs /resource:NumberResources.resources  
+  
+md fr-FR  
+resgen NumberResources.fr-FR.txt  
+al /out:fr-FR\ShowNumbers.resources.dll /culture:fr-FR /embed:NumberResources.fr-FR.resources  
+  
+```  
+  
+ [!code-csharp[System.Resources.ResourceManager.GetResourceSet#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.getresourceset/cs/shownumbers.cs#1)]
+ [!code-vb[System.Resources.ResourceManager.GetResourceSet#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.getresourceset/vb/shownumbers.vb#1)]  
+  
+ 请注意，如果将`createIfNotExists`参数的值更改为`false`，则方法调用将返回`null`，因为资源管理器尚未加载法语资源。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="culture" /> 参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.Resources.MissingManifestResourceException"><paramref name="tryParents" /> 是 <see langword="true" />，未找到可用的资源集，并且没有默认区域性的资源。</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <altmember cref="T:System.Globalization.CultureInfo" />
+        <related type="Article" href="~/docs/standard/globalization-localization/index.md">对 .NET 应用程序进行全球化和本地化</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSatelliteContractVersion">
+      <MemberSignature Language="C#" Value="protected static Version GetSatelliteContractVersion (System.Reflection.Assembly a);" />
+      <MemberSignature Language="ILAsm" Value=".method familystatic hidebysig class System.Version GetSatelliteContractVersion(class System.Reflection.Assembly a) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.GetSatelliteContractVersion(System.Reflection.Assembly)" />
+      <MemberSignature Language="VB.NET" Value="Protected Shared Function GetSatelliteContractVersion (a As Assembly) As Version" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; static Version ^ GetSatelliteContractVersion(System::Reflection::Assembly ^ a);" />
+      <MemberSignature Language="F#" Value="static member GetSatelliteContractVersion : System.Reflection.Assembly -&gt; Version" Usage="System.Resources.ResourceManager.GetSatelliteContractVersion a" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Version</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="a" Type="System.Reflection.Assembly" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="a">要检查 <see cref="T:System.Resources.SatelliteContractVersionAttribute" /> 特性的程序集。</param>
+        <summary>返回给定程序集中的 <see cref="T:System.Resources.SatelliteContractVersionAttribute" /> 特性指定的版本。</summary>
+        <returns>给定程序集的附属版本，如果未找到任何版本，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 有关附属程序集版本控制的详细信息， <xref:System.Resources.SatelliteContractVersionAttribute>请参阅参考主题。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">在程序集 <paramref name="a" /> 找到的 <see cref="T:System.Version" /> 是无效的。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="a" /> 为 <see langword="null" />。</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <altmember cref="T:System.Resources.SatelliteContractVersionAttribute" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="GetStream">
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>从指定资源返回非托管内存流对象。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public System.IO.UnmanagedMemoryStream GetStream (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.UnmanagedMemoryStream GetStream(string name) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.GetStream(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetStream (name As String) As UnmanagedMemoryStream" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::IO::UnmanagedMemoryStream ^ GetStream(System::String ^ name);" />
+      <MemberSignature Language="F#" Value="member this.GetStream : string -&gt; System.IO.UnmanagedMemoryStream" Usage="resourceManager.GetStream name" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5">
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.UnmanagedMemoryStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="name">资源的名称。</param>
+        <summary>从指定资源返回非托管内存流对象。</summary>
+        <returns>表示资源的非托管内存流对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法采用存储<xref:System.IO.MemoryStream>为对象的资源的名称， <xref:System.Object>获取资源的值，并返回一个<xref:System.IO.UnmanagedMemoryStream>对象。 <xref:System.Resources.ResourceManager.GetStream%2A> 它要求您直接处理字节流，然后将其转换为对象。 此方法主要用于提高性能，因为以字节流而不是显式对象的形式检索资源可以提高性能。  
+  
+ 返回的资源针对当前线程的 UI 区域性进行了本地化，后者由<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性定义。 如果没有为此区域性本地化该资源，资源管理器将使用回退规则加载相应的资源。 如果未找到可用的本地化资源集，则<xref:System.Resources.ResourceManager>回退到默认区域性的资源。 如果找不到默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
+  
+ 属性确定`name`与资源名称的比较是否不区分大小写（默认值）或区分大小写。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
+  
+   
+  
+## Examples  
+ 下面的示例使用 <xref:System.Resources.ResourceManager.GetStream%28System.String%29> 方法检索应用启动初始窗口中使用的位图。 以下来自名为 CreateResources.cs （适用于C#）或位于（对于 Visual Basic）的文件的源代码将生成一个包含序列化图像的 .Resx 文件 AppResources。 在这种情况下，图片从一个名为 SplashScreen.jpg 的文件中加载；可以修改文件名以替换你自己的图像。  
+  
+ [!code-csharp[Conceptual.Resources.Retrieving#4](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/createresources.cs#4)]
+ [!code-vb[Conceptual.Resources.Retrieving#4](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/createresources.vb#4)]  
+  
+ 以下来自名为 GetStream.cs （for C#）或 system.resources.resourcemanager.getstream （对于 Visual Basic）的文件中的代码检索资源，并在<xref:System.Windows.Forms.PictureBox?displayProperty=nameWithType>控件中显示图像。  
+  
+ [!code-csharp[Conceptual.Resources.Retrieving#5](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/getstream.cs#5)]
+ [!code-vb[Conceptual.Resources.Retrieving#5](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/getstream.vb#5)]  
+  
+ 可以使用以下批处理文件生成 C# 示例。 对于 Visual Basic，将 `csc` 更改为 `vbc`，并将源代码文件的扩展名由 `.cs` 更改为 `.vb`。 
+  
+```  
+  
+csc CreateResources.cs  
+CreateResources  
+  
+resgen AppResources.resx  
+  
+csc GetStream.cs /resource:AppResources.resources  
+  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">指定资源的值不是 <see cref="T:System.IO.MemoryStream" /> 对象。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的资源集，并且没有默认资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public System.IO.UnmanagedMemoryStream GetStream (string name, System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.UnmanagedMemoryStream GetStream(string name, class System.Globalization.CultureInfo culture) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.GetStream(System.String,System.Globalization.CultureInfo)" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetStream (name As String, culture As CultureInfo) As UnmanagedMemoryStream" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::IO::UnmanagedMemoryStream ^ GetStream(System::String ^ name, System::Globalization::CultureInfo ^ culture);" />
+      <MemberSignature Language="F#" Value="member this.GetStream : string * System.Globalization.CultureInfo -&gt; System.IO.UnmanagedMemoryStream" Usage="resourceManager.GetStream (name, culture)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5">
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IO.UnmanagedMemoryStream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="name">资源的名称。</param>
+        <param name="culture">指定要用于资源查找的区域性的对象。 如果 <paramref name="culture" /> 为 <see langword="null" />，则使用当前线程的区域性。</param>
+        <summary>使用指定的区域性从指定的资源返回非托管内存流对象。</summary>
+        <returns>表示资源的非托管内存流对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法采用存储<xref:System.IO.MemoryStream>为对象的资源的名称， <xref:System.Object>获取资源的值，并返回一个<xref:System.IO.UnmanagedMemoryStream>对象。 <xref:System.Resources.ResourceManager.GetStream%2A> 它要求您直接处理字节流，然后将其转换为对象。 此方法主要用于提高性能，因为以字节流而不是显式对象的形式检索资源可以提高性能。  
+  
+ 返回的资源`culture`针对指定的区域性进行了本地化; 如果`culture`为`null`，则为<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性所指定的区域性。 如果没有为此区域性本地化该资源，资源管理器将使用回退规则加载相应的资源。 如果未找到可用的本地化资源集，则<xref:System.Resources.ResourceManager>回退到默认区域性的资源。 如果找不到默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
+  
+ 属性确定`name`与资源名称的比较是否不区分大小写（默认值）或区分大小写。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">指定资源的值不是 <see cref="T:System.IO.MemoryStream" /> 对象。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的资源集，并且没有默认资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联的枚举<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />：。</permission>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="GetString">
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>返回指定区域性或当前 UI 区域性的指定字符串资源。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="GetString">
+      <MemberSignature Language="C#" Value="public virtual string GetString (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetString(string name) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.GetString(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetString (name As String) As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::String ^ GetString(System::String ^ name);" />
+      <MemberSignature Language="F#" Value="abstract member GetString : string -&gt; string&#xA;override this.GetString : string -&gt; string" Usage="resourceManager.GetString name" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">要检索的资源的名称。</param>
+        <summary>返回指定的字符串资源的值。</summary>
+        <returns>为调用方的当前 UI 区域性本地化的资源的值，如果在资源集中找不到 <see langword="null" />，则为 <paramref name="name" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+## <a name="desktop-apps"></a>桌面应用  
+ 在桌面应用中，为当前线程的 UI 区域性本地化返回的资源，由<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性定义。 如果尚未针对该区域性对资源进行本地化，则 resource manager 会按照[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)一文中的 "资源回退进程" 一节中所述的步骤来探测资源。 如果未找到可用的本地化资源集，资源管理器将回退到默认区域性的资源。 如果资源管理器无法加载默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
+  
+ 属性确定`name`与资源名称的比较是否不区分大小写（默认值）或区分大小写。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
+  
+> [!CAUTION]
+>  此方法可能会引发比列出的更多异常。 出现这种情况的原因之一是，此方法调用的方法会引发异常。  例如， <xref:System.IO.FileLoadException>如果在部署或安装附属程序集时出错，则可能会引发异常; 如果在反<xref:System.Runtime.Serialization.SerializationException>序列化类型时用户定义的类型引发用户定义的异常，则可能引发异常。  
+  
+## <a name="includewin8_appname_longincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
+  
+> [!IMPORTANT]
+>  尽管此<xref:System.Resources.ResourceManager>类在应用中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]受支持，但我们不建议使用它。 仅当你开发[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]用于应用程序的项目时，才使用此类。 若要从[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中检索资源，请改用[windows.applicationmodel.resources.core. windows.applicationmodel.resources.resourceloader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
+  
+ 在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序中<xref:System.Resources.ResourceManager.GetString%28System.String%29> ，该方法`name`返回字符串资源的值，该资源已本地化为调用方的当前 UI 区域性设置。 区域性列表派生自操作系统的首选 UI 语言列表。 如果资源管理器不匹配`name`，则该方法`null`返回。  
+  
+   
+  
+## Examples  
+ 下面的示例使用<xref:System.Resources.ResourceManager.GetString%2A>方法检索特定于区域性的资源。 它包含从 .txt 文件中编译的、英语（en）、法语（法国）（fr）和俄语（俄罗斯）（ru）区域性的资源。 该示例将当前区域性和当前 UI 区域性更改为英语（美国）、法语（法国）、俄语（俄罗斯）和瑞典语（瑞典）。 然后，它调用<xref:System.Resources.ResourceManager.GetString%2A>方法来检索本地化字符串，该字符串与当前日期和月份一起显示。 请注意，输出将显示适当的本地化字符串，除非当前 UI 区域性为 "瑞典语（瑞典）"。 由于瑞典语资源不可用，因此应用会改用默认区域性的资源，即英语。 该示例需要下表中列出的基于文本的资源文件。 每个都有一个名为`DateStart`的字符串资源。  
+  
+|culture|文件名|资源名称|资源值|  
+|-------------|---------------|-------------------|--------------------|  
+|en-US|DateStrings .txt|`DateStart`|今天是|  
+|fr-FR|DateStrings.fr-FR.TXT|`DateStart`|Aujourd'hui，c'est le|  
+|ru-RU|DateStrings.ru-RU.TXT|`DateStart`|Сегодня|  
+  
+ 您可以使用以下批处理文件编译该C#示例。 对于 Visual Basic，将 `csc` 更改为 `vbc`，并将源代码文件的扩展名由 `.cs` 更改为 `.vb`。  
+  
+```  
+resgen DateStrings.txt  
+csc showdate.cs /resource:DateStrings.resources  
+  
+md fr-FR  
+resgen DateStrings.fr-FR.txt  
+al /out:fr-FR\Showdate.resources.dll /culture:fr-FR /embed:DateStrings.fr-FR.resources   
+  
+md ru-RU  
+resgen DateStrings.ru-RU.txt  
+al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.resources  
+```  
+  
+ 下面是此示例的源代码（适用于该C#版本的 Visual Basic 版本的 ShowDate 或 ShowDate.cs）。  
+  
+ [!code-csharp[System.Resources.ResourceManager.Class#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.class/cs/showdate.cs#2)]
+ [!code-vb[System.Resources.ResourceManager.Class#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.class/vb/showdate.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException">指定资源的值不是字符串。</exception>
+        <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的资源集，并且没有默认区域性的资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <threadsafe>方法<see cref="M:System.Resources.ResourceManager.GetString(System.String)" />是线程安全的。</threadsafe>
+        <altmember cref="T:System.Globalization.CultureInfo" />
+        <related type="Article" href="~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md">打包和部署资源</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/eca16922-1c46-4f68-aefe-e7a12283641f">检索附属程序集中的资源</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetString">
+      <MemberSignature Language="C#" Value="public virtual string GetString (string name, System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetString(string name, class System.Globalization.CultureInfo culture) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.GetString(System.String,System.Globalization.CultureInfo)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetString (name As String, culture As CultureInfo) As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::String ^ GetString(System::String ^ name, System::Globalization::CultureInfo ^ culture);" />
+      <MemberSignature Language="F#" Value="abstract member GetString : string * System.Globalization.CultureInfo -&gt; string&#xA;override this.GetString : string * System.Globalization.CultureInfo -&gt; string" Usage="resourceManager.GetString (name, culture)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
+      </Parameters>
+      <Docs>
+        <param name="name">要检索的资源的名称。</param>
+        <param name="culture">一个对象，表示为其本地化资源的区域性。</param>
+        <summary>返回为指定区域性本地化的字符串资源的值。</summary>
+        <returns>为指定区域性本地化的资源的值，如果在资源集中找不到 <paramref name="name" />，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+## <a name="desktop-apps"></a>桌面应用  
+ 在桌面应用中， `culture`如果`null`为， <xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>则方法<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>使用从属性获取的当前 UI 区域性。  
+  
+ 返回的资源针对`culture`参数所指定的区域性进行了本地化。 如果尚未为`culture`配置资源，资源管理器会按照[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)主题的 "资源回退进程" 一节中所述的步骤来探测资源。 如果未找到可用的资源集，资源管理器将回退到默认区域性的资源。 如果资源管理器无法加载默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
+  
+ 属性确定`name`与资源名称的比较是否不区分大小写（默认值）或区分大小写。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
+  
+> [!CAUTION]
+>  此方法可能会引发比列出的更多异常。 出现这种情况的原因之一是，此方法调用的方法会引发异常。  例如， <xref:System.IO.FileLoadException>如果在部署或安装附属程序集时出错，则可能会引发异常; 如果在反<xref:System.Runtime.Serialization.SerializationException>序列化类型时用户定义的类型引发用户定义的异常，则可能引发异常。  
+  
+## <a name="includewin8_appname_longincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
+  
+> [!IMPORTANT]
+>  尽管此<xref:System.Resources.ResourceManager>类在应用中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]受支持，但我们不建议使用它。 仅当你开发[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]用于应用程序的项目时，才使用此类。 若要从[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中检索资源，请改用[windows.applicationmodel.resources.core. windows.applicationmodel.resources.resourceloader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
+  
+ 在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序中<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29> ，方法`name`返回字符串资源的值`culture` ，该资源针对参数指定的区域性进行了本地化。 如果没有为`culture`区域性本地化该资源，则查找将使用整个[!INCLUDE[win8](~/includes/win8-md.md)]语言回退列表，并在查找默认区域性后停止。 如果资源管理器不匹配`name`，则该方法`null`返回。  
+  
+   
+  
+## Examples  
+ 下面的示例使用<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>方法检索特定于区域性的资源。 该示例的默认区域性为英语（en），它包括法语（法国）（fr-fr）和俄语（俄罗斯）（ru）区域性的附属程序集。 在调用<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>之前，此示例将当前区域性和当前 UI 区域性更改为俄语（俄罗斯）。 然后，它调用<xref:System.Resources.ResourceManager.GetString%2A>方法<xref:System.DateTime.ToString%28System.String%2CSystem.IFormatProvider%29?displayProperty=nameWithType>和方法，并将<xref:System.Globalization.CultureInfo>表示法语（法国）和瑞典语（瑞典）区域性的对象传递给每个方法。 在输出中，月份和月份的日期以及前面的字符串显示为法语，因为<xref:System.Resources.ResourceManager.GetString%2A>方法可以检索法语资源。 但是，当使用瑞典语（瑞典）区域性时，月份和月份中的某一天将以瑞典语显示，但其前面的字符串为英语。 这是因为资源管理器找不到本地化的瑞典语资源，因此它将返回默认英语区域性的资源。  
+  
+ 该示例需要下表中列出的基于文本的资源文件。 每个都有一个名为`DateStart`的字符串资源。  
+  
+|culture|文件名|资源名称|资源值|  
+|-------------|---------------|-------------------|--------------------|  
+|en-US|DateStrings .txt|`DateStart`|今天是|  
+|fr-FR|DateStrings.fr-FR.TXT|`DateStart`|Aujourd'hui，c'est le|  
+|ru-RU|DateStrings.ru-RU.TXT|`DateStart`|Сегодня|  
+  
+ 可以使用以下批处理文件编译 Visual Basic 示例。 若要在C#中编译`vbc` ， `csc`请将更改为，并将源代码文件的扩展名`.vb`从`.cs`更改为。  
+  
+```  
+resgen DateStrings.txt  
+vbc showdate.vb /resource:DateStrings.resources  
+  
+md fr-FR  
+resgen DateStrings.fr-FR.txt  
+al /out:fr-FR\Showdate.resources.dll /culture:fr-FR /embed:DateStrings.fr-FR.resources   
+  
+md ru-RU  
+resgen DateStrings.ru-RU.txt  
+al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.resources  
+```  
+  
+ 下面是此示例的源代码（适用于该C#版本的 Visual Basic 版本的 ShowDate 或 ShowDate.cs）。  
+  
+ [!code-csharp[System.Resources.ResourceManager.Class#3](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.class/cs/showdate2.cs#3)]
+ [!code-vb[System.Resources.ResourceManager.Class#3](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.class/vb/showdate2.vb#3)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException">指定资源的值不是字符串。</exception>
+        <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的资源集，并且没有默认区域性的资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <threadsafe>方法<see cref="M:System.Resources.ResourceManager.GetString(System.String,System.Globalization.CultureInfo)" />是线程安全的。</threadsafe>
+        <altmember cref="T:System.Globalization.CultureInfo" />
+        <related type="Article" href="~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md">打包和部署资源</related>
+      </Docs>
+    </Member>
+    <Member MemberName="HeaderVersionNumber">
+      <MemberSignature Language="C#" Value="public static readonly int HeaderVersionNumber;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 HeaderVersionNumber" />
+      <MemberSignature Language="DocId" Value="F:System.Resources.ResourceManager.HeaderVersionNumber" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly HeaderVersionNumber As Integer " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly int HeaderVersionNumber;" />
+      <MemberSignature Language="F#" Value=" staticval mutable HeaderVersionNumber : int" Usage="System.Resources.ResourceManager.HeaderVersionNumber" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>指定 <see cref="T:System.Resources.ResourceManager" /> 的当前实现可解释和产生的资源文件头的版本。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IgnoreCase">
+      <MemberSignature Language="C#" Value="public virtual bool IgnoreCase { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IgnoreCase" />
+      <MemberSignature Language="DocId" Value="P:System.Resources.ResourceManager.IgnoreCase" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Property IgnoreCase As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property bool IgnoreCase { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.IgnoreCase : bool with get, set" Usage="System.Resources.ResourceManager.IgnoreCase" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置值，该值指示资源管理器是否允许在 <see cref="M:System.Resources.ResourceManager.GetString(System.String)" /> 和 <see cref="M:System.Resources.ResourceManager.GetObject(System.String)" /> 方法中进行不区分大小写的资源查找。</summary>
+        <value>要在资源查找过程中忽略大小写，则为 <see langword="true" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果<xref:System.Resources.ResourceManager.IgnoreCase%2A>属性的值为`false`，则名称为 "resource" 的资源与名为 "resource" 的资源不等效。 如果<xref:System.Resources.ResourceManager.IgnoreCase%2A> 为 `true` ，则名称为 "resource" 的资源等效于名称为 "resource" 的资源。 但请注意，在为<xref:System.Resources.ResourceManager.IgnoreCase%2A> `true` <xref:System.Resources.ResourceManager.GetString%2A?displayProperty=nameWithType>时，和<xref:System.Resources.ResourceManager.GetObject%2A?displayProperty=nameWithType>方法使用固定区域性执行不区分大小写的字符串比较。 优点是这些方法执行的不区分大小写的字符串比较的结果在所有计算机上都是相同的，与区域性无关。 缺点是结果与所有区域性的大小写规则都不一致。  
+  
+ 例如，土耳其语字母有两个版本的字符 I：一个带有点，一个没有句点。 在土耳其语中，字符 I （Unicode 0049）被视为不同字符ı（Unicode 0131）的大写版本。 字符 i （Unicode 0069）被视为其他字符 i （Unicode 0130）的小写形式。 根据这些大小写规则，i （Unicode 0069）和 I （Unicode 0049）字符的不区分大小写的字符串比较对于区域性 "tr-TR" （土耳其语）应该失败。 但是，因为如果<xref:System.Resources.ResourceManager.IgnoreCase%2A>为，则将使用固定区域性的大小写规则进行比较，这种`true`比较将会成功。  
+  
+> [!NOTE]
+>  出于性能原因，最好始终为资源名称指定正确的大小写。 设置<xref:System.Resources.ResourceManager.IgnoreCase%2A> 为 `true` 可能会导致工作集大幅增加，并显著降低性能。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InternalGetResourceSet">
+      <MemberSignature Language="C#" Value="protected virtual System.Resources.ResourceSet InternalGetResourceSet (System.Globalization.CultureInfo culture, bool createIfNotExists, bool tryParents);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.Resources.ResourceSet InternalGetResourceSet(class System.Globalization.CultureInfo culture, bool createIfNotExists, bool tryParents) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.InternalGetResourceSet(System.Globalization.CultureInfo,System.Boolean,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Function InternalGetResourceSet (culture As CultureInfo, createIfNotExists As Boolean, tryParents As Boolean) As ResourceSet" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual System::Resources::ResourceSet ^ InternalGetResourceSet(System::Globalization::CultureInfo ^ culture, bool createIfNotExists, bool tryParents);" />
+      <MemberSignature Language="F#" Value="abstract member InternalGetResourceSet : System.Globalization.CultureInfo * bool * bool -&gt; System.Resources.ResourceSet&#xA;override this.InternalGetResourceSet : System.Globalization.CultureInfo * bool * bool -&gt; System.Resources.ResourceSet" Usage="resourceManager.InternalGetResourceSet (culture, createIfNotExists, tryParents)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Resources.ResourceSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="culture" Type="System.Globalization.CultureInfo" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="createIfNotExists" Type="System.Boolean" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="tryParents" Type="System.Boolean" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="culture">要查找的区域性对象。</param>
+        <param name="createIfNotExists">如果尚未加载，<see langword="true" /> 要加载资源集；否则为 <see langword="false" />。</param>
+        <param name="tryParents">要在无法加载资源集时检查父 <see cref="T:System.Globalization.CultureInfo" /> 对象，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>提供用于查找资源集的实现。</summary>
+        <returns>指定的资源集。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.Resources.MissingManifestResourceException">主程序集不包含 .resources 文件，但查找资源需要此文件。</exception>
+        <exception cref="T:System.ExecutionEngineException">运行时中存在内部错误。</exception>
+        <exception cref="T:System.Resources.MissingSatelliteAssemblyException">未能定位与 <paramref name="culture" /> 关联的附属程序集。</exception>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <block subset="none" type="overrides"><para>此方法完成查找资源集所需的所有工作，可以是递归和可重入的。 换言之，此方法可能会加载一个程序集，并触发<see cref="E:System.AppDomain.AssemblyLoad" />一个事件，该事件随后回调<see cref="T:System.Resources.ResourceManager" />到尚未完全初始化的对象。 若要避免额外锁定，此方法不是线程安全的。 <see cref="M:System.Resources.ResourceManager.GetResourceSet(System.Globalization.CultureInfo,System.Boolean,System.Boolean)" />、和方法 <see cref="M:System.Resources.ResourceManager.GetObject(System.String)" /> 执行所有必要的同步。 <see cref="M:System.Resources.ResourceManager.GetString(System.String)" /></para></block>
+        <altmember cref="T:System.Globalization.CultureInfo" />
+        <related type="Article" href="~/docs/standard/globalization-localization/index.md">对 .NET 应用程序进行全球化和本地化</related>
+      </Docs>
+    </Member>
+    <Member MemberName="MagicNumber">
+      <MemberSignature Language="C#" Value="public static readonly int MagicNumber;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly int32 MagicNumber" />
+      <MemberSignature Language="DocId" Value="F:System.Resources.ResourceManager.MagicNumber" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly MagicNumber As Integer " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly int MagicNumber;" />
+      <MemberSignature Language="F#" Value=" staticval mutable MagicNumber : int" Usage="System.Resources.ResourceManager.MagicNumber" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>保留用于标识资源文件的数字。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此值设置为0xBEEFCACE。 系统默认文件格式的前四个字节包含用小 endian 格式表示的32位有符号整数（请参阅<xref:System.Text.Encoding>）。  
+  
+ 如果找到了，则后面的字节将是<xref:System.Resources.ResourceManager>标头的版本号，后跟一个数字，用于指示应跳过多少个字节来超过此标头。 <xref:System.Resources.ResourceManager.MagicNumber> 下一个数字指示创建该标头<xref:System.Resources.ResourceManager>的的版本，然后是特定于版本的信息。  
+  
+ 当前实现的版本号为1。 接下来的字节是长度为前缀的字符串<xref:System.Resources.IResourceReader>，它包含可读取此文件的名称。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MainAssembly">
+      <MemberSignature Language="C#" Value="protected System.Reflection.Assembly MainAssembly;" />
+      <MemberSignature Language="ILAsm" Value=".field family class System.Reflection.Assembly MainAssembly" />
+      <MemberSignature Language="DocId" Value="F:System.Resources.ResourceManager.MainAssembly" />
+      <MemberSignature Language="VB.NET" Value="Protected MainAssembly As Assembly " />
+      <MemberSignature Language="C++ CLI" Value="protected: System::Reflection::Assembly ^ MainAssembly;" />
+      <MemberSignature Language="F#" Value="val mutable MainAssembly : System.Reflection.Assembly" Usage="System.Resources.ResourceManager.MainAssembly" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>指定包含资源的主要程序集。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 仅<xref:System.Resources.ResourceManager.MainAssembly>当您编写自己的派生<xref:System.Resources.ResourceManager>自类的类时，此字段才有用。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReleaseAllResources">
+      <MemberSignature Language="C#" Value="public virtual void ReleaseAllResources ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ReleaseAllResources() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.ReleaseAllResources" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Sub ReleaseAllResources ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void ReleaseAllResources();" />
+      <MemberSignature Language="F#" Value="abstract member ReleaseAllResources : unit -&gt; unit&#xA;override this.ReleaseAllResources : unit -&gt; unit" Usage="resourceManager.ReleaseAllResources " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>告知资源管理对所有 <see cref="T:System.Resources.ResourceSet" /> 对象调用方法 <see cref="M:System.Resources.ResourceSet.Close" />，并释放所有资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法将缩小正在运行的应用程序中的工作集。 此<xref:System.Resources.ResourceManager>对象将来的任何资源查找都将像第一次查找一样昂贵，因为资源管理器将不得不再次搜索并加载资源。 这在某些复杂的线程方案中非常有用，在这种<xref:System.Resources.ResourceManager>情况下，创建新对象是适当的行为。  
+  
+> [!NOTE]
+>  从 .NET Framework 版本2.0 开始，方法在<xref:System.Resources.ResourceManager.ReleaseAllResources%2A> <xref:System.Resources.ResourceManager.GetObject%2A>、 <xref:System.Resources.ResourceManager.GetString%2A>和<xref:System.Resources.ResourceManager.GetStream%2A>操作方面不是线程安全的。 此更改的优点是对访问资源的多个线程性能有所提高。 但是，如果在一个线程<xref:System.Resources.ResourceManager.ReleaseAllResources%2A>中调用方法同时同时获取另一个线程中的资源，则 get 操作可能会<xref:System.ObjectDisposedException>引发异常。  
+  
+ 你还可以在以下情况下使用此方法：当前资源管理器创建的资源的托管实例必须以确定性方式释放，无需等待资源管理器完全超出范围并进行垃圾回收。  
+  
+> [!NOTE]
+>  调用此方法不会卸载附属程序集。 若要卸载附属程序集， <xref:System.AppDomain.Unload%2A>请使用方法。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="ResourceSets">
+      <MemberSignature Language="C#" Value="protected System.Collections.Hashtable ResourceSets;" />
+      <MemberSignature Language="ILAsm" Value=".field family class System.Collections.Hashtable ResourceSets" />
+      <MemberSignature Language="DocId" Value="F:System.Resources.ResourceManager.ResourceSets" />
+      <MemberSignature Language="VB.NET" Value="Protected ResourceSets As Hashtable " />
+      <MemberSignature Language="C++ CLI" Value="protected: System::Collections::Hashtable ^ ResourceSets;" />
+      <MemberSignature Language="F#" Value="val mutable ResourceSets : System.Collections.Hashtable" Usage="System.Resources.ResourceManager.ResourceSets" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Obsolete("call InternalGetResourceSet instead")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.Hashtable</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>包含 <see cref="T:System.Collections.Hashtable" />，它返回从区域性到 <see cref="T:System.Resources.ResourceSet" /> 对象的映射。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ResourceSetType">
+      <MemberSignature Language="C#" Value="public virtual Type ResourceSetType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ResourceSetType" />
+      <MemberSignature Language="DocId" Value="P:System.Resources.ResourceManager.ResourceSetType" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable ReadOnly Property ResourceSetType As Type" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property Type ^ ResourceSetType { Type ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.ResourceSetType : Type" Usage="System.Resources.ResourceManager.ResourceSetType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Resources.ResourceManager</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取资源管理器使用构造 <see cref="T:System.Resources.ResourceSet" /> 对象的资源设置对象的类型。</summary>
+        <value>使用构造对象的资源管理器 <see cref="T:System.Resources.ResourceSet" /> 的设置的对象的资源类型。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

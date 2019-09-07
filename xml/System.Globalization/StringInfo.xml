@@ -1,0 +1,863 @@
+<Type Name="StringInfo" FullName="System.Globalization.StringInfo">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="d4c1ef406e811014aa84aac4fc645028a8fae96e" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70486973" /></Metadata><TypeSignature Language="C#" Value="public class StringInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit StringInfo extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Globalization.StringInfo" />
+  <TypeSignature Language="VB.NET" Value="Public Class StringInfo" />
+  <TypeSignature Language="C++ CLI" Value="public ref class StringInfo" />
+  <TypeSignature Language="F#" Value="type StringInfo = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Globalization</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime</AssemblyName>
+    <AssemblyVersion>4.2.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+    <Attribute FrameworkAlternate="netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
+      <AttributeName>System.Serializable</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>提供将字符串拆分为文本元素和循环访问这些文本元素的功能。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks
+
+.NET 将文本元素定义为显示为单个字符（即字形）的文本单元。 文本元素可以是基字符、代理项对或组合字符序列。 [Unicode 标准](https://go.microsoft.com/fwlink/?linkid=37123)将代理项对定义为单个抽象字符的编码字符表示形式，该字符由两个代码单元组成，其中，对的第一个单元为高代理项，第二个是低代理项。 Unicode 标准将组合字符序列定义为基字符和一个或多个组合字符的组合。 代理项对可表示基字符或组合字符。  
+  
+<xref:System.Globalization.StringInfo> 类使您能够将字符串作为一系列文本元素而不是单个 <xref:System.Char> 对象进行处理。  
+  
+若要实例<xref:System.Globalization.StringInfo>化表示指定字符串的对象，可以执行以下任一操作：  
+ 
+- 调用构造函数并向其传递<xref:System.Globalization.StringInfo>对象要表示为参数的字符串。 <xref:System.Globalization.StringInfo.%23ctor%28System.String%29>  
+  
+- 调用默认<xref:System.Globalization.StringInfo.%23ctor>构造函数，并将<xref:System.Globalization.StringInfo>对象要表示<xref:System.Globalization.StringInfo.String%2A>的字符串分配给属性。  
+  
+ 可通过两种方式处理字符串中的单个文本元素：  
+  
+- 通过枚举每个文本元素。 为此，您可以调用 <xref:System.Globalization.StringInfo.GetTextElementEnumerator%2A> 方法，然后对返回的 <xref:System.Globalization.TextElementEnumerator.MoveNext%2A> 对象重复调用 <xref:System.Globalization.TextElementEnumerator> 方法，直到此方法返回 `false`。  
+  
+- 通过调用 <xref:System.Globalization.StringInfo.ParseCombiningCharacters%2A> 方法检索包含每个文本元素的起始索引的数组。 然后可通过将这些索引传递给 <xref:System.Globalization.StringInfo.SubstringByTextElements%2A> 方法来检索单个文本元素。  
+  
+下面的示例阐释了两种处理字符串中的文本元素的方法。 它创建两个字符串：  
+  
+- `strCombining`，它是一个阿拉伯语字符串，包含三个文本元素和多个 <xref:System.Char> 对象。 第一个文本元素是后跟 ARABIC HAMZA BELOW (U+-655) 和 ARABIC KASRA (U+0650) 的基字符 ARABIC LETTER ALEF (U+-627)。 第二个文本元素是后跟 ARABIC FATHA (U+-64E) 的 ARABIC LETTER HEH (U+0647)。 第三个文本元素是后跟 ARABIC DAMMATAN (U+064C) 的 ARABIC LETTTER BEH (U+0628)。  
+  
+- `strSurrogates`，它是一个包含三个代理项对的字符串：希腊语 ACROPHONIC 5 人才（U + 10148）从补充的多语言平面，从辅助表意型的 U + 20026，以及从专用用户区域中的 U + F1001。 每个字符的 UTF-16 编码是一个代理项对，其中依次包含一个高代理项和一个低代理项。  
+  
+每个字符串依次通过 <xref:System.Globalization.StringInfo.ParseCombiningCharacters%2A> 方法和 <xref:System.Globalization.StringInfo.GetTextElementEnumerator%2A> 方法分析一次。 两个方法都可正确分析两个字符串中的文本元素并显示分析操作的结果。  
+  
+[!code-csharp[System.Globalization.StringInfo.Class#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.globalization.stringinfo.class/cs/indexing1.cs#1)]
+[!code-vb[System.Globalization.StringInfo.Class#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.globalization.stringinfo.class/vb/indexing1.vb#1)]  
+  
+## Examples  
+
+此示例使用<xref:System.Globalization.StringInfo.GetTextElementEnumerator%2A> <xref:System.Globalization.StringInfo>类的<xref:System.Globalization.StringInfo.ParseCombiningCharacters%2A>和方法来操作包含代理项和组合字符的字符串。  
+  
+[!code-cpp[stringinfo#1](~/samples/snippets/cpp/VS_Snippets_CLR/StringInfo/cpp/StringInfo.cpp#1)]
+[!code-csharp[stringinfo#1](~/samples/snippets/csharp/VS_Snippets_CLR/StringInfo/CS/StringInfo.cs#1)]
+[!code-vb[stringinfo#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/StringInfo/vb/stringinfo.vb#1)]  
+
+ ]]></format>
+    </remarks>
+    <block subset="none" type="usage"><para>在内部， <see cref="T:System.Globalization.StringInfo" />类的方法调用<see cref="T:System.Globalization.CharUnicodeInfo" />类的方法来确定字符类别。 从 .NET Framework 4.6.2 开始，字符分类基于[Unicode 标准版本 8.0.0](https://unicode.org/versions/Unicode8.0.0)。 对于 .NET Framework 4 到 .NET Framework 4.6.1，它基于[Unicode 标准6.3.0 版本](https://www.unicode.org/versions/Unicode6.3.0/)。 在 .NET Core 中，它基于[Unicode Standard 8.0.0 版](https://unicode.org/versions/Unicode8.0.0)。</para></block>
+    <related type="ExternalDocumentation" href="https://www.microsoft.com/download/details.aspx?id=10921">为 Windows 操作系统排序权重表</related>
+    <related type="ExternalDocumentation" href="https://www.unicode.org/Public/UCA/latest/allkeys.txt">适用于 Linux 和 macOS 的默认 Unicode 排序规则元素表</related>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Globalization.StringInfo" /> 类的新实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StringInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Globalization.StringInfo.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; StringInfo();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.Globalization.StringInfo" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 新<xref:System.Globalization.StringInfo>对象的值将初始化为空字符串（""）。 您可以使用<xref:System.Globalization.StringInfo.String%2A>属性向其分配另一个字符串。  还可以通过<xref:System.Globalization.StringInfo.%23ctor%28System.String%29>调用构造<xref:System.Globalization.StringInfo>函数，实例化一个对象，该对象表示单个步骤中的指定字符串。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="F:System.String.Empty" />
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StringInfo (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Globalization.StringInfo.#ctor(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (value As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; StringInfo(System::String ^ value);" />
+      <MemberSignature Language="F#" Value="new System.Globalization.StringInfo : string -&gt; System.Globalization.StringInfo" Usage="new System.Globalization.StringInfo value" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="value" Type="System.String" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="value">用于初始化此 <see cref="T:System.Globalization.StringInfo" /> 对象的字符串。</param>
+        <summary>将 <see cref="T:System.Globalization.StringInfo" /> 类的新实例初始化为指定的字符串。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数将 value 参数分配给对象的<xref:System.Globalization.StringInfo.String%2A>属性。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="value" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Globalization.StringInfo.Equals(System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function Equals (value As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override bool Equals(System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="override this.Equals : obj -&gt; bool" Usage="stringInfo.Equals value" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="value">一个对象。</param>
+        <summary>指示当前 <see cref="T:System.Globalization.StringInfo" /> 对象是否与指定的对象相等。</summary>
+        <returns>如果 <paramref name="value" /> 参数是 <see cref="T:System.Globalization.StringInfo" /> 对象并且其 <see cref="P:System.Globalization.StringInfo.String" /> 属性等同于此 <see cref="T:System.Globalization.StringInfo" /> 对象的 <see cref="P:System.Globalization.StringInfo.String" /> 属性，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>To be added.</remarks>
+        <altmember cref="Overload:System.String.Equals" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Globalization.StringInfo.GetHashCode" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetHashCode () As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override int GetHashCode();" />
+      <MemberSignature Language="F#" Value="override this.GetHashCode : unit -&gt; int" Usage="stringInfo.GetHashCode " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>计算当前 <see cref="T:System.Globalization.StringInfo" /> 对象的值的哈希代码。</summary>
+        <returns>基于此 <see cref="T:System.Globalization.StringInfo" /> 对象的字符串值的 32 位带符号整数哈希代码。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 的<xref:System.Globalization.StringInfo.GetHashCode%2A>行为依赖于其实现，该实现可能会从公共语言运行时的一个版本更改为另一个版本。 这样做可能会提高的性能<xref:System.Globalization.StringInfo.GetHashCode%2A>。 若要使行为<xref:System.Globalization.StringInfo.GetHashCode%2A>保持不变，应用程序应将的运行时<xref:System.Globalization.StringInfo.GetHashCode%2A>实现重写，使其具有一个不会更改的已知实现。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.String.GetHashCode" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="GetNextTextElement">
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>获取指定字符串中的第一个文本元素。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="GetNextTextElement">
+      <MemberSignature Language="C#" Value="public static string GetNextTextElement (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetNextTextElement(string str) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Globalization.StringInfo.GetNextTextElement(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function GetNextTextElement (str As String) As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::String ^ GetNextTextElement(System::String ^ str);" />
+      <MemberSignature Language="F#" Value="static member GetNextTextElement : string -&gt; string" Usage="System.Globalization.StringInfo.GetNextTextElement str" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="str" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="str">要从中获取文本元素的字符串。</param>
+        <summary>获取指定字符串中的第一个文本元素。</summary>
+        <returns>包含指定字符串中的第一个文本元素的字符串。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 
+.NET 将文本元素定义为显示为单个字符（即字形）的文本单元。 文本元素可以是基字符、代理项对或组合字符序列。 [Unicode 标准](https://go.microsoft.com/fwlink/?linkid=37123)将代理项对定义为单个抽象字符的编码字符表示形式，该字符由两个代码单元组成，其中，对的第一个单元为高代理项，第二个是低代理项。 [Unicode 标准](https://go.microsoft.com/fwlink/?linkid=37123)将组合字符序列定义为基字符和一个或多个组合字符的组合。 代理项对可表示基字符或组合字符。  
+  
+ 此方法仅返回第一个文本元素。 若要循环访问字符串的文本元素，应用程序应使用<xref:System.Globalization.TextElementEnumerator> <xref:System.Globalization.StringInfo.GetTextElementEnumerator%2A>方法生成的对象。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="str" /> 为 <see langword="null" />。</exception>
+        <altmember cref="M:System.Globalization.StringInfo.GetTextElementEnumerator(System.String)" />
+        <altmember cref="M:System.Globalization.StringInfo.ParseCombiningCharacters(System.String)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetNextTextElement">
+      <MemberSignature Language="C#" Value="public static string GetNextTextElement (string str, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetNextTextElement(string str, int32 index) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Globalization.StringInfo.GetNextTextElement(System.String,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function GetNextTextElement (str As String, index As Integer) As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::String ^ GetNextTextElement(System::String ^ str, int index);" />
+      <MemberSignature Language="F#" Value="static member GetNextTextElement : string * int -&gt; string" Usage="System.Globalization.StringInfo.GetNextTextElement (str, index)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="str" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="str">要从中获取文本元素的字符串。</param>
+        <param name="index">文本元素开始位置的从零开始的索引。</param>
+        <summary>获取指定字符串中指定索引处的文本元素。</summary>
+        <returns>包含指定字符串中指定索引处的文本元素的字符串。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks
+ 
+.NET 将文本元素定义为显示为单个字符（即字形）的文本单元。 文本元素可以是基字符、代理项对或组合字符序列。 [Unicode 标准](https://go.microsoft.com/fwlink/?linkid=37123)将代理项对定义为单个抽象字符的编码字符表示形式，该字符由两个代码单元组成，其中，对的第一个单元为高代理项，第二个是低代理项。 Unicode 标准将组合字符序列定义为基字符和一个或多个组合字符的组合。 代理项对可表示基字符或组合字符。  
+  
+ 此方法只返回从指定索引处开始的子字符串的第一个文本元素。 若要循环访问字符串的文本元素，应用程序应使用<xref:System.Globalization.TextElementEnumerator> <xref:System.Globalization.StringInfo.GetTextElementEnumerator%2A>由方法生成的。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="str" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index" /> 超出了 <paramref name="str" /> 的有效索引范围。</exception>
+        <altmember cref="M:System.Globalization.StringInfo.GetTextElementEnumerator(System.String)" />
+        <altmember cref="M:System.Globalization.StringInfo.ParseCombiningCharacters(System.String)" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="GetTextElementEnumerator">
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>返回一个循环访问字符串的文本元素的枚举器。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="GetTextElementEnumerator">
+      <MemberSignature Language="C#" Value="public static System.Globalization.TextElementEnumerator GetTextElementEnumerator (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Globalization.TextElementEnumerator GetTextElementEnumerator(string str) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Globalization.StringInfo.GetTextElementEnumerator(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function GetTextElementEnumerator (str As String) As TextElementEnumerator" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Globalization::TextElementEnumerator ^ GetTextElementEnumerator(System::String ^ str);" />
+      <MemberSignature Language="F#" Value="static member GetTextElementEnumerator : string -&gt; System.Globalization.TextElementEnumerator" Usage="System.Globalization.StringInfo.GetTextElementEnumerator str" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Globalization.TextElementEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="str" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="str">要循环访问的字符串。</param>
+        <summary>返回一个循环访问整个字符串的文本元素的枚举数。</summary>
+        <returns>整个字符串的 <see cref="T:System.Globalization.TextElementEnumerator" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ .NET 将文本元素定义为显示为单个字符（即字形）的文本单元。 文本元素可以是基字符、代理项对或组合字符序列。 [Unicode 标准](https://go.microsoft.com/fwlink/?linkid=37123)将代理项对定义为单个抽象字符的编码字符表示形式，该字符由两个代码单元组成，其中，对的第一个单元为高代理项，第二个是低代理项。 Unicode 标准将组合字符序列定义为基字符和一个或多个组合字符的组合。 代理项对可表示基字符或组合字符。  
+  
+ 文本元素枚举器仅用于读取字符串中的数据;它不能修改基础字符串。 枚举器没有对字符串的独占访问权限。  
+  
+ 如果枚举器位于字符串中第一个文本元素之前或字符串中的最后一个文本元素之后，则该枚举器处于无效状态。 如果枚举器处于无效状态，则调用<xref:System.Globalization.TextElementEnumerator.Current%2A>会引发异常。  
+  
+ 最初，枚举器位于字符串中第一个文本元素之前。 <xref:System.Globalization.TextElementEnumerator.Reset%2A> 也会将枚举器放回此位置。 因此，在创建枚举器或调用之后<xref:System.Globalization.TextElementEnumerator.Reset%2A> ，必须<xref:System.Globalization.TextElementEnumerator.Current%2A>先<xref:System.Globalization.TextElementEnumerator.MoveNext%2A>调用，以将枚举数前移到字符串的第一个文本元素，然后才能读取的值。  
+  
+ 在调用 <xref:System.Globalization.TextElementEnumerator.Current%2A> 或 <xref:System.Globalization.TextElementEnumerator.MoveNext%2A> 之前，<xref:System.Globalization.TextElementEnumerator.Reset%2A> 返回同一对象。  
+  
+ 传递字符串末尾后，枚举器将再次处于无效状态并调用<xref:System.Globalization.TextElementEnumerator.MoveNext%2A>返回。 `false` 如果<xref:System.Globalization.TextElementEnumerator.Current%2A>最后一次<xref:System.Globalization.TextElementEnumerator.MoveNext%2A>调用返回`false`，则调用会引发异常。  
+  
+   
+  
+## Examples  
+ 下面的示例演示如何调用 <xref:System.Globalization.StringInfo.GetTextElementEnumerator%2A> 方法。 此示例是为<xref:System.Globalization.StringInfo>类提供的更大示例的一部分。  
+  
+ [!code-cpp[stringinfo#1](~/samples/snippets/cpp/VS_Snippets_CLR/StringInfo/cpp/StringInfo.cpp#1)]
+ [!code-csharp[stringinfo#1](~/samples/snippets/csharp/VS_Snippets_CLR/StringInfo/CS/StringInfo.cs#1)]
+ [!code-vb[stringinfo#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/StringInfo/vb/stringinfo.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="str" /> 为 <see langword="null" />。</exception>
+        <altmember cref="T:System.Globalization.TextElementEnumerator" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetTextElementEnumerator">
+      <MemberSignature Language="C#" Value="public static System.Globalization.TextElementEnumerator GetTextElementEnumerator (string str, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Globalization.TextElementEnumerator GetTextElementEnumerator(string str, int32 index) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Globalization.StringInfo.GetTextElementEnumerator(System.String,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function GetTextElementEnumerator (str As String, index As Integer) As TextElementEnumerator" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Globalization::TextElementEnumerator ^ GetTextElementEnumerator(System::String ^ str, int index);" />
+      <MemberSignature Language="F#" Value="static member GetTextElementEnumerator : string * int -&gt; System.Globalization.TextElementEnumerator" Usage="System.Globalization.StringInfo.GetTextElementEnumerator (str, index)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Globalization.TextElementEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="str" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="str">要循环访问的字符串。</param>
+        <param name="index">开始迭代处的从零开始的索引。</param>
+        <summary>返回一个枚举数，它循环访问字符串的文本元素并从指定索引处开始。</summary>
+        <returns>在 <paramref name="index" /> 处开始的字符串的 <see cref="T:System.Globalization.TextElementEnumerator" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ .NET 将文本元素定义为显示为单个字符（即字形）的文本单元。 文本元素可以是基字符、代理项对或组合字符序列。 [Unicode 标准](https://go.microsoft.com/fwlink/?linkid=37123)将代理项对定义为单个抽象字符的编码字符表示形式，该字符由两个代码单元组成，其中，对的第一个单元为高代理项，第二个是低代理项。 Unicode 标准将组合字符序列定义为基字符和一个或多个组合字符的组合。 代理项对可表示基字符或组合字符。  
+  
+ 文本元素枚举器仅用于读取字符串中的数据;它不能修改基础字符串。 枚举器没有对字符串的独占访问权限。  
+  
+ 如果枚举器位于字符串中第一个文本元素之前或字符串中的最后一个文本元素之后，则该枚举器处于无效状态。 如果枚举器处于无效状态，则调用<xref:System.Globalization.TextElementEnumerator.Current%2A>会引发异常。  
+  
+ 最初，枚举器位于字符串中第一个文本元素之前。 <xref:System.Globalization.TextElementEnumerator.Reset%2A> 也会将枚举器放回此位置。 因此，在创建枚举器或调用之后<xref:System.Globalization.TextElementEnumerator.Reset%2A> ，必须<xref:System.Globalization.TextElementEnumerator.Current%2A>先<xref:System.Globalization.TextElementEnumerator.MoveNext%2A>调用，以将枚举数前移到字符串的第一个文本元素，然后才能读取的值。  
+  
+ 在调用 <xref:System.Globalization.TextElementEnumerator.Current%2A> 或 <xref:System.Globalization.TextElementEnumerator.MoveNext%2A> 之前，<xref:System.Globalization.TextElementEnumerator.Reset%2A> 返回同一对象。  
+  
+ 传递字符串末尾后，枚举器将再次处于无效状态并调用<xref:System.Globalization.TextElementEnumerator.MoveNext%2A>返回。 `false` 如果<xref:System.Globalization.TextElementEnumerator.Current%2A>最后一次<xref:System.Globalization.TextElementEnumerator.MoveNext%2A>调用返回`false`，则调用会引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="str" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index" /> 超出了 <paramref name="str" /> 的有效索引范围。</exception>
+        <altmember cref="T:System.Globalization.TextElementEnumerator" />
+      </Docs>
+    </Member>
+    <Member MemberName="LengthInTextElements">
+      <MemberSignature Language="C#" Value="public int LengthInTextElements { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 LengthInTextElements" />
+      <MemberSignature Language="DocId" Value="P:System.Globalization.StringInfo.LengthInTextElements" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property LengthInTextElements As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int LengthInTextElements { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.LengthInTextElements : int" Usage="System.Globalization.StringInfo.LengthInTextElements" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取当前 <see cref="T:System.Globalization.StringInfo" /> 对象中的文本元素数量。</summary>
+        <value>此 <see cref="T:System.Globalization.StringInfo" /> 对象中基本字符、代理项对和组合字符序列的数量。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ParseCombiningCharacters">
+      <MemberSignature Language="C#" Value="public static int[] ParseCombiningCharacters (string str);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32[] ParseCombiningCharacters(string str) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Globalization.StringInfo.ParseCombiningCharacters(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function ParseCombiningCharacters (str As String) As Integer()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static cli::array &lt;int&gt; ^ ParseCombiningCharacters(System::String ^ str);" />
+      <MemberSignature Language="F#" Value="static member ParseCombiningCharacters : string -&gt; int[]" Usage="System.Globalization.StringInfo.ParseCombiningCharacters str" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="str" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="str">要搜索的字符串。</param>
+        <summary>返回指定字符串中每个基字符、高代理项或控制字符的索引。</summary>
+        <returns>一个整数数组，它包含指定字符串中每个基字符、高代理项或控制字符的从零开始的索引。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ [Unicode 标准](https://go.microsoft.com/fwlink/?linkid=37123)将代理项对定义为单个抽象字符的编码字符表示形式，该字符由两个代码单元组成，其中，对的第一个单元为高代理项，第二个是低代理项。 高代理项是 U + D800 到 U + DBFF 范围内的 Unicode 码位，低代理项是 U + DC00 到 U + DFFF 范围内的 Unicode 码位。  
+  
+ 控制字符是 Unicode 值为 U + 007F 或在 U + 0000 到 U + 001F 或 U + 0080 到 U + 009F 范围内的字符。  
+  
+ .NET 将文本元素定义为显示为单个字符（即字形）的文本单元。 文本元素可以是基字符、代理项对或组合字符序列。 [Unicode 标准](https://go.microsoft.com/fwlink/?linkid=37123)将组合字符序列定义为基字符和一个或多个组合字符的组合。 代理项对可表示基字符或组合字符。  
+  
+ 如果组合字符序列无效，还将返回该序列中的每个组合字符。  
+  
+ 生成的数组中的每个索引都是文本元素的开头，即基字符或高代理项的索引。  
+  
+ 每个元素的长度很容易计算为连续索引之间的差异。 数组的长度将始终小于或等于字符串的长度。 例如，假设字符串为 "\u4f00\u302a\ud800\udc00\u4f01"，则此方法返回索引0、2和4。  
+  
+## <a name="equivalent-members"></a>等效成员  
+ 从 .NET Framework 的2.0 版开始， <xref:System.Globalization.StringInfo.SubstringByTextElements%2A>方法和<xref:System.Globalization.StringInfo.LengthInTextElements%2A>属性提供了<xref:System.Globalization.StringInfo.ParseCombiningCharacters%2A>方法提供的功能的易用实现。  
+  
+   
+  
+## Examples  
+ 下面的示例演示如何调用 <xref:System.Globalization.StringInfo.ParseCombiningCharacters%2A> 方法。 此代码示例是为<xref:System.Globalization.StringInfo>类提供的更大示例的一部分。  
+  
+ [!code-cpp[stringinfo#1](~/samples/snippets/cpp/VS_Snippets_CLR/StringInfo/cpp/StringInfo.cpp#1)]
+ [!code-csharp[stringinfo#1](~/samples/snippets/csharp/VS_Snippets_CLR/StringInfo/CS/StringInfo.cs#1)]
+ [!code-vb[stringinfo#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/StringInfo/vb/stringinfo.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="str" /> 为 <see langword="null" />。</exception>
+        <altmember cref="Overload:System.Globalization.StringInfo.SubstringByTextElements" />
+        <altmember cref="P:System.Globalization.StringInfo.LengthInTextElements" />
+      </Docs>
+    </Member>
+    <Member MemberName="String">
+      <MemberSignature Language="C#" Value="public string String { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string String" />
+      <MemberSignature Language="DocId" Value="P:System.Globalization.StringInfo.String" />
+      <MemberSignature Language="VB.NET" Value="Public Property String As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ String { System::String ^ get(); void set(System::String ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.String : string with get, set" Usage="System.Globalization.StringInfo.String" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置当前 <see cref="T:System.Globalization.StringInfo" /> 对象的值。</summary>
+        <value>作为当前 <see cref="T:System.Globalization.StringInfo" /> 对象的值的字符串。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在实例化<xref:System.Globalization.StringInfo.String%2A> <xref:System.Globalization.StringInfo>对象时，其属性设置为以下值之一：  
+  
+-   <xref:System.String.Empty?displayProperty=nameWithType>如果调用了<xref:System.Globalization.StringInfo.%23ctor>默认值，则为。 然后，应使用<xref:System.Globalization.StringInfo.String%2A>属性来分配此<xref:System.Globalization.StringInfo>对象 rperesents 的字符串。  
+  
+-   作为`value`参数提供<xref:System.Globalization.StringInfo.%23ctor%28System.String%29>给构造函数的字符串。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">设置操作中的值为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="SubstringByTextElements">
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>从当前 <see cref="T:System.Globalization.StringInfo" /> 对象中检索文本元素的子字符串。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="SubstringByTextElements">
+      <MemberSignature Language="C#" Value="public string SubstringByTextElements (int startingTextElement);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string SubstringByTextElements(int32 startingTextElement) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Globalization.StringInfo.SubstringByTextElements(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Function SubstringByTextElements (startingTextElement As Integer) As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::String ^ SubstringByTextElements(int startingTextElement);" />
+      <MemberSignature Language="F#" Value="member this.SubstringByTextElements : int -&gt; string" Usage="stringInfo.SubstringByTextElements startingTextElement" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startingTextElement" Type="System.Int32" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="startingTextElement">此 <see cref="T:System.Globalization.StringInfo" /> 对象中文本元素的从零开始的索引。</param>
+        <summary>从当前的 <see cref="T:System.Globalization.StringInfo" /> 对象检索文本元素的子字符串（从指定的文本元素开始，一直到最后一个文本元素）。</summary>
+        <returns>此 <see cref="T:System.Globalization.StringInfo" /> 对象中的文本元素的子字符串（从 <paramref name="startingTextElement" /> 参数指定的文本元素索引开始，一直到此对象中的最后一个文本元素）。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 请考虑一个由五个文本元素组成的字符串，索引从0到4。 如果参数为1，则该<xref:System.Globalization.StringInfo.SubstringByTextElements%2A>方法将返回一个子字符串，其中包含索引为1、2、3和4的文本元素。 `startingTextElement`  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="startingTextElement" /> 小于零。  
+  
+- 或 - 
+当前 <see cref="T:System.Globalization.StringInfo" /> 对象的值字符串是空字符串 ("")。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SubstringByTextElements">
+      <MemberSignature Language="C#" Value="public string SubstringByTextElements (int startingTextElement, int lengthInTextElements);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string SubstringByTextElements(int32 startingTextElement, int32 lengthInTextElements) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Globalization.StringInfo.SubstringByTextElements(System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Function SubstringByTextElements (startingTextElement As Integer, lengthInTextElements As Integer) As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::String ^ SubstringByTextElements(int startingTextElement, int lengthInTextElements);" />
+      <MemberSignature Language="F#" Value="member this.SubstringByTextElements : int * int -&gt; string" Usage="stringInfo.SubstringByTextElements (startingTextElement, lengthInTextElements)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Globalization</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startingTextElement" Type="System.Int32" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="lengthInTextElements" Type="System.Int32" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="startingTextElement">此 <see cref="T:System.Globalization.StringInfo" /> 对象中文本元素的从零开始的索引。</param>
+        <param name="lengthInTextElements">要检索的文本元素的数目。</param>
+        <summary>从当前的 <see cref="T:System.Globalization.StringInfo" /> 对象中检索文本元素的子字符串（从指定文本元素开始，一直到指定数目的文本元素）。</summary>
+        <returns>此 <see cref="T:System.Globalization.StringInfo" /> 对象中的文本元素的子字符串。 子字符串包含由 <paramref name="lengthInTextElements" /> 参数指定的文本元素数量，并从 <paramref name="startingTextElement" /> 参数指定的文本元素索引开始。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 请考虑一个由五个文本元素组成的字符串，索引从0到4。 如果参数为1， `lengthInTextElements`并且参数为3，则该<xref:System.Globalization.StringInfo.SubstringByTextElements%2A>方法将返回一个子字符串，其中包含索引为1、2和3的文本元素。 `startingTextElement`  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="startingTextElement" /> 小于零。  
+  
+- 或 - 
+ <paramref name="startingTextElement" /> 大于或等于当前 <see cref="T:System.Globalization.StringInfo" /> 对象的值字符串的长度。  
+  
+- 或 - 
+ <paramref name="lengthInTextElements" /> 小于零。  
+  
+或 
+当前 <see cref="T:System.Globalization.StringInfo" /> 对象的值字符串是空字符串 ("")。  
+  
+- 或 - 
+ <paramref name="startingTextElement" /> + <paramref name="lengthInTextElements" /> 指定大于此 <see cref="T:System.Globalization.StringInfo" /> 对象中的文本元素数目的索引。</exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
