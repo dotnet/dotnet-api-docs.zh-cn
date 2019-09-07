@@ -1,0 +1,2674 @@
+<Type Name="Debug" FullName="System.Diagnostics.Debug">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="ded7b56d84c0ec496720394b49ff74c140a074af" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70487133" /></Metadata><TypeSignature Language="C#" Value="public static class Debug" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Debug extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Diagnostics.Debug" />
+  <TypeSignature Language="VB.NET" Value="Public Class Debug" />
+  <TypeSignature Language="C++ CLI" Value="public ref class Debug abstract sealed" />
+  <TypeSignature Language="F#" Value="type Debug = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>提供一组有助于调试代码的方法和属性。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果使用类中的<xref:System.Diagnostics.Debug>方法来打印调试信息并使用断言检查逻辑，则可以使代码更可靠，而不会影响发运产品的性能和代码大小。  
+  
+ 此类提供用于显示<xref:System.Diagnostics.Debug.Assert%2A>对话框的方法，并发出将始终失败的断言。 此类提供以下变体中的写入方法<xref:System.Diagnostics.Debug.Write%2A>： <xref:System.Diagnostics.Debug.WriteLine%2A> <xref:System.Diagnostics.Debug.WriteIf%2A> 、和<xref:System.Diagnostics.Debug.WriteLineIf%2A>。  
+  
+ <xref:System.Diagnostics.BooleanSwitch> 和 <xref:System.Diagnostics.TraceSwitch> 类提供了动态控制跟踪输出的方法。 您可以修改这些开关的值，而无需重新编译应用程序。 有关使用配置文件设置开关的信息，请参阅<xref:System.Diagnostics.Switch>类和[跟踪开关](~/docs/framework/debug-trace-profile/trace-switches.md)主题。  
+  
+ 您可以通过将实例添加<xref:System.Diagnostics.TraceListener>到<xref:System.Diagnostics.Debug.Listeners%2A>集合或从集合中删除实例来自定义跟踪输出的目标。 集合由<xref:System.Diagnostics.Debug> 和 <xref:System.Diagnostics.Trace> 类共享; 将跟踪侦听器添加到任一类会将侦听器添加到这两个类中。 <xref:System.Diagnostics.Debug.Listeners%2A> 默认情况下， <xref:System.Diagnostics.DefaultTraceListener>类发出跟踪输出。  
+  
+> [!NOTE]
+>  如果跟踪侦听器使用的资源<xref:System.Diagnostics.Debug.Listeners%2A>不可用，则在跟踪时将跟踪侦听器添加到集合可能导致引发异常。 条件和引发的异常依赖于跟踪侦听器，在本主题中无法枚举。 在<xref:System.Diagnostics.Debug>块中`try` 调用方法以 `catch` 检测和处理跟踪侦听器中的任何异常可能会很有用。 /  
+  
+ 您可以使用<xref:System.Diagnostics.Debug.Indent%2A>方法<xref:System.Diagnostics.Debug.IndentLevel%2A>或属性修改缩进级别。 若要修改缩进间距，请<xref:System.Diagnostics.Debug.IndentSize%2A>使用属性。 可以通过将<xref:System.Diagnostics.Debug.AutoFlush%2A>属性设置为来`true`指定是否在每次写入后自动刷新输出缓冲区。  
+  
+ 若要为<xref:System.Diagnostics.Debug.AutoFlush%2A>设置<xref:System.Diagnostics.Debug.IndentSize%2A>和<xref:System.Diagnostics.Debug>，你可以编辑与应用程序名称对应的配置文件。 应设置配置文件的格式，如以下示例中所示。  
+  
+```xml  
+<configuration>  
+  <system.diagnostics>  
+    <trace autoflush="true" indentsize="7" />  
+  </system.diagnostics>  
+</configuration>  
+```  
+  
+ 特性应用于的<xref:System.Diagnostics.Debug>方法。 <xref:System.Diagnostics.ConditionalAttribute> 支持<xref:System.Diagnostics.ConditionalAttribute>忽略对这些方法的调用的编译器，除非将 "DEBUG" 定义为条件编译符号。 请参阅编译器的文档，以确定是否<xref:System.Diagnostics.ConditionalAttribute>支持以及用于定义条件编译符号的语法。  
+  
+> [!NOTE]
+> 在 Visual Studio C#和 Visual Basic 项目中，默认情况下，为调试版本定义 "debug" 条件编译符号，同时为调试版本和发布版本定义 "TRACE" 符号。 有关如何禁用此行为的信息，请参阅 Visual Studio 文档。 有关 Visual C++中的条件调试的信息，请参阅[DebugC++类（/cli）](/cpp/dotnet/debug-class-cpp-cli)。
+  
+ 若要在中C#定义 "调试" 条件编译符号，请`/d:DEBUG`在使用命令行编译代码时将选项添加到编译器命令行，或将添加`#define DEBUG`到文件的顶部。 在 Visual Basic 中，将`/d:DEBUG=True`选项添加到编译器命令行或添加`#Const DEBUG=True`到文件。  
+  
+   
+  
+## Examples  
+ 下面的示例使用<xref:System.Diagnostics.Debug>指示程序执行的开始和结束。 该示例还使用<xref:System.Diagnostics.Debug.Indent%2A>和<xref:System.Diagnostics.Debug.Unindent%2A>来区分跟踪输出。  
+  
+ [!code-cpp[Classic Debug Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug Example/VB/source.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <threadsafe>此类型是线程安全的。</threadsafe>
+    <altmember cref="T:System.Diagnostics.Trace" />
+    <altmember cref="T:System.Diagnostics.Switch" />
+    <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+    <altmember cref="T:System.Diagnostics.TraceSwitch" />
+    <altmember cref="T:System.Diagnostics.TraceListener" />
+    <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+    <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+    <altmember cref="T:System.Diagnostics.EventLogTraceListener" />
+    <altmember cref="T:System.Diagnostics.TraceListenerCollection" />
+    <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+  </Docs>
+  <Members>
+    <MemberGroup MemberName="Assert">
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>检查条件 ；如果条件为 <see langword="false" />，则输出消息，并显示一个消息框，其中显示调用堆栈。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Assert">
+      <MemberSignature Language="C#" Value="public static void Assert (bool condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assert(bool condition) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Assert(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Assert (condition As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Assert(bool condition);" />
+      <MemberSignature Language="F#" Value="static member Assert : bool -&gt; unit" Usage="System.Diagnostics.Debug.Assert condition" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="condition">要计算的条件表达式。 如果条件为 <see langword="true" />，则不会发送失败消息，也不显示消息框。</param>
+        <summary>检查条件 ；如果条件为 <see langword="false" />，则显示一个消息框，其中显示调用堆栈。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下， <xref:System.Diagnostics.Debug.Assert%2A?displayProperty=nameWithType>该方法仅适用于调试版本。 如果要在发布版本中进行断言，请使用方法。 <xref:System.Diagnostics.Trace.Assert%2A?displayProperty=nameWithType> 有关详细信息，请参阅[托管代码中的断言](/visualstudio/debugger/assertions-in-managed-code)。  
+  
+> [!IMPORTANT]
+>  这些`Assert`方法不适用于[!INCLUDE[win8_appstore_long](~/includes/win8-appstore-long-md.md)]应用。  
+  
+ 通常，方法<xref:System.Diagnostics.Debug.Assert%28System.Boolean%29>用于标识程序开发过程中的逻辑错误。 <xref:System.Diagnostics.Debug.Assert%2A>计算条件。 如果结果为`false`，则它会将失败消息发送到<xref:System.Diagnostics.Debug.Listeners%2A>该集合。 可以通过将添加<xref:System.Diagnostics.TraceListener>到<xref:System.Diagnostics.Debug.Listeners%2A>集合或从集合中删除一个来自定义此行为。  
+  
+ 当应用程序在用户界面模式下运行时，它将显示一个消息框，其中显示带有文件和行号的调用堆栈。 消息框包含三个按钮： "**中止**"、"**重试**" 和 "**忽略**"。 单击 "**中止**" 按钮将终止应用程序。 如果你的应用程序在调试器中运行，则单击 "**重试**" 会将你发送到调试器中的代码，如果不是，则单击 "提供" 以打开调试器。 单击 "**忽略**" 将继续执行代码中的下一个指令。  
+  
+> [!NOTE]
+>  [!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用不支持模式对话框，因此它们在用户界面模式和非用户界面模式下的行为相同。 在调试模式下将消息写入活动跟踪侦听器，否则不会以发布模式编写消息。  
+  
+> [!NOTE]
+>  消息框的显示取决于是否存在<xref:System.Diagnostics.DefaultTraceListener>。 <xref:System.Diagnostics.DefaultTraceListener>如果不 <xref:System.Diagnostics.Trace.Listeners%2A> 在集合中，则不显示消息框。 <xref:System.Diagnostics.DefaultTraceListener>可以通过 <xref:System.Diagnostics.TraceListenerCollection.Clear%2A>  [清除、 &gt; 删除或对属性调用方法（）来删除&lt;](~/docs/framework/configure-apps/file-schema/trace-debug/clear-element-for-listeners-for-trace.md)。 [ &lt;&gt;](~/docs/framework/configure-apps/file-schema/trace-debug/remove-element-for-listeners-for-trace.md) <xref:System.Diagnostics.Trace.Listeners%2A> `System.Diagnostics.Trace.Listeners.Clear()`  
+  
+ 你可以在配置文件中更改<xref:System.Diagnostics.DefaultTraceListener>与你的应用程序的名称相对应的行为。 在此文件中，您可以启用和禁用断言消息框或设置<xref:System.Diagnostics.DefaultTraceListener.LogFileName%2A?displayProperty=nameWithType>属性。 配置文件的格式应如下所示：  
+  
+```xml  
+<configuration>  
+  <system.diagnostics>  
+    <assert assertuienabled="true" logfilename="c:\\myFile.log" />  
+  </system.diagnostics>  
+</configuration>  
+```  
+  
+   
+  
+## Examples  
+ 下面的示例为数组创建一个索引，执行某些操作以设置索引的值，然后调用<xref:System.Diagnostics.Debug.Assert%2A>以确认索引值有效。 如果无效， <xref:System.Diagnostics.Debug.Assert%2A>则输出调用堆栈。  
+  
+ [!code-cpp[Classic Debug.Assert Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Assert Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Assert Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Assert Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Assert Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Assert Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="Assert">
+      <MemberSignature Language="C#" Value="public static void Assert (bool condition, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assert(bool condition, string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Assert(System.Boolean,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Assert (condition As Boolean, message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Assert(bool condition, System::String ^ message);" />
+      <MemberSignature Language="F#" Value="static member Assert : bool * string -&gt; unit" Usage="System.Diagnostics.Debug.Assert (condition, message)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="condition">要计算的条件表达式。 如果条件为 <see langword="true" />，则不会发送指定消息，也不显示消息框。</param>
+        <param name="message">要发送到 <see cref="P:System.Diagnostics.Trace.Listeners" /> 集合的消息。</param>
+        <summary>检查条件；如果条件为 <see langword="false" />，则输出指定消息并显示指示调用堆栈的消息框。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下， <xref:System.Diagnostics.Debug.Assert%2A?displayProperty=nameWithType>该方法仅适用于调试版本。 如果要在发布版本中进行断言，请使用方法。 <xref:System.Diagnostics.Trace.Assert%2A?displayProperty=nameWithType> 有关详细信息，请参阅[托管代码中的断言](/visualstudio/debugger/assertions-in-managed-code)。  
+  
+ 通常，方法<xref:System.Diagnostics.Debug.Assert%2A>用于标识程序开发过程中的逻辑错误。 <xref:System.Diagnostics.Debug.Assert%2A>计算条件。 如果结果为`false`，则将指定的诊断消息发送到该<xref:System.Diagnostics.Debug.Listeners%2A>集合。 可以通过将添加<xref:System.Diagnostics.TraceListener>到<xref:System.Diagnostics.Debug.Listeners%2A>集合或从集合中删除一个来自定义此行为。  
+  
+ 当应用程序在用户界面模式下运行时，它将显示一个消息框，其中显示带有文件和行号的调用堆栈。 消息框包含三个按钮： "**中止**"、"**重试**" 和 "**忽略**"。 单击 "**中止**" 按钮将终止应用程序。 如果你的应用程序在调试器中运行，则单击 "**重试**" 会将你发送到调试器中的代码，如果不是，则单击 "提供" 以打开调试器。 单击 "**忽略**" 将继续执行代码中的下一个指令。  
+  
+> [!NOTE]
+>  消息框的显示取决于是否存在<xref:System.Diagnostics.DefaultTraceListener>。 <xref:System.Diagnostics.DefaultTraceListener>如果不 <xref:System.Diagnostics.Trace.Listeners%2A> 在集合中，则不显示消息框。 <xref:System.Diagnostics.DefaultTraceListener>可以通过 <xref:System.Diagnostics.TraceListenerCollection.Clear%2A>  [清除、 &gt; 删除或对属性调用方法（）来删除&lt;](~/docs/framework/configure-apps/file-schema/trace-debug/clear-element-for-listeners-for-trace.md)。 [ &lt;&gt;](~/docs/framework/configure-apps/file-schema/trace-debug/remove-element-for-listeners-for-trace.md) <xref:System.Diagnostics.Trace.Listeners%2A> `System.Diagnostics.Trace.Listeners.Clear()`  
+  
+ 你可以在配置文件中更改<xref:System.Diagnostics.DefaultTraceListener>与你的应用程序的名称相对应的行为。 在此文件中，您可以启用和禁用断言消息框或设置<xref:System.Diagnostics.DefaultTraceListener.LogFileName%2A?displayProperty=nameWithType>属性。 配置文件的格式应如下所示：  
+  
+```xml  
+<configuration>  
+  <system.diagnostics>  
+    <assert assertuienabled="true" logfilename="c:\\myFile.log" />  
+  </system.diagnostics>  
+</configuration>  
+```  
+  
+   
+  
+## Examples  
+ 下面的示例检查`type`参数是否有效。 如果`type`为`null` ， <xref:System.Diagnostics.Trace.Assert%2A> 则输出一条消息。  
+  
+ [!code-cpp[Classic Debug.Assert1 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Assert1 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Assert1 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Assert1 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Assert1 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Assert1 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="Assert">
+      <MemberSignature Language="C#" Value="public static void Assert (bool condition, string message, string detailMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assert(bool condition, string message, string detailMessage) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Assert(System.Boolean,System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Assert (condition As Boolean, message As String, detailMessage As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Assert(bool condition, System::String ^ message, System::String ^ detailMessage);" />
+      <MemberSignature Language="F#" Value="static member Assert : bool * string * string -&gt; unit" Usage="System.Diagnostics.Debug.Assert (condition, message, detailMessage)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="message" Type="System.String" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="detailMessage" Type="System.String" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="condition">要计算的条件表达式。 如果条件为 <see langword="true" />，则不会发送指定的消息，也不显示消息框。</param>
+        <param name="message">要发送到 <see cref="P:System.Diagnostics.Trace.Listeners" /> 集合的消息。</param>
+        <param name="detailMessage">要发送到 <see cref="P:System.Diagnostics.Trace.Listeners" /> 集合的详细消息。</param>
+        <summary>检查条件 ；如果条件为 <see langword="false" />，则输出两条指定消息，并显示一个消息框，其中显示调用堆栈。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下， <xref:System.Diagnostics.Debug.Assert%2A?displayProperty=nameWithType>该方法仅适用于调试版本。 如果要在发布版本中进行断言，请使用方法。 <xref:System.Diagnostics.Trace.Assert%2A?displayProperty=nameWithType> 有关详细信息，请参阅[托管代码中的断言](/visualstudio/debugger/assertions-in-managed-code)。  
+  
+ 通常，方法<xref:System.Diagnostics.Debug.Assert%28System.Boolean%2CSystem.String%2CSystem.String%29>用于标识程序开发过程中的逻辑错误。 <xref:System.Diagnostics.Debug.Assert%2A>计算条件。 如果结果为`false`，则它会向<xref:System.Diagnostics.Debug.Listeners%2A>集合发送指定的诊断消息和详细消息。 可以通过将添加<xref:System.Diagnostics.TraceListener>到<xref:System.Diagnostics.Debug.Listeners%2A>集合或从集合中删除一个来自定义此行为。  
+  
+ 当应用程序在用户界面模式下运行时，它将显示一个消息框，其中显示带有文件和行号的调用堆栈。 消息框包含三个按钮： "**中止**"、"**重试**" 和 "**忽略**"。 单击 "**中止**" 按钮将终止应用程序。 如果你的应用程序在调试器中运行，则单击 "**重试**" 会将你发送到调试器中的代码，如果不是，则单击 "提供" 以打开调试器。 单击 "**忽略**" 将继续执行代码中的下一个指令。  
+  
+> [!NOTE]
+>  消息框的显示取决于是否存在<xref:System.Diagnostics.DefaultTraceListener>。 <xref:System.Diagnostics.DefaultTraceListener>如果不 <xref:System.Diagnostics.Trace.Listeners%2A> 在集合中，则不显示消息框。 <xref:System.Diagnostics.DefaultTraceListener>可以通过 <xref:System.Diagnostics.TraceListenerCollection.Clear%2A>  [清除、 &gt; 删除或对属性调用方法（）来删除&lt;](~/docs/framework/configure-apps/file-schema/trace-debug/clear-element-for-listeners-for-trace.md)。 [ &lt;&gt;](~/docs/framework/configure-apps/file-schema/trace-debug/remove-element-for-listeners-for-trace.md) <xref:System.Diagnostics.Trace.Listeners%2A> `System.Diagnostics.Trace.Listeners.Clear()`  
+  
+ 你可以在配置文件中更改<xref:System.Diagnostics.DefaultTraceListener>与你的应用程序的名称相对应的行为。 在此文件中，您可以启用和禁用断言消息框或设置<xref:System.Diagnostics.DefaultTraceListener.LogFileName%2A?displayProperty=nameWithType>属性。 配置文件的格式应如下所示：  
+  
+```xml  
+<configuration>  
+  <system.diagnostics>  
+    <assert assertuienabled="true" logfilename="c:\\myFile.log" />  
+  </system.diagnostics>  
+</configuration>  
+```  
+  
+   
+  
+## Examples  
+ 下面的示例检查`type`参数是否有效。 如果`type`为`null` ， <xref:System.Diagnostics.Trace.Assert%2A> 则输出两条消息。  
+  
+ [!code-cpp[Classic Debug.Assert2 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Assert2 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Assert2 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Assert2 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Assert2 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Assert2 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="Assert">
+      <MemberSignature Language="C#" Value="public static void Assert (bool condition, string message, string detailMessageFormat, params object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Assert(bool condition, string message, string detailMessageFormat, object[] args) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Assert(System.Boolean,System.String,System.String,System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Assert (condition As Boolean, message As String, detailMessageFormat As String, ParamArray args As Object())" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Assert(bool condition, System::String ^ message, System::String ^ detailMessageFormat, ... cli::array &lt;System::Object ^&gt; ^ args);" />
+      <MemberSignature Language="F#" Value="static member Assert : bool * string * string * obj[] -&gt; unit" Usage="System.Diagnostics.Debug.Assert (condition, message, detailMessageFormat, args)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="message" Type="System.String" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="detailMessageFormat" Type="System.String" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="args" Type="System.Object[]" Index="3" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
+          <Attributes>
+            <Attribute FrameworkAlternate="dotnet-uwp-10.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="condition">要计算的条件表达式。 如果条件为 <see langword="true" />，则不会发送指定的消息，也不显示消息框。</param>
+        <param name="message">要发送到 <see cref="P:System.Diagnostics.Trace.Listeners" /> 集合的消息。</param>
+        <param name="detailMessageFormat">要发送到 <see cref="P:System.Diagnostics.Trace.Listeners" /> 集合的复合格式字符串。 该消息包含与零个或多个格式项混合的文本，它与 <paramref name="args" /> 数组中的对象相对应。</param>
+        <param name="args">一个对象数组，其中包含零个或多个要设置格式的对象。</param>
+        <summary>检查条件；如果条件为 <see langword="false" />，则输出两条指定消息（简单消息和格式化消息），并显示一个消息框，其中会显示调用堆栈。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法使用[.net 复合格式设置功能](~/docs/standard/base-types/composite-formatting.md)将对象的值转换为其文本表示形式，并将该表示形式嵌入到字符串中。 生成的字符串将发送到<xref:System.Diagnostics.Trace.Listeners%2A>集合中。  
+  
+ 默认情况下， <xref:System.Diagnostics.Debug.Assert%2A?displayProperty=nameWithType>该方法仅适用于调试版本。 如果要在发布版本中进行断言，请使用方法。 <xref:System.Diagnostics.Trace.Assert%2A?displayProperty=nameWithType> 有关详细信息，请参阅[托管代码中的断言](/visualstudio/debugger/assertions-in-managed-code)。  
+  
+ 通常，方法<xref:System.Diagnostics.Debug.Assert%28System.Boolean%2CSystem.String%2CSystem.String%2CSystem.Object%5B%5D%29>用于标识程序开发过程中的逻辑错误。 <xref:System.Diagnostics.Debug.Assert%2A>计算条件。 如果`false`结果为<xref:System.String.Format%28System.String%2CSystem.Object%5B%5D%29?displayProperty=nameWithType> ，则调用`detailMessageFormat`方法，并将字符串和`args`数组作为参数传入。 <xref:System.Diagnostics.Debug.Assert%28System.Boolean%2CSystem.String%2CSystem.String%2CSystem.Object%5B%5D%29>然后，将指定的文本消息和带格式的文本消息<xref:System.Diagnostics.Debug.Listeners%2A>发送到该集合。 可以通过将添加<xref:System.Diagnostics.TraceListener>到<xref:System.Diagnostics.Debug.Listeners%2A>集合或从集合中删除一个来自定义此行为。  
+  
+ 当应用程序在用户界面模式下运行时，它将显示一个消息框，其中显示带有文件和行号的调用堆栈。 消息框包含三个按钮： "**中止**"、"**重试**" 和 "**忽略**"。 单击 "**中止**" 按钮将终止应用程序。 如果你的应用程序在调试器中运行，则单击 "**重试**" 会将你发送到调试器中的代码，如果不是，则单击 "提供" 以打开调试器。 单击 "**忽略**" 将继续执行代码中的下一个指令。  
+  
+> [!NOTE]
+>  消息框的显示取决于是否存在<xref:System.Diagnostics.DefaultTraceListener>。 <xref:System.Diagnostics.DefaultTraceListener>如果不 <xref:System.Diagnostics.Trace.Listeners%2A> 在集合中，则不显示消息框。 <xref:System.Diagnostics.DefaultTraceListener>可以通过 <xref:System.Diagnostics.TraceListenerCollection.Clear%2A>  [清除、 &gt; 删除或对属性调用方法（）来删除&lt;](~/docs/framework/configure-apps/file-schema/trace-debug/clear-element-for-listeners-for-trace.md)。 [ &lt;&gt;](~/docs/framework/configure-apps/file-schema/trace-debug/remove-element-for-listeners-for-trace.md) <xref:System.Diagnostics.Trace.Listeners%2A> `System.Diagnostics.Trace.Listeners.Clear()`  
+  
+ 你可以在配置文件中更改<xref:System.Diagnostics.DefaultTraceListener>与你的应用程序的名称相对应的行为。 在此文件中，您可以启用和禁用断言消息框或设置<xref:System.Diagnostics.DefaultTraceListener.LogFileName%2A?displayProperty=nameWithType>属性。 配置文件的格式应如下所示：  
+  
+```xml  
+<configuration>  
+  <system.diagnostics>  
+    <assert assertuienabled="true" logfilename="c:\\myFile.log" />  
+  </system.diagnostics>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AutoFlush">
+      <MemberSignature Language="C#" Value="public static bool AutoFlush { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool AutoFlush" />
+      <MemberSignature Language="DocId" Value="P:System.Diagnostics.Debug.AutoFlush" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Property AutoFlush As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property bool AutoFlush { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.AutoFlush : bool with get, set" Usage="System.Diagnostics.Debug.AutoFlush" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，通过该值指示每次写入后是否应在 <see cref="M:System.Diagnostics.Debug.Flush" /> 上调用 <see cref="P:System.Diagnostics.Debug.Listeners" />。</summary>
+        <value>如果每次写入后都在 <see cref="M:System.Diagnostics.Debug.Flush" /> 上调用 <see cref="P:System.Diagnostics.Debug.Listeners" />，则为 <see langword="true" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认值为 `false`。  
+  
+ 除非显式调用<xref:System.Diagnostics.Debug.Flush%2A>或<xref:System.Diagnostics.Debug.Close%2A>，否则刷新流将不会刷新其基础编码器。 如果<xref:System.Diagnostics.Debug.AutoFlush%2A>设置`true`为，则表示将数据从缓冲区刷新到流，但不会刷新编码器状态。 这允许编码器保留其状态（部分字符），以使其能够正确编码下一个字符块。 此方案影响 UTF8 和 UTF7，其中某些字符只能在编码器接收到相邻字符后编码。  
+  
+ 若要为<xref:System.Diagnostics.Debug.AutoFlush%2A>设置<xref:System.Diagnostics.Debug.IndentSize%2A>和<xref:System.Diagnostics.Debug>，还可以编辑与应用程序名称对应的配置文件。 应设置配置文件的格式，如以下示例中所示。  
+  
+```xml  
+<configuration>  
+  <system.diagnostics>  
+    <trace autoflush="true" indentsize="7" />  
+  </system.diagnostics>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于处理非托管代码。 要求值<see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />; 关联的枚举<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />：。</permission>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public static void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Close() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Close" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Close ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Close();" />
+      <MemberSignature Language="F#" Value="static member Close : unit -&gt; unit" Usage="System.Diagnostics.Debug.Close " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>刷新输出缓冲区，然后对所有 <see cref="P:System.Diagnostics.Debug.Listeners" /> 调用 <see langword="Close" /> 方法。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当输出进入文件（如<xref:System.Diagnostics.TextWriterTraceListener>）时使用此方法。  
+  
+ 除非显式调用<xref:System.Diagnostics.Debug.Flush%2A>或<xref:System.Diagnostics.Debug.Close%2A>，否则刷新流将不会刷新其基础编码器。 如果<xref:System.Diagnostics.Debug.AutoFlush%2A>设置`true`为，则表示将数据从缓冲区刷新到流，但不会刷新编码器状态。 这允许编码器保留其状态（部分字符），以使其能够正确编码下一个字符块。 此方案影响 UTF8 和 UTF7，其中某些字符只能在编码器接收到相邻字符后编码。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TextWriterTraceListener>名`myTextListener`为的。 `myTextListener`使用调用<xref:System.IO.StreamWriter> `myOutputWriter`的来写入名`TestFile.txt`为的文件。 该示例创建文件、流和文本编写器，将一行文本写入文件，然后刷新并关闭输出。  
+  
+ [!code-cpp[Classic Debug.Close Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Close Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Close Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Close Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Close Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Close Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于处理非托管代码。 要求值<see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />; 关联的枚举<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />：。</permission>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Fail">
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>发出错误消息。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Fail">
+      <MemberSignature Language="C#" Value="public static void Fail (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Fail(string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Fail(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Fail (message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Fail(System::String ^ message);" />
+      <MemberSignature Language="F#" Value="static member Fail : string -&gt; unit" Usage="System.Diagnostics.Debug.Fail message" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.CodeAnalysis.DoesNotReturn</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="message">要发出的消息。</param>
+        <summary>发出指定的错误消息。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认行为是在用户界面<xref:System.Diagnostics.DefaultTraceListener>模式下运行应用程序时，将消息输出到消息框，并将其输出到<xref:System.Diagnostics.TraceListener> <xref:System.Diagnostics.Debug.Listeners%2A>集合中的实例。  
+  
+> [!NOTE]
+>  消息框的显示取决于是否存在<xref:System.Diagnostics.DefaultTraceListener>。 <xref:System.Diagnostics.DefaultTraceListener>如果不 <xref:System.Diagnostics.Trace.Listeners%2A> 在集合中，则不显示消息框。 <xref:System.Diagnostics.DefaultTraceListener>可以通过 <xref:System.Diagnostics.TraceListenerCollection.Clear%2A>  [清除、 &gt; 删除或对属性调用方法（）来删除&lt;](~/docs/framework/configure-apps/file-schema/trace-debug/clear-element-for-listeners-for-trace.md)。 [ &lt;&gt;](~/docs/framework/configure-apps/file-schema/trace-debug/remove-element-for-listeners-for-trace.md) <xref:System.Diagnostics.Trace.Listeners%2A> `System.Diagnostics.Trace.Listeners.Clear()`  
+  
+ 可以通过将添加<xref:System.Diagnostics.TraceListener>到<xref:System.Diagnostics.Debug.Listeners%2A>集合或从集合中删除一个来自定义此行为。  
+  
+   
+  
+## Examples  
+ 下面的示例使用<xref:System.Diagnostics.Debug.Fail%2A>方法在异常处理过程中打印消息。  
+  
+ [!code-cpp[Classic Debug.Fail Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Fail Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Fail Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Fail Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Fail Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Fail Example/VB/source.vb#1)]  
+  
+ 你还可以在 switch <xref:System.Diagnostics.Debug.Fail%2A>语句中使用方法。  
+  
+ [!code-cpp[Classic Debug.Fail Example#2](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Fail Example/CPP/source.cpp#2)]
+ [!code-csharp[Classic Debug.Fail Example#2](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Fail Example/CS/source.cs#2)]
+ [!code-vb[Classic Debug.Fail Example#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Fail Example/VB/source.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="Fail">
+      <MemberSignature Language="C#" Value="public static void Fail (string message, string detailMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Fail(string message, string detailMessage) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Fail(System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Fail (message As String, detailMessage As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Fail(System::String ^ message, System::String ^ detailMessage);" />
+      <MemberSignature Language="F#" Value="static member Fail : string * string -&gt; unit" Usage="System.Diagnostics.Debug.Fail (message, detailMessage)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.CodeAnalysis.DoesNotReturn</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="detailMessage" Type="System.String" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="message">要发出的消息。</param>
+        <param name="detailMessage">要发出的详细消息。</param>
+        <summary>发出错误消息及详细的错误消息。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认行为是在用户界面<xref:System.Diagnostics.DefaultTraceListener>模式下运行应用程序时，将消息输出到消息框，并将其输出到<xref:System.Diagnostics.TraceListener> <xref:System.Diagnostics.Debug.Listeners%2A>集合中的实例。  
+  
+> [!NOTE]
+>  消息框的显示取决于是否存在<xref:System.Diagnostics.DefaultTraceListener>。 <xref:System.Diagnostics.DefaultTraceListener>如果不 <xref:System.Diagnostics.Trace.Listeners%2A> 在集合中，则不显示消息框。 <xref:System.Diagnostics.DefaultTraceListener>可以通过 <xref:System.Diagnostics.TraceListenerCollection.Clear%2A>  [清除、 &gt; 删除或对属性调用方法（）来删除&lt;](~/docs/framework/configure-apps/file-schema/trace-debug/clear-element-for-listeners-for-trace.md)。 [ &lt;&gt;](~/docs/framework/configure-apps/file-schema/trace-debug/remove-element-for-listeners-for-trace.md) <xref:System.Diagnostics.Trace.Listeners%2A> `System.Diagnostics.Trace.Listeners.Clear()`  
+  
+ 可以通过将添加<xref:System.Diagnostics.TraceListener>到<xref:System.Diagnostics.Debug.Listeners%2A>集合或从集合中删除一个来自定义此行为。  
+  
+   
+  
+## Examples  
+ 下面的示例使用<xref:System.Diagnostics.Debug.Fail%2A>方法在异常处理过程中打印消息。  
+  
+ [!code-cpp[Classic Debug.Fail1 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Fail1 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Fail1 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Fail1 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Fail1 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Fail1 Example/VB/source.vb#1)]  
+  
+ 你还可以在 switch <xref:System.Diagnostics.Debug.Fail%2A>语句中使用方法。  
+  
+ [!code-cpp[Classic Debug.Fail1 Example#2](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Fail1 Example/CPP/source.cpp#2)]
+ [!code-csharp[Classic Debug.Fail1 Example#2](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Fail1 Example/CS/source.cs#2)]
+ [!code-vb[Classic Debug.Fail1 Example#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Fail1 Example/VB/source.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="C#" Value="public static void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Flush() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Flush" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Flush ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Flush();" />
+      <MemberSignature Language="F#" Value="static member Flush : unit -&gt; unit" Usage="System.Diagnostics.Debug.Flush " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>刷新输出缓冲区并使放入缓冲区的数据写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 除非显式调用<xref:System.Diagnostics.Debug.Flush%2A>或<xref:System.Diagnostics.Debug.Close%2A>，否则刷新流将不会刷新其基础编码器。 如果<xref:System.Diagnostics.Debug.AutoFlush%2A>设置`true`为，则表示将数据从缓冲区刷新到流，但不会刷新编码器状态。 这允许编码器保留其状态（部分字符），以使其能够正确编码下一个字符块。 此方案影响 UTF8 和 UTF7，其中某些字符只能在编码器接收到相邻字符后编码。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TextWriterTraceListener>名`myTextListener`为的。 `myTextListener`使用调用<xref:System.IO.FileStream> `myFileStream`的来写入名`TestFile.txt`为的文件。 该示例将创建流，打开文件（如果存在）或创建一个新文件，向文件写入一行文本，然后刷新并关闭输出。  
+  
+ [!code-cpp[Classic Debug.Close Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Close Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Close Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Close Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Close Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Close Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="Indent">
+      <MemberSignature Language="C#" Value="public static void Indent ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Indent() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Indent" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Indent ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Indent();" />
+      <MemberSignature Language="F#" Value="static member Indent : unit -&gt; unit" Usage="System.Diagnostics.Debug.Indent " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>将当前的 <see cref="P:System.Diagnostics.Debug.IndentLevel" /> 增加 1。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的示例设置缩进级别并发出调试消息。  
+  
+ [!code-cpp[Classic Debug.IndentLevel Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.IndentLevel Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.IndentLevel Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.IndentLevel Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.IndentLevel Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.IndentLevel Example/VB/source.vb#1)]  
+  
+ 该示例产生下面的输出：  
+  
+```  
+  
+List of errors:  
+     Error 1: File not found  
+     Error 2: Directory not found  
+End of list of errors  
+  
+```  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Diagnostics.Debug.Unindent" />
+        <altmember cref="P:System.Diagnostics.Debug.IndentLevel" />
+        <altmember cref="P:System.Diagnostics.Debug.IndentSize" />
+      </Docs>
+    </Member>
+    <Member MemberName="IndentLevel">
+      <MemberSignature Language="C#" Value="public static int IndentLevel { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 IndentLevel" />
+      <MemberSignature Language="DocId" Value="P:System.Diagnostics.Debug.IndentLevel" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Property IndentLevel As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property int IndentLevel { int get(); void set(int value); };" />
+      <MemberSignature Language="F#" Value="member this.IndentLevel : int with get, set" Usage="System.Diagnostics.Debug.IndentLevel" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置缩进级别。</summary>
+        <value>缩进级别。 默认值为 0。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 属性表示应用大小<xref:System.Diagnostics.Debug.IndentSize%2A>缩进的次数。 <xref:System.Diagnostics.Debug.IndentLevel%2A>  
+  
+   
+  
+## Examples  
+ 下面的示例设置缩进级别并发出调试消息。  
+  
+ [!code-cpp[Classic Debug.IndentLevel Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.IndentLevel Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.IndentLevel Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.IndentLevel Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.IndentLevel Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.IndentLevel Example/VB/source.vb#1)]  
+  
+ 该示例产生下面的输出：  
+  
+```  
+  
+List of errors:  
+     Error 1: File not found  
+     Error 2: Directory not found  
+End of list of errors  
+  
+```  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Diagnostics.Debug.IndentSize" />
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="IndentSize">
+      <MemberSignature Language="C#" Value="public static int IndentSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 IndentSize" />
+      <MemberSignature Language="DocId" Value="P:System.Diagnostics.Debug.IndentSize" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Property IndentSize As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property int IndentSize { int get(); void set(int value); };" />
+      <MemberSignature Language="F#" Value="member this.IndentSize : int with get, set" Usage="System.Diagnostics.Debug.IndentSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置缩进的空格数。</summary>
+        <value>缩进的空格数。 默认值为四。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将<xref:System.Diagnostics.TextWriterTraceListener>此数字解释为空格。 <xref:System.Diagnostics.EventLogTraceListener>忽略此值。  
+  
+ 若要为<xref:System.Diagnostics.Debug.AutoFlush%2A>设置<xref:System.Diagnostics.Debug.IndentSize%2A>和<xref:System.Diagnostics.Debug>，还可以编辑与应用程序名称对应的配置文件。 应设置配置文件的格式，如以下示例中所示。  
+  
+```xml  
+<configuration>  
+  <system.diagnostics>  
+    <trace autoflush="true" indentsize="7" />  
+  </system.diagnostics>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Diagnostics.Debug.IndentLevel" />
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="Listeners">
+      <MemberSignature Language="C#" Value="public static System.Diagnostics.TraceListenerCollection Listeners { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Diagnostics.TraceListenerCollection Listeners" />
+      <MemberSignature Language="DocId" Value="P:System.Diagnostics.Debug.Listeners" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly Property Listeners As TraceListenerCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property System::Diagnostics::TraceListenerCollection ^ Listeners { System::Diagnostics::TraceListenerCollection ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Listeners : System.Diagnostics.TraceListenerCollection" Usage="System.Diagnostics.Debug.Listeners" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.TraceListenerCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取监视调试输出的侦听器集合。</summary>
+        <value><see cref="T:System.Diagnostics.TraceListenerCollection" />，它表示监视该调试输出的 <see cref="T:System.Diagnostics.TraceListener" /> 类型的集合。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 侦听器从调试输出生成格式化的输出。 默认情况下，集合包含<xref:System.Diagnostics.DefaultTraceListener>类的实例。 若要删除默认侦听器，请调用<xref:System.Diagnostics.TraceListenerCollection.Remove%2A>方法，并向其传递的实例。 <xref:System.Diagnostics.DefaultTraceListener> 若要将输出重定向到控制台窗口，请添加的<xref:System.Diagnostics.ConsoleTraceListener>实例。 若要将输出重定向到文件或流，请添加的<xref:System.Diagnostics.TextWriterTraceListener>实例。  
+  
+> [!NOTE]
+>  集合由<xref:System.Diagnostics.Debug> 和 <xref:System.Diagnostics.Trace> 类共享; 将跟踪侦听器添加到任一类会将侦听器添加到这两个类中。 <xref:System.Diagnostics.Debug.Listeners%2A>  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TextWriterTraceListener>输出到控制台屏幕的。 然后，该代码将新侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>。  
+  
+ [!code-cpp[Classic Debug.Listeners Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Listeners Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Listeners Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Listeners Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Listeners Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Listeners Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于处理非托管代码。 要求值<see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />; 关联的枚举<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />：。</permission>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Print">
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将后跟行结束符的消息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Print">
+      <MemberSignature Language="C#" Value="public static void Print (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Print(string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Print(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Print (message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Print(System::String ^ message);" />
+      <MemberSignature Language="F#" Value="static member Print : string -&gt; unit" Usage="System.Diagnostics.Debug.Print message" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="message">要写入的消息。</param>
+        <summary>将后跟行结束符的消息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认行终止符为回车符后跟一个换行符。 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Print">
+      <MemberSignature Language="C#" Value="public static void Print (string format, params object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Print(string format, object[] args) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Print(System.String,System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Print (format As String, ParamArray args As Object())" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Print(System::String ^ format, ... cli::array &lt;System::Object ^&gt; ^ args);" />
+      <MemberSignature Language="F#" Value="static member Print : string * obj[] -&gt; unit" Usage="System.Diagnostics.Debug.Print (format, args)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="args" Type="System.Object[]" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="format">包含与零个或多个格式项混合的文本的一个复合格式字符串，与 <paramref name="args" /> 数组中的对象相对应。</param>
+        <param name="args">包含零个或多个要格式化的对象的对象数组。</param>
+        <summary>将后跟行结束符的格式化字符串写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法使用[.net 复合格式设置功能](~/docs/standard/base-types/composite-formatting.md)将对象的值转换为其文本表示形式，并将该表示形式嵌入到字符串中。 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="format" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.FormatException"><paramref name="format" /> 无效。  
+  
+- 或 - 
+表示要设置格式的参数的数字小于零，或者大于等于要设置格式的指定对象的数目。</exception>
+        <related type="Article" href="~/docs/standard/base-types/composite-formatting.md">复合格式设置</related>
+        <related type="Article" href="~/docs/standard/base-types/standard-numeric-format-strings.md">标准数字格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/custom-numeric-format-strings.md">自定义数字格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/standard-date-and-time-format-strings.md">标准 DateTime 格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/custom-date-and-time-format-strings.md">自定义日期时间格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/enumeration-format-strings.md">枚举格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/formatting-types.md">设置 .NET 中类型的格式</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Unindent">
+      <MemberSignature Language="C#" Value="public static void Unindent ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Unindent() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Unindent" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Unindent ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Unindent();" />
+      <MemberSignature Language="F#" Value="static member Unindent : unit -&gt; unit" Usage="System.Diagnostics.Debug.Unindent " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>将当前的 <see cref="P:System.Diagnostics.Debug.IndentLevel" /> 减少 1。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的示例设置缩进级别并发出调试消息。  
+  
+ [!code-cpp[Classic Debug.IndentLevel Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.IndentLevel Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.IndentLevel Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.IndentLevel Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.IndentLevel Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.IndentLevel Example/VB/source.vb#1)]  
+  
+ 该示例产生下面的输出：  
+  
+```  
+  
+List of errors:  
+     Error 1: File not found  
+     Error 2: Directory not found  
+End of list of errors  
+  
+```  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Diagnostics.Debug.Indent" />
+        <altmember cref="P:System.Diagnostics.Debug.IndentLevel" />
+        <altmember cref="P:System.Diagnostics.Debug.IndentSize" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Write">
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将有关调试的信息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public static void Write (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Write(System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Write (value As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Write(System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="static member Write : obj -&gt; unit" Usage="System.Diagnostics.Debug.Write value" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="value">一个对象，其名称被发送到 <see cref="P:System.Diagnostics.Debug.Listeners" />。</param>
+        <summary>将对象的 <see cref="M:System.Object.ToString" /> 方法的值写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.Write%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将第二个错误消息输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.Write Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Write Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Write Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Write Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Write Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Write Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public static void Write (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Write(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Write (message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Write(System::String ^ message);" />
+      <MemberSignature Language="F#" Value="static member Write : string -&gt; unit" Usage="System.Diagnostics.Debug.Write message" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="message">要写入的消息。</param>
+        <summary>将消息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.Write%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将第二个错误消息输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.Write Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Write Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Write Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Write Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Write Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Write Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public static void Write (object value, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(object value, string category) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Write(System.Object,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Write (value As Object, category As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Write(System::Object ^ value, System::String ^ category);" />
+      <MemberSignature Language="F#" Value="static member Write : obj * string -&gt; unit" Usage="System.Diagnostics.Debug.Write (value, category)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="category" Type="System.String" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="value">一个对象，其名称被发送到 <see cref="P:System.Diagnostics.Debug.Listeners" />。</param>
+        <param name="category">用于组织输出的类别名称。</param>
+        <summary>将类别名称和对象的 <see cref="M:System.Object.ToString" /> 方法值写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ `category`使用参数对输出消息进行分组。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.Write%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将第二个错误消息输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.Write Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Write Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Write Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Write Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Write Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Write Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public static void Write (string message, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(string message, string category) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.Write(System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub Write (message As String, category As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void Write(System::String ^ message, System::String ^ category);" />
+      <MemberSignature Language="F#" Value="static member Write : string * string -&gt; unit" Usage="System.Diagnostics.Debug.Write (message, category)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="category" Type="System.String" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="message">要写入的消息。</param>
+        <param name="category">用于组织输出的类别名称。</param>
+        <summary>将类别名称和消息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ `category`使用参数对输出消息进行分组。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.Write%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将第二个错误消息输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.Write Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.Write Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.Write Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.Write Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.Write Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.Write Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="WriteIf">
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>如果条件为 <see langword="true" />，则将有关调试的信息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="WriteIf">
+      <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteIf(bool condition, object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteIf (condition As Boolean, value As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteIf(bool condition, System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="static member WriteIf : bool * obj -&gt; unit" Usage="System.Diagnostics.Debug.WriteIf (condition, value)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="value" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="condition">要计算的条件表达式。 如果条件为 <see langword="true" />，则将值写入集合中的跟踪侦听器。</param>
+        <param name="value">一个对象，其名称被发送到 <see cref="P:System.Diagnostics.Debug.Listeners" />。</param>
+        <summary>如果条件为 <see langword="true" />，则将对象的 <see cref="M:System.Object.ToString" /> 方法值写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.Write%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将值参数的第一个名称输出到<xref:System.Diagnostics.Debug.Listeners%2A>。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例将在第一条消息所在的行上输出一条消息。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.WriteIf1 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteIf1 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteIf1 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteIf1 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteIf1 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteIf1 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>可以通过使用<see langword="If...Then" />语句而不是使用<see cref="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.String)" />语句来最大程度地减少对应用程序进行检测的性能损失。 下面两个代码示例发送相同的调试消息。 但是，当跟踪关闭时，第一个示例速度要快得多，因为如果<c>mySwitch</c>的<see langword="false" />计算结果为，则<see cref="M:System.Diagnostics.Debug.Write(System.String)" />不会调用。 第二个示例始终<see cref="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.String)" />调用，即使<c>mySwitch</c>为<see langword="false" /> TraceError，也不会生成任何跟踪输出。 这可能导致不必要地执行任意复杂的代码。  
+  
+第一个示例： 
+```csharp  
+if(mySwitch.TraceError)   
+    Debug.Write("aNumber = " + aNumber + " out of range");  
+```  
+  
+第二个示例： 
+```csharp  
+Debug.WriteIf(mySwitch.TraceError, "aNumber = " + aNumber + " out of range");  
+```</para></block>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="WriteIf">
+      <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteIf(bool condition, string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteIf (condition As Boolean, message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteIf(bool condition, System::String ^ message);" />
+      <MemberSignature Language="F#" Value="static member WriteIf : bool * string -&gt; unit" Usage="System.Diagnostics.Debug.WriteIf (condition, message)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="message" Type="System.String" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="condition">要计算的条件表达式。 如果条件为 <see langword="true" />，则将消息写入集合中的跟踪侦听器。</param>
+        <param name="message">要写入的消息。</param>
+        <summary>如果条件为 <see langword="true" />，则将消息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.Write%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将第二个错误消息输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.WriteIf Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteIf Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteIf Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteIf Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteIf Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteIf Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>可以通过使用<see langword="If...Then" />语句而不是使用<see cref="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.String)" />语句来最大程度地减少对应用程序进行检测的性能损失。 下面两个代码示例发送相同的调试消息。 但是，当跟踪关闭时，第一个示例速度要快得多，因为如果<c>mySwitch</c>的<see langword="false" />计算结果为，则<see cref="M:System.Diagnostics.Debug.Write(System.String)" />不会调用。 第二个示例始终<see cref="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.String)" />调用，即使<c>mySwitch</c>为<see langword="false" /> TraceError，也不会生成任何跟踪输出。 这可能导致不必要地执行任意复杂的代码。  
+  
+第一个示例： 
+```csharp  
+if(mySwitch.TraceError)   
+    Debug.Write("aNumber = " + aNumber + " out of range");  
+```  
+  
+第二个示例： 
+```csharp  
+Debug.WriteIf(mySwitch.TraceError, "aNumber = " + aNumber + " out of range");  
+```</para></block>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="WriteIf">
+      <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, object value, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteIf(bool condition, object value, string category) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.Object,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteIf (condition As Boolean, value As Object, category As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteIf(bool condition, System::Object ^ value, System::String ^ category);" />
+      <MemberSignature Language="F#" Value="static member WriteIf : bool * obj * string -&gt; unit" Usage="System.Diagnostics.Debug.WriteIf (condition, value, category)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="value" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="category" Type="System.String" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="condition">要计算的条件表达式。 如果条件为 <see langword="true" />，则将类别名称和值写入集合中的跟踪侦听器。</param>
+        <param name="value">一个对象，其名称被发送到 <see cref="P:System.Diagnostics.Debug.Listeners" />。</param>
+        <param name="category">用于组织输出的类别名称。</param>
+        <summary>如果条件为 <see langword="true" />，则将类别名称和对象的 <see cref="M:System.Object.ToString" /> 方法值写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ `category`参数可用于对输出消息进行分组。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.Write%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关<xref:System.Diagnostics.TraceLevel>设置为`Verbose`，则该示例会将`myObject`和的`category`名称输出到<xref:System.Diagnostics.Debug.Listeners%2A>。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>设置为`Error`或更高版本，则该示例会将第二个错误消息输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.WriteIf3 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteIf3 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteIf3 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteIf3 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteIf3 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteIf3 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>可以通过使用<see langword="If...Then" />语句而不是使用<see cref="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.String)" />语句来最大程度地减少对应用程序进行检测的性能损失。 下面两个代码示例发送相同的调试消息。 但是，当跟踪关闭时，第一个示例速度要快得多，因为如果<c>mySwitch</c>的<see langword="false" />计算结果为，则<see cref="M:System.Diagnostics.Debug.Write(System.String)" />不会调用。 第二个示例始终<see cref="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.String)" />调用，即使<c>mySwitch</c>为<see langword="false" /> TraceError，也不会生成任何跟踪输出。 这可能导致不必要地执行任意复杂的代码。  
+  
+第一个示例： 
+```csharp  
+if(mySwitch.TraceError)   
+    Debug.Write("aNumber = " + aNumber + " out of range");  
+```  
+  
+第二个示例： 
+```csharp  
+Debug.WriteIf(mySwitch.TraceError, "aNumber = " + aNumber + " out of range");  
+```</para></block>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="WriteIf">
+      <MemberSignature Language="C#" Value="public static void WriteIf (bool condition, string message, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteIf(bool condition, string message, string category) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteIf (condition As Boolean, message As String, category As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteIf(bool condition, System::String ^ message, System::String ^ category);" />
+      <MemberSignature Language="F#" Value="static member WriteIf : bool * string * string -&gt; unit" Usage="System.Diagnostics.Debug.WriteIf (condition, message, category)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="message" Type="System.String" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="category" Type="System.String" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="condition">要计算的条件表达式。 如果条件为 <see langword="true" />，则将类别名称和消息写入集合中的跟踪侦听器。</param>
+        <param name="message">要写入的消息。</param>
+        <param name="category">用于组织输出的类别名称。</param>
+        <summary>如果条件为 <see langword="true" />，则将类别名称和消息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ `category`参数可用于对输出消息进行分组。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.Write%2A?displayProperty=nameWithType>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Verbose`，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>设置为`Error`或更高版本，则该示例会将第二个错误消息输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.WriteIf2 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteIf2 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteIf2 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteIf2 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteIf2 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteIf2 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>可以通过使用<see langword="If...Then" />语句而不是使用<see cref="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.String)" />语句来最大程度地减少对应用程序进行检测的性能损失。 下面两个代码示例发送相同的调试消息。 但是，当跟踪关闭时，第一个示例速度要快得多，因为如果<c>mySwitch</c>的<see langword="false" />计算结果为，则<see cref="M:System.Diagnostics.Debug.Write(System.String)" />不会调用。 第二个示例始终<see cref="M:System.Diagnostics.Debug.WriteIf(System.Boolean,System.String)" />调用，即使<c>mySwitch</c>为<see langword="false" /> TraceError，也不会生成任何跟踪输出。 这可能导致不必要地执行任意复杂的代码。  
+  
+第一个示例： 
+```csharp  
+if(mySwitch.TraceError)   
+    Debug.Write("aNumber = " + aNumber + " out of range");  
+```  
+  
+第二个示例： 
+```csharp  
+Debug.WriteIf(mySwitch.TraceError, "aNumber = " + aNumber + " out of range");  
+```</para></block>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="WriteLine">
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将有关调试的信息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="C#" Value="public static void WriteLine (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteLine(System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteLine (value As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteLine(System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="static member WriteLine : obj -&gt; unit" Usage="System.Diagnostics.Debug.WriteLine value" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">一个对象，其名称被发送到 <see cref="P:System.Diagnostics.Debug.Listeners" />。</param>
+        <summary>将对象的 <see cref="M:System.Object.ToString" /> 方法的值写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.WriteLine%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将对象的名称输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.WriteLine1 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteLine1 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteLine1 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteLine1 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteLine1 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteLine1 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="C#" Value="public static void WriteLine (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteLine(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteLine (message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteLine(System::String ^ message);" />
+      <MemberSignature Language="F#" Value="static member WriteLine : string -&gt; unit" Usage="System.Diagnostics.Debug.WriteLine message" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">要写入的消息。</param>
+        <summary>将后跟行结束符的消息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.WriteLine%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将第二个错误消息输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.WriteLine Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteLine Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteLine Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteLine Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteLine Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteLine Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="C#" Value="public static void WriteLine (object value, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(object value, string category) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteLine(System.Object,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteLine (value As Object, category As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteLine(System::Object ^ value, System::String ^ category);" />
+      <MemberSignature Language="F#" Value="static member WriteLine : obj * string -&gt; unit" Usage="System.Diagnostics.Debug.WriteLine (value, category)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="category" Type="System.String" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="value">一个对象，其名称被发送到 <see cref="P:System.Diagnostics.Debug.Listeners" />。</param>
+        <param name="category">用于组织输出的类别名称。</param>
+        <summary>将类别名称和对象的 <see cref="M:System.Object.ToString" /> 方法值写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ `category`参数可用于对输出消息进行分组。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.WriteLine%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将第二个错误消息输出到第一条消息所在的同一行。 第二条消息后跟行结束符。  
+  
+ [!code-cpp[Classic Debug.WriteLine3 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteLine3 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteLine3 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteLine3 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteLine3 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteLine3 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="C#" Value="public static void WriteLine (string format, params object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(string format, object[] args) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteLine(System.String,System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteLine (format As String, ParamArray args As Object())" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteLine(System::String ^ format, ... cli::array &lt;System::Object ^&gt; ^ args);" />
+      <MemberSignature Language="F#" Value="static member WriteLine : string * obj[] -&gt; unit" Usage="System.Diagnostics.Debug.WriteLine (format, args)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="args" Type="System.Object[]" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
+          <Attributes>
+            <Attribute FrameworkAlternate="dotnet-uwp-10.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="format">包含与零个或多个格式项混合的文本的一个复合格式字符串，与 <paramref name="args" /> 数组中的对象相对应。</param>
+        <param name="args">一个对象数组，其中包含零个或多个要设置格式的对象。</param>
+        <summary>将后跟行结束符的格式化消息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法使用[.net 复合格式设置功能](~/docs/standard/base-types/composite-formatting.md)将对象的值转换为其文本表示形式，并将该表示形式嵌入到字符串中。  
+  
+ 此方法的语法C#中的[params](~/docs/csharp/language-reference/keywords/params.md) （in）或[ParamArray](~/docs/visual-basic/language-reference/modifiers/paramarray.md) （in Visual Basic）关键字表示对象数组可以是单个值。 此情况的例外是<xref:System.String>对象。 显式重载优先，因此`arg` ，单个字符串的值将默认<xref:System.Diagnostics.Debug.WriteLine%28System.String%2CSystem.String%29?displayProperty=nameWithType>为重载。  
+  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.WriteLine%2A?displayProperty=nameWithType>跟踪侦听器的方法。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="C#" Value="public static void WriteLine (string message, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(string message, string category) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteLine(System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteLine (message As String, category As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteLine(System::String ^ message, System::String ^ category);" />
+      <MemberSignature Language="F#" Value="static member WriteLine : string * string -&gt; unit" Usage="System.Diagnostics.Debug.WriteLine (message, category)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="category" Type="System.String" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="message">要写入的消息。</param>
+        <param name="category">用于组织输出的类别名称。</param>
+        <summary>将类别名称和消息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ `category`参数可用于对输出消息进行分组。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.WriteLine%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将`category`第二个错误消息和与第一条消息输出在同一行上。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.WriteLine2 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteLine2 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteLine2 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteLine2 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteLine2 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteLine2 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="WriteLineIf">
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>如果条件为 <see langword="true" />，则将有关调试的信息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="WriteLineIf">
+      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLineIf(bool condition, object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteLineIf (condition As Boolean, value As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteLineIf(bool condition, System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="static member WriteLineIf : bool * obj -&gt; unit" Usage="System.Diagnostics.Debug.WriteLineIf (condition, value)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="value" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="condition">要计算的条件表达式。 如果条件为 <see langword="true" />，则将值写入集合中的跟踪侦听器。</param>
+        <param name="value">一个对象，其名称被发送到 <see cref="P:System.Diagnostics.Debug.Listeners" />。</param>
+        <summary>如果条件为 <see langword="true" />，则将对象的 <see cref="M:System.Object.ToString" /> 方法值写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.WriteLine%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将对象的名称输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.WriteLineIf1 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf1 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteLineIf1 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf1 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteLineIf1 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf1 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>可以通过使用<see langword="If...Then" />语句而不是使用<see cref="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.String)" />语句来最大程度地减少对应用程序进行检测的性能损失。 下面两个代码示例发送相同的调试消息。 但是，当跟踪关闭时，第一个示例速度要快得多，因为如果<c>mySwitch</c>的<see langword="false" />计算结果为，则<see cref="M:System.Diagnostics.Debug.WriteLine(System.String)" />不会调用。 第二个示例始终<see cref="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.String)" />调用，即使<c>mySwitch</c>为<see langword="false" /> TraceError，也不会生成任何跟踪输出。 这可能导致不必要地执行任意复杂的代码。  
+  
+第一个示例： 
+```csharp  
+if(mySwitch.TraceError)   
+    Debug.WriteLine("aNumber = " + aNumber + " out of range");  
+```  
+  
+第二个示例： 
+```csharp  
+Debug.WriteLineIf(mySwitch.TraceError, "aNumber = " + aNumber + " out of range");  
+```</para></block>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLineIf">
+      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLineIf(bool condition, string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteLineIf (condition As Boolean, message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteLineIf(bool condition, System::String ^ message);" />
+      <MemberSignature Language="F#" Value="static member WriteLineIf : bool * string -&gt; unit" Usage="System.Diagnostics.Debug.WriteLineIf (condition, message)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="condition">要计算的条件表达式。 如果条件为 <see langword="true" />，则将消息写入集合中的跟踪侦听器。</param>
+        <param name="message">要写入的消息。</param>
+        <summary>如果条件为 <see langword="true" />，则将消息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.WriteLine%2A?displayProperty=nameWithType>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将第二个错误消息输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.WriteLineIf Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteLineIf Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteLineIf Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>可以通过使用<see langword="If...Then" />语句而不是使用<see cref="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.String)" />语句来最大程度地减少对应用程序进行检测的性能损失。 下面两个代码示例发送相同的调试消息。 但是，当跟踪关闭时，第一个示例速度要快得多，因为如果<c>mySwitch</c>的<see langword="false" />计算结果为，则<see cref="M:System.Diagnostics.Debug.WriteLine(System.String)" />不会调用。 第二个示例始终<see cref="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.String)" />调用，即使<c>mySwitch</c>为<see langword="false" /> TraceError，也不会生成任何跟踪输出。 这可能导致不必要地执行任意复杂的代码。  
+  
+第一个示例： 
+```csharp  
+if(mySwitch.TraceError)   
+    Debug.WriteLine("aNumber = " + aNumber + " out of range");  
+```  
+  
+第二个示例： 
+```csharp  
+Debug.WriteLineIf(mySwitch.TraceError, "aNumber = " + aNumber + " out of range");  
+```</para></block>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLineIf">
+      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, object value, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLineIf(bool condition, object value, string category) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.Object,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteLineIf (condition As Boolean, value As Object, category As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteLineIf(bool condition, System::Object ^ value, System::String ^ category);" />
+      <MemberSignature Language="F#" Value="static member WriteLineIf : bool * obj * string -&gt; unit" Usage="System.Diagnostics.Debug.WriteLineIf (condition, value, category)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="value" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="category" Type="System.String" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="condition">要计算的条件表达式。 如果条件为 <see langword="true" />，则将类别名称和值写入集合中的跟踪侦听器。</param>
+        <param name="value">一个对象，其名称被发送到 <see cref="P:System.Diagnostics.Debug.Listeners" />。</param>
+        <param name="category">用于组织输出的类别名称。</param>
+        <summary>如果条件为 <see langword="true" />，则将类别名称和对象的 <see cref="M:System.Object.ToString" /> 方法值写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ `category`参数可用于对输出消息进行分组。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.WriteLine%2A>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将第二个错误消息输出到第一条消息所在的同一行。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.WriteLineIf3 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf3 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteLineIf3 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf3 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteLineIf3 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf3 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>可以通过使用<see langword="If...Then" />语句而不是使用<see cref="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.String)" />语句来最大程度地减少对应用程序进行检测的性能损失。 下面两个代码示例发送相同的调试消息。 但是，当跟踪关闭时，第一个示例速度要快得多，因为如果<c>mySwitch</c>的<see langword="false" />计算结果为，则<see cref="M:System.Diagnostics.Debug.WriteLine(System.String)" />不会调用。 第二个示例始终<see cref="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.String)" />调用，即使<c>mySwitch</c>为<see langword="false" /> TraceError，也不会生成任何跟踪输出。 这可能导致不必要地执行任意复杂的代码。  
+  
+第一个示例： 
+```csharp  
+if(mySwitch.TraceError)   
+    Debug.WriteLine("aNumber = " + aNumber + " out of range");  
+```  
+  
+第二个示例： 
+```csharp  
+Debug.WriteLineIf(mySwitch.TraceError, "aNumber = " + aNumber + " out of range");  
+```</para></block>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLineIf">
+      <MemberSignature Language="C#" Value="public static void WriteLineIf (bool condition, string message, string category);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLineIf(bool condition, string message, string category) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub WriteLineIf (condition As Boolean, message As String, category As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void WriteLineIf(bool condition, System::String ^ message, System::String ^ category);" />
+      <MemberSignature Language="F#" Value="static member WriteLineIf : bool * string * string -&gt; unit" Usage="System.Diagnostics.Debug.WriteLineIf (condition, message, category)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.Debug</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("DEBUG")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="message" Type="System.String" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="category" Type="System.String" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="condition">若要使消息被写入，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <param name="message">要写入的消息。</param>
+        <param name="category">用于组织输出的类别名称。</param>
+        <summary>如果条件为 <see langword="true" />，则将类别名称和消息写入 <see cref="P:System.Diagnostics.Debug.Listeners" /> 集合中的跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，输出将写入到的实例<xref:System.Diagnostics.DefaultTraceListener>中。  
+  
+ `category`参数可用于对输出消息进行分组。  
+  
+ 此方法调用<xref:System.Diagnostics.TraceListener.WriteLine%2A?displayProperty=nameWithType>跟踪侦听器的方法。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Diagnostics.TraceSwitch>名`generalSwitch`为的。 此开关在代码示例之外设置。  
+  
+ 如果开关设置为<xref:System.Diagnostics.TraceLevel> `Error`或更高版本，则该示例会将<xref:System.Diagnostics.Debug.Listeners%2A>第一条错误消息输出到。 有关将侦听器添加到<xref:System.Diagnostics.Debug.Listeners%2A>集合的信息， <xref:System.Diagnostics.TraceListenerCollection>请参阅类。  
+  
+ 然后，如果<xref:System.Diagnostics.TraceLevel>将设置为`Verbose`，则该示例会将`category`第二个错误消息和与第一条消息输出在同一行上。 行结束符后跟第二条消息。  
+  
+ [!code-cpp[Classic Debug.WriteLineIf2 Example#1](~/samples/snippets/cpp/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf2 Example/CPP/source.cpp#1)]
+ [!code-csharp[Classic Debug.WriteLineIf2 Example#1](~/samples/snippets/csharp/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf2 Example/CS/source.cs#1)]
+ [!code-vb[Classic Debug.WriteLineIf2 Example#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_Classic/classic Debug.WriteLineIf2 Example/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>可以通过使用<see langword="If...Then" />语句而不是使用<see cref="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.String)" />语句来最大程度地减少对应用程序进行检测的性能损失。 下面两个代码示例发送相同的调试消息。 但是，当跟踪关闭时，第一个示例速度要快得多，因为如果<c>mySwitch</c>的<see langword="false" />计算结果为，则<see cref="M:System.Diagnostics.Debug.WriteLine(System.String)" />不会调用。 第二个示例始终<see cref="M:System.Diagnostics.Debug.WriteLineIf(System.Boolean,System.String)" />调用，即使<c>mySwitch</c>为<see langword="false" /> TraceError，也不会生成任何跟踪输出。 这可能导致不必要地执行任意复杂的代码。  
+  
+第一个示例： 
+```csharp  
+if(mySwitch.TraceError)   
+    Debug.WriteLine("aNumber = " + aNumber + " out of range");  
+```  
+  
+第二个示例： 
+```csharp  
+Debug.WriteLineIf(mySwitch.TraceError, "aNumber = " + aNumber + " out of range");  
+```</para></block>
+        <altmember cref="T:System.Diagnostics.Debug" />
+        <altmember cref="T:System.Diagnostics.Trace" />
+        <altmember cref="T:System.Diagnostics.BooleanSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceSwitch" />
+        <altmember cref="T:System.Diagnostics.TraceListener" />
+        <altmember cref="T:System.Diagnostics.DefaultTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConsoleTraceListener" />
+        <altmember cref="T:System.Diagnostics.ConditionalAttribute" />
+      </Docs>
+    </Member>
+  </Members>
+</Type>

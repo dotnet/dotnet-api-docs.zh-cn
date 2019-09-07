@@ -1,0 +1,561 @@
+<Type Name="XamlXmlWriter" FullName="System.Xaml.XamlXmlWriter">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="4c517484e17b8799fb8895c418c6e2a7e5f7122f" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70406873" /></Metadata><TypeSignature Language="C#" Value="public class XamlXmlWriter : System.Xaml.XamlWriter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XamlXmlWriter extends System.Xaml.XamlWriter" />
+  <TypeSignature Language="DocId" Value="T:System.Xaml.XamlXmlWriter" />
+  <TypeSignature Language="VB.NET" Value="Public Class XamlXmlWriter&#xA;Inherits XamlWriter" />
+  <TypeSignature Language="C++ CLI" Value="public ref class XamlXmlWriter : System::Xaml::XamlWriter" />
+  <TypeSignature Language="F#" Value="type XamlXmlWriter = class&#xA;    inherit XamlWriter" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xaml</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Xaml.XamlWriter</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>使用 <see cref="T:System.IO.TextWriter" /> 或 <see cref="T:System.Xml.XmlWriter" /> 支持类将 XAML 节点流写入文本或标记序列化形式。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此类通常用于序列化方案。  
+  
+## <a name="how-to-use-xamlxmlwriter"></a>如何使用 XamlXmlWriter  
+ <xref:System.Xaml.XamlWriter> API 具有几个写入不同类型的 XAML 节点的方法。 它们统称为，在文档`Write`中称为的方法。 <xref:System.Xaml.XamlWriter> <xref:System.Xaml.XamlXmlWriter>使用几个内部状态类来确定在它`Write`的某个实现调用时要执行的操作。 `Write`调用使用状态来确定是否可以写入请求的元素、属性或值，或者是否引发异常。 例如，如果调用<xref:System.Xaml.XamlXmlWriter.WriteEndObject%2A>且<xref:System.Xaml.XamlXmlWriter>当前节点位置的状态位于某个值或成员内，则会引发异常。 通常， <xref:System.Xaml.XamlXmlWriter> API 的调用方应知道来自 xaml 读取器和 xaml 节点流的当前 xaml 节点的类型。 根据此知识，调用方应避免调用`Write`与当前节点类型不相关的 api。  
+  
+## <a name="xaml-namespaces-and-xamlxmlwriter"></a>XAML 命名空间和 XamlXmlWriter  
+ 的<xref:System.Xaml.XamlXmlWriter> XAML 命名空间写入行为是复杂的，并不限于对的显式<xref:System.Xaml.XamlXmlWriter.WriteNamespace%2A>调用。 相反，其他`Write`调用（ <xref:System.Xaml.XamlXmlWriter.WriteStartObject%2A>如）可能要求将命名空间声明写入节点结构中的特定点。 XAML 编写器要么通过其自身的逻辑生成前缀，要么使用服务中的<xref:System.Xaml.INamespacePrefixLookup>信息来确定首选前缀。 此外，如果<xref:System.Xaml.XamlXmlWriter.WriteNamespace%2A> XAML 命名空间声明已适用并在其他位置声明，则显式调用可能会延迟或返回 nothing。  
+  
+## <a name="write-method-exceptions"></a>写入方法异常  
+ 方法引发<xref:System.Xaml.XamlXmlWriter> <xref:System.InvalidOperationException>的异常通常为或 <xref:System.Xaml.XamlXmlWriterException> 。  `Write`  
+  
+ <xref:System.InvalidOperationException>通常指示 xaml 读取器将无效的节点结构传递到 xaml 节点流中。 在这种情况下，由于与 XAML 架构或 XAML 架构上下文验证无关的原因，节点结构无效。 相反，节点流的基本格式无效。 例如，如果错误的 xaml 读取器实现生成包含两个连续`StartObject`节点的 xaml 节点流，则尝试调用第二<xref:System.Xaml.XamlXmlWriter.WriteStartObject%2A>个节点将引发<xref:System.InvalidOperationException>。 所有 XAML 编写器都认为此操作无效。 的另一个示例<xref:System.InvalidOperationException>是当 xaml 命名空间信息通过应用于当前节点流位置的 xaml 架构上下文不可用时。  
+  
+ <xref:System.Xaml.XamlXmlWriterException>指示此特定 XAML 编写器实现根据其预期功能选择引发异常的异常。 可以指示违反其自身状态或<xref:System.Xaml.XamlXmlWriter>设置的特定情况。 <xref:System.Xaml.XamlXmlWriterException> 例如，可能是<xref:System.Xaml.XamlXmlWriterException>因为尝试将 XAML 命名空间信息写入到其序列化格式不<xref:System.Xaml.XamlXmlWriter>支持的位置，或在实例的<xref:System.Xaml.XamlXmlWriterSettings>禁止时写入重复成员。  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="M:System.Xaml.XamlServices.Save(System.IO.Stream,System.Object)" />
+    <related type="Article" href="https://msdn.microsoft.com/library/7c11abec-1075-474c-9d9b-778e5dab21c3">了解 XAML 节点流结构和概念</related>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Xaml.XamlXmlWriter" /> 类的新实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XamlXmlWriter (System.IO.Stream stream, System.Xaml.XamlSchemaContext schemaContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream, class System.Xaml.XamlSchemaContext schemaContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.#ctor(System.IO.Stream,System.Xaml.XamlSchemaContext)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XamlXmlWriter(System::IO::Stream ^ stream, System::Xaml::XamlSchemaContext ^ schemaContext);" />
+      <MemberSignature Language="F#" Value="new System.Xaml.XamlXmlWriter : System.IO.Stream * System.Xaml.XamlSchemaContext -&gt; System.Xaml.XamlXmlWriter" Usage="new System.Xaml.XamlXmlWriter (stream, schemaContext)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="schemaContext" Type="System.Xaml.XamlSchemaContext" />
+      </Parameters>
+      <Docs>
+        <param name="stream">要写入的流。</param>
+        <param name="schemaContext">XAML 编写器的 XAML 架构上下文。</param>
+        <summary>从流中初始化 <see cref="T:System.Xaml.XamlXmlWriter" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="stream" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="schemaContext" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XamlXmlWriter (System.IO.TextWriter textWriter, System.Xaml.XamlSchemaContext schemaContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.TextWriter textWriter, class System.Xaml.XamlSchemaContext schemaContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.#ctor(System.IO.TextWriter,System.Xaml.XamlSchemaContext)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XamlXmlWriter(System::IO::TextWriter ^ textWriter, System::Xaml::XamlSchemaContext ^ schemaContext);" />
+      <MemberSignature Language="F#" Value="new System.Xaml.XamlXmlWriter : System.IO.TextWriter * System.Xaml.XamlSchemaContext -&gt; System.Xaml.XamlXmlWriter" Usage="new System.Xaml.XamlXmlWriter (textWriter, schemaContext)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="textWriter" Type="System.IO.TextWriter" />
+        <Parameter Name="schemaContext" Type="System.Xaml.XamlSchemaContext" />
+      </Parameters>
+      <Docs>
+        <param name="textWriter">写入输出的 <see cref="T:System.IO.TextWriter" />。</param>
+        <param name="schemaContext">XAML 编写器的 XAML 架构上下文。</param>
+        <summary>从 <see cref="T:System.Xaml.XamlXmlWriter" /> 基础初始化 <see cref="T:System.IO.TextWriter" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="textWriter" /> 或 <paramref name="schemaContext" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XamlXmlWriter (System.Xml.XmlWriter xmlWriter, System.Xaml.XamlSchemaContext schemaContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlWriter xmlWriter, class System.Xaml.XamlSchemaContext schemaContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.#ctor(System.Xml.XmlWriter,System.Xaml.XamlSchemaContext)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XamlXmlWriter(System::Xml::XmlWriter ^ xmlWriter, System::Xaml::XamlSchemaContext ^ schemaContext);" />
+      <MemberSignature Language="F#" Value="new System.Xaml.XamlXmlWriter : System.Xml.XmlWriter * System.Xaml.XamlSchemaContext -&gt; System.Xaml.XamlXmlWriter" Usage="new System.Xaml.XamlXmlWriter (xmlWriter, schemaContext)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="xmlWriter" Type="System.Xml.XmlWriter" />
+        <Parameter Name="schemaContext" Type="System.Xaml.XamlSchemaContext" />
+      </Parameters>
+      <Docs>
+        <param name="xmlWriter">写入输出的 <see cref="T:System.Xml.XmlWriter" />。</param>
+        <param name="schemaContext">XAML 编写器的 XAML 架构上下文。</param>
+        <summary>从 <see cref="T:System.Xaml.XamlXmlWriter" /> 基础初始化 <see cref="T:System.Xml.XmlWriter" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="xmlWriter" /> 或 <paramref name="schemaContext" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XamlXmlWriter (System.IO.Stream stream, System.Xaml.XamlSchemaContext schemaContext, System.Xaml.XamlXmlWriterSettings settings);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream, class System.Xaml.XamlSchemaContext schemaContext, class System.Xaml.XamlXmlWriterSettings settings) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.#ctor(System.IO.Stream,System.Xaml.XamlSchemaContext,System.Xaml.XamlXmlWriterSettings)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XamlXmlWriter(System::IO::Stream ^ stream, System::Xaml::XamlSchemaContext ^ schemaContext, System::Xaml::XamlXmlWriterSettings ^ settings);" />
+      <MemberSignature Language="F#" Value="new System.Xaml.XamlXmlWriter : System.IO.Stream * System.Xaml.XamlSchemaContext * System.Xaml.XamlXmlWriterSettings -&gt; System.Xaml.XamlXmlWriter" Usage="new System.Xaml.XamlXmlWriter (stream, schemaContext, settings)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="schemaContext" Type="System.Xaml.XamlSchemaContext" />
+        <Parameter Name="settings" Type="System.Xaml.XamlXmlWriterSettings" />
+      </Parameters>
+      <Docs>
+        <param name="stream">要写入的流。</param>
+        <param name="schemaContext">XAML 编写器的 XAML 架构上下文。</param>
+        <param name="settings"><see cref="T:System.Xaml.XamlXmlWriterSettings" /> 的实例，此实例通常具有特定的非默认设置。</param>
+        <summary>使用编写器设置对象从流中初始化 <see cref="T:System.Xaml.XamlXmlWriter" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 构造`settings` 实例 <xref:System.Xaml.XamlXmlWriter> 后，请不要更改对象的任何值。 <xref:System.Xaml.XamlXmlWriter>无法根据运行时可变的设置值更新其内部设置。 应该提供仅用于初始化的设置。 您可以通过使用其中一个<xref:System.Xaml.XamlXmlWriterSettings>构造函数签名来合并活动 XAML 编写器中的设置; 但是，您必须将这些设置应用于新的 xaml 编写器实例，而不是尝试调整现有的 xaml 编写器实例。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="stream" /> 或 <paramref name="schemaContext" /> 为 <see langword="null" /></exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XamlXmlWriter (System.IO.TextWriter textWriter, System.Xaml.XamlSchemaContext schemaContext, System.Xaml.XamlXmlWriterSettings settings);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.TextWriter textWriter, class System.Xaml.XamlSchemaContext schemaContext, class System.Xaml.XamlXmlWriterSettings settings) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.#ctor(System.IO.TextWriter,System.Xaml.XamlSchemaContext,System.Xaml.XamlXmlWriterSettings)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XamlXmlWriter(System::IO::TextWriter ^ textWriter, System::Xaml::XamlSchemaContext ^ schemaContext, System::Xaml::XamlXmlWriterSettings ^ settings);" />
+      <MemberSignature Language="F#" Value="new System.Xaml.XamlXmlWriter : System.IO.TextWriter * System.Xaml.XamlSchemaContext * System.Xaml.XamlXmlWriterSettings -&gt; System.Xaml.XamlXmlWriter" Usage="new System.Xaml.XamlXmlWriter (textWriter, schemaContext, settings)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="textWriter" Type="System.IO.TextWriter" />
+        <Parameter Name="schemaContext" Type="System.Xaml.XamlSchemaContext" />
+        <Parameter Name="settings" Type="System.Xaml.XamlXmlWriterSettings" />
+      </Parameters>
+      <Docs>
+        <param name="textWriter">写入输出的 <see cref="T:System.IO.TextWriter" />。</param>
+        <param name="schemaContext">XAML 编写器的 XAML 架构上下文。</param>
+        <param name="settings"><see cref="T:System.Xaml.XamlXmlWriterSettings" /> 的实例，此实例通常具有特定的非默认设置。</param>
+        <summary>使用设置对象从 <see cref="T:System.Xaml.XamlXmlWriter" /> 基础初始化 <see cref="T:System.IO.TextWriter" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 构造`settings` 实例 <xref:System.Xaml.XamlXmlWriter> 后，请不要更改对象的任何值。 <xref:System.Xaml.XamlXmlWriter>无法根据运行时可变的设置值更新其内部设置。 应该提供仅用于初始化的设置。 您可以通过使用其中一个<xref:System.Xaml.XamlXmlWriterSettings>构造函数签名来合并活动 XAML 编写器中的设置; 但是，您必须将这些设置应用于新的 xaml 编写器实例，而不是尝试调整现有的 xaml 编写器实例。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="textWriter" /> 或 <paramref name="schemaContext" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XamlXmlWriter (System.Xml.XmlWriter xmlWriter, System.Xaml.XamlSchemaContext schemaContext, System.Xaml.XamlXmlWriterSettings settings);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlWriter xmlWriter, class System.Xaml.XamlSchemaContext schemaContext, class System.Xaml.XamlXmlWriterSettings settings) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.#ctor(System.Xml.XmlWriter,System.Xaml.XamlSchemaContext,System.Xaml.XamlXmlWriterSettings)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XamlXmlWriter(System::Xml::XmlWriter ^ xmlWriter, System::Xaml::XamlSchemaContext ^ schemaContext, System::Xaml::XamlXmlWriterSettings ^ settings);" />
+      <MemberSignature Language="F#" Value="new System.Xaml.XamlXmlWriter : System.Xml.XmlWriter * System.Xaml.XamlSchemaContext * System.Xaml.XamlXmlWriterSettings -&gt; System.Xaml.XamlXmlWriter" Usage="new System.Xaml.XamlXmlWriter (xmlWriter, schemaContext, settings)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="xmlWriter" Type="System.Xml.XmlWriter" />
+        <Parameter Name="schemaContext" Type="System.Xaml.XamlSchemaContext" />
+        <Parameter Name="settings" Type="System.Xaml.XamlXmlWriterSettings" />
+      </Parameters>
+      <Docs>
+        <param name="xmlWriter">写入输出的 <see cref="T:System.Xml.XmlWriter" />。</param>
+        <param name="schemaContext">XAML 编写器的 XAML 架构上下文。</param>
+        <param name="settings"><see cref="T:System.Xaml.XamlXmlWriterSettings" /> 的实例，此实例通常具有特定的非默认设置。</param>
+        <summary>使用设置对象从 <see cref="T:System.Xaml.XamlXmlWriter" /> 基础初始化 <see cref="T:System.Xml.XmlWriter" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 构造`settings` 实例 <xref:System.Xaml.XamlXmlWriter> 后，请不要更改对象的任何值。 <xref:System.Xaml.XamlXmlWriter>无法根据运行时可变的设置值更新其内部设置。 应该提供仅用于初始化的设置。 您可以通过使用其中一个<xref:System.Xaml.XamlXmlWriterSettings>构造函数签名来合并活动 XAML 编写器中的设置; 但是，您必须将这些设置应用于新的 xaml 编写器实例，而不是尝试调整现有的 xaml 编写器实例。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="xmlWriter" /> 或 <paramref name="schemaContext" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.Dispose(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overrides Sub Dispose (disposing As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; override void Dispose(bool disposing);" />
+      <MemberSignature Language="F#" Value="override this.Dispose : bool -&gt; unit" Usage="xamlXmlWriter.Dispose disposing" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">设置为 <see langword="true" /> 以释放非托管资源；否则为 <see langword="false" />。</param>
+        <summary>释放 <see cref="T:System.Xaml.XamlXmlWriter" /> 占用的非托管资源，也可以选择释放托管资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此实现对`Close`基础<xref:System.Xml.XmlWriter> <xref:System.IO.TextWriter>或在中<xref:System.Xaml.XamlXmlWriterSettings.CloseOutput%2A> 提供 <xref:System.Xaml.XamlXmlWriterSettings> 的情况调用。  `true` 否则，它会<xref:System.Xaml.XamlXmlWriter.Flush%2A>调用。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="C#" Value="public void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Flush() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.Flush" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Flush ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Flush();" />
+      <MemberSignature Language="F#" Value="member this.Flush : unit -&gt; unit" Usage="xamlXmlWriter.Flush " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>调用基础 <see cref="T:System.Xml.XmlWriter" /> 或 <see cref="T:System.IO.TextWriter" /> 的 <see langword="Flush" /> 方法，该方法将写出当前位于缓冲区中的任何内容，然后关闭编写器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 的`Dispose` <xref:System.Xaml.XamlXmlWriterSettings.CloseOutput%2A?displayProperty=nameWithType>行为<xref:System.Xaml.XamlXmlWriter>可能会受到其编写器设置的影响，尤其是。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SchemaContext">
+      <MemberSignature Language="C#" Value="public override System.Xaml.XamlSchemaContext SchemaContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xaml.XamlSchemaContext SchemaContext" />
+      <MemberSignature Language="DocId" Value="P:System.Xaml.XamlXmlWriter.SchemaContext" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property SchemaContext As XamlSchemaContext" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Xaml::XamlSchemaContext ^ SchemaContext { System::Xaml::XamlSchemaContext ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.SchemaContext : System.Xaml.XamlSchemaContext" Usage="System.Xaml.XamlXmlWriter.SchemaContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Xaml.XamlSchemaContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取此 <see cref="T:System.Xaml.XamlXmlWriter" /> 用于处理的 XAML 架构上下文。</summary>
+        <value>此 <see cref="T:System.Xaml.XamlXmlWriter" /> 用于 XAML 处理的 XAML 架构上下文。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ XAML 编写器通常从提供 XAML 节点流的关联 XAML 读取器获取其 XAML 架构上下文。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Settings">
+      <MemberSignature Language="C#" Value="public System.Xaml.XamlXmlWriterSettings Settings { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xaml.XamlXmlWriterSettings Settings" />
+      <MemberSignature Language="DocId" Value="P:System.Xaml.XamlXmlWriter.Settings" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Settings As XamlXmlWriterSettings" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Xaml::XamlXmlWriterSettings ^ Settings { System::Xaml::XamlXmlWriterSettings ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Settings : System.Xaml.XamlXmlWriterSettings" Usage="System.Xaml.XamlXmlWriter.Settings" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xaml.XamlXmlWriterSettings</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取此 <see cref="T:System.Xaml.XamlXmlWriter" /> 用于 XAML 处理的编写器设置。</summary>
+        <value>此 <see cref="T:System.Xaml.XamlXmlWriter" /> 用于 XAML 处理的编写器设置。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从此属性获取的值是副本，而不是引用。 更改设置上的属性值不影响活动<xref:System.Xaml.XamlXmlWriter>。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteEndMember">
+      <MemberSignature Language="C#" Value="public override void WriteEndMember ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteEndMember() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.WriteEndMember" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub WriteEndMember ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void WriteEndMember();" />
+      <MemberSignature Language="F#" Value="override this.WriteEndMember : unit -&gt; unit" Usage="xamlXmlWriter.WriteEndMember " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>将 XAML 结束成员节点写入到基础 <see cref="T:System.Xml.XmlWriter" /> 或 <see cref="T:System.IO.TextWriter" />。 如果 XAML 节点流的当前位置不在成员内，或者如果内部编写器状态不支持写入结束成员，则引发异常。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.InvalidOperationException">XAML 节点流的当前位置不在成员内。</exception>
+        <exception cref="T:System.Xaml.XamlXmlWriterException">当前编写器状态不支持写入结束成员。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteEndObject">
+      <MemberSignature Language="C#" Value="public override void WriteEndObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteEndObject() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.WriteEndObject" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub WriteEndObject ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void WriteEndObject();" />
+      <MemberSignature Language="F#" Value="override this.WriteEndObject : unit -&gt; unit" Usage="xamlXmlWriter.WriteEndObject " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>将 XAML 结束对象节点写入到基础 <see cref="T:System.Xml.XmlWriter" /> 或 <see cref="T:System.IO.TextWriter" />。 如果所处理的 XAML 节点流的当前位置与写入结束对象不兼容，则引发异常。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在 XAML 的标记和文本表示形式中，结束对象是结束标记。  
+  
+ 由<xref:System.InvalidOperationException> <xref:System.Xaml.XamlXmlWriter.WriteEndObject%2A>引发的最常见的情况是当前 XAML 节点流位置仍在成员内并且被调用。 <xref:System.Xaml.XamlXmlWriter.WriteEndObject%2A>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">XAML 节点流的当前位置不在可以写入结束成员的范围内。</exception>
+        <exception cref="T:System.Xaml.XamlXmlWriterException">当前编写器状态不支持写入结束对象。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteGetObject">
+      <MemberSignature Language="C#" Value="public override void WriteGetObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteGetObject() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.WriteGetObject" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub WriteGetObject ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void WriteGetObject();" />
+      <MemberSignature Language="F#" Value="override this.WriteGetObject : unit -&gt; unit" Usage="xamlXmlWriter.WriteGetObject " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>针对指定对象是所编写属性的默认值或隐式值的情况写出对象，而不是指定为输入 XAML 节点集中的对象值。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteNamespace">
+      <MemberSignature Language="C#" Value="public override void WriteNamespace (System.Xaml.NamespaceDeclaration namespaceDeclaration);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteNamespace(class System.Xaml.NamespaceDeclaration namespaceDeclaration) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.WriteNamespace(System.Xaml.NamespaceDeclaration)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void WriteNamespace(System::Xaml::NamespaceDeclaration ^ namespaceDeclaration);" />
+      <MemberSignature Language="F#" Value="override this.WriteNamespace : System.Xaml.NamespaceDeclaration -&gt; unit" Usage="xamlXmlWriter.WriteNamespace namespaceDeclaration" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="namespaceDeclaration" Type="System.Xaml.NamespaceDeclaration" />
+      </Parameters>
+      <Docs>
+        <param name="namespaceDeclaration">要写入的 XAML 命名空间声明。</param>
+        <summary>将命名空间信息写入到基础 <see cref="T:System.Xml.XmlWriter" /> 或 <see cref="T:System.IO.TextWriter" />。 对于某些状态可能会引发异常；但在编写器和所处理的 XAML 节点流到达可放置 XAML 命名空间声明的位置之前，可能会改为延迟写入命名空间信息。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="namespaceDeclaration" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="namespaceDeclaration" /> 不是有效的 XAML 命名空间声明（具有 null 前缀或 null 标识符组件）。</exception>
+        <exception cref="T:System.Xaml.XamlXmlWriterException">当前编写器状态不支持编写 XAML 命名空间声明。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteStartMember">
+      <MemberSignature Language="C#" Value="public override void WriteStartMember (System.Xaml.XamlMember property);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteStartMember(class System.Xaml.XamlMember property) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.WriteStartMember(System.Xaml.XamlMember)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub WriteStartMember (property As XamlMember)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void WriteStartMember(System::Xaml::XamlMember ^ property);" />
+      <MemberSignature Language="F#" Value="override this.WriteStartMember : System.Xaml.XamlMember -&gt; unit" Usage="xamlXmlWriter.WriteStartMember property" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="property" Type="System.Xaml.XamlMember" />
+      </Parameters>
+      <Docs>
+        <param name="property">要写入的成员的 XAML 成员标识符。</param>
+        <summary>将 XAML 起始成员节点写入到基础 <see cref="T:System.Xml.XmlWriter" /> 或 <see cref="T:System.IO.TextWriter" />。 如果 XAML 节点流的当前位置在另一个成员内，或者未处于可写入起始成员的范围或编写器状态中，则引发异常。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 第一次尝试以<xref:System.Xaml.XamlXmlWriter>属性形式写入成员时的内部默认逻辑。 如果不支持特性窗体，因为属性或其值不支持文本语法，则改为写入属性元素。 如果属性为 xaml 内容属性、 `GetObject` case 或隐式属性，则可能会写入其他 XAML 格式，如内部文本或没有干预成员的对象子级。  
+  
+ 如果<xref:System.Xaml.XamlXmlWriterSettings.AssumeValidInput%2A> <xref:System.Xaml.XamlXmlWriterSettings>在用于此 <xref:System.Xaml.XamlXmlWriter> 的设置的对象中，则永远不会引发重复成员异常。 `true`  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="property" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="property" /> 不是有效的 <see cref="T:System.Xaml.XamlMember" />。</exception>
+        <exception cref="T:System.InvalidOperationException">XAML 节点流的当前位置无效，无法写入起始成员。</exception>
+        <exception cref="T:System.Xaml.XamlXmlWriterException">编写器状态对于编写开始成员是无效的。  
+  
+ 或  
+  
+ XAML 编写器尝试编写重复的成员。 此异常可能具有更精确的内部异常。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteStartObject">
+      <MemberSignature Language="C#" Value="public override void WriteStartObject (System.Xaml.XamlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteStartObject(class System.Xaml.XamlType type) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.WriteStartObject(System.Xaml.XamlType)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub WriteStartObject (type As XamlType)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void WriteStartObject(System::Xaml::XamlType ^ type);" />
+      <MemberSignature Language="F#" Value="override this.WriteStartObject : System.Xaml.XamlType -&gt; unit" Usage="xamlXmlWriter.WriteStartObject type" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Xaml.XamlType" />
+      </Parameters>
+      <Docs>
+        <param name="type">要写入的对象的 <see cref="T:System.Xaml.XamlType" />（XAML 类型标识符）。</param>
+        <summary>将 XAML 起始对象节点写入到基础 <see cref="T:System.Xml.XmlWriter" /> 或 <see cref="T:System.IO.TextWriter" />。 如果 XAML 节点流的当前位置不在可写入起始对象的范围内，或者编写器未处于可写入起始对象的状态，则引发异常。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="type" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="type" /> 不是有效的 <see cref="T:System.Xaml.XamlType" />。</exception>
+        <exception cref="T:System.InvalidOperationException">XAML 节点流的当前位置无效，无法写入新的开始对象。</exception>
+        <exception cref="T:System.Xaml.XamlXmlWriterException">XAML 编写器的状态无效，无法写入新的开始对象。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteValue">
+      <MemberSignature Language="C#" Value="public override void WriteValue (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteValue(object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xaml.XamlXmlWriter.WriteValue(System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub WriteValue (value As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void WriteValue(System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="override this.WriteValue : obj -&gt; unit" Usage="xamlXmlWriter.WriteValue value" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xaml</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="value">要写入的值信息。</param>
+        <summary>将 XAML 值节点写入到基础 <see cref="T:System.Xml.XmlWriter" /> 或 <see cref="T:System.IO.TextWriter" />。 如果 XAML 节点流的当前位置对于写入值操作无效，或者编写器处于无法写入值的状态，则引发异常。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 输入`value`可能为`null`，它支持以序列化值的形式显式写出 null。 此行为使用<xref:System.Xaml.XamlLanguage.Null%2A?displayProperty=nameWithType>定义作为<xref:System.Xaml.XamlXmlWriter.WriteStartObject%2A>输入，然后立即调用<xref:System.Xaml.XamlXmlWriter.WriteEndObject%2A>。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">XAML 节点流的当前位置无效，无法写入值。</exception>
+        <exception cref="T:System.Xaml.XamlXmlWriterException">XAML 编写器状态不支持对值节点的写入。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="value" /> 指定的值不为 null，也不为字符串。</exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
