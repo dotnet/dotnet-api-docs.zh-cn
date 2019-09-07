@@ -1,0 +1,213 @@
+<Type Name="PersistenceParticipant" FullName="System.Activities.Persistence.PersistenceParticipant">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="eff49a6fa1166e060b136d9a92c0e0256da30449" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70411283" /></Metadata><TypeSignature Language="C#" Value="public abstract class PersistenceParticipant" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit PersistenceParticipant extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Activities.Persistence.PersistenceParticipant" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class PersistenceParticipant" />
+  <TypeSignature Language="C++ CLI" Value="public ref class PersistenceParticipant abstract" />
+  <TypeSignature Language="F#" Value="type PersistenceParticipant = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Activities</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary><span data-ttu-id="12f55-101">此类允许 <see cref="T:System.Activities.WorkflowApplication" /> 和 <see cref="T:System.ServiceModel.WorkflowServiceHost" /> 均参与保留过程。</span><span class="sxs-lookup"><span data-stu-id="12f55-101">This class allows both <see cref="T:System.Activities.WorkflowApplication" /> and <see cref="T:System.ServiceModel.WorkflowServiceHost" /> to participate in persistence process.</span></span> <span data-ttu-id="12f55-102">持久性参与者派生自 <see cref="T:System.Activities.Persistence.PersistenceParticipant" /> 类或 <see cref="T:System.Activities.Persistence.PersistenceIOParticipant" /> 类（<see cref="T:System.Activities.Persistence.PersistenceParticipant" /> 类的派生类），实现抽象方法，然后添加类的实例作为工作流实例扩展。</span><span class="sxs-lookup"><span data-stu-id="12f55-102">A persistence participant derives from the <see cref="T:System.Activities.Persistence.PersistenceParticipant" /> class or the <see cref="T:System.Activities.Persistence.PersistenceIOParticipant" /> class (derived class of the <see cref="T:System.Activities.Persistence.PersistenceParticipant" /> class), implements abstract methods, and then add an instance of the class as a workflow instance extension.</span></span> <span data-ttu-id="12f55-103"><see cref="T:System.Activities.WorkflowApplication" /> 和 <see cref="T:System.ServiceModel.WorkflowServiceHost" /> 在保留实例时查找此类扩展，并在适当的时间调用适当的方法。</span><span class="sxs-lookup"><span data-stu-id="12f55-103">The <see cref="T:System.Activities.WorkflowApplication" /> and <see cref="T:System.ServiceModel.WorkflowServiceHost" /> look for such extensions when persisting an instance and invoke appropriate methods at appropriate times.</span></span></summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="12f55-104">宿主在保留实例时执行以下步骤（或阶段）：</span><span class="sxs-lookup"><span data-stu-id="12f55-104">A host executes the following steps (or stages) when persisting an instance:</span></span>  
+  
+1.  <span data-ttu-id="12f55-105">收集要保留的值。</span><span class="sxs-lookup"><span data-stu-id="12f55-105">Collects values to be persisted.</span></span>  
+  
+2.  <span data-ttu-id="12f55-106">将整体结构化类的字段映射到单独的值。</span><span class="sxs-lookup"><span data-stu-id="12f55-106">Maps fields of monolithic structured values to individual values.</span></span>  
+  
+3.  <span data-ttu-id="12f55-107">向持久性提供程序发出 <xref:System.Activities.DurableInstancing.SaveWorkflowCommand>。</span><span class="sxs-lookup"><span data-stu-id="12f55-107">Issues the <xref:System.Activities.DurableInstancing.SaveWorkflowCommand> to the persistence provider.</span></span>  
+  
+4.  <span data-ttu-id="12f55-108">在持久性事务下执行 I/O。</span><span class="sxs-lookup"><span data-stu-id="12f55-108">Performs I/O under the persistence transaction.</span></span>  
+  
+ <span data-ttu-id="12f55-109">宿主将完成一个阶段，之后再开始下一个阶段。</span><span class="sxs-lookup"><span data-stu-id="12f55-109">A host completes a stage before beginning the next stage.</span></span> <span data-ttu-id="12f55-110">例如，在保留时，宿主将从所有持久性参与者处收集值，之后再转移到第二个阶段。</span><span class="sxs-lookup"><span data-stu-id="12f55-110">For example when persisting, the host collects values from all the persistence participants before moving to the second stage.</span></span> <span data-ttu-id="12f55-111">在第二个阶段中，宿主会将第一个阶段中收集的所有值提供给第二个阶段中的所有持久性参与者进行映射。</span><span class="sxs-lookup"><span data-stu-id="12f55-111">In the second stage, the host provides all the values collected in the first stage to all persistence participants in the second stage for mapping.</span></span> <span data-ttu-id="12f55-112">在第三个阶段中，宿主会在调用 <xref:System.Activities.DurableInstancing.SaveWorkflowCommand> 时将第一个和第二个阶段中收集的所有值提供给持久性提供程序。</span><span class="sxs-lookup"><span data-stu-id="12f55-112">In the third stage, the host provides all the collected values in the first and second stages to the persistence provider when invoking the <xref:System.Activities.DurableInstancing.SaveWorkflowCommand>.</span></span> <span data-ttu-id="12f55-113">然后，在第四个阶段中，主机会在持久性事务下将所有收集的值提供给所有持久性 IO 参与者。</span><span class="sxs-lookup"><span data-stu-id="12f55-113">Then in the fourth stage, the host provides all the collected values to all the persistence IO participants under the persistence transaction.</span></span>  
+  
+ <span data-ttu-id="12f55-114">宿主在加载持久性实例时将执行以下阶段：</span><span class="sxs-lookup"><span data-stu-id="12f55-114">A host executes the following stages when loading a persistence instance:</span></span>  
+  
+1.  <span data-ttu-id="12f55-115">向持久性提供程序发出 <xref:System.Activities.DurableInstancing.LoadWorkflowCommand> 和 <xref:System.Activities.DurableInstancing.LoadWorkflowByInstanceKeyCommand>。</span><span class="sxs-lookup"><span data-stu-id="12f55-115">Issues the <xref:System.Activities.DurableInstancing.LoadWorkflowCommand> and <xref:System.Activities.DurableInstancing.LoadWorkflowByInstanceKeyCommand> to the persistence provider.</span></span>  
+  
+2.  <span data-ttu-id="12f55-116">在持久性事务下执行 I/O。</span><span class="sxs-lookup"><span data-stu-id="12f55-116">Performs I/O under the persistence transaction.</span></span>  
+  
+3.  <span data-ttu-id="12f55-117">发布加载的值。</span><span class="sxs-lookup"><span data-stu-id="12f55-117">Publishes the loaded values.</span></span>  
+  
+ <span data-ttu-id="12f55-118">在最高级别，派生自 <xref:System.Activities.Persistence.PersistenceParticipant> 类的工作流实例扩展可以参与保留过程的第一个阶段（收集）和第二个阶段（映射），以及加载过程的第三个阶段（发布）。</span><span class="sxs-lookup"><span data-stu-id="12f55-118">At the highest level, workflow instance extensions that derive from the <xref:System.Activities.Persistence.PersistenceParticipant> class can participate in the first (Collect) and second (Map) stages of persisting process and the third stage (Publish) of loading process.</span></span>  <span data-ttu-id="12f55-119">派生自 PersistenceIOParticipant 类的工作流实例扩展另外还可以参与保留过程的第四个阶段以及加载过程的第二个阶段 (I/O)。</span><span class="sxs-lookup"><span data-stu-id="12f55-119">Workflow instance extensions deriving from the PersistenceIOParticipant class can additionally participate in the fourth stage of the persisting process and the second stage of the loading process (I/O).</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="12f55-120">下面的代码示例演示如何创建一个从 <xref:System.Activities.Persistence.PersistenceParticipant> 派生的类。</span><span class="sxs-lookup"><span data-stu-id="12f55-120">The following code sample demonstrates creating a class that derives from <xref:System.Activities.Persistence.PersistenceParticipant>.</span></span> <span data-ttu-id="12f55-121">此示例来自[聘用过程](~/docs/framework/windows-workflow-foundation/samples/hiring-process.md)示例。</span><span class="sxs-lookup"><span data-stu-id="12f55-121">This example is from the [Hiring Process](~/docs/framework/windows-workflow-foundation/samples/hiring-process.md) sample.</span></span>  
+  
+ [!code-csharp[wfs_HiringRequestProcess#1](~/samples/snippets/csharp/VS_Snippets_CFX/wfs_hiringrequestprocess/cs/hiringrequestpersistenceparticipant.cs#1)]  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected PersistenceParticipant ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Persistence.PersistenceParticipant.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; PersistenceParticipant();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="12f55-122">初始化 <see cref="T:System.Activities.Persistence.PersistenceParticipant" /> 类的实例。</span><span class="sxs-lookup"><span data-stu-id="12f55-122">Initializes an instance of the <see cref="T:System.Activities.Persistence.PersistenceParticipant" /> class.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ <span data-ttu-id="12f55-123">下面的代码示例演示如何创建一个从 <xref:System.Activities.Persistence.PersistenceParticipant> 派生的类。</span><span class="sxs-lookup"><span data-stu-id="12f55-123">The following code sample demonstrates creating a class that derives from <xref:System.Activities.Persistence.PersistenceParticipant>.</span></span> <span data-ttu-id="12f55-124">此示例来自[聘用过程](~/docs/framework/windows-workflow-foundation/samples/hiring-process.md)示例。</span><span class="sxs-lookup"><span data-stu-id="12f55-124">This example is from the [Hiring Process](~/docs/framework/windows-workflow-foundation/samples/hiring-process.md) sample.</span></span>  
+  
+ [!code-csharp[wfs_HiringRequestProcess#1](~/samples/snippets/csharp/VS_Snippets_CFX/wfs_hiringrequestprocess/cs/hiringrequestpersistenceparticipant.cs#1)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CollectValues">
+      <MemberSignature Language="C#" Value="protected virtual void CollectValues (out System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,object&gt; readWriteValues, out System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,object&gt; writeOnlyValues);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void CollectValues([out] class System.Collections.Generic.IDictionary`2&lt;class System.Xml.Linq.XName, object&gt;&amp; readWriteValues, [out] class System.Collections.Generic.IDictionary`2&lt;class System.Xml.Linq.XName, object&gt;&amp; writeOnlyValues) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Persistence.PersistenceParticipant.CollectValues(System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object}@,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object}@)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub CollectValues (ByRef readWriteValues As IDictionary(Of XName, Object), ByRef writeOnlyValues As IDictionary(Of XName, Object))" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void CollectValues([Runtime::InteropServices::Out] System::Collections::Generic::IDictionary&lt;System::Xml::Linq::XName ^, System::Object ^&gt; ^ % readWriteValues, [Runtime::InteropServices::Out] System::Collections::Generic::IDictionary&lt;System::Xml::Linq::XName ^, System::Object ^&gt; ^ % writeOnlyValues);" />
+      <MemberSignature Language="F#" Value="abstract member CollectValues :  *  -&gt; unit&#xA;override this.CollectValues :  *  -&gt; unit" Usage="persistenceParticipant.CollectValues (readWriteValues, writeOnlyValues)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Runtime.IPersistencePipelineModule.CollectValues(System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object}@,System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object}@)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="readWriteValues" Type="System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,System.Object&gt;" RefType="out" />
+        <Parameter Name="writeOnlyValues" Type="System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,System.Object&gt;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="readWriteValues"><span data-ttu-id="12f55-125">要保持的读/写值。</span><span class="sxs-lookup"><span data-stu-id="12f55-125">The read-write values to be persisted.</span></span></param>
+        <param name="writeOnlyValues"><span data-ttu-id="12f55-126">要保持的只写值。</span><span class="sxs-lookup"><span data-stu-id="12f55-126">The write-only values to be persisted.</span></span></param>
+        <summary><span data-ttu-id="12f55-127">宿主对自定义持久性参与者调用此方法，以收集要保留的读/写值和只写值。</span><span class="sxs-lookup"><span data-stu-id="12f55-127">A host invokes this method on a custom persistence participant to collect read-write values and write-only values, to be persisted.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="12f55-128">宿主以 <xref:System.Runtime.DurableInstancing.InstanceValue> 集合的 <xref:System.Activities.DurableInstancing.SaveWorkflowCommand.InstanceData*> 对象的形式将读/写值包装在第一个字典中，并以 <xref:System.Runtime.DurableInstancing.InstanceValue> 对象的形式将只写值包装在第二个字典中（设置了 <xref:System.Runtime.DurableInstancing.InstanceValueOptions.Optional> 和 <xref:System.Runtime.DurableInstancing.InstanceValueOptions.WriteOnly> 标志）。</span><span class="sxs-lookup"><span data-stu-id="12f55-128">The host packages read-write values in the first dictionary as <xref:System.Runtime.DurableInstancing.InstanceValue> objects of an <xref:System.Activities.DurableInstancing.SaveWorkflowCommand.InstanceData*> collection, and packages write-only values in the second dictionary as <xref:System.Runtime.DurableInstancing.InstanceValue> objects with <xref:System.Runtime.DurableInstancing.InstanceValueOptions.Optional> and <xref:System.Runtime.DurableInstancing.InstanceValueOptions.WriteOnly> flags set.</span></span> <span data-ttu-id="12f55-129">有关详细信息，请参阅 <xref:System.Runtime.DurableInstancing.InstanceValueOptions>。</span><span class="sxs-lookup"><span data-stu-id="12f55-129">For more information, see <xref:System.Runtime.DurableInstancing.InstanceValueOptions>.</span></span>  
+  
+> [!IMPORTANT]
+>  <span data-ttu-id="12f55-130">由一个持久性段内所有持久性参与者之间的 <xref:System.Activities.Persistence.PersistenceParticipant.CollectValues%2A> 实现提供的每个值均必须具有唯一的 XName。</span><span class="sxs-lookup"><span data-stu-id="12f55-130">Each value provided by implementations of <xref:System.Activities.Persistence.PersistenceParticipant.CollectValues%2A> across all persistence participants within one persistence episode must have a unique XName.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="12f55-131">下面的代码示例演示如何在一个从 <xref:System.Activities.Persistence.PersistenceParticipant> 派生的类中使用 CollectValues。</span><span class="sxs-lookup"><span data-stu-id="12f55-131">The following code sample demonstrates using CollectValues in a class that derives from <xref:System.Activities.Persistence.PersistenceParticipant>.</span></span> <span data-ttu-id="12f55-132">此示例来自[持久性参与者](~/docs/framework/windows-workflow-foundation/persistence-participants.md)示例。</span><span class="sxs-lookup"><span data-stu-id="12f55-132">This example is from the [Persistence Participants](~/docs/framework/windows-workflow-foundation/persistence-participants.md) sample.</span></span>  
+  
+ [!code-csharp[wfs_PersistenceParticipants#2](~/samples/snippets/csharp/VS_Snippets_CFX/wfs_persistenceparticipants/cs/stepcountextension.cs#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MapValues">
+      <MemberSignature Language="C#" Value="protected virtual System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,object&gt; MapValues (System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,object&gt; readWriteValues, System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,object&gt; writeOnlyValues);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.Collections.Generic.IDictionary`2&lt;class System.Xml.Linq.XName, object&gt; MapValues(class System.Collections.Generic.IDictionary`2&lt;class System.Xml.Linq.XName, object&gt; readWriteValues, class System.Collections.Generic.IDictionary`2&lt;class System.Xml.Linq.XName, object&gt; writeOnlyValues) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Persistence.PersistenceParticipant.MapValues(System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object},System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object})" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Function MapValues (readWriteValues As IDictionary(Of XName, Object), writeOnlyValues As IDictionary(Of XName, Object)) As IDictionary(Of XName, Object)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual System::Collections::Generic::IDictionary&lt;System::Xml::Linq::XName ^, System::Object ^&gt; ^ MapValues(System::Collections::Generic::IDictionary&lt;System::Xml::Linq::XName ^, System::Object ^&gt; ^ readWriteValues, System::Collections::Generic::IDictionary&lt;System::Xml::Linq::XName ^, System::Object ^&gt; ^ writeOnlyValues);" />
+      <MemberSignature Language="F#" Value="abstract member MapValues : System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName, obj&gt; * System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName, obj&gt; -&gt; System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName, obj&gt;&#xA;override this.MapValues : System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName, obj&gt; * System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName, obj&gt; -&gt; System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName, obj&gt;" Usage="persistenceParticipant.MapValues (readWriteValues, writeOnlyValues)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Runtime.IPersistencePipelineModule.MapValues(System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object},System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object})</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,System.Object&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="readWriteValues" Type="System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,System.Object&gt;" />
+        <Parameter Name="writeOnlyValues" Type="System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,System.Object&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="readWriteValues"><span data-ttu-id="12f55-133">要保持的读/写值。</span><span class="sxs-lookup"><span data-stu-id="12f55-133">The read-write values to be persisted.</span></span></param>
+        <param name="writeOnlyValues"><span data-ttu-id="12f55-134">要保持的只写值。</span><span class="sxs-lookup"><span data-stu-id="12f55-134">The write-only values to be persisted.</span></span></param>
+        <summary><span data-ttu-id="12f55-135">当宿主完成在第一个阶段中收集值的工作后，将调用此方法。</span><span class="sxs-lookup"><span data-stu-id="12f55-135">A host invokes this method after it is done with collecting the values in the first stage.</span></span> <span data-ttu-id="12f55-136">宿主会将由其在第一个阶段（CollectValues 阶段）中从所有持久性参与者中收集的值组成的两个只读字典转发给此方法用于映射。</span><span class="sxs-lookup"><span data-stu-id="12f55-136">The host forwards two read-only dictionaries of values it collected from all persistence participants during the first stage (CollectValues stage) to this method for mapping.</span></span> <span data-ttu-id="12f55-137">主机会将此方法的返回的字典中的值添加到只写值的集合。</span><span class="sxs-lookup"><span data-stu-id="12f55-137">The host adds values in the dictionary returned by this method to the collection of write-only values.</span></span></summary>
+        <returns><span data-ttu-id="12f55-138">包含要保留的附加只写值的字典。</span><span class="sxs-lookup"><span data-stu-id="12f55-138">A dictionary containing additional write-only values to be persisted.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="12f55-139">由所有持久性参与者（包括在第一个阶段（即 CollectValues 阶段）中收集的所有值）之间的所有 <xref:System.Activities.Persistence.PersistenceParticipant.MapValues%2A> 方法的实现提供的每个值均必须具有唯一的 XName。</span><span class="sxs-lookup"><span data-stu-id="12f55-139">Each value provided by implementations of all the <xref:System.Activities.Persistence.PersistenceParticipant.MapValues%2A> methods across all persistence participants including all the values collected in the first stage (CollectValues stage) must have a unique XName.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="12f55-140">下面的代码示例演示如何在一个从 <xref:System.Activities.Persistence.PersistenceParticipant> 派生的类中使用 MapValues。</span><span class="sxs-lookup"><span data-stu-id="12f55-140">The following code sample demonstrates using MapValues in a class that derives from <xref:System.Activities.Persistence.PersistenceParticipant>.</span></span> <span data-ttu-id="12f55-141">此示例来自[公司购买过程](~/docs/framework/windows-workflow-foundation/samples/corporate-purchase-process.md)示例。</span><span class="sxs-lookup"><span data-stu-id="12f55-141">This example is from the [Corporate Purchase Process](~/docs/framework/windows-workflow-foundation/samples/corporate-purchase-process.md) sample.</span></span>  
+  
+ [!code-csharp[wfs_PurchaseProcess#2](~/samples/snippets/csharp/VS_Snippets_CFX/wfs_purchaseprocess/cs/xmlpersistenceparticipant.cs#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PublishValues">
+      <MemberSignature Language="C#" Value="protected virtual void PublishValues (System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,object&gt; readWriteValues);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void PublishValues(class System.Collections.Generic.IDictionary`2&lt;class System.Xml.Linq.XName, object&gt; readWriteValues) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Persistence.PersistenceParticipant.PublishValues(System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object})" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub PublishValues (readWriteValues As IDictionary(Of XName, Object))" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void PublishValues(System::Collections::Generic::IDictionary&lt;System::Xml::Linq::XName ^, System::Object ^&gt; ^ readWriteValues);" />
+      <MemberSignature Language="F#" Value="abstract member PublishValues : System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName, obj&gt; -&gt; unit&#xA;override this.PublishValues : System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName, obj&gt; -&gt; unit" Usage="persistenceParticipant.PublishValues readWriteValues" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Runtime.IPersistencePipelineModule.PublishValues(System.Collections.Generic.IDictionary{System.Xml.Linq.XName,System.Object})</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="readWriteValues" Type="System.Collections.Generic.IDictionary&lt;System.Xml.Linq.XName,System.Object&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="readWriteValues"><span data-ttu-id="12f55-142">从持久性存储中加载的读/写值。</span><span class="sxs-lookup"><span data-stu-id="12f55-142">The read-write values that were loaded from the persistence store.</span></span> <span data-ttu-id="12f55-143">此字典与由在最近的持久性段中保留的读/写值组成的字典相对应。</span><span class="sxs-lookup"><span data-stu-id="12f55-143">This dictionary corresponds to the dictionary of read-write values persisted in the most recent persistence episode.</span></span></param>
+        <summary><span data-ttu-id="12f55-144">宿主调用此方法，并传递 <see cref="P:System.Activities.DurableInstancing.SaveWorkflowCommand.InstanceData" /> 集合中所有加载的值（由 <see cref="T:System.Activities.DurableInstancing.LoadWorkflowCommand" /> 或 <see cref="T:System.Activities.DurableInstancing.LoadWorkflowByInstanceKeyCommand" /> 填充）作为字典参数。</span><span class="sxs-lookup"><span data-stu-id="12f55-144">The host invokes this method and passes all the loaded values in the <see cref="P:System.Activities.DurableInstancing.SaveWorkflowCommand.InstanceData" /> collection (filled by the <see cref="T:System.Activities.DurableInstancing.LoadWorkflowCommand" /> or <see cref="T:System.Activities.DurableInstancing.LoadWorkflowByInstanceKeyCommand" />) as a dictionary parameter.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ <span data-ttu-id="12f55-145">下面的代码示例演示如何在一个从 <xref:System.Activities.Persistence.PersistenceParticipant> 派生的类中使用 PublishValues。</span><span class="sxs-lookup"><span data-stu-id="12f55-145">The following code sample demonstrates using PublishValues in a class that derives from <xref:System.Activities.Persistence.PersistenceParticipant>.</span></span> <span data-ttu-id="12f55-146">此示例来自[持久性参与者](~/docs/framework/windows-workflow-foundation/persistence-participants.md)示例。</span><span class="sxs-lookup"><span data-stu-id="12f55-146">This example is from the [Persistence Participants](~/docs/framework/windows-workflow-foundation/persistence-participants.md) sample.</span></span>  
+  
+ [!code-csharp[wfs_PersistenceParticipants#2](~/samples/snippets/csharp/VS_Snippets_CFX/wfs_persistenceparticipants/cs/stepcountextension.cs#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
