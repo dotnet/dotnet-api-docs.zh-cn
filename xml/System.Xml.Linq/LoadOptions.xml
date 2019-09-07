@@ -1,0 +1,290 @@
+<Type Name="LoadOptions" FullName="System.Xml.Linq.LoadOptions">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="133e5011fbf8873419ecdebeab831882bb46a0b7" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70406763" /></Metadata><TypeSignature Language="C#" Value="public enum LoadOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed LoadOptions extends System.Enum" />
+  <TypeSignature Language="DocId" Value="T:System.Xml.Linq.LoadOptions" />
+  <TypeSignature Language="VB.NET" Value="Public Enum LoadOptions" />
+  <TypeSignature Language="C++ CLI" Value="public enum class LoadOptions" />
+  <TypeSignature Language="F#" Value="type LoadOptions = " />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.XDocument</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;dotnet-uwp-10.0;netcore-3.0;netstandard-2.1">
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>指定分析 XML 时的加载选项。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果在加载时保留空白，则 XML 树中所有无意义的空白都将按原样具体化在 XML 树中。 如果不保留空白，则放弃所有无意义的空白。  
+  
+ 如果设置了 SetBaseUri 和 SetLineInfo 标志，则会对性能产生负面影响。  
+  
+ 在加载 XML 文档后，基本 URI 和行信息立即准确无误。 如果在加载文档后修改 XML 树，则基本 URI 和行信息可能会变得毫无意义。  
+  
+ 如果基础<xref:System.Xml.XmlReader>没有基 URI 或行信息，则设置 SetBaseUri 和 SetLineInfo 标志将不起作用。  
+  
+ 此类型使你能够控制在加载或分析时 LINQ to XML 处理空白的方式。 有关详细信息，请参阅在[加载或分析 XML 时保留空白](https://msdn.microsoft.com/library/093a7169-a04e-4638-b08c-d1cb98aa650d)，并[在序列化时保留空白区域](https://msdn.microsoft.com/library/fb146217-0a49-4efc-ac84-7265b91d3939)。  
+  
+   
+  
+## Examples  
+ 此示例从文件中加载一个小型 XML 树，并将选项设置为设置基 URI 和保留行信息。 然后，它添加另一个不包含行信息的元素。 然后打印树中每个元素的行信息。  
+  
+```csharp  
+string markup = @"<Root>  
+    <Child1 />  
+    <Child2 />  
+    <Child4 />  
+</Root>";  
+  
+File.WriteAllText("Test.xml", markup);  
+  
+XElement po = XElement.Load("Test.xml",  
+    LoadOptions.SetBaseUri | LoadOptions.SetLineInfo);  
+  
+// add a node to the tree.  
+// the newly added node will not have line information.  
+po.Element("Child2").AddAfterSelf(new XElement("Child3"));  
+  
+string[] splitUri = po.BaseUri.Split('/');  
+Console.WriteLine("BaseUri: {0}", splitUri[splitUri.Length - 1]);  
+Console.WriteLine();  
+Console.WriteLine("{0}{1}{2}",  
+    "Element Name".PadRight(20),  
+    "Line".PadRight(5),  
+    "Position");  
+Console.WriteLine("{0}{1}{2}",  
+    "------------".PadRight(20),  
+    "----".PadRight(5),  
+    "--------");  
+foreach (XElement e in po.DescendantsAndSelf())  
+    Console.WriteLine("{0}{1}{2}",  
+        ("".PadRight(e.Ancestors().Count() * 2) + e.Name).PadRight(20),  
+        ((IXmlLineInfo)e).HasLineInfo() ?  
+            ((IXmlLineInfo)e).LineNumber.ToString().PadRight(5) :  
+            "",  
+        ((IXmlLineInfo)e).HasLineInfo() ?  
+            ((IXmlLineInfo)e).LinePosition.ToString() :  
+            "No Line Information");  
+```  
+  
+```vb  
+Dim markup As String = _  
+    "<Root>" + Environment.NewLine & _  
+    "    <Child1 />" + Environment.NewLine & _  
+    "    <Child2 />" + Environment.NewLine & _  
+    "    <Child4 />" + Environment.NewLine & _  
+    "</Root>"  
+  
+File.WriteAllText("Test.xml", markup)  
+  
+Dim po As XElement = XElement.Load("Test.xml", LoadOptions.SetBaseUri Or LoadOptions.SetLineInfo)  
+  
+' add a node to the tree.  
+' the newly added node will not have line information.  
+po.Element("Child2").AddAfterSelf(New XElement("Child3"))  
+  
+Dim splitUri() As String = po.BaseUri.Split("/"c)  
+Console.WriteLine("BaseUri: {0}", splitUri(splitUri.Length - 1))  
+Console.WriteLine()  
+Console.WriteLine("{0}{1}{2}", _  
+    "Element Name".PadRight(20), _  
+    "Line".PadRight(5), _  
+    "Position")  
+Console.WriteLine("{0}{1}{2}", _  
+    "------------".PadRight(20), _  
+    "----".PadRight(5), _  
+    "--------")  
+For Each e As XElement In po.DescendantsAndSelf()  
+    Console.WriteLine("{0}{1}{2}", _  
+        ("".PadRight(e.Ancestors().Count() * 2) & e.Name.ToString).PadRight(20), _  
+        IIf(DirectCast(e, IXmlLineInfo).HasLineInfo(), _  
+            DirectCast(e, IXmlLineInfo).LineNumber.ToString().PadRight(5), _  
+            ""), _  
+        IIf(DirectCast(e, IXmlLineInfo).HasLineInfo(), _  
+            DirectCast(e, IXmlLineInfo).LinePosition.ToString(), _  
+            "No Line Information"))  
+Next  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```  
+BaseUri: Test.xml  
+  
+Element Name        Line Position  
+------------        ---- --------  
+Root                1    2  
+  Child1            2    6  
+  Child2            3    6  
+  Child3            No Line Information  
+  Child4            4    6  
+```  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.Xml.Linq.SaveOptions" />
+    <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+    <related type="Article" href="https://msdn.microsoft.com/library/18680d1c-6e7c-4645-8d53-27b5a96f2d3f">使用节点进行编程</related>
+  </Docs>
+  <Members>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Linq.LoadOptions None = int32(0)" />
+      <MemberSignature Language="DocId" Value="F:System.Xml.Linq.LoadOptions.None" />
+      <MemberSignature Language="VB.NET" Value="None" />
+      <MemberSignature Language="C++ CLI" Value="None" />
+      <MemberSignature Language="F#" Value="None = 0" Usage="System.Xml.Linq.LoadOptions.None" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.LoadOptions</ReturnType>
+      </ReturnValue>
+      <MemberValue>0</MemberValue>
+      <Docs>
+        <summary>不保留无关紧要的空白，也不加载基 URI 和行信息。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="PreserveWhitespace">
+      <MemberSignature Language="C#" Value="PreserveWhitespace" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Linq.LoadOptions PreserveWhitespace = int32(1)" />
+      <MemberSignature Language="DocId" Value="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" />
+      <MemberSignature Language="VB.NET" Value="PreserveWhitespace" />
+      <MemberSignature Language="C++ CLI" Value="PreserveWhitespace" />
+      <MemberSignature Language="F#" Value="PreserveWhitespace = 1" Usage="System.Xml.Linq.LoadOptions.PreserveWhitespace" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.LoadOptions</ReturnType>
+      </ReturnValue>
+      <MemberValue>1</MemberValue>
+      <Docs>
+        <summary>分析时保留无关紧要的空白。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SetBaseUri">
+      <MemberSignature Language="C#" Value="SetBaseUri" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Linq.LoadOptions SetBaseUri = int32(2)" />
+      <MemberSignature Language="DocId" Value="F:System.Xml.Linq.LoadOptions.SetBaseUri" />
+      <MemberSignature Language="VB.NET" Value="SetBaseUri" />
+      <MemberSignature Language="C++ CLI" Value="SetBaseUri" />
+      <MemberSignature Language="F#" Value="SetBaseUri = 2" Usage="System.Xml.Linq.LoadOptions.SetBaseUri" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.LoadOptions</ReturnType>
+      </ReturnValue>
+      <MemberValue>2</MemberValue>
+      <Docs>
+        <summary>从 <see cref="T:System.Xml.XmlReader" /> 请求基 URI 信息，并通过 <see cref="P:System.Xml.Linq.XObject.BaseUri" /> 属性使此信息可用。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SetLineInfo">
+      <MemberSignature Language="C#" Value="SetLineInfo" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.Linq.LoadOptions SetLineInfo = int32(4)" />
+      <MemberSignature Language="DocId" Value="F:System.Xml.Linq.LoadOptions.SetLineInfo" />
+      <MemberSignature Language="VB.NET" Value="SetLineInfo" />
+      <MemberSignature Language="C++ CLI" Value="SetLineInfo" />
+      <MemberSignature Language="F#" Value="SetLineInfo = 4" Usage="System.Xml.Linq.LoadOptions.SetLineInfo" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.LoadOptions</ReturnType>
+      </ReturnValue>
+      <MemberValue>4</MemberValue>
+      <Docs>
+        <summary>从 <see cref="T:System.Xml.XmlReader" /> 请求行信息并通过 <see cref="T:System.Xml.Linq.XObject" /> 上的属性使此信息可用。</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
