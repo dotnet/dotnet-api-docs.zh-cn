@@ -1,0 +1,768 @@
+<Type Name="XmlWriterTraceListener" FullName="System.Diagnostics.XmlWriterTraceListener">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="1445a59b4b5ffacc035b30dd392f9a19190d4885" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70570938" /></Metadata><TypeSignature Language="C#" Value="public class XmlWriterTraceListener : System.Diagnostics.TextWriterTraceListener" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlWriterTraceListener extends System.Diagnostics.TextWriterTraceListener" />
+  <TypeSignature Language="DocId" Value="T:System.Diagnostics.XmlWriterTraceListener" />
+  <TypeSignature Language="VB.NET" Value="Public Class XmlWriterTraceListener&#xA;Inherits TextWriterTraceListener" />
+  <TypeSignature Language="C++ CLI" Value="public ref class XmlWriterTraceListener : System::Diagnostics::TextWriterTraceListener" />
+  <TypeSignature Language="F#" Value="type XmlWriterTraceListener = class&#xA;    inherit TextWriterTraceListener" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+    <AssemblyVersion>4.1.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Diagnostics.TextWriterTraceListener</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>将跟踪或调试输出作为 XML 编码的数据定向到 <see cref="T:System.IO.TextWriter" /> 或 <see cref="T:System.IO.Stream" />（如 <see cref="T:System.IO.FileStream" />）。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  您必须具有非托管代码权限才能创建<xref:System.Diagnostics.XmlWriterTraceListener>类的实例。  
+  
+ <xref:System.Diagnostics.XmlWriterTraceListener>类将跟踪和调试信息转换为 XML 编码的文本流。 下面的表显示了 XML 输出的说明。 您可以使用[服务跟踪查看器工具（svctraceviewer.exe）](https://go.microsoft.com/fwlink/p/?LinkId=240129)来显示 XML 输出。  
+  
+ 你可以<xref:System.Diagnostics.XmlWriterTraceListener>通过应用程序配置文件启用或禁用，然后在你的应用<xref:System.Diagnostics.XmlWriterTraceListener>程序中使用配置的。 或者，您可以<xref:System.Diagnostics.XmlWriterTraceListener>在代码中创建。  
+  
+ 若要配置<xref:System.Diagnostics.XmlWriterTraceListener>，请编辑与应用程序名称对应的配置文件。 在此文件中，可以添加或删除侦听器，设置侦听器的属性，或删除侦听器。 配置文件的格式应与下面的示例类似。  
+  
+```xml  
+<configuration>  
+  <system.diagnostics>  
+    <trace autoflush="false" indentsize="4">  
+      <listeners>  
+        <add name="xmlListener"   
+          type="System.Diagnostics.XmlWriterTraceListener"   
+          initializeData="xmlOutput.xml"   
+          traceOutputOptions="ProcessId, DateTime" />  
+        <remove name="Default" />  
+      </listeners>  
+    </trace>  
+  </system.diagnostics>  
+</configuration>  
+```  
+  
+ 类从基类<xref:System.Diagnostics.TraceListener.Filter%2A> 继承 <xref:System.Diagnostics.TraceListener> 属性。  <xref:System.Diagnostics.XmlWriterTraceListener>  <xref:System.Diagnostics.TraceListener.Filter%2A>属性允许侦听器上的其他级别的跟踪输出筛选。  如果存在筛选器，则跟踪侦听器`Trace`的方法将调用筛选器的<xref:System.Diagnostics.TraceFilter.ShouldTrace%2A>方法来确定是否发出跟踪。  
+  
+> [!NOTE]
+>  如果尝试写入正在使用或不可用的文件，则该文件名将自动以 GUID 为前缀。  
+  
+> [!NOTE]
+>  侦听器方法旨在由<xref:System.Diagnostics.Debug>、 <xref:System.Diagnostics.Trace>和<xref:System.Diagnostics.TraceSource>类的方法调用。  侦听器方法不应在应用程序代码中直接调用。 侦听器主要供<xref:System.Diagnostics.TraceSource>类使用。 <xref:System.Diagnostics.XmlWriterTraceListener> <xref:System.Diagnostics.XmlWriterTraceListener.Write%2A> 和 <xref:System.Diagnostics.Trace> 方法可<xref:System.Diagnostics.Debug>由和类 <xref:System.Diagnostics.Debug> 调用，并且为不提供值的 XML 元素提供默认值。 <xref:System.Diagnostics.Trace>  <xref:System.Diagnostics.XmlWriterTraceListener.WriteLine%2A>  
+  
+ 下表介绍了 XML 输出的元素和属性。  
+  
+|元素|特性|Output|说明|  
+|-------------|----------------|------------|-----------|  
+|`CallStack`|None|取决于<xref:System.Diagnostics.TraceListener.TraceOutputOptions%2A>属性中是否存在<xref:System.Diagnostics.TraceOptions.Callstack>该标志。|特殊字符（如 > 或 <）将替换为转义序列。 请参阅后面的转义字符转换表。|  
+|`Computer`|None|始终存在。|<xref:System.Environment.MachineName%2A> 属性的值。|  
+|`Correlation`|`ActivityID`|始终存在|如果未指定，则默认值为空 GUID。|  
+||`RelatedActivityID`|取决于跟踪方法调用中`relatedActivityId`是否存在参数。|<xref:System.Diagnostics.XmlWriterTraceListener.TraceTransfer%2A> 方法的 `relatedActivityId` 参数。|  
+|`DataItem`|None|取决于<xref:System.Diagnostics.XmlWriterTraceListener.TraceData%2A>方法的参数。 `data`|此元素可以包含元素数组或一个元素，因此，这些值将作为一组`DataItem`节点`TraceData`在元素下写入。<br /><br /> 数据输出使用`ToString`传入的数据对象的方法。|  
+|`EventID`|None|始终存在。|参数输入（`id`）。|  
+|`Execution`|`ProcessName`|始终存在。|中的<xref:System.Diagnostics.TraceEventCache>。|  
+||`ProcessID`|始终存在。|中的<xref:System.Diagnostics.TraceEventCache>。 在 Windows 98 和 windows Me 操作系统上，如果`ProcessID`大于2147483647，则它是负数的正表示形式，应转换为获取正确的进程标识符。|  
+||`ThreadID`|始终存在。|中的<xref:System.Diagnostics.TraceEventCache>。|  
+|`Level`|None|始终存在。|参数输入（的数值`eventType`）。 大于255的参数值输出为255。|  
+|`LogicalOperationStack`|None|取决于<xref:System.Diagnostics.TraceListener.TraceOutputOptions%2A>属性中是否存在<xref:System.Diagnostics.TraceOptions.LogicalOperationStack>该标志。|可以有多个逻辑操作，因此，这些值将作为`LogicalOperation`节点下的`LogicalOperationStack`元素写入。|  
+|`Message`|None|取决于跟踪方法调用中是否存在消息。|如果提供了格式设置参数，则此元素是已格式化的消息。|  
+|`Source`|`Name`|始终存在。|参数输入。|  
+|`SubType`|`Name`|始终存在。|参数输入。|  
+|`TimeCreated`|`SystemTime`|始终存在。|如果中<xref:System.Diagnostics.TraceEventCache>不存在，则默认为当前时间。|  
+|`TimeStamp`|None|取决于<xref:System.Diagnostics.TraceListener.TraceOutputOptions%2A>属性中是否存在<xref:System.Diagnostics.TraceOptions.Timestamp>该标志。|中的<xref:System.Diagnostics.TraceEventCache>。|  
+|`Type`|None|始终存在。|始终为值3。|  
+  
+ 下表显示了在 XML 输出中转义的字符。 转义`DataItem`发生在除元素之外的所有元素和属性中，如果传递`data`给该<xref:System.Diagnostics.XmlWriterTraceListener.TraceData%2A>方法的参数的对象是一个<xref:System.Xml.XPath.XPathNavigator>对象，则不会对其进行转义。 如果用于数据对象<xref:System.Xml.XPath.XPathNavigator.MoveToRoot%2A> ，则调用方法，并将整个根节点视为非转义数据。 <xref:System.Xml.XPath.XPathNavigator>  
+  
+|转义字符|值|  
+|-----------------------|-----------|  
+|&|&amp;|  
+|\<|&lt;|  
+|>|&gt;|  
+|"|&quot;|  
+|\|&apos;|  
+|0xD|&\#XD|  
+|0xA|&\#XA|  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用<xref:System.Diagnostics.XmlWriterTraceListener>类将转义和非转义的数据写入文件日志。  
+  
+ [!code-csharp[System.Diagnostics.XmlWriterTraceListener#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.XmlWriterTraceListener/CS/program.cs#1)]
+ [!code-vb[System.Diagnostics.XmlWriterTraceListener#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.XmlWriterTraceListener/VB/module1.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联枚举：<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />。</permission>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Diagnostics.XmlWriterTraceListener" /> 类的新实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlWriterTraceListener (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.#ctor(System.IO.Stream)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XmlWriterTraceListener(System::IO::Stream ^ stream);" />
+      <MemberSignature Language="F#" Value="new System.Diagnostics.XmlWriterTraceListener : System.IO.Stream -&gt; System.Diagnostics.XmlWriterTraceListener" Usage="new System.Diagnostics.XmlWriterTraceListener stream" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream"><see cref="T:System.IO.Stream" />，它表示跟踪侦听器写入的流。</param>
+        <summary>通过将指定的流用作调试和跟踪输出的接收者来初始化 <see cref="T:System.Diagnostics.XmlWriterTraceListener" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将<xref:System.Diagnostics.TraceListener.Name%2A>属性初始化为空字符串（""）。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="stream" /> 为 <see langword="null" />。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联枚举：<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlWriterTraceListener (System.IO.TextWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.TextWriter writer) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.#ctor(System.IO.TextWriter)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (writer As TextWriter)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XmlWriterTraceListener(System::IO::TextWriter ^ writer);" />
+      <MemberSignature Language="F#" Value="new System.Diagnostics.XmlWriterTraceListener : System.IO.TextWriter -&gt; System.Diagnostics.XmlWriterTraceListener" Usage="new System.Diagnostics.XmlWriterTraceListener writer" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer"><see cref="T:System.IO.TextWriter" />，它接收来自跟踪侦听器的输出。</param>
+        <summary>通过将指定的编写器用作调试和跟踪输出的接收者来初始化 <see cref="T:System.Diagnostics.XmlWriterTraceListener" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将<xref:System.Diagnostics.TraceListener.Name%2A>属性初始化为空字符串（""）。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="writer" /> 为 <see langword="null" />。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联枚举：<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlWriterTraceListener (string filename);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string filename) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.#ctor(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (filename As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XmlWriterTraceListener(System::String ^ filename);" />
+      <MemberSignature Language="F#" Value="new System.Diagnostics.XmlWriterTraceListener : string -&gt; System.Diagnostics.XmlWriterTraceListener" Usage="new System.Diagnostics.XmlWriterTraceListener filename" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">要写入的文件的名称。</param>
+        <summary>通过将指定的文件用作调试和跟踪输出的接收者来初始化 <see cref="T:System.Diagnostics.XmlWriterTraceListener" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数使用<xref:System.IO.StreamWriter> <xref:System.Text.Encoding.UTF8%2A>编码为指定路径上的指定文件初始化类的新实例。 如果文件存在，则将其追加到。 如果该文件不存在，则创建一个新文件。  
+  
+> [!NOTE]
+>  若要减少异常的几率，任何可能使输出无效的字符都将替换为 "？" 字符。  
+  
+ 将<xref:System.Diagnostics.TraceListener.Name%2A>属性初始化为空字符串（""）。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="filename" /> 为 <see langword="null" />。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联枚举：<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlWriterTraceListener (System.IO.Stream stream, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Stream stream, string name) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.#ctor(System.IO.Stream,System.String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XmlWriterTraceListener(System::IO::Stream ^ stream, System::String ^ name);" />
+      <MemberSignature Language="F#" Value="new System.Diagnostics.XmlWriterTraceListener : System.IO.Stream * string -&gt; System.Diagnostics.XmlWriterTraceListener" Usage="new System.Diagnostics.XmlWriterTraceListener (stream, name)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="stream"><see cref="T:System.IO.Stream" />，它表示跟踪侦听器写入的流。</param>
+        <param name="name">新实例的名称。</param>
+        <summary>通过将指定的流用作调试和跟踪输出的接收者来初始化具有指定名称的 <see cref="T:System.Diagnostics.XmlWriterTraceListener" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果<xref:System.Diagnostics.TraceListener.Name%2A> `name`参数`name` 为 `null` ，则此构造函数将属性初始化为参数值或空字符串（""）。 该名称可用作<xref:System.Diagnostics.Trace.Listeners%2A?displayProperty=nameWithType>集合中的索引，以编程方式更改侦听器的属性。 例如，下面的代码将设置<xref:System.Diagnostics.TraceListener.TraceOutputOptions%2A> <xref:System.Diagnostics.XmlWriterTraceListener>其<xref:System.Diagnostics.TraceListener.Name%2A>属性为 "xmlListener" 的实例的属性。  
+  
+```  
+((XmlWriterTraceListener)Trace.Listeners["xmlListener"]).TraceOutputOptions =   
+    TraceOptions.Timestamp  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="stream" /> 为 <see langword="null" />。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联的枚举<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />：。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlWriterTraceListener (System.IO.TextWriter writer, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.TextWriter writer, string name) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.#ctor(System.IO.TextWriter,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (writer As TextWriter, name As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XmlWriterTraceListener(System::IO::TextWriter ^ writer, System::String ^ name);" />
+      <MemberSignature Language="F#" Value="new System.Diagnostics.XmlWriterTraceListener : System.IO.TextWriter * string -&gt; System.Diagnostics.XmlWriterTraceListener" Usage="new System.Diagnostics.XmlWriterTraceListener (writer, name)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="writer" Type="System.IO.TextWriter" />
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="writer"><see cref="T:System.IO.TextWriter" />，它接收来自跟踪侦听器的输出。</param>
+        <param name="name">新实例的名称。</param>
+        <summary>通过将指定的编写器用作调试和跟踪输出的接收者来初始化具有指定名称的 <see cref="T:System.Diagnostics.XmlWriterTraceListener" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果<xref:System.Diagnostics.TraceListener.Name%2A> `name`参数`name` 为 `null` ，则此构造函数将属性初始化为参数值或空字符串（""）。 该名称可用作<xref:System.Diagnostics.Trace.Listeners%2A?displayProperty=nameWithType>集合中的索引，以编程方式更改侦听器的属性。 例如，下面的代码将设置<xref:System.Diagnostics.TraceListener.TraceOutputOptions%2A> <xref:System.Diagnostics.XmlWriterTraceListener>其<xref:System.Diagnostics.TraceListener.Name%2A>属性为 "xmlListener" 的实例的属性。  
+  
+```  
+((XmlWriterTraceListener)Trace.Listeners["xmlListener"]).TraceOutputOptions =   
+    TraceOptions.Timestamp.  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="writer" /> 为 <see langword="null" />。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联的枚举<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />：。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XmlWriterTraceListener (string filename, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string filename, string name) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.#ctor(System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (filename As String, name As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XmlWriterTraceListener(System::String ^ filename, System::String ^ name);" />
+      <MemberSignature Language="F#" Value="new System.Diagnostics.XmlWriterTraceListener : string * string -&gt; System.Diagnostics.XmlWriterTraceListener" Usage="new System.Diagnostics.XmlWriterTraceListener (filename, name)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="filename" Type="System.String" />
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="filename">要写入的文件的名称。</param>
+        <param name="name">新实例的名称。</param>
+        <summary>通过将指定的文件用作调试和跟踪输出的接收者来初始化具有指定名称的 <see cref="T:System.Diagnostics.XmlWriterTraceListener" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数使用<xref:System.IO.StreamWriter> <xref:System.Text.Encoding.UTF8%2A>编码为指定路径上的指定文件初始化类的新实例。 如果文件存在，则将其追加到。 如果该文件不存在，则创建一个新文件。  
+  
+> [!NOTE]
+>  若要减少异常的几率，任何可能使输出无效的字符都将替换为 "？" 字符。  
+  
+ 如果<xref:System.Diagnostics.TraceListener.Name%2A> `name`参数为`name` ，则将属性设置为参数值或空字符串（""）。 `null` 该名称可用作<xref:System.Diagnostics.Trace.Listeners%2A?displayProperty=nameWithType>集合中的索引，以编程方式更改侦听器的属性。 例如，下面的代码将设置<xref:System.Diagnostics.TraceListener.TraceOutputOptions%2A> <xref:System.Diagnostics.XmlWriterTraceListener>其<xref:System.Diagnostics.TraceListener.Name%2A>属性为 "xmlListener" 的实例的属性。  
+  
+```  
+((XmlWriterTraceListener)Trace.Listeners["xmlListener"]).TraceOutputOptions =  
+    TraceOptions.Timestamp.  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="stream" /> 为 <see langword="null" />。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联枚举：<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public override void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Close() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.Close" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub Close ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void Close();" />
+      <MemberSignature Language="F#" Value="override this.Close : unit -&gt; unit" Usage="xmlWriterTraceListener.Close " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>关闭该侦听器的 <see cref="P:System.Diagnostics.TextWriterTraceListener.Writer" />，以使其不再接收跟踪或调试输出。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Fail">
+      <MemberSignature Language="C#" Value="public override void Fail (string message, string detailMessage);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Fail(string message, string detailMessage) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.Fail(System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub Fail (message As String, detailMessage As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void Fail(System::String ^ message, System::String ^ detailMessage);" />
+      <MemberSignature Language="F#" Value="override this.Fail : string * string -&gt; unit" Usage="xmlWriterTraceListener.Fail (message, detailMessage)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="detailMessage" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">要写入的错误信息。</param>
+        <param name="detailMessage">要追加到错误信息的详细错误信息。</param>
+        <summary>将包含错误信息和详细错误信息的跟踪信息写入文件或流中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当应用程序在用户界面模式下运行时，默认行为是在消息框中显示消息和详细消息，并将其显示到<xref:System.Diagnostics.TraceListener> <xref:System.Diagnostics.Trace.Listeners%2A?displayProperty=nameWithType>集合中的实例。 默认情况下，集合包含的<xref:System.Diagnostics.DefaultTraceListener>实例。 可以通过在集合<xref:System.Diagnostics.TraceListener>中添加或删除来自定义此行为。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联枚举：<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />。</permission>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="TraceData">
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>向输出文件或流中写入跟踪数据。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="TraceData">
+      <MemberSignature Language="C#" Value="public override void TraceData (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, object data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void TraceData(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, object data) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.TraceData(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub TraceData (eventCache As TraceEventCache, source As String, eventType As TraceEventType, id As Integer, data As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void TraceData(System::Diagnostics::TraceEventCache ^ eventCache, System::String ^ source, System::Diagnostics::TraceEventType eventType, int id, System::Object ^ data);" />
+      <MemberSignature Language="F#" Value="override this.TraceData : System.Diagnostics.TraceEventCache * string * System.Diagnostics.TraceEventType * int * obj -&gt; unit" Usage="xmlWriterTraceListener.TraceData (eventCache, source, eventType, id, data)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventCache" Type="System.Diagnostics.TraceEventCache" />
+        <Parameter Name="source" Type="System.String" />
+        <Parameter Name="eventType" Type="System.Diagnostics.TraceEventType" />
+        <Parameter Name="id" Type="System.Int32" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="eventCache">包含当前进程 ID、线程 ID 以及堆栈跟踪信息的 <see cref="T:System.Diagnostics.TraceEventCache" />。</param>
+        <param name="source">源名称。</param>
+        <param name="eventType"><see cref="T:System.Diagnostics.TraceEventType" /> 值之一。</param>
+        <param name="id">事件的数值标识符。</param>
+        <param name="data">要发出的数据对象。</param>
+        <summary>将跟踪信息、数据对象和事件信息写入文件或流中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 、、和参数 `id` 在跟踪的页眉和页脚中使用。 `source` `eventCache` `eventType` 在`id`写入之前，将参数转换为无符号整数，因此负值`id`将被写入为大正整数。 参数作为节点写入`TraceData`元素中。 `DataItem` `data` 数据对象的方法用于将对象转换为字符串。 `ToString`  
+  
+> [!IMPORTANT]
+>  此方法不应由应用程序代码直接调用。  它由<xref:System.Diagnostics.Debug>、 <xref:System.Diagnostics.Trace>和<xref:System.Diagnostics.TraceSource>类的方法调用，用于写入跟踪数据。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联枚举：<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="TraceData">
+      <MemberSignature Language="C#" Value="public override void TraceData (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, params object[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void TraceData(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, object[] data) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.TraceData(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub TraceData (eventCache As TraceEventCache, source As String, eventType As TraceEventType, id As Integer, ParamArray data As Object())" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void TraceData(System::Diagnostics::TraceEventCache ^ eventCache, System::String ^ source, System::Diagnostics::TraceEventType eventType, int id, ... cli::array &lt;System::Object ^&gt; ^ data);" />
+      <MemberSignature Language="F#" Value="override this.TraceData : System.Diagnostics.TraceEventCache * string * System.Diagnostics.TraceEventType * int * obj[] -&gt; unit" Usage="xmlWriterTraceListener.TraceData (eventCache, source, eventType, id, data)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventCache" Type="System.Diagnostics.TraceEventCache" />
+        <Parameter Name="source" Type="System.String" />
+        <Parameter Name="eventType" Type="System.Diagnostics.TraceEventType" />
+        <Parameter Name="id" Type="System.Int32" />
+        <Parameter Name="data" Type="System.Object[]">
+          <Attributes>
+            <Attribute FrameworkAlternate="netcore-3.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="eventCache">包含当前进程 ID、线程 ID 以及堆栈跟踪信息的 <see cref="T:System.Diagnostics.TraceEventCache" />。</param>
+        <param name="source">源名称。</param>
+        <param name="eventType"><see cref="T:System.Diagnostics.TraceEventType" /> 值之一。</param>
+        <param name="id">事件的数值标识符。</param>
+        <param name="data">要发出的数据对象的数组。</param>
+        <summary>将跟踪信息、数据对象和事件信息写入文件或流中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 、、和参数 `id` 在跟踪的页眉和页脚中使用。 `source` `eventCache` `eventType` 在`id`写入之前，将参数转换为无符号整数，因此负值`id`将被写入为大正整数。 `data`参数数组中的对象作为`DataItem` `TraceData`元素中的节点写入。 每`ToString`个数据对象的方法用于将对象转换为字符串。  
+  
+> [!IMPORTANT]
+>  此方法不应由应用程序代码直接调用。  它由<xref:System.Diagnostics.Debug>、 <xref:System.Diagnostics.Trace>和<xref:System.Diagnostics.TraceSource>类的方法调用，用于写入跟踪数据。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联的枚举<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />：。</permission>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="TraceEvent">
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将事件跟踪信息写入输出文件或流中。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="TraceEvent">
+      <MemberSignature Language="C#" Value="public override void TraceEvent (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void TraceEvent(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.TraceEvent(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub TraceEvent (eventCache As TraceEventCache, source As String, eventType As TraceEventType, id As Integer, message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void TraceEvent(System::Diagnostics::TraceEventCache ^ eventCache, System::String ^ source, System::Diagnostics::TraceEventType eventType, int id, System::String ^ message);" />
+      <MemberSignature Language="F#" Value="override this.TraceEvent : System.Diagnostics.TraceEventCache * string * System.Diagnostics.TraceEventType * int * string -&gt; unit" Usage="xmlWriterTraceListener.TraceEvent (eventCache, source, eventType, id, message)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventCache" Type="System.Diagnostics.TraceEventCache" />
+        <Parameter Name="source" Type="System.String" />
+        <Parameter Name="eventType" Type="System.Diagnostics.TraceEventType" />
+        <Parameter Name="id" Type="System.Int32" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="eventCache">包含当前进程 ID、线程 ID 以及堆栈跟踪信息的 <see cref="T:System.Diagnostics.TraceEventCache" />。</param>
+        <param name="source">源名称。</param>
+        <param name="eventType"><see cref="T:System.Diagnostics.TraceEventType" /> 值之一。</param>
+        <param name="id">事件的数值标识符。</param>
+        <param name="message">要写入的消息。</param>
+        <summary>将跟踪信息、消息和事件信息写入文件或流中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 、、和参数 `id` 在跟踪的页眉和页脚中使用。 `source` `eventCache` `eventType` 在`id`写入之前，将参数转换为无符号整数，因此负值`id`将被写入为大正整数。 `message` 参数 `Message` 作为元素写入。  
+  
+> [!IMPORTANT]
+>  此方法不应由应用程序代码直接调用。  它由<xref:System.Diagnostics.Debug>、 <xref:System.Diagnostics.Trace>和<xref:System.Diagnostics.TraceSource>类的方法调用，用于写入跟踪数据。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联的枚举<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />：。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="TraceEvent">
+      <MemberSignature Language="C#" Value="public override void TraceEvent (System.Diagnostics.TraceEventCache eventCache, string source, System.Diagnostics.TraceEventType eventType, int id, string format, params object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void TraceEvent(class System.Diagnostics.TraceEventCache eventCache, string source, valuetype System.Diagnostics.TraceEventType eventType, int32 id, string format, object[] args) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.TraceEvent(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub TraceEvent (eventCache As TraceEventCache, source As String, eventType As TraceEventType, id As Integer, format As String, ParamArray args As Object())" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void TraceEvent(System::Diagnostics::TraceEventCache ^ eventCache, System::String ^ source, System::Diagnostics::TraceEventType eventType, int id, System::String ^ format, ... cli::array &lt;System::Object ^&gt; ^ args);" />
+      <MemberSignature Language="F#" Value="override this.TraceEvent : System.Diagnostics.TraceEventCache * string * System.Diagnostics.TraceEventType * int * string * obj[] -&gt; unit" Usage="xmlWriterTraceListener.TraceEvent (eventCache, source, eventType, id, format, args)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventCache" Type="System.Diagnostics.TraceEventCache" />
+        <Parameter Name="source" Type="System.String" />
+        <Parameter Name="eventType" Type="System.Diagnostics.TraceEventType" />
+        <Parameter Name="id" Type="System.Int32" />
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute FrameworkAlternate="netcore-3.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="eventCache">包含当前进程 ID、线程 ID 以及堆栈跟踪信息的 <see cref="T:System.Diagnostics.TraceEventCache" />。</param>
+        <param name="source">源名称。</param>
+        <param name="eventType"><see cref="T:System.Diagnostics.TraceEventType" /> 值之一。</param>
+        <param name="id">事件的数值标识符。</param>
+        <param name="format">包含零个或多个格式项的格式字符串，这些项与 <paramref name="args" /> 数组中的对象相对应。</param>
+        <param name="args">包含零个或多个要格式化的对象的对象数组。</param>
+        <summary>将跟踪信息、格式化消息和事件信息写入文件或流中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 、、和参数 `id` 在跟踪的页眉和页脚中使用。 `source` `eventCache` `eventType` 在`id`写入之前，将参数转换为无符号整数，因此负值`id`将被写入为大正整数。 `format` `args` `args`调用方法，将字符串和数组作为参数传递，以将对象数组`Message`的格式设置为元素。 <xref:System.String.Format%28System.String%2CSystem.Object%5B%5D%29?displayProperty=nameWithType>  
+  
+> [!IMPORTANT]
+>  此方法不应由应用程序代码直接调用。  它由<xref:System.Diagnostics.Debug>、 <xref:System.Diagnostics.Trace>和<xref:System.Diagnostics.TraceSource>类的方法调用，用于写入跟踪数据。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联枚举：<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="TraceTransfer">
+      <MemberSignature Language="C#" Value="public override void TraceTransfer (System.Diagnostics.TraceEventCache eventCache, string source, int id, string message, Guid relatedActivityId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void TraceTransfer(class System.Diagnostics.TraceEventCache eventCache, string source, int32 id, string message, valuetype System.Guid relatedActivityId) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.TraceTransfer(System.Diagnostics.TraceEventCache,System.String,System.Int32,System.String,System.Guid)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub TraceTransfer (eventCache As TraceEventCache, source As String, id As Integer, message As String, relatedActivityId As Guid)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void TraceTransfer(System::Diagnostics::TraceEventCache ^ eventCache, System::String ^ source, int id, System::String ^ message, Guid relatedActivityId);" />
+      <MemberSignature Language="F#" Value="override this.TraceTransfer : System.Diagnostics.TraceEventCache * string * int * string * Guid -&gt; unit" Usage="xmlWriterTraceListener.TraceTransfer (eventCache, source, id, message, relatedActivityId)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventCache" Type="System.Diagnostics.TraceEventCache" />
+        <Parameter Name="source" Type="System.String" />
+        <Parameter Name="id" Type="System.Int32" />
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="relatedActivityId" Type="System.Guid" />
+      </Parameters>
+      <Docs>
+        <param name="eventCache">包含当前进程 ID、线程 ID 以及堆栈跟踪信息的 <see cref="T:System.Diagnostics.TraceEventCache" />。</param>
+        <param name="source">源名称。</param>
+        <param name="id">事件的数值标识符。</param>
+        <param name="message">要写入的跟踪消息。</param>
+        <param name="relatedActivityId">标识相关活动的 <see cref="T:System.Guid" /> 结构。</param>
+        <summary>将跟踪信息（包括相关活动的标识）、消息和事件信息写入文件或流中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Diagnostics.XmlWriterTraceListener.TraceTransfer%2A>方法用于关联相关跟踪。 、、和参数 `relatedActivityId` 在跟踪的页眉和页脚中使用。 `source` `eventCache` `id` 在`id`写入之前，将参数转换为无符号整数，因此负值`id`将被写入为大正整数。 `message` 参数 `Message` 作为元素写入。 调用方法将`relatedActivityId`值转换为标头中显示的 "B" 格式字符串。 <xref:System.Guid.ToString%28System.String%29?displayProperty=nameWithType> 页脚`SubTypeName`中的元素将跟踪事件类型标识<xref:System.Diagnostics.TraceEventType.Transfer>为。  
+  
+> [!IMPORTANT]
+>  <xref:System.Diagnostics.XmlWriterTraceListener.TraceTransfer%2A>方法不应由应用程序代码调用。  它旨在由<xref:System.Diagnostics.TraceSource>对象调用，以便为其<xref:System.Diagnostics.TraceSource.TraceTransfer%2A>方法发出跟踪信息。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联枚举：<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public override void Write (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Write(string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.Write(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub Write (message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void Write(System::String ^ message);" />
+      <MemberSignature Language="F#" Value="override this.Write : string -&gt; unit" Usage="xmlWriterTraceListener.Write message" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">要写入的消息。</param>
+        <summary>将不包含任何其他上下文信息的原义消息写入文件或流中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Diagnostics.XmlWriterTraceListener.TraceData%2A>使用方法在日志输出中包含上下文信息。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联枚举：<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="C#" Value="public override void WriteLine (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteLine(string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.XmlWriterTraceListener.WriteLine(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub WriteLine (message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void WriteLine(System::String ^ message);" />
+      <MemberSignature Language="F#" Value="override this.WriteLine : string -&gt; unit" Usage="xmlWriterTraceListener.WriteLine message" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TextWriterTraceListener</AssemblyName>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">要写入的消息。</param>
+        <summary>将不包含任何其他上下文信息且后跟当前行结束符的原义消息写入文件或流中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Diagnostics.XmlWriterTraceListener.TraceData%2A>使用方法在日志输出中包含上下文信息。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码。 关联的枚举<see cref="P:System.Security.Permissions.SecurityPermissionAttribute.UnmanagedCode" />：。</permission>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

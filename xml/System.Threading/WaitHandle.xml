@@ -1,0 +1,2052 @@
+<Type Name="WaitHandle" FullName="System.Threading.WaitHandle">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="5b0250cf5d94f2e2dd11058978329bf6d723a3d8" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70513518" /></Metadata><TypeSignature Language="C#" Value="public abstract class WaitHandle : MarshalByRefObject, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi abstract beforefieldinit WaitHandle extends System.MarshalByRefObject implements class System.IDisposable" />
+  <TypeSignature Language="DocId" Value="T:System.Threading.WaitHandle" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class WaitHandle&#xA;Inherits MarshalByRefObject&#xA;Implements IDisposable" />
+  <TypeSignature Language="C++ CLI" Value="public ref class WaitHandle abstract : MarshalByRefObject, IDisposable" />
+  <TypeSignature Language="F#" Value="type WaitHandle = class&#xA;    inherit MarshalByRefObject&#xA;    interface IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+    <AssemblyVersion>4.0.20.0</AssemblyVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+    <BaseTypeName FrameworkAlternate="netframework-4.5">System.MarshalByRefObject</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>封装等待对共享资源进行独占访问的操作系统特定的对象。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Threading.WaitHandle>类封装本机操作系统同步句柄，用于表示运行时中允许多个等待操作的所有同步对象。 有关等待句柄与其他同步对象的比较，请参阅[同步基元概述](~/docs/standard/threading/overview-of-synchronization-primitives.md)。  
+  
+ <xref:System.Threading.WaitHandle>类本身是抽象类。 从派生的<xref:System.Threading.WaitHandle>类定义信号机制以指示获取或释放对共享资源的访问，但它们使用继承<xref:System.Threading.WaitHandle>的方法在等待对共享资源的访问时进行阻止。 派生自<xref:System.Threading.WaitHandle>的类包括：  
+  
+-   <xref:System.Threading.Mutex> 类。 请参阅[mutex](~/docs/standard/threading/mutexes.md)。  
+  
+-   类及其派生<xref:System.Threading.AutoResetEvent>类和 <xref:System.Threading.ManualResetEvent> 。  <xref:System.Threading.EventWaitHandle>  
+  
+-   <xref:System.Threading.Semaphore> 类。 请参阅[信号灯和 SemaphoreSlim](~/docs/standard/threading/semaphore-and-semaphoreslim.md)。  
+  
+ 线程可以通过调用实例方法阻止单个等待句柄，该<xref:System.Threading.WaitHandle.WaitOne%2A>实例方法由派生自<xref:System.Threading.WaitHandle>的类继承。  
+  
+ 的<xref:System.Threading.WaitHandle>派生类在其线程关联中有所不同。 事件等待句柄<xref:System.Threading.EventWaitHandle>（ <xref:System.Threading.AutoResetEvent>、、 <xref:System.Threading.ManualResetEvent>和）和信号量不具有线程关联，任何线程都可以通知事件等待句柄或信号量。 另一方面，互斥体确实具有线程关联;拥有互斥体的线程必须释放它，如果线程对不属于它的互斥体调用<xref:System.Threading.Mutex.ReleaseMutex%2A>方法，则会引发异常。  
+  
+ 由于类派生自<xref:System.MarshalByRefObject>，因此这些类可用于跨应用程序域边界同步线程的活动。 <xref:System.Threading.WaitHandle>  
+  
+ 除派生类之外， <xref:System.Threading.WaitHandle>类还具有许多静态方法，这些方法阻止线程，直到一个或多个同步对象收到信号。 这些方法包括：  
+  
+-   <xref:System.Threading.WaitHandle.SignalAndWait%2A>，它允许线程向一个等待句柄发出信号，并立即等待另一个等待句柄。  
+  
+-   <xref:System.Threading.WaitHandle.WaitAll%2A>，它允许线程等待，直到数组中的所有等待句柄都收到信号。  
+  
+-   <xref:System.Threading.WaitHandle.WaitAny%2A>，它允许线程等待，直到指定的一组等待句柄发出信号。  
+  
+ 这些方法的重载提供了放弃等待的超时间隔，以及在进入等待前退出同步上下文的机会，从而允许其他线程使用同步上下文。  
+  
+> [!IMPORTANT]
+>  此类型实现 <xref:System.IDisposable> 接口。 使用完类型或派生自该类型的类型后，应直接或间接释放它。 若要直接释放类型，请在 `try`/`catch` 块中调用其 <xref:System.Threading.WaitHandle.Close%2A> 方法。 若要间接释放类型，请使用 `using`（在 C# 中）或 `Using`（在 Visual Basic 中）等语言构造。 有关详细信息，请参阅 <xref:System.IDisposable> 接口主题中的“使用实现 IDisposable 的对象”一节。  
+  
+ <xref:System.Threading.WaitHandle><xref:System.IDisposable.Dispose%2A>实现模式。 请参阅 [实现 Dispose 方法] （~/docs/standard/garbage-collection/implementing-dispose）。 从<xref:System.Threading.WaitHandle>派生时，请<xref:System.Threading.WaitHandle.SafeWaitHandle%2A>使用属性存储本机操作系统句柄。 除非使用其他非托管资源，否则<xref:System.Threading.WaitHandle.Dispose%2A>不需要重写受保护的方法。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示了在主线程使用<xref:System.Threading.WaitHandle.WaitAny%2A> <xref:System.Threading.WaitHandle>类的静态和<xref:System.Threading.WaitHandle.WaitAll%2A>方法等待任务完成时，两个线程可以执行后台任务的方式。  
+  
+ [!code-cpp[WaitHandle#1](~/samples/snippets/cpp/VS_Snippets_CLR/WaitHandle/cpp/WaitHandle.cpp#1)]
+ [!code-csharp[WaitHandle#1](~/samples/snippets/csharp/VS_Snippets_CLR/WaitHandle/CS/WaitHandle.cs#1)]
+ [!code-vb[WaitHandle#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/WaitHandle/VB/WaitHandle.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <threadsafe>此类型是线程安全的。</threadsafe>
+    <related type="Article" href="~/docs/standard/threading/index.md">线程</related>
+    <related type="Article" href="~/docs/standard/threading/threading-objects-and-features.md">线程处理对象和功能</related>
+    <related type="Article" href="~/docs/standard/threading/mutexes.md">Mutexes</related>
+    <related type="Article" href="https://msdn.microsoft.com/library/cd94fc34-ac15-427f-b723-a1240a4fab7d">EventWaitHandle、AutoResetEvent 和 ManualResetEvent</related>
+    <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">信号量</related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected WaitHandle ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; WaitHandle();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.Threading.WaitHandle" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public virtual void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.Close" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Sub Close ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void Close();" />
+      <MemberSignature Language="F#" Value="abstract member Close : unit -&gt; unit&#xA;override this.Close : unit -&gt; unit" Usage="waitHandle.Close " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>释放由当前 <see cref="T:System.Threading.WaitHandle" /> 占用的所有资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法是<xref:System.Threading.WaitHandle>该类及其派生类的<xref:System.IDisposable.Dispose%2A?displayProperty=nameWithType>方法的公共实现。 它提供了一个标准实现，该`Dispose(Boolean)`实现`true`使用<xref:System.GC.SuppressFinalize%2A?displayProperty=nameWithType>自变量调用重载，然后调用方法。 调用此方法可释放实例`WaitHandle`持有的所有资源或派生类。  
+  
+ 调用此方法后，对当前实例的引用将导致未定义的行为。  
+  
+> [!NOTE]
+>  在释放<xref:System.Threading.WaitHandle.Close%2A>对<xref:System.Threading.WaitHandle.Dispose> 的 <xref:System.Threading.WaitHandle> 最后一个引用之前，请始终调用或。 否则，将不会释放它所使用的资源。  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>应重写<see langword="Dispose(Boolean)" />方法以释放派生类中分配的资源。</para></block>
+        <related type="Article" href="~/docs/standard/garbage-collection/implementing-dispose.md">实现 Dispose 方法</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Dispose">
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>释放 <see cref="T:System.Threading.WaitHandle" /> 类的当前实例所使用的所有资源</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.Dispose" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Dispose ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void Dispose();" />
+      <MemberSignature Language="F#" Value="abstract member Dispose : unit -&gt; unit&#xA;override this.Dispose : unit -&gt; unit" Usage="waitHandle.Dispose " />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IDisposable.Dispose</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>释放 <see cref="T:System.Threading.WaitHandle" /> 类的当前实例所使用的所有资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法等效于<xref:System.Threading.WaitHandle.Close%2A>方法。  
+  
+> [!NOTE]
+>  在释放<xref:System.Threading.WaitHandle.Close%2A>对<xref:System.Threading.WaitHandle.Dispose> 的 <xref:System.Threading.WaitHandle> 最后一个引用之前，请始终调用或。 否则，将不会释放它所使用的资源。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/standard/garbage-collection/unmanaged.md">清理非托管资源</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool explicitDisposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool explicitDisposing) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.Dispose(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub Dispose (explicitDisposing As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void Dispose(bool explicitDisposing);" />
+      <MemberSignature Language="F#" Value="abstract member Dispose : bool -&gt; unit&#xA;override this.Dispose : bool -&gt; unit" Usage="waitHandle.Dispose explicitDisposing" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="explicitDisposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="explicitDisposing"><see langword="true" /> 表示释放托管资源和非托管资源；<see langword="false" /> 表示仅释放非托管资源。</param>
+        <summary>当在派生类中重写时，释放 <see cref="T:System.Threading.WaitHandle" /> 使用的非托管资源，并且可选择释放托管资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此<xref:System.Threading.WaitHandle.Close%2A>方法由<xref:System.Threading.WaitHandle.Dispose>和`explicitDisposing`参数设置为`true`的方法调用。  当参数为`true`时，此方法释放该<xref:System.Threading.WaitHandle>对象引用的任何托管对象所持有的所有资源。 `explicitDisposing`  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>应重写<see cref="M:System.Threading.WaitHandle.Dispose(System.Boolean)" />方法以释放派生类中分配的资源。  
+  
+<see cref="M:System.Threading.WaitHandle.Close" /> 或 <see cref="M:System.Threading.WaitHandle.Dispose" /> 方法可由其他对象多次调用。 重写此方法时，请注意不要引用之前在或对<see langword="Dispose" />或<see langword="Close" />的调用中已释放的对象。</para></block>
+        <related type="Article" href="~/docs/standard/garbage-collection/implementing-dispose.md">实现 Dispose 方法</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~WaitHandle ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.Finalize" />
+      <MemberSignature Language="VB.NET" Value="Finalize ()" />
+      <MemberSignature Language="C++ CLI" Value="!WaitHandle ()" />
+      <MemberSignature Language="F#" Value="override this.Finalize : unit -&gt; unit" Usage="waitHandle.Finalize " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>释放由当前实例所持有的资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks  
+
+> [!NOTE]
+> 此成员已从 .NET Framework 版本2.0 和后续版本中删除。 本主题仅适用于本主题后面的 "版本信息" 中列出的版本。
+
+
+应用程序代码不会调用此方法;它在垃圾回收期间自动调用，除非已禁用垃圾回收器的终止。 有关详细信息，请参阅 <xref:System.GC.SuppressFinalize%2A?displayProperty=nameWithType> 和 <xref:System.Object.Finalize>。 此方法重写 <xref:System.Object.Finalize>。
+
+]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Handle">
+      <MemberSignature Language="C#" Value="public virtual IntPtr Handle { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance native int Handle" />
+      <MemberSignature Language="DocId" Value="P:System.Threading.WaitHandle.Handle" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Property Handle As IntPtr" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property IntPtr Handle { IntPtr get(); void set(IntPtr value); };" />
+      <MemberSignature Language="F#" Value="member this.Handle : nativeint with get, set" Usage="System.Threading.WaitHandle.Handle" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Obsolete("Use the SafeWaitHandle property instead.")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.0">
+          <AttributeName>get: System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.0">
+          <AttributeName>set: System.Security.SecurityCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置本机操作系统句柄。</summary>
+        <value><see langword="IntPtr" />，它表示本机操作系统句柄。 默认为 <see cref="F:System.Threading.WaitHandle.InvalidHandle" /> 字段的值。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 为<xref:System.Threading.WaitHandle.Handle%2A>属性分配新值不会关闭上一个句柄。 这可能会导致句柄泄露。  
+  
+ 请不要在 .NET Framework 版本2.0 或更高版本中使用此属性;请改用<xref:System.Threading.WaitHandle.SafeWaitHandle%2A>属性。 如果将此属性设置为有效的句柄<xref:System.Threading.WaitHandle.SafeWaitHandle%2A> ，还会设置属性， <xref:System.Threading.WaitHandle.InvalidHandle>但将其设置为可能导致泄漏的句柄。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.SecurityCriticalAttribute">需要对直接调用方的完全信任才能设置属性值。 此成员不能由部分受信任的或透明的代码设置。</permission>
+        <permission cref="F:System.Security.Permissions.SecurityAction.InheritanceDemand">派生的<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />类型必须设置属性值。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="InvalidHandle">
+      <MemberSignature Language="C#" Value="protected static readonly IntPtr InvalidHandle;" />
+      <MemberSignature Language="ILAsm" Value=".field family static initonly native int InvalidHandle" />
+      <MemberSignature Language="DocId" Value="F:System.Threading.WaitHandle.InvalidHandle" />
+      <MemberSignature Language="VB.NET" Value="Protected Shared ReadOnly InvalidHandle As IntPtr " />
+      <MemberSignature Language="C++ CLI" Value="protected: static initonly IntPtr InvalidHandle;" />
+      <MemberSignature Language="F#" Value=" staticval mutable InvalidHandle : nativeint" Usage="System.Threading.WaitHandle.InvalidHandle" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>表示无效的本机操作系统句柄。 此字段为只读。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在内部用来初始化<xref:System.Threading.WaitHandle.Handle%2A>属性。  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>您可以使用此值来确定<see cref="P:System.Threading.WaitHandle.Handle" />属性是否包含有效的本机操作系统句柄。</para></block>
+      </Docs>
+    </Member>
+    <Member MemberName="SafeWaitHandle">
+      <MemberSignature Language="C#" Value="public Microsoft.Win32.SafeHandles.SafeWaitHandle SafeWaitHandle { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Microsoft.Win32.SafeHandles.SafeWaitHandle SafeWaitHandle" />
+      <MemberSignature Language="DocId" Value="P:System.Threading.WaitHandle.SafeWaitHandle" />
+      <MemberSignature Language="VB.NET" Value="Public Property SafeWaitHandle As SafeWaitHandle" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property Microsoft::Win32::SafeHandles::SafeWaitHandle ^ SafeWaitHandle { Microsoft::Win32::SafeHandles::SafeWaitHandle ^ get(); void set(Microsoft::Win32::SafeHandles::SafeWaitHandle ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.SafeWaitHandle : Microsoft.Win32.SafeHandles.SafeWaitHandle with get, set" Usage="System.Threading.WaitHandle.SafeWaitHandle" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.0">
+          <AttributeName>get: System.Security.SecurityCritical</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>set: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.0">
+          <AttributeName>set: System.Security.SecurityCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.SafeHandles.SafeWaitHandle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置本机操作系统句柄。</summary>
+        <value><see cref="T:Microsoft.Win32.SafeHandles.SafeWaitHandle" />，它表示本机操作系统句柄。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将新值分配到<xref:System.Threading.WaitHandle.SafeWaitHandle%2A>属性时，将在收集上一个<xref:Microsoft.Win32.SafeHandles.SafeWaitHandle>对象时关闭上一个句柄。 不要手动关闭句柄，因为这<xref:System.ObjectDisposedException> <xref:Microsoft.Win32.SafeHandles.SafeWaitHandle>会导致在尝试关闭句柄时出现。  
+  
+ <xref:System.Threading.WaitHandle><xref:System.IDisposable.Dispose%2A>实现模式。 请参阅 [实现 Dispose 方法] （~/docs/standard/garbage-collection/implementing-dispose）。 当从<xref:System.Threading.WaitHandle>派生时， <xref:System.Threading.WaitHandle.SafeWaitHandle%2A>使用属性存储本机句柄操作系统句柄。 除非使用其他非托管资源，否则<xref:System.Threading.WaitHandle.Dispose%2A>不需要重写受保护的方法。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.SecurityCriticalAttribute">需要对直接调用方的完全信任。 部分受信任的或透明的代码不能使用此成员。</permission>
+        <permission cref="F:System.Security.Permissions.SecurityAction.InheritanceDemand">派生的<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />类型必须调用此成员。</permission>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="SignalAndWait">
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>向一个 <see cref="T:System.Threading.WaitHandle" /> 发出信号并等待另一个。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="SignalAndWait">
+      <MemberSignature Language="C#" Value="public static bool SignalAndWait (System.Threading.WaitHandle toSignal, System.Threading.WaitHandle toWaitOn);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool SignalAndWait(class System.Threading.WaitHandle toSignal, class System.Threading.WaitHandle toWaitOn) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.SignalAndWait(System.Threading.WaitHandle,System.Threading.WaitHandle)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function SignalAndWait (toSignal As WaitHandle, toWaitOn As WaitHandle) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool SignalAndWait(System::Threading::WaitHandle ^ toSignal, System::Threading::WaitHandle ^ toWaitOn);" />
+      <MemberSignature Language="F#" Value="static member SignalAndWait : System.Threading.WaitHandle * System.Threading.WaitHandle -&gt; bool" Usage="System.Threading.WaitHandle.SignalAndWait (toSignal, toWaitOn)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="toSignal" Type="System.Threading.WaitHandle" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="toWaitOn" Type="System.Threading.WaitHandle" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="toSignal">要发出信号的 <see cref="T:System.Threading.WaitHandle" />。</param>
+        <param name="toWaitOn">要等待的 <see cref="T:System.Threading.WaitHandle" />。</param>
+        <summary>向一个 <see cref="T:System.Threading.WaitHandle" /> 发出信号并等待另一个。</summary>
+        <returns>如果信号和等待都成功完成，则为 <see langword="true" />；如果等待没有完成，则此方法不返回。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 不保证此操作为原子操作。 在当前线程发出信号`toSignal`之后但在`toWaitOn`等待之前，另一个处理器上运行的线程可能会发出`toWaitOn`信号或等待。  
+  
+   
+  
+## Examples  
+ 下面的代码示例使用<xref:System.Threading.WaitHandle.SignalAndWait%28System.Threading.WaitHandle%2CSystem.Threading.WaitHandle%29>方法重载，以允许主线程向阻止的线程发出信号，并等待线程完成任务。  
+  
+ 该示例启动五个线程，使其可以在<xref:System.Threading.EventWaitHandle> <xref:System.Threading.EventResetMode.AutoReset?displayProperty=nameWithType>使用标志创建的上阻塞，然后在每次用户按下 enter 键时释放一个线程。 然后，该示例将另一线程排队，并通过使用<xref:System.Threading.EventWaitHandle> <xref:System.Threading.EventResetMode.ManualReset?displayProperty=nameWithType>标志创建的所有线程释放它们。  
+  
+ [!code-cpp[System.Threading.WaitHandle.SignalAndWait#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.WaitHandle.SignalAndWait/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.WaitHandle.SignalAndWait#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.WaitHandle.SignalAndWait/CS/source.cs#1)]
+ [!code-vb[System.Threading.WaitHandle.SignalAndWait#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.WaitHandle.SignalAndWait/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="toSignal" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="toWaitOn" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.NotSupportedException">在一个具有 <see cref="T:System.STAThreadAttribute" /> 的线程上调用了该方法。</exception>
+        <exception cref="T:System.PlatformNotSupportedException">Windows 98 或 Windows Millennium Edition 不支持此方法。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="toSignal" /> 是信号量，已达到最大计数。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SignalAndWait">
+      <MemberSignature Language="C#" Value="public static bool SignalAndWait (System.Threading.WaitHandle toSignal, System.Threading.WaitHandle toWaitOn, int millisecondsTimeout, bool exitContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool SignalAndWait(class System.Threading.WaitHandle toSignal, class System.Threading.WaitHandle toWaitOn, int32 millisecondsTimeout, bool exitContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.SignalAndWait(System.Threading.WaitHandle,System.Threading.WaitHandle,System.Int32,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function SignalAndWait (toSignal As WaitHandle, toWaitOn As WaitHandle, millisecondsTimeout As Integer, exitContext As Boolean) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool SignalAndWait(System::Threading::WaitHandle ^ toSignal, System::Threading::WaitHandle ^ toWaitOn, int millisecondsTimeout, bool exitContext);" />
+      <MemberSignature Language="F#" Value="static member SignalAndWait : System.Threading.WaitHandle * System.Threading.WaitHandle * int * bool -&gt; bool" Usage="System.Threading.WaitHandle.SignalAndWait (toSignal, toWaitOn, millisecondsTimeout, exitContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="toSignal" Type="System.Threading.WaitHandle" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="toWaitOn" Type="System.Threading.WaitHandle" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="exitContext" Type="System.Boolean" Index="3" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="toSignal">要发出信号的 <see cref="T:System.Threading.WaitHandle" />。</param>
+        <param name="toWaitOn">要等待的 <see cref="T:System.Threading.WaitHandle" />。</param>
+        <param name="millisecondsTimeout">一个整数，表示要等待的间隔。 如果值是 <see cref="F:System.Threading.Timeout.Infinite" />，即 -1，则等待是无限期的。</param>
+        <param name="exitContext">如果等待之前先退出上下文的同步域（如果在同步上下文中），并在稍后重新获取它，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>向一个 <see cref="T:System.Threading.WaitHandle" /> 发出信号并等待另一个，指定超时间隔为 32 位有符号整数，并指定在进入等待前是否退出上下文的同步域。</summary>
+        <returns>如果信号发送和等待均成功完成，则为 <see langword="true" />；如果信号发送完成，但等待超时，则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 不保证此操作为原子操作。 在当前线程发出信号`toSignal`之后但在`toWaitOn`等待之前，另一个处理器上运行的线程可能会发出`toWaitOn`信号或等待。  
+  
+ 如果`millisecondsTimeout`为零，则该方法不会阻止。 它测试的状态`toWaitOn`并立即返回。  
+  
+## <a name="notes-on-exiting-the-context"></a>有关退出上下文的说明  
+ 除非从非默认托管上下文内调用`exitContext` 方法，否则参数 <xref:System.Threading.WaitHandle.SignalAndWait%2A> 不起作用。 如果你的线程在对从<xref:System.ContextBoundObject>派生的类的实例的调用中，则可能会发生这种情况。 即使当前正在对不是从派生的<xref:System.ContextBoundObject>类（如<xref:System.String>）执行方法，如果<xref:System.ContextBoundObject>在当前应用程序域中的堆栈上，也可以在非默认上下文中执行。  
+  
+ 当你的代码在非默认上下文中执行时`true` ， `exitContext`为指定将会导致线程在执行<xref:System.Threading.WaitHandle.SignalAndWait%2A>方法之前退出非默认托管上下文（即转换为默认上下文）。 调用<xref:System.Threading.WaitHandle.SignalAndWait%2A>方法完成后，线程返回到原始的非默认上下文。  
+  
+ 当上下文绑定类具有<xref:System.Runtime.Remoting.Contexts.SynchronizationAttribute>时，这会很有用。 在这种情况下，对类成员的所有调用都将自动同步，同步域是类的整个代码正文。 如果成员的调用堆栈中的代码调用<xref:System.Threading.WaitHandle.SignalAndWait%2A>方法并为`exitContext`指定`true` ，则线程将退出同步域，从而允许在对对象的任何成员的调用上被阻止的线程继续。 <xref:System.Threading.WaitHandle.SignalAndWait%2A>当方法返回时，进行调用的线程必须等待重新进入同步域。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="toSignal" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="toWaitOn" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.NotSupportedException">对具有 <see cref="T:System.STAThreadAttribute" /> 的线程调用了此方法。</exception>
+        <exception cref="T:System.PlatformNotSupportedException">Windows 98 或 Windows Millennium Edition 不支持此方法。</exception>
+        <exception cref="T:System.InvalidOperationException">无法终止 <see cref="T:System.Threading.WaitHandle" />，因为它将超过其最大计数。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 是一个非 -1 的负数，而 -1 表示无限期超时。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SignalAndWait">
+      <MemberSignature Language="C#" Value="public static bool SignalAndWait (System.Threading.WaitHandle toSignal, System.Threading.WaitHandle toWaitOn, TimeSpan timeout, bool exitContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool SignalAndWait(class System.Threading.WaitHandle toSignal, class System.Threading.WaitHandle toWaitOn, valuetype System.TimeSpan timeout, bool exitContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.SignalAndWait(System.Threading.WaitHandle,System.Threading.WaitHandle,System.TimeSpan,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function SignalAndWait (toSignal As WaitHandle, toWaitOn As WaitHandle, timeout As TimeSpan, exitContext As Boolean) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool SignalAndWait(System::Threading::WaitHandle ^ toSignal, System::Threading::WaitHandle ^ toWaitOn, TimeSpan timeout, bool exitContext);" />
+      <MemberSignature Language="F#" Value="static member SignalAndWait : System.Threading.WaitHandle * System.Threading.WaitHandle * TimeSpan * bool -&gt; bool" Usage="System.Threading.WaitHandle.SignalAndWait (toSignal, toWaitOn, timeout, exitContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="toSignal" Type="System.Threading.WaitHandle" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="toWaitOn" Type="System.Threading.WaitHandle" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="timeout" Type="System.TimeSpan" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="exitContext" Type="System.Boolean" Index="3" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="toSignal">要发出信号的 <see cref="T:System.Threading.WaitHandle" />。</param>
+        <param name="toWaitOn">要等待的 <see cref="T:System.Threading.WaitHandle" />。</param>
+        <param name="timeout">一个 <see cref="T:System.TimeSpan" />，表示要等待的间隔。 如果值是 -1，则等待是无限期的。</param>
+        <param name="exitContext">如果等待之前先退出上下文的同步域（如果在同步上下文中），并在稍后重新获取它，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>向一个 <see cref="T:System.Threading.WaitHandle" /> 发出信号并等待另一个，指定超时间隔为 <see cref="T:System.TimeSpan" />，并指定在进入等待前是否退出上下文的同步域。</summary>
+        <returns>如果信号发送和等待均成功完成，则为 <see langword="true" />；如果信号发送完成，但等待超时，则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 不保证此操作为原子操作。 在当前线程发出信号`toSignal`之后但在`toWaitOn`等待之前，另一个处理器上运行的线程可能会发出`toWaitOn`信号或等待。  
+  
+ 的最大值`timeout`为<xref:System.Int32.MaxValue?displayProperty=nameWithType>。  
+  
+ 如果`timeout`为零，则该方法不会阻止。 它测试的状态`toWaitOn`并立即返回。  
+  
+## <a name="notes-on-exiting-the-context"></a>有关退出上下文的说明  
+ 除非从非默认托管上下文内调用`exitContext` 方法，否则参数 <xref:System.Threading.WaitHandle.SignalAndWait%2A> 不起作用。 如果你的线程在对从<xref:System.ContextBoundObject>派生的类的实例的调用中，则可能会发生这种情况。 即使当前正在对不是从派生的<xref:System.ContextBoundObject>类（如<xref:System.String>）执行方法，如果<xref:System.ContextBoundObject>在当前应用程序域中的堆栈上，也可以在非默认上下文中执行。  
+  
+ 当你的代码在非默认上下文中执行时`true` ， `exitContext`为指定将会导致线程在执行<xref:System.Threading.WaitHandle.SignalAndWait%2A>方法之前退出非默认托管上下文（即转换为默认上下文）。 调用<xref:System.Threading.WaitHandle.SignalAndWait%2A>方法完成后，线程返回到原始的非默认上下文。  
+  
+ 当上下文绑定类具有<xref:System.Runtime.Remoting.Contexts.SynchronizationAttribute>时，这会很有用。 在这种情况下，对类成员的所有调用都将自动同步，同步域是类的整个代码正文。 如果成员的调用堆栈中的代码调用<xref:System.Threading.WaitHandle.SignalAndWait%2A>方法并为`exitContext`指定`true` ，则线程将退出同步域，从而允许在对对象的任何成员的调用上被阻止的线程继续。 <xref:System.Threading.WaitHandle.SignalAndWait%2A>当方法返回时，进行调用的线程必须等待重新进入同步域。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="toSignal" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="toWaitOn" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.NotSupportedException">在一个具有 <see cref="T:System.STAThreadAttribute" /> 的线程上调用了该方法。</exception>
+        <exception cref="T:System.PlatformNotSupportedException">Windows 98 或 Windows Millennium Edition 不支持此方法。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="toSignal" /> 是信号量，已达到最大计数。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 计算为 -1 以外的负毫秒数。  
+  
+或 
+ <paramref name="timeout" /> 大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="System.IDisposable.Dispose">
+      <MemberSignature Language="C#" Value="void IDisposable.Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.IDisposable.Dispose() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.System#IDisposable#Dispose" />
+      <MemberSignature Language="VB.NET" Value="Sub Dispose () Implements IDisposable.Dispose" />
+      <MemberSignature Language="C++ CLI" Value=" virtual void System.IDisposable.Dispose() = IDisposable::Dispose;" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IDisposable.Dispose</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>释放由 <see cref="T:System.Threading.WaitHandle" /> 使用的所有资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks  
+调用`Dispose`会允许出于其他目的重新<xref:System.Threading.WaitHandle>分配所使用的资源。 有关的详细信息`Dispose`，请参阅[清理非托管资源](~/docs/standard/garbage-collection/unmanaged.md)。
+
+]]></format>
+        </remarks>
+        <forInternalUseOnly />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="WaitAll">
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>等待指定数组中的所有元素都收到信号。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="WaitAll">
+      <MemberSignature Language="C#" Value="public static bool WaitAll (System.Threading.WaitHandle[] waitHandles);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool WaitAll(class System.Threading.WaitHandle[] waitHandles) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitAll(System.Threading.WaitHandle[])" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function WaitAll (waitHandles As WaitHandle()) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool WaitAll(cli::array &lt;System::Threading::WaitHandle ^&gt; ^ waitHandles);" />
+      <MemberSignature Language="F#" Value="static member WaitAll : System.Threading.WaitHandle[] -&gt; bool" Usage="System.Threading.WaitHandle.WaitAll waitHandles" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">一个 <see langword="WaitHandle" /> 数组，包含当前实例将等待的对象。 此数组不能包含对同一对象的多个引用。</param>
+        <summary>等待指定数组中的所有元素都收到信号。</summary>
+        <returns>如果 <see langword="true" /> 中的每个元素都收到信号，则返回 <paramref name="waitHandles" />；否则该方法永不返回。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Threading.AbandonedMutexException>是 .NET Framework 版本2.0 中的新增项。 在以前的版本中<xref:System.Threading.WaitHandle.WaitAll%2A> ，在`true`放弃互斥体时，该方法将返回。 被放弃的 mutex 通常表明出现了严重的编码错误。 对于系统范围内的互斥体，它可能指示应用程序突然终止（例如，使用 Windows 任务管理器）。 此异常包含用于调试的信息。  
+  
+ 当<xref:System.Threading.WaitHandle.WaitAll%2A>所有句柄都收到信号时，此方法将返回。 在某些实现中，如果传递的<xref:System.NotSupportedException>句柄超过64，则会引发。 如果数组包含重复项，调用将失败，并<xref:System.DuplicateWaitObjectException>出现。  
+  
+> [!NOTE]
+>  <xref:System.Threading.WaitHandle.WaitAll%2A> 具有 <xref:System.STAThreadAttribute> 的线程不支持方法。  
+  
+ 调用此方法重载等效<xref:System.Threading.WaitHandle.WaitAll%28System.Threading.WaitHandle%5B%5D%2CSystem.Int32%2CSystem.Boolean%29>于调用方法重载，并为`millisecondsTimeout`和`true` `exitContext`指定-1 （ <xref:System.Threading.Timeout.Infinite?displayProperty=nameWithType>或）。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用线程池异步创建和写入一组文件。 每个写入操作都作为工作项排队，并在完成后发出信号。 主线程等待所有项发出信号，然后退出。  
+  
+ [!code-cpp[System.Threading.WaitHandle.WaitAll1#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAll1/CPP/source1.cpp#1)]
+ [!code-csharp[System.Threading.WaitHandle.WaitAll1#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAll1/CS/source1.cs#1)]
+ [!code-vb[System.Threading.WaitHandle.WaitAll1#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAll1/VB/source1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="waitHandles" /> 参数为 <see langword="null" />。 - 或 - 
+<paramref name="waitHandles" /> 数组中一个或多个对象为 <see langword="null" />。  
+  
+或 
+ <paramref name="waitHandles" /> 为不具有元素的数组且 .NET Framework 版本为 2.0 或更高版本。</exception>
+        <exception cref="T:System.DuplicateWaitObjectException"><block subset="none" type="note">
+            <para>  
+ 在<see href="https://go.microsoft.com/fwlink/?LinkID=247912">适用于 Windows 应用商店应用的 .NET</see> 或<see href="https://docs.microsoft.com/dotnet/standard/cross-platform/cross-platform-development-with-the-portable-class-library">可移植类库</see>中，改为捕获基类异常 <see cref="T:System.ArgumentException" />。  
+  
+</para>
+          </block>  
+  
+ <paramref name="waitHandles" /> 数组包含重复的元素。</exception>
+        <exception cref="T:System.NotSupportedException"><paramref name="waitHandles" /> 中的对象数大于系统允许的数量。  
+  
+或 
+<see cref="T:System.STAThreadAttribute" /> 属性应用于当前线程的线程过程且 <paramref name="waitHandles" /> 包含多个元素。</exception>
+        <exception cref="T:System.ApplicationException"><paramref name="waitHandles" /> 数组不含任何元素，并且 .NET Framework 版本为 1.0 或 1.1。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待终止，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="waitHandles" /> 数组包含其他应用程序域中 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitAll">
+      <MemberSignature Language="C#" Value="public static bool WaitAll (System.Threading.WaitHandle[] waitHandles, int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool WaitAll(class System.Threading.WaitHandle[] waitHandles, int32 millisecondsTimeout) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitAll(System.Threading.WaitHandle[],System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function WaitAll (waitHandles As WaitHandle(), millisecondsTimeout As Integer) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool WaitAll(cli::array &lt;System::Threading::WaitHandle ^&gt; ^ waitHandles, int millisecondsTimeout);" />
+      <MemberSignature Language="F#" Value="static member WaitAll : System.Threading.WaitHandle[] * int -&gt; bool" Usage="System.Threading.WaitHandle.WaitAll (waitHandles, millisecondsTimeout)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">一个 <see langword="WaitHandle" /> 数组，包含当前实例将等待的对象。 此数组不能包含对同一对象的多个引用（重复的元素）。</param>
+        <param name="millisecondsTimeout">等待的毫秒数，或为 <see cref="F:System.Threading.Timeout.Infinite" /> (-1)，表示无限期等待。</param>
+        <summary>等待指定数组中的所有元素接收信号，同时使用 <see cref="T:System.Int32" /> 值指定时间间隔。</summary>
+        <returns>如果 <paramref name="waitHandles" /> 中的每个元素都已收到信号，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`millisecondsTimeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ 此<xref:System.Threading.WaitHandle.WaitAll%2A>方法在等待终止时返回，这意味着在所有句柄都发出信号或发生超时时。 在某些实现中，如果传递的<xref:System.NotSupportedException>句柄超过64，则会引发。 如果数组中有重复项，调用将失败，并<xref:System.DuplicateWaitObjectException>出现。  
+  
+> [!NOTE]
+>  <xref:System.Threading.WaitHandle.WaitAll%2A> 具有 <xref:System.STAThreadAttribute> 的线程不支持方法。  
+  
+ 调用此方法重载与调用<xref:System.Threading.WaitHandle.WaitAll%28System.Threading.WaitHandle%5B%5D%2CSystem.Int32%2CSystem.Boolean%29>重载并为指定`false`的`exitContext`相同。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="waitHandles" /> 参数为 <see langword="null" />。  
+  
+- 或 - 
+<paramref name="waitHandles" /> 数组中一个或多个对象为 <see langword="null" />。  
+  
+或 
+ <paramref name="waitHandles" /> 是一个不含任何元素的数组。</exception>
+        <exception cref="T:System.DuplicateWaitObjectException"><block subset="none" type="note">
+            <para>  
+ 在<see href="https://go.microsoft.com/fwlink/?LinkID=247912">适用于 Windows 应用商店应用的 .NET</see> 或<see href="https://docs.microsoft.com/dotnet/standard/cross-platform/cross-platform-development-with-the-portable-class-library">可移植类库</see>中，改为捕获基类异常 <see cref="T:System.ArgumentException" />。  
+  
+</para>
+          </block>  
+  
+ <paramref name="waitHandles" /> 数组包含重复的元素。</exception>
+        <exception cref="T:System.NotSupportedException"><paramref name="waitHandles" /> 中的对象数大于系统允许的数量。  
+  
+- 或 - 
+<see cref="T:System.STAThreadAttribute" /> 属性应用于当前线程的线程过程且 <paramref name="waitHandles" /> 包含多个元素。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 是一个非 -1 的负数，而 -1 表示无限期超时。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="waitHandles" /> 数组包含其他应用程序域中 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitAll">
+      <MemberSignature Language="C#" Value="public static bool WaitAll (System.Threading.WaitHandle[] waitHandles, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool WaitAll(class System.Threading.WaitHandle[] waitHandles, valuetype System.TimeSpan timeout) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitAll(System.Threading.WaitHandle[],System.TimeSpan)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function WaitAll (waitHandles As WaitHandle(), timeout As TimeSpan) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool WaitAll(cli::array &lt;System::Threading::WaitHandle ^&gt; ^ waitHandles, TimeSpan timeout);" />
+      <MemberSignature Language="F#" Value="static member WaitAll : System.Threading.WaitHandle[] * TimeSpan -&gt; bool" Usage="System.Threading.WaitHandle.WaitAll (waitHandles, timeout)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="timeout" Type="System.TimeSpan" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">一个 <see langword="WaitHandle" /> 数组，包含当前实例将等待的对象。 此数组不能包含对同一对象的多个引用。</param>
+        <param name="timeout">表示等待毫秒数的 <see cref="T:System.TimeSpan" />，或表示 -1 毫秒（无限期等待）的 <see cref="T:System.TimeSpan" />。</param>
+        <summary>等待指定数组中的所有元素接收信号，同时使用 <see cref="T:System.TimeSpan" /> 值指定时间间隔。</summary>
+        <returns>如果 <paramref name="waitHandles" /> 中的每个元素都已收到信号，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`timeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ 当<xref:System.Threading.WaitHandle.WaitAll%2A>等待终止时，此方法将返回，这意味着所有句柄都已终止或发生超时。 在某些实现中，如果传递的<xref:System.NotSupportedException>句柄超过64，则会引发。 如果数组包含重复项，则调用将失败。  
+  
+> [!NOTE]
+>  <xref:System.Threading.WaitHandle.WaitAll%2A> 具有 <xref:System.STAThreadAttribute> 的线程不支持方法。  
+  
+ 的最大值`timeout`为<xref:System.Int32.MaxValue?displayProperty=nameWithType>。  
+  
+ 调用此方法重载与调用<xref:System.Threading.WaitHandle.WaitAll%28System.Threading.WaitHandle%5B%5D%2CSystem.TimeSpan%2CSystem.Boolean%29>重载并为指定`false`的`exitContext`相同。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="waitHandles" /> 参数为 <see langword="null" />。  
+  
+- 或 - 
+<paramref name="waitHandles" /> 数组中一个或多个对象为 <see langword="null" />。  
+  
+或 
+ <paramref name="waitHandles" /> 是一个不含任何元素的数组。</exception>
+        <exception cref="T:System.DuplicateWaitObjectException"><block subset="none" type="note">
+            <para>  
+ 在<see href="https://go.microsoft.com/fwlink/?LinkID=247912">适用于 Windows 应用商店应用的 .NET</see> 或<see href="https://docs.microsoft.com/dotnet/standard/cross-platform/cross-platform-development-with-the-portable-class-library">可移植类库</see>中，改为捕获基类异常 <see cref="T:System.ArgumentException" />。  
+  
+</para>
+          </block>  
+  
+ <paramref name="waitHandles" /> 数组包含重复的元素。</exception>
+        <exception cref="T:System.NotSupportedException"><paramref name="waitHandles" /> 中的对象数大于系统允许的数量。  
+  
+- 或 - 
+<see cref="T:System.STAThreadAttribute" /> 属性应用于当前线程的线程过程且 <paramref name="waitHandles" /> 包含多个元素。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 为 -1 毫秒以外的负数，表示无限期超时。 
+- 或 - 
+ <paramref name="timeout" /> 大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待终止，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="waitHandles" /> 数组包含其他应用程序域中 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitAll">
+      <MemberSignature Language="C#" Value="public static bool WaitAll (System.Threading.WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool WaitAll(class System.Threading.WaitHandle[] waitHandles, int32 millisecondsTimeout, bool exitContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitAll(System.Threading.WaitHandle[],System.Int32,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function WaitAll (waitHandles As WaitHandle(), millisecondsTimeout As Integer, exitContext As Boolean) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool WaitAll(cli::array &lt;System::Threading::WaitHandle ^&gt; ^ waitHandles, int millisecondsTimeout, bool exitContext);" />
+      <MemberSignature Language="F#" Value="static member WaitAll : System.Threading.WaitHandle[] * int * bool -&gt; bool" Usage="System.Threading.WaitHandle.WaitAll (waitHandles, millisecondsTimeout, exitContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="exitContext" Type="System.Boolean" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">一个 <see langword="WaitHandle" /> 数组，包含当前实例将等待的对象。 此数组不能包含对同一对象的多个引用（重复的元素）。</param>
+        <param name="millisecondsTimeout">等待的毫秒数，或为 <see cref="F:System.Threading.Timeout.Infinite" /> (-1)，表示无限期等待。</param>
+        <param name="exitContext">如果等待之前先退出上下文的同步域（如果在同步上下文中），并在稍后重新获取它，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>等待指定数组中的所有元素收到信号，使用 <see cref="T:System.Int32" /> 值指定时间间隔，并指定是否在等待之前退出同步域。</summary>
+        <returns>如果 <paramref name="waitHandles" /> 中的每个元素都已收到信号，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`millisecondsTimeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ <xref:System.Threading.AbandonedMutexException>是 .NET Framework 版本2.0 中的新增项。 在以前的版本中<xref:System.Threading.WaitHandle.WaitAll%2A> ，在`true`放弃互斥体时，该方法将返回。 被放弃的 mutex 通常表明出现了严重的编码错误。 对于系统范围内的互斥体，它可能指示应用程序突然终止（例如，使用 Windows 任务管理器）。 此异常包含用于调试的信息。  
+  
+ 此<xref:System.Threading.WaitHandle.WaitAll%2A>方法在等待终止时返回，这意味着在所有句柄都发出信号或发生超时时。 在某些实现中，如果传递的<xref:System.NotSupportedException>句柄超过64，则会引发。 如果数组中有重复项，调用将失败，并<xref:System.DuplicateWaitObjectException>出现。  
+  
+> [!NOTE]
+>  <xref:System.Threading.WaitHandle.WaitAll%2A> 具有 <xref:System.STAThreadAttribute> 的线程不支持方法。  
+  
+## <a name="notes-on-exiting-the-context"></a>有关退出上下文的说明  
+ 除非从非默认托管上下文内调用`exitContext` 方法，否则参数 <xref:System.Threading.WaitHandle.WaitAll%2A> 不起作用。 如果你的线程在对从<xref:System.ContextBoundObject>派生的类的实例的调用中，则可能会发生这种情况。 即使当前正在对不是从派生的<xref:System.ContextBoundObject>类（如<xref:System.String>）执行方法，如果<xref:System.ContextBoundObject>在当前应用程序域中的堆栈上，也可以在非默认上下文中执行。  
+  
+ 当你的代码在非默认上下文中执行时`true` ， `exitContext`为指定将会导致线程在执行<xref:System.Threading.WaitHandle.WaitAll%2A>方法之前退出非默认托管上下文（即转换为默认上下文）。 调用<xref:System.Threading.WaitHandle.WaitAll%2A>方法完成后，线程返回到原始的非默认上下文。  
+  
+ 当上下文绑定类具有<xref:System.Runtime.Remoting.Contexts.SynchronizationAttribute>属性时，这会很有用。 在这种情况下，对类成员的所有调用都将自动同步，同步域是类的整个代码正文。 如果成员的调用堆栈中的代码调用<xref:System.Threading.WaitHandle.WaitAll%2A>方法并为`exitContext`指定`true` ，则线程将退出同步域，从而允许在对对象的任何成员的调用上被阻止的线程继续。 <xref:System.Threading.WaitHandle.WaitAll%2A>当方法返回时，进行调用的线程必须等待重新进入同步域。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用线程池异步创建和写入一组文件。 每个写入操作都作为工作项排队，并在完成后发出信号。 主线程等待所有项发出信号，然后退出。  
+  
+ [!code-cpp[System.Threading.WaitHandle.WaitAll2#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAll2/CPP/source2.cpp#1)]
+ [!code-csharp[System.Threading.WaitHandle.WaitAll2#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAll2/CS/source2.cs#1)]
+ [!code-vb[System.Threading.WaitHandle.WaitAll2#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAll2/VB/source2.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="waitHandles" /> 参数为 <see langword="null" />。  
+  
+- 或 - 
+<paramref name="waitHandles" /> 数组中一个或多个对象为 <see langword="null" />。  
+  
+- 或 - 
+ <paramref name="waitHandles" /> 为不具有元素的数组且 .NET Framework 版本为 2.0 或更高版本。</exception>
+        <exception cref="T:System.DuplicateWaitObjectException"><paramref name="waitHandles" /> 数组包含重复的元素。</exception>
+        <exception cref="T:System.NotSupportedException"><paramref name="waitHandles" /> 中的对象数大于系统允许的数量。  
+  
+或 
+<see cref="T:System.STAThreadAttribute" /> 属性应用于当前线程的线程过程且 <paramref name="waitHandles" /> 包含多个元素。</exception>
+        <exception cref="T:System.ApplicationException"><paramref name="waitHandles" /> 数组不含任何元素，并且 .NET Framework 版本为 1.0 或 1.1。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 是一个非 -1 的负数，而 -1 表示无限期超时。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="waitHandles" /> 数组包含其他应用程序域中 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitAll">
+      <MemberSignature Language="C#" Value="public static bool WaitAll (System.Threading.WaitHandle[] waitHandles, TimeSpan timeout, bool exitContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool WaitAll(class System.Threading.WaitHandle[] waitHandles, valuetype System.TimeSpan timeout, bool exitContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitAll(System.Threading.WaitHandle[],System.TimeSpan,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function WaitAll (waitHandles As WaitHandle(), timeout As TimeSpan, exitContext As Boolean) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool WaitAll(cli::array &lt;System::Threading::WaitHandle ^&gt; ^ waitHandles, TimeSpan timeout, bool exitContext);" />
+      <MemberSignature Language="F#" Value="static member WaitAll : System.Threading.WaitHandle[] * TimeSpan * bool -&gt; bool" Usage="System.Threading.WaitHandle.WaitAll (waitHandles, timeout, exitContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="timeout" Type="System.TimeSpan" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="exitContext" Type="System.Boolean" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">一个 <see langword="WaitHandle" /> 数组，包含当前实例将等待的对象。 此数组不能包含对同一对象的多个引用。</param>
+        <param name="timeout">表示等待毫秒数的 <see cref="T:System.TimeSpan" />，或表示 -1 毫秒（无限期等待）的 <see cref="T:System.TimeSpan" />。</param>
+        <param name="exitContext">如果等待之前先退出上下文的同步域（如果在同步上下文中），并在稍后重新获取它，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>等待指定数组中的所有元素收到信号，使用 <see cref="T:System.TimeSpan" /> 值指定时间间隔，并指定是否在等待之前退出同步域。</summary>
+        <returns>如果 <paramref name="waitHandles" /> 中的每个元素都收到信号，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`timeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ <xref:System.Threading.AbandonedMutexException>是 .NET Framework 版本2.0 中的新增项。 在以前的版本中<xref:System.Threading.WaitHandle.WaitAll%2A> ，在`true`放弃互斥体时，该方法将返回。 被放弃的 mutex 通常表明出现了严重的编码错误。 对于系统范围内的互斥体，它可能指示应用程序突然终止（例如，使用 Windows 任务管理器）。 此异常包含用于调试的信息。  
+  
+ 当<xref:System.Threading.WaitHandle.WaitAll%2A>等待终止时，此方法将返回，这意味着所有句柄都已终止或发生超时。 在某些实现中，如果传递的<xref:System.NotSupportedException>句柄超过64，则会引发。 如果数组包含重复项，则调用将失败。  
+  
+> [!NOTE]
+>  <xref:System.Threading.WaitHandle.WaitAll%2A> 具有 <xref:System.STAThreadAttribute> 的线程不支持方法。  
+  
+ 的最大值`timeout`为<xref:System.Int32.MaxValue?displayProperty=nameWithType>。  
+  
+## <a name="notes-on-exiting-the-context"></a>有关退出上下文的说明  
+ 除非从非默认托管上下文内调用`exitContext` 方法，否则参数 <xref:System.Threading.WaitHandle.WaitAll%2A> 不起作用。 如果你的线程在对从<xref:System.ContextBoundObject>派生的类的实例的调用中，则可能会发生这种情况。 即使当前正在对不是从派生的<xref:System.ContextBoundObject>类（如<xref:System.String>）执行方法，如果<xref:System.ContextBoundObject>在当前应用程序域中的堆栈上，也可以在非默认上下文中执行。  
+  
+ 当你的代码在非默认上下文中执行时`true` ， `exitContext`为指定将会导致线程在执行<xref:System.Threading.WaitHandle.WaitAll%2A>方法之前退出非默认托管上下文（即转换为默认上下文）。 此<xref:System.Threading.WaitHandle.WaitAll%2A>方法在调用方法完成后返回到原始的非默认上下文。  
+  
+ 当上下文绑定类具有<xref:System.Runtime.Remoting.Contexts.SynchronizationAttribute>时，这会很有用。 在这种情况下，对类成员的所有调用都将自动同步，同步域是类的整个代码正文。 如果成员的调用堆栈中的代码调用<xref:System.Threading.WaitHandle.WaitAll%2A>方法并为`exitContext`指定`true` ，则线程将退出同步域，从而允许在对对象的任何成员的调用上被阻止的线程继续。 <xref:System.Threading.WaitHandle.WaitAll%2A>当方法返回时，进行调用的线程必须等待重新进入同步域。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用线程池异步创建和写入一组文件。 每个写入操作都作为工作项排队，并在完成后发出信号。 主线程等待所有项发出信号，然后退出。  
+  
+ [!code-cpp[System.Threading.WaitHandle.WaitAll3#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAll3/CPP/source3.cpp#1)]
+ [!code-csharp[System.Threading.WaitHandle.WaitAll3#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAll3/CS/source3.cs#1)]
+ [!code-vb[System.Threading.WaitHandle.WaitAll3#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAll3/VB/source3.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="waitHandles" /> 参数为 <see langword="null" />。  
+  
+或 
+<paramref name="waitHandles" /> 数组中一个或多个对象为 <see langword="null" />。  
+  
+- 或 - 
+ <paramref name="waitHandles" /> 为不具有元素的数组且 .NET Framework 版本为 2.0 或更高版本。</exception>
+        <exception cref="T:System.DuplicateWaitObjectException"><paramref name="waitHandles" /> 数组包含重复的元素。</exception>
+        <exception cref="T:System.NotSupportedException"><paramref name="waitHandles" /> 中的对象数大于系统允许的数量。  
+  
+或 
+<see cref="T:System.STAThreadAttribute" /> 属性应用于当前线程的线程过程且 <paramref name="waitHandles" /> 包含多个元素。</exception>
+        <exception cref="T:System.ApplicationException"><paramref name="waitHandles" /> 数组不含任何元素，并且 .NET Framework 版本为 1.0 或 1.1。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 为 -1 毫秒以外的负数，表示无限期超时。 
+或 
+ <paramref name="timeout" /> 大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待终止，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="waitHandles" /> 数组包含其他应用程序域中 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="WaitAny">
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>等待指定数组中的任一元素收到信号。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="WaitAny">
+      <MemberSignature Language="C#" Value="public static int WaitAny (System.Threading.WaitHandle[] waitHandles);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 WaitAny(class System.Threading.WaitHandle[] waitHandles) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitAny(System.Threading.WaitHandle[])" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function WaitAny (waitHandles As WaitHandle()) As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static int WaitAny(cli::array &lt;System::Threading::WaitHandle ^&gt; ^ waitHandles);" />
+      <MemberSignature Language="F#" Value="static member WaitAny : System.Threading.WaitHandle[] -&gt; int" Usage="System.Threading.WaitHandle.WaitAny waitHandles" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">一个 <see langword="WaitHandle" /> 数组，包含当前实例将等待的对象。</param>
+        <summary>等待指定数组中的任一元素收到信号。</summary>
+        <returns>满足等待的对象的数组索引。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Threading.AbandonedMutexException>是 .NET Framework 版本2.0 中的新增项。 在以前的版本中<xref:System.Threading.WaitHandle.WaitAny%2A> ，如果`true`等待因放弃互斥体而完成，则该方法返回。 被放弃的 mutex 通常表明出现了严重的编码错误。 对于系统范围内的互斥体，它可能指示应用程序突然终止（例如，使用 Windows 任务管理器）。 此异常包含用于调试的信息。  
+  
+ 此<xref:System.Threading.WaitHandle.WaitAny%2A>方法<xref:System.Threading.AbandonedMutexException>仅在等待由于放弃的 mutex 而完成时引发。 如果`waitHandles`包含的释放互斥体的索引号小于被放弃的互斥体， <xref:System.Threading.WaitHandle.WaitAny%2A>则该方法将正常完成并且不会引发异常。  
+  
+> [!NOTE]
+>  在早于版本2.0 的 .NET Framework 版本中，如果<xref:System.Threading.Mutex>线程退出或中止，而不显式释放， `Mutex`并且位于另一个线程的`WaitAny`数组中的索引为0（零），则返回`WaitAny`的索引为128而不是0。  
+  
+ 当任何句柄终止时，此方法将返回。 如果在调用过程中有多个对象收到信号，则返回值为带有所有已发出信号的对象的最小索引值的信号对象的数组索引。 在某些实现中，如果传递了64个以上的句<xref:System.NotSupportedException>柄，则会引发。  
+  
+ 调用此方法重载等效<xref:System.Threading.WaitHandle.WaitAny%28System.Threading.WaitHandle%5B%5D%2CSystem.Int32%2CSystem.Boolean%29>于调用方法重载，并为`millisecondsTimeout`和`true` `exitContext`指定-1 （ <xref:System.Threading.Timeout.Infinite?displayProperty=nameWithType>或）。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何调用<xref:System.Threading.WaitHandle.WaitAny%2A>方法。  
+  
+ [!code-cpp[WaitHandle#1](~/samples/snippets/cpp/VS_Snippets_CLR/WaitHandle/cpp/WaitHandle.cpp#1)]
+ [!code-csharp[WaitHandle#1](~/samples/snippets/csharp/VS_Snippets_CLR/WaitHandle/CS/WaitHandle.cs#1)]
+ [!code-vb[WaitHandle#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/WaitHandle/VB/WaitHandle.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="waitHandles" /> 参数为 <see langword="null" />。  
+  
+- 或 - 
+<paramref name="waitHandles" /> 数组中一个或多个对象为 <see langword="null" />。</exception>
+        <exception cref="T:System.NotSupportedException"><paramref name="waitHandles" /> 中的对象数大于系统允许的数量。</exception>
+        <exception cref="T:System.ApplicationException"><paramref name="waitHandles" /> 是不含元素的数组，并且 .NET Framework 的版本为 1.0 或 1.1。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="waitHandles" /> 是不含元素的数组，并且 .NET Framework 的版本为 2.0 或更高。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="waitHandles" /> 数组包含其他应用程序域中 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitAny">
+      <MemberSignature Language="C#" Value="public static int WaitAny (System.Threading.WaitHandle[] waitHandles, int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 WaitAny(class System.Threading.WaitHandle[] waitHandles, int32 millisecondsTimeout) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitAny(System.Threading.WaitHandle[],System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function WaitAny (waitHandles As WaitHandle(), millisecondsTimeout As Integer) As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static int WaitAny(cli::array &lt;System::Threading::WaitHandle ^&gt; ^ waitHandles, int millisecondsTimeout);" />
+      <MemberSignature Language="F#" Value="static member WaitAny : System.Threading.WaitHandle[] * int -&gt; int" Usage="System.Threading.WaitHandle.WaitAny (waitHandles, millisecondsTimeout)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">一个 <see langword="WaitHandle" /> 数组，包含当前实例将等待的对象。</param>
+        <param name="millisecondsTimeout">等待的毫秒数，或为 <see cref="F:System.Threading.Timeout.Infinite" /> (-1)，表示无限期等待。</param>
+        <summary>等待指定数组中的任意元素接收信号，同时使用 32 位有符号整数指定时间间隔。</summary>
+        <returns>满足等待的对象的数组索引；如果没有任何对象满足等待，并且等效于 <paramref name="millisecondsTimeout" /> 的时间间隔已过，则为 <see cref="F:System.Threading.WaitHandle.WaitTimeout" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`millisecondsTimeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ 此<xref:System.Threading.WaitHandle.WaitAny%2A>方法<xref:System.Threading.AbandonedMutexException>仅在等待由于放弃的 mutex 而完成时引发。 如果`waitHandles`包含的释放互斥体的索引号小于被放弃的互斥体， <xref:System.Threading.WaitHandle.WaitAny%2A>则该方法将正常完成并且不会引发异常。  
+  
+ 当等待终止时，此方法将返回，无论是在任何句柄收到信号，还是发生超时。 如果在调用过程中有多个对象收到信号，则返回值为带有所有已发出信号的对象的最小索引值的信号对象的数组索引。 在某些实现中，如果传递了64个以上的句<xref:System.NotSupportedException>柄，则会引发。  
+  
+ 调用此方法重载与调用<xref:System.Threading.WaitHandle.WaitAny%28System.Threading.WaitHandle%5B%5D%2CSystem.Int32%2CSystem.Boolean%29>重载并为指定`false`的`exitContext`相同。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="waitHandles" /> 参数为 <see langword="null" />。  
+  
+- 或 - 
+<paramref name="waitHandles" /> 数组中一个或多个对象为 <see langword="null" />。</exception>
+        <exception cref="T:System.NotSupportedException"><paramref name="waitHandles" /> 中的对象数大于系统允许的数量。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 是一个非 -1 的负数，而 -1 表示无限期超时。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="waitHandles" /> 是一个不含任何元素的数组。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="waitHandles" /> 数组包含其他应用程序域中 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitAny">
+      <MemberSignature Language="C#" Value="public static int WaitAny (System.Threading.WaitHandle[] waitHandles, TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 WaitAny(class System.Threading.WaitHandle[] waitHandles, valuetype System.TimeSpan timeout) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitAny(System.Threading.WaitHandle[],System.TimeSpan)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function WaitAny (waitHandles As WaitHandle(), timeout As TimeSpan) As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static int WaitAny(cli::array &lt;System::Threading::WaitHandle ^&gt; ^ waitHandles, TimeSpan timeout);" />
+      <MemberSignature Language="F#" Value="static member WaitAny : System.Threading.WaitHandle[] * TimeSpan -&gt; int" Usage="System.Threading.WaitHandle.WaitAny (waitHandles, timeout)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="timeout" Type="System.TimeSpan" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">一个 <see langword="WaitHandle" /> 数组，包含当前实例将等待的对象。</param>
+        <param name="timeout">表示等待毫秒数的 <see cref="T:System.TimeSpan" />，或表示 -1 毫秒（无限期等待）的 <see cref="T:System.TimeSpan" />。</param>
+        <summary>等待指定数组中的任意元素接收信号，同时使用 <see cref="T:System.TimeSpan" /> 指定时间间隔。</summary>
+        <returns>满足等待的对象的数组索引；如果没有任何对象满足等待，并且等效于 <paramref name="timeout" /> 的时间间隔已过，则为 <see cref="F:System.Threading.WaitHandle.WaitTimeout" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`timeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ 此<xref:System.Threading.WaitHandle.WaitAny%2A>方法<xref:System.Threading.AbandonedMutexException>仅在等待由于放弃的 mutex 而完成时引发。 如果`waitHandles`包含的释放互斥体的索引号小于被放弃的互斥体， <xref:System.Threading.WaitHandle.WaitAny%2A>则该方法将正常完成并且不会引发异常。  
+  
+ 当等待终止时，此方法将返回，无论是在任何句柄收到信号时，还是发生超时。 如果在调用过程中有多个对象收到信号，则返回值为带有所有已发出信号的对象的最小索引值的信号对象的数组索引。 在某些实现中，如果传递了64个以上的句<xref:System.NotSupportedException>柄，则会引发。  
+  
+ 的最大值`timeout`为<xref:System.Int32.MaxValue?displayProperty=nameWithType>。  
+  
+ 调用此方法重载与调用<xref:System.Threading.WaitHandle.WaitAny%28System.Threading.WaitHandle%5B%5D%2CSystem.TimeSpan%2CSystem.Boolean%29>重载并为指定`false`的`exitContext`相同。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="waitHandles" /> 参数为 <see langword="null" />。  
+  
+或 
+<paramref name="waitHandles" /> 数组中一个或多个对象为 <see langword="null" />。</exception>
+        <exception cref="T:System.NotSupportedException"><paramref name="waitHandles" /> 中的对象数大于系统允许的数量。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 为 -1 毫秒以外的负数，表示无限期超时。 
+- 或 - 
+ <paramref name="timeout" /> 大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="waitHandles" /> 是一个不含任何元素的数组。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="waitHandles" /> 数组包含其他应用程序域中 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitAny">
+      <MemberSignature Language="C#" Value="public static int WaitAny (System.Threading.WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 WaitAny(class System.Threading.WaitHandle[] waitHandles, int32 millisecondsTimeout, bool exitContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitAny(System.Threading.WaitHandle[],System.Int32,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function WaitAny (waitHandles As WaitHandle(), millisecondsTimeout As Integer, exitContext As Boolean) As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static int WaitAny(cli::array &lt;System::Threading::WaitHandle ^&gt; ^ waitHandles, int millisecondsTimeout, bool exitContext);" />
+      <MemberSignature Language="F#" Value="static member WaitAny : System.Threading.WaitHandle[] * int * bool -&gt; int" Usage="System.Threading.WaitHandle.WaitAny (waitHandles, millisecondsTimeout, exitContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="exitContext" Type="System.Boolean" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">一个 <see langword="WaitHandle" /> 数组，包含当前实例将等待的对象。</param>
+        <param name="millisecondsTimeout">等待的毫秒数，或为 <see cref="F:System.Threading.Timeout.Infinite" /> (-1)，表示无限期等待。</param>
+        <param name="exitContext">如果等待之前先退出上下文的同步域（如果在同步上下文中），并在稍后重新获取它，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>等待指定数组中的任一元素收到信号，使用 32 位带符号整数指定时间间隔并指定是否在等待之前退出同步域。</summary>
+        <returns>满足等待的对象的数组索引；如果没有任何对象满足等待，并且等效于 <paramref name="millisecondsTimeout" /> 的时间间隔已过，则为 <see cref="F:System.Threading.WaitHandle.WaitTimeout" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`millisecondsTimeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ <xref:System.Threading.AbandonedMutexException>是 .NET Framework 版本2.0 中的新增项。 在以前的版本中<xref:System.Threading.WaitHandle.WaitAny%2A> ，如果`true`等待因放弃互斥体而完成，则该方法返回。 被放弃的 mutex 通常表明出现了严重的编码错误。 对于系统范围内的互斥体，它可能指示应用程序突然终止（例如，使用 Windows 任务管理器）。 此异常包含用于调试的信息。  
+  
+ 此<xref:System.Threading.WaitHandle.WaitAny%2A>方法<xref:System.Threading.AbandonedMutexException>仅在等待由于放弃的 mutex 而完成时引发。 如果`waitHandles`包含的释放互斥体的索引号小于被放弃的互斥体， <xref:System.Threading.WaitHandle.WaitAny%2A>则该方法将正常完成并且不会引发异常。  
+  
+> [!NOTE]
+>  在早于版本2.0 的 .NET Framework 版本中，如果<xref:System.Threading.Mutex>线程退出或中止，而不显式释放， `Mutex`并且位于另一个线程的`WaitAny`数组中的索引为0（零），则返回`WaitAny`的索引为128而不是0。  
+  
+ 当等待终止时，此方法将返回，无论是在任何句柄收到信号，还是发生超时。 如果在调用过程中有多个对象收到信号，则返回值为带有所有已发出信号的对象的最小索引值的信号对象的数组索引。 在某些实现中，如果传递了64个以上的句<xref:System.NotSupportedException>柄，则会引发。  
+  
+## <a name="notes-on-exiting-the-context"></a>有关退出上下文的说明  
+ 除非从非默认托管上下文内调用`exitContext` 方法，否则参数 <xref:System.Threading.WaitHandle.WaitAny%2A> 不起作用。 如果你的线程在对从<xref:System.ContextBoundObject>派生的类的实例的调用中，则可能会发生这种情况。 即使当前正在对不是从派生的<xref:System.ContextBoundObject>类（如<xref:System.String>）执行方法，如果<xref:System.ContextBoundObject>在当前应用程序域中的堆栈上，也可以在非默认上下文中执行。  
+  
+ 当你的代码在非默认上下文中执行时`true` ， `exitContext`为指定将会导致线程在执行<xref:System.Threading.WaitHandle.WaitAny%2A>方法之前退出非默认托管上下文（即转换为默认上下文）。 调用<xref:System.Threading.WaitHandle.WaitAny%2A>方法完成后，线程返回到原始的非默认上下文。  
+  
+ 当上下文绑定类具有<xref:System.Runtime.Remoting.Contexts.SynchronizationAttribute>时，这会很有用。 在这种情况下，对类成员的所有调用都将自动同步，同步域是类的整个代码正文。 如果成员的调用堆栈中的代码调用<xref:System.Threading.WaitHandle.WaitAny%2A>方法并为`exitContext`指定`true` ，则线程将退出同步域，从而允许在对对象的任何成员的调用上被阻止的线程继续。 <xref:System.Threading.WaitHandle.WaitAny%2A>当方法返回时，进行调用的线程必须等待重新进入同步域。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用线程池同时搜索多个磁盘上的文件。 出于空间考虑，只会搜索每个磁盘的根目录。  
+  
+ [!code-cpp[System.Threading.WaitHandle.WaitAny2#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAny2/CPP/source2.cpp#1)]
+ [!code-csharp[System.Threading.WaitHandle.WaitAny2#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAny2/CS/source2.cs#1)]
+ [!code-vb[System.Threading.WaitHandle.WaitAny2#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAny2/VB/source2.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="waitHandles" /> 参数为 <see langword="null" />。  
+  
+或 
+<paramref name="waitHandles" /> 数组中一个或多个对象为 <see langword="null" />。</exception>
+        <exception cref="T:System.NotSupportedException"><paramref name="waitHandles" /> 中的对象数大于系统允许的数量。</exception>
+        <exception cref="T:System.ApplicationException"><paramref name="waitHandles" /> 是不含元素的数组，并且 .NET Framework 的版本为 1.0 或 1.1。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 是一个非 -1 的负数，而 -1 表示无限期超时。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="waitHandles" /> 是不含元素的数组，并且 .NET Framework 的版本为 2.0 或更高。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="waitHandles" /> 数组包含其他应用程序域中 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitAny">
+      <MemberSignature Language="C#" Value="public static int WaitAny (System.Threading.WaitHandle[] waitHandles, TimeSpan timeout, bool exitContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 WaitAny(class System.Threading.WaitHandle[] waitHandles, valuetype System.TimeSpan timeout, bool exitContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitAny(System.Threading.WaitHandle[],System.TimeSpan,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function WaitAny (waitHandles As WaitHandle(), timeout As TimeSpan, exitContext As Boolean) As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static int WaitAny(cli::array &lt;System::Threading::WaitHandle ^&gt; ^ waitHandles, TimeSpan timeout, bool exitContext);" />
+      <MemberSignature Language="F#" Value="static member WaitAny : System.Threading.WaitHandle[] * TimeSpan * bool -&gt; int" Usage="System.Threading.WaitHandle.WaitAny (waitHandles, timeout, exitContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="waitHandles" Type="System.Threading.WaitHandle[]" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="timeout" Type="System.TimeSpan" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="exitContext" Type="System.Boolean" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="waitHandles">一个 <see langword="WaitHandle" /> 数组，包含当前实例将等待的对象。</param>
+        <param name="timeout">表示等待毫秒数的 <see cref="T:System.TimeSpan" />，或表示 -1 毫秒（无限期等待）的 <see cref="T:System.TimeSpan" />。</param>
+        <param name="exitContext">如果等待之前先退出上下文的同步域（如果在同步上下文中），并在稍后重新获取它，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>等待指定数组中的任一元素收到信号，使用 <see cref="T:System.TimeSpan" /> 指定时间间隔并指定是否在等待之前退出同步域。</summary>
+        <returns>满足等待的对象的数组索引；如果没有任何对象满足等待，并且等效于 <paramref name="timeout" /> 的时间间隔已过，则为 <see cref="F:System.Threading.WaitHandle.WaitTimeout" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`timeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ <xref:System.Threading.AbandonedMutexException>是 .NET Framework 版本2.0 中的新增项。 在以前的版本中<xref:System.Threading.WaitHandle.WaitAny%2A> ，如果`true`等待因放弃互斥体而完成，则该方法返回。 被放弃的 mutex 通常表明出现了严重的编码错误。 对于系统范围内的互斥体，它可能指示应用程序突然终止（例如，使用 Windows 任务管理器）。 此异常包含用于调试的信息。  
+  
+ 此<xref:System.Threading.WaitHandle.WaitAny%2A>方法<xref:System.Threading.AbandonedMutexException>仅在等待由于放弃的 mutex 而完成时引发。 如果`waitHandles`包含的释放互斥体的索引号小于被放弃的互斥体， <xref:System.Threading.WaitHandle.WaitAny%2A>则该方法将正常完成并且不会引发异常。  
+  
+> [!NOTE]
+>  在早于版本2.0 的 .NET Framework 版本中，如果<xref:System.Threading.Mutex>线程退出或中止，而不显式释放， `Mutex`并且位于另一个线程的`WaitAny`数组中的索引为0（零），则返回`WaitAny`的索引为128而不是0。  
+  
+ 当等待终止时，此方法将返回，无论是在任何句柄收到信号时，还是发生超时。 如果在调用过程中有多个对象收到信号，则返回值为带有所有已发出信号的对象的最小索引值的信号对象的数组索引。 在某些实现中，如果传递了64个以上的句<xref:System.NotSupportedException>柄，则会引发。  
+  
+ 的最大值`timeout`为<xref:System.Int32.MaxValue?displayProperty=nameWithType>。  
+  
+## <a name="notes-on-exiting-the-context"></a>有关退出上下文的说明  
+ 除非从非默认托管上下文内调用`exitContext` 方法，否则参数 <xref:System.Threading.WaitHandle.WaitAny%2A> 不起作用。 如果你的线程在对从<xref:System.ContextBoundObject>派生的类的实例的调用中，则可能会发生这种情况。 即使当前正在对不是从派生的<xref:System.ContextBoundObject>类（如<xref:System.String>）执行方法，如果<xref:System.ContextBoundObject>在当前应用程序域中的堆栈上，也可以在非默认上下文中执行。  
+  
+ 当你的代码在非默认上下文中执行时`true` ， `exitContext`为指定将会导致线程在执行<xref:System.Threading.WaitHandle.WaitAny%2A>方法之前退出非默认托管上下文（即转换为默认上下文）。 调用<xref:System.Threading.WaitHandle.WaitAny%2A>方法完成后，线程返回到原始的非默认上下文。  
+  
+ 当上下文绑定类具有<xref:System.Runtime.Remoting.Contexts.SynchronizationAttribute>时，这会很有用。 在这种情况下，对类成员的所有调用都将自动同步，同步域是类的整个代码正文。 如果成员的调用堆栈中的代码调用<xref:System.Threading.WaitHandle.WaitAny%2A>方法并为`exitContext`指定`true` ，则线程将退出同步域，从而允许在对对象的任何成员的调用上被阻止的线程继续。 <xref:System.Threading.WaitHandle.WaitAny%2A>当方法返回时，进行调用的线程必须等待重新进入同步域。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用线程池同时搜索多个磁盘上的文件。 出于空间考虑，只会搜索每个磁盘的根目录。  
+  
+ [!code-cpp[System.Threading.WaitHandle.WaitAny3#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAny3/CPP/source3.cpp#1)]
+ [!code-csharp[System.Threading.WaitHandle.WaitAny3#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAny3/CS/source3.cs#1)]
+ [!code-vb[System.Threading.WaitHandle.WaitAny3#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAny3/VB/source3.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="waitHandles" /> 参数为 <see langword="null" />。  
+  
+或 
+<paramref name="waitHandles" /> 数组中一个或多个对象为 <see langword="null" />。</exception>
+        <exception cref="T:System.NotSupportedException"><paramref name="waitHandles" /> 中的对象数大于系统允许的数量。</exception>
+        <exception cref="T:System.ApplicationException"><paramref name="waitHandles" /> 是不含元素的数组，并且 .NET Framework 的版本为 1.0 或 1.1。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 为 -1 毫秒以外的负数，表示无限期超时。 
+或 
+ <paramref name="timeout" /> 大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="waitHandles" /> 是不含元素的数组，并且 .NET Framework 的版本为 2.0 或更高。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="waitHandles" /> 数组包含其他应用程序域中 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="WaitOne">
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>阻止当前线程，直到当前 <see cref="T:System.Threading.WaitHandle" /> 收到信号。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="C#" Value="public virtual bool WaitOne ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool WaitOne() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitOne" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function WaitOne () As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool WaitOne();" />
+      <MemberSignature Language="F#" Value="abstract member WaitOne : unit -&gt; bool&#xA;override this.WaitOne : unit -&gt; bool" Usage="waitHandle.WaitOne " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>阻止当前线程，直到当前 <see cref="T:System.Threading.WaitHandle" /> 收到信号。</summary>
+        <returns>如果当前实例收到信号，则为 <see langword="true" />。 如果当前实例永不发出信号，则 <see cref="M:System.Threading.WaitHandle.WaitOne(System.Int32,System.Boolean)" /> 永不返回。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Threading.AbandonedMutexException>是 .NET Framework 版本2.0 中的新增项。 在以前的版本中<xref:System.Threading.WaitHandle.WaitOne%2A> ，在`true`放弃互斥体时，该方法将返回。 被放弃的 mutex 通常表明出现了严重的编码错误。 对于系统范围内的互斥体，它可能指示应用程序突然终止（例如，使用 Windows 任务管理器）。 此异常包含用于调试的信息。  
+  
+ 此方法的调用方会无限期阻止，直到当前实例收到信号。 使用此方法可在<xref:System.Threading.WaitHandle>接收来自另一个线程的信号之前进行阻止，如在异步操作完成时生成。 有关详细信息，请参阅<xref:System.IAsyncResult>接口。  
+  
+ 调用此方法重载等效于调用<xref:System.Threading.WaitHandle.WaitOne%28System.Int32%2CSystem.Boolean%29>方法重载，并将第一个参数和<xref:System.Threading.Timeout.Infinite?displayProperty=nameWithType> `false`第二个参数指定为-1 或。  
+  
+ 重写此方法以自定义派生类的行为。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用等待句柄来防止进程在等待后台线程完成执行时终止。  
+  
+ [!code-cpp[System.Threading.WaitHandle.WaitOne1#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitOne1/CPP/source1.cpp#1)]
+ [!code-csharp[System.Threading.WaitHandle.WaitOne1#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitOne1/CS/source1.cs#1)]
+ [!code-vb[System.Threading.WaitHandle.WaitOne1#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitOne1/VB/source1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">已释放当前实例。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.InvalidOperationException">当前实例是另一个应用程序域中的 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="C#" Value="public virtual bool WaitOne (int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool WaitOne(int32 millisecondsTimeout) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitOne(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function WaitOne (millisecondsTimeout As Integer) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool WaitOne(int millisecondsTimeout);" />
+      <MemberSignature Language="F#" Value="abstract member WaitOne : int -&gt; bool&#xA;override this.WaitOne : int -&gt; bool" Usage="waitHandle.WaitOne millisecondsTimeout" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="millisecondsTimeout">等待的毫秒数，或为 <see cref="F:System.Threading.Timeout.Infinite" /> (-1)，表示无限期等待。</param>
+        <summary>阻止当前线程，直到当前 <see cref="T:System.Threading.WaitHandle" /> 收到信号，同时使用 32 位带符号整数指定时间间隔（以毫秒为单位）。</summary>
+        <returns>如果当前实例收到信号，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`millisecondsTimeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ 此方法的调用方会一直阻止，直到当前实例收到信号或发生超时。 使用此方法可在<xref:System.Threading.WaitHandle>接收来自另一个线程的信号之前进行阻止，如在异步操作完成时生成。 有关详细信息，请参阅<xref:System.IAsyncResult>接口。  
+  
+ 重写此方法以自定义派生类的行为。  
+  
+ 调用此方法重载与调用<xref:System.Threading.WaitHandle.WaitOne%28System.Int32%2CSystem.Boolean%29>重载并为指定`false`的`exitContext`相同。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用等待句柄来防止进程在等待后台线程完成执行时终止。  
+  
+ [!code-cpp[System.Threading.WaitHandle.WaitOne2#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitOne2/CPP/source2.cpp#1)]
+ [!code-csharp[System.Threading.WaitHandle.WaitOne2#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitOne2/CS/source2.cs#1)]
+ [!code-vb[System.Threading.WaitHandle.WaitOne2#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitOne2/VB/source2.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">已释放当前实例。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 是一个非 -1 的负数，而 -1 表示无限期超时。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.InvalidOperationException">当前实例是另一个应用程序域中的 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="C#" Value="public virtual bool WaitOne (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool WaitOne(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitOne(System.TimeSpan)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function WaitOne (timeout As TimeSpan) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool WaitOne(TimeSpan timeout);" />
+      <MemberSignature Language="F#" Value="abstract member WaitOne : TimeSpan -&gt; bool&#xA;override this.WaitOne : TimeSpan -&gt; bool" Usage="waitHandle.WaitOne timeout" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">表示等待毫秒数的 <see cref="T:System.TimeSpan" />，或表示 -1 毫秒（无限期等待）的 <see cref="T:System.TimeSpan" />。</param>
+        <summary>阻止当前线程，直到当前实例收到信号，同时使用 <see cref="T:System.TimeSpan" /> 指定时间间隔。</summary>
+        <returns>如果当前实例收到信号，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`timeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ 此方法的调用方会一直阻止，直到当前实例收到信号或发生超时。 使用此方法可在<xref:System.Threading.WaitHandle>接收来自另一个线程的信号之前进行阻止，如在异步操作完成时生成。 有关详细信息，请参阅<xref:System.IAsyncResult>接口。  
+  
+ 重写此方法以自定义派生类的行为。  
+  
+ 的最大值`timeout`为<xref:System.Int32.MaxValue?displayProperty=nameWithType>。  
+  
+ 调用此方法重载与调用<xref:System.Threading.WaitHandle.WaitOne%28System.TimeSpan%2CSystem.Boolean%29>重载并为指定`false`的`exitContext`相同。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">已释放当前实例。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 为 -1 毫秒以外的负数，表示无限期超时。 
+或 
+ <paramref name="timeout" /> 大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.InvalidOperationException">当前实例是另一个应用程序域中的 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="C#" Value="public virtual bool WaitOne (int millisecondsTimeout, bool exitContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool WaitOne(int32 millisecondsTimeout, bool exitContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitOne(System.Int32,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function WaitOne (millisecondsTimeout As Integer, exitContext As Boolean) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool WaitOne(int millisecondsTimeout, bool exitContext);" />
+      <MemberSignature Language="F#" Value="abstract member WaitOne : int * bool -&gt; bool&#xA;override this.WaitOne : int * bool -&gt; bool" Usage="waitHandle.WaitOne (millisecondsTimeout, exitContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="millisecondsTimeout" Type="System.Int32" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="exitContext" Type="System.Boolean" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="millisecondsTimeout">等待的毫秒数，或为 <see cref="F:System.Threading.Timeout.Infinite" /> (-1)，表示无限期等待。</param>
+        <param name="exitContext">如果等待之前先退出上下文的同步域（如果在同步上下文中），并在稍后重新获取它，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>阻止当前线程，直到当前的 <see cref="T:System.Threading.WaitHandle" /> 收到信号为止，同时使用 32 位带符号整数指定时间间隔，并指定是否在等待之前退出同步域。</summary>
+        <returns>如果当前实例收到信号，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`millisecondsTimeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ <xref:System.Threading.AbandonedMutexException>是 .NET Framework 版本2.0 中的新增项。 在以前的版本中<xref:System.Threading.WaitHandle.WaitOne%2A> ，在`true`放弃互斥体时，该方法将返回。 被放弃的 mutex 通常表明出现了严重的编码错误。 对于系统范围内的互斥体，它可能指示应用程序突然终止（例如，使用 Windows 任务管理器）。 此异常包含用于调试的信息。  
+  
+ 此方法的调用方会一直阻止，直到当前实例收到信号或发生超时。 使用此方法可在<xref:System.Threading.WaitHandle>接收来自另一个线程的信号之前进行阻止，如在异步操作完成时生成。 有关详细信息，请参阅<xref:System.IAsyncResult>接口。  
+  
+ 重写此方法以自定义派生类的行为。  
+  
+## <a name="notes-on-exiting-the-context"></a>有关退出上下文的说明  
+ 除非从非默认托管上下文内调用`exitContext` 方法，否则参数 <xref:System.Threading.WaitHandle.WaitOne%2A> 不起作用。 如果你的线程在对从<xref:System.ContextBoundObject>派生的类的实例的调用中，则可能会发生这种情况。 即使当前正在对不是从派生的<xref:System.ContextBoundObject>类（如<xref:System.String>）执行方法，如果<xref:System.ContextBoundObject>在当前应用程序域中的堆栈上，也可以在非默认上下文中执行。  
+  
+ 当你的代码在非默认上下文中执行时`true` ， `exitContext`为指定将会导致线程在执行<xref:System.Threading.WaitHandle.WaitOne%2A>方法之前退出非默认托管上下文（即转换为默认上下文）。 调用<xref:System.Threading.WaitHandle.WaitOne%2A>方法完成后，线程返回到原始的非默认上下文。  
+  
+ 当上下文绑定类具有<xref:System.Runtime.Remoting.Contexts.SynchronizationAttribute>时，这会很有用。 在这种情况下，对类成员的所有调用都将自动同步，同步域是类的整个代码正文。 如果成员的调用堆栈中的代码调用<xref:System.Threading.WaitHandle.WaitOne%2A>方法并为`exitContext`指定`true` ，则线程将退出同步域，从而允许在对对象的任何成员的调用上被阻止的线程继续。 <xref:System.Threading.WaitHandle.WaitOne%2A>当方法返回时，进行调用的线程必须等待重新进入同步域。  
+  
+   
+  
+## Examples  
+ 下面的示例演示方法重载<xref:System.Threading.WaitHandle.WaitOne%28System.Int32%2CSystem.Boolean%29>在同步域中调用时的行为方式。 首先，线程`exitContext`将设置为`false`并在等待超时过期之前进行阻止。 第一个线程在第一个线程终止并等待设置为`exitContext` `true`时执行。 对此第二个线程的等待句柄发出信号的调用未被阻止，线程在等待超时前完成。  
+  
+ [!code-cpp[System.Threading.WaitHandle.WaitOne4#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.threading.waithandle.waitone4/cpp/source.cpp#1)]
+ [!code-csharp[System.Threading.WaitHandle.WaitOne4#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.threading.waithandle.waitone4/cs/source.cs#1)]
+ [!code-vb[System.Threading.WaitHandle.WaitOne4#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.threading.waithandle.waitone4/vb/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">已释放当前实例。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 是一个非 -1 的负数，而 -1 表示无限期超时。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.InvalidOperationException">当前实例是另一个应用程序域中的 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitOne">
+      <MemberSignature Language="C#" Value="public virtual bool WaitOne (TimeSpan timeout, bool exitContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool WaitOne(valuetype System.TimeSpan timeout, bool exitContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.WaitHandle.WaitOne(System.TimeSpan,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function WaitOne (timeout As TimeSpan, exitContext As Boolean) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool WaitOne(TimeSpan timeout, bool exitContext);" />
+      <MemberSignature Language="F#" Value="abstract member WaitOne : TimeSpan * bool -&gt; bool&#xA;override this.WaitOne : TimeSpan * bool -&gt; bool" Usage="waitHandle.WaitOne (timeout, exitContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="exitContext" Type="System.Boolean" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="timeout">表示等待毫秒数的 <see cref="T:System.TimeSpan" />，或表示 -1 毫秒（无限期等待）的 <see cref="T:System.TimeSpan" />。</param>
+        <param name="exitContext">如果等待之前先退出上下文的同步域（如果在同步上下文中），并在稍后重新获取它，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>阻止当前线程，直到当前实例收到信号为止，同时使用 <see cref="T:System.TimeSpan" /> 指定时间间隔，并指定是否在等待之前退出同步域。</summary>
+        <returns>如果当前实例收到信号，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果`timeout`为零，则该方法不会阻止。 它将测试等待句柄的状态并立即返回。  
+  
+ <xref:System.Threading.AbandonedMutexException>是 .NET Framework 版本2.0 中的新增项。 在以前的版本中<xref:System.Threading.WaitHandle.WaitOne%2A> ，在`true`放弃互斥体时，该方法将返回。 被放弃的 mutex 通常表明出现了严重的编码错误。 对于系统范围内的互斥体，它可能指示应用程序突然终止（例如，使用 Windows 任务管理器）。 此异常包含用于调试的信息。  
+  
+ 此方法的调用方会一直阻止，直到当前实例收到信号或发生超时。 使用此方法可在<xref:System.Threading.WaitHandle>接收来自另一个线程的信号之前进行阻止，如在异步操作完成时生成。 有关详细信息，请参阅<xref:System.IAsyncResult>接口。  
+  
+ 重写此方法以自定义派生类的行为。  
+  
+ 的最大值`timeout`为<xref:System.Int32.MaxValue?displayProperty=nameWithType>。  
+  
+## <a name="notes-on-exiting-the-context"></a>有关退出上下文的说明  
+ 除非从非默认托管上下文内调用`exitContext` 方法，否则参数 <xref:System.Threading.WaitHandle.WaitOne%2A> 不起作用。 如果你的线程在对从<xref:System.ContextBoundObject>派生的类的实例的调用中，则可能会发生这种情况。 即使当前正在对不是从派生的<xref:System.ContextBoundObject>类（如<xref:System.String>）执行方法，如果<xref:System.ContextBoundObject>在当前应用程序域中的堆栈上，也可以在非默认上下文中执行。  
+  
+ 当你的代码在非默认上下文中执行时`true` ， `exitContext`为指定将会导致线程在执行<xref:System.Threading.WaitHandle.WaitOne%2A>方法之前退出非默认托管上下文（即转换为默认上下文）。 调用<xref:System.Threading.WaitHandle.WaitOne%2A>方法完成后，线程返回到原始的非默认上下文。  
+  
+ 当上下文绑定类具有<xref:System.Runtime.Remoting.Contexts.SynchronizationAttribute>时，这会很有用。 在这种情况下，对类成员的所有调用都将自动同步，同步域是类的整个代码正文。 如果成员的调用堆栈中的代码调用<xref:System.Threading.WaitHandle.WaitOne%2A>方法并为`exitContext`指定`true` ，则线程将退出同步域，从而允许在对对象的任何成员的调用上被阻止的线程继续。 <xref:System.Threading.WaitHandle.WaitOne%2A>当方法返回时，进行调用的线程必须等待重新进入同步域。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用等待句柄来防止进程在等待后台线程完成执行时终止。  
+  
+ [!code-cpp[System.Threading.WaitHandle.WaitOne3#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitOne3/CPP/source3.cpp#1)]
+ [!code-csharp[System.Threading.WaitHandle.WaitOne3#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitOne3/CS/source3.cs#1)]
+ [!code-vb[System.Threading.WaitHandle.WaitOne3#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitOne3/VB/source3.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">已释放当前实例。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 为 -1 毫秒以外的负数，表示无限期超时。 
+或 
+ <paramref name="timeout" /> 大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+        <exception cref="T:System.Threading.AbandonedMutexException">等待结束，因为线程在未释放互斥的情况下退出。 在 Windows 98 或 Windows Millennium Edition 上不会引发此异常。</exception>
+        <exception cref="T:System.InvalidOperationException">当前实例是另一个应用程序域中的 <see cref="T:System.Threading.WaitHandle" /> 的透明代理。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitTimeout">
+      <MemberSignature Language="C#" Value="public const int WaitTimeout = 258;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 WaitTimeout = (258)" />
+      <MemberSignature Language="DocId" Value="F:System.Threading.WaitHandle.WaitTimeout" />
+      <MemberSignature Language="VB.NET" Value="Public Const WaitTimeout As Integer  = 258" />
+      <MemberSignature Language="C++ CLI" Value="public: int WaitTimeout = 258;" />
+      <MemberSignature Language="F#" Value="val mutable WaitTimeout : int" Usage="System.Threading.WaitHandle.WaitTimeout" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.0.20.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <MemberValue>258</MemberValue>
+      <Docs>
+        <summary>指示在任何等待句柄终止之前 <see cref="M:System.Threading.WaitHandle.WaitAny(System.Threading.WaitHandle[],System.Int32,System.Boolean)" /> 操作已超时。 此字段为常数。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此字段是可能的返回值`WaitAny`之一。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用线程池同时搜索多个磁盘上的文件。 出于空间考虑，只会搜索每个磁盘的根目录。  
+  
+ [!code-cpp[System.Threading.WaitHandle.WaitAny2#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAny2/CPP/source2.cpp#1)]
+ [!code-csharp[System.Threading.WaitHandle.WaitAny2#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAny2/CS/source2.cs#1)]
+ [!code-vb[System.Threading.WaitHandle.WaitAny2#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.WaitHandle.WaitAny2/VB/source2.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
