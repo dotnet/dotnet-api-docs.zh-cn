@@ -1,0 +1,204 @@
+<Type Name="IServiceBehavior" FullName="System.ServiceModel.Description.IServiceBehavior">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="8f180c5c844145924ad16b66d821004bfbce2f07" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70496683" /></Metadata><TypeSignature Language="C#" Value="public interface IServiceBehavior" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IServiceBehavior" />
+  <TypeSignature Language="DocId" Value="T:System.ServiceModel.Description.IServiceBehavior" />
+  <TypeSignature Language="VB.NET" Value="Public Interface IServiceBehavior" />
+  <TypeSignature Language="C++ CLI" Value="public interface class IServiceBehavior" />
+  <TypeSignature Language="F#" Value="type IServiceBehavior = interface" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>提供一种在整个服务内修改或插入自定义扩展的机制，包括 <see cref="T:System.ServiceModel.ServiceHostBase" />。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 实现 <xref:System.ServiceModel.Description.IServiceBehavior> 可以在应用程序级别，修改、检查或扩展服务范围的某些执行方面：  
+  
+-   使用 <xref:System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior%2A> 方法可以更改运行时属性值或插入自定义扩展对象，例如错误处理程序、消息或参数拦截器、安全扩展以及其他自定义扩展对象。  
+  
+-   <xref:System.ServiceModel.Description.IServiceBehavior.Validate%2A>使用方法可在 Windows Communication Foundation （WCF）构造执行服务之前检查说明，以确认它可以正常执行。  
+  
+-   使用 <xref:System.ServiceModel.Description.IServiceBehavior.AddBindingParameters%2A> 方法可以向绑定元素传递服务的自定义信息，这样绑定元素就可向服务提供正确的支持。  
+  
+ <xref:System.ServiceModel.Description.IServiceBehavior> 对象可使用所有这些方法，但通常只有一种方法是重要的，在这种情况下，未被使用的方法可不带值返回。  
+  
+> [!NOTE]
+>  所有 <xref:System.ServiceModel.Description.IServiceBehavior> 方法会将 <xref:System.ServiceModel.Description.ServiceDescription?displayProperty=nameWithType> 和 <xref:System.ServiceModel.ServiceHostBase?displayProperty=nameWithType> 对象作为参数传递。 <xref:System.ServiceModel.Description.ServiceDescription> 参数只用于检查；如果您修改了这些对象，则执行行为将不确定。  
+  
+ 若要执行 <xref:System.ServiceModel.Description.IServiceBehavior> 对象的自定义任务，则必须在构造服务运行时前，将该对象添加到 <xref:System.ServiceModel.Description.ServiceDescription.Behaviors%2A> 属性。 有三种方法可以实现此操作：  
+  
+-   以编程方式，先将自定义服务行为添加到 <xref:System.ServiceModel.Description.ServiceDescription.Behaviors%2A> 属性，然后对 <xref:System.ServiceModel.ICommunicationObject.Open%2A?displayProperty=nameWithType> 对象调用 <xref:System.ServiceModel.ServiceHost?displayProperty=nameWithType> 方法。  
+  
+-   创建一个可实现 <xref:System.ServiceModel.Description.IServiceBehavior> 的自定义属性，并利用它来标记要修改的服务类。 <xref:System.ServiceModel.ServiceHost>构造对象时，WCF 使用反射来发现服务类型上的属性。 如果有属性实现 <xref:System.ServiceModel.Description.IServiceBehavior>，则它们将会被添加到 <xref:System.ServiceModel.Description.ServiceDescription> 上的行为集合中。  
+  
+-   扩展 <xref:System.ServiceModel.Configuration.BehaviorExtensionElement?displayProperty=nameWithType> 类，以支持应用程序配置文件或计算机配置文件中的行为规范。 有关更多信息，请参见“示例”一节。  
+  
+ WCF 中服务行为的示例<xref:System.ServiceModel.ServiceBehaviorAttribute>包括属性<xref:System.ServiceModel.Description.ServiceThrottlingBehavior?displayProperty=nameWithType>、 <xref:System.ServiceModel.Description.ServiceDebugBehavior?displayProperty=nameWithType>和<xref:System.ServiceModel.Description.ServiceMetadataBehavior?displayProperty=nameWithType>行为。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示了如何使用配置文件中所指定的服务行为来向服务应用程序中插入自定义错误处理程序。 在该示例中，错误处理程序捕获所有异常，并将它们转换为一个自定义 `GreetingFault` SOAP 错误，该自定义错误会随后返回给客户端。  
+  
+ 下面的 <xref:System.ServiceModel.Description.IServiceBehavior> 实现不添加任何绑定参数对象，而会将自定义 <xref:System.ServiceModel.Dispatcher.IErrorHandler?displayProperty=nameWithType> 对象添加到所有 <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A?displayProperty=nameWithType> 属性，并会验证服务行为所应用到的、<xref:System.ServiceModel.FaultContractAttribute?displayProperty=nameWithType> 类型为 `GreetingFault` 的服务的每个操作。  
+  
+ [!code-csharp[IErrorHandler#7](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/ierrorhandler.cs#7)]
+ [!code-vb[IErrorHandler#7](~/samples/snippets/visualbasic/VS_Snippets_CFX/ierrorhandler/vb/ierrorhandler.vb#7)]  
+  
+ 在该示例中，行为类还可实现 <xref:System.ServiceModel.Configuration.BehaviorExtensionElement?displayProperty=nameWithType>，这样就可通过在应用程序配置文件中使用服务行为来插入服务行为，具体请参见下面的代码示例。  
+  
+ [!code-xml[IErrorHandler#4](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/hostapplication.exe.config#4)]   
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AddBindingParameters">
+      <MemberSignature Language="C#" Value="public void AddBindingParameters (System.ServiceModel.Description.ServiceDescription serviceDescription, System.ServiceModel.ServiceHostBase serviceHostBase, System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, System.ServiceModel.Channels.BindingParameterCollection bindingParameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddBindingParameters(class System.ServiceModel.Description.ServiceDescription serviceDescription, class System.ServiceModel.ServiceHostBase serviceHostBase, class System.Collections.ObjectModel.Collection`1&lt;class System.ServiceModel.Description.ServiceEndpoint&gt; endpoints, class System.ServiceModel.Channels.BindingParameterCollection bindingParameters) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.ServiceModel.Description.IServiceBehavior.AddBindingParameters(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase,System.Collections.ObjectModel.Collection{System.ServiceModel.Description.ServiceEndpoint},System.ServiceModel.Channels.BindingParameterCollection)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void AddBindingParameters(System::ServiceModel::Description::ServiceDescription ^ serviceDescription, System::ServiceModel::ServiceHostBase ^ serviceHostBase, System::Collections::ObjectModel::Collection&lt;System::ServiceModel::Description::ServiceEndpoint ^&gt; ^ endpoints, System::ServiceModel::Channels::BindingParameterCollection ^ bindingParameters);" />
+      <MemberSignature Language="F#" Value="abstract member AddBindingParameters : System.ServiceModel.Description.ServiceDescription * System.ServiceModel.ServiceHostBase * System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt; * System.ServiceModel.Channels.BindingParameterCollection -&gt; unit" Usage="iServiceBehavior.AddBindingParameters (serviceDescription, serviceHostBase, endpoints, bindingParameters)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serviceDescription" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+        <Parameter Name="endpoints" Type="System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Description.ServiceEndpoint&gt;" />
+        <Parameter Name="bindingParameters" Type="System.ServiceModel.Channels.BindingParameterCollection" />
+      </Parameters>
+      <Docs>
+        <param name="serviceDescription">服务的服务说明。</param>
+        <param name="serviceHostBase">服务的宿主。</param>
+        <param name="endpoints">服务终结点。</param>
+        <param name="bindingParameters">绑定元素可访问的自定义对象。</param>
+        <summary>用于向绑定元素传递自定义数据，以支持协定实现。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用 <xref:System.ServiceModel.Description.IServiceBehavior.AddBindingParameters%2A> 方法可以将自定义对象添加到 `parameters` 集合，绑定元素可利用该集合获取额外信息，从而向协定提供支持。  
+  
+ 对每个侦听 URI 都调用一次该方法。 例如，如果一个服务有四个终结点，其中两个终结点的侦听 URI 相同，则此方法将会被调用三次。 原因是，`bindingParameters` 要定位所有通道堆栈，每个侦听 URI 都有一个通道堆栈。 因为每个调用都要在侦听 URI 接收这些终结点，所以有两个调用将会各自获得一个单独的 <xref:System.ServiceModel.Description.ServiceEndpoint?displayProperty=nameWithType>，另一个调用将会获得两个 <xref:System.ServiceModel.Description.ServiceEndpoint?displayProperty=nameWithType> 对象的集合。  
+  
+> [!NOTE]
+>  所有 <xref:System.ServiceModel.Description.IServiceBehavior> 方法会将 <xref:System.ServiceModel.Description.ServiceDescription?displayProperty=nameWithType> 和 <xref:System.ServiceModel.ServiceHostBase?displayProperty=nameWithType> 对象作为参数传递。 <xref:System.ServiceModel.Description.ServiceDescription> 参数仅用于自定义检查和插入；如果您修改了这些对象，则执行行为将不确定。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplyDispatchBehavior">
+      <MemberSignature Language="C#" Value="public void ApplyDispatchBehavior (System.ServiceModel.Description.ServiceDescription serviceDescription, System.ServiceModel.ServiceHostBase serviceHostBase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ApplyDispatchBehavior(class System.ServiceModel.Description.ServiceDescription serviceDescription, class System.ServiceModel.ServiceHostBase serviceHostBase) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void ApplyDispatchBehavior(System::ServiceModel::Description::ServiceDescription ^ serviceDescription, System::ServiceModel::ServiceHostBase ^ serviceHostBase);" />
+      <MemberSignature Language="F#" Value="abstract member ApplyDispatchBehavior : System.ServiceModel.Description.ServiceDescription * System.ServiceModel.ServiceHostBase -&gt; unit" Usage="iServiceBehavior.ApplyDispatchBehavior (serviceDescription, serviceHostBase)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serviceDescription" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <param name="serviceDescription">服务说明。</param>
+        <param name="serviceHostBase">当前正在生成的宿主。</param>
+        <summary>用于更改运行时属性值或插入自定义扩展对象（例如错误处理程序、消息或参数拦截器、安全扩展以及其他自定义扩展对象）。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 实现 <xref:System.ServiceModel.Description.IServiceBehavior.ApplyDispatchBehavior%2A> 方法可以检查或修改正在构建的 <xref:System.ServiceModel.ServiceHostBase> 对象，从而支持某些自定义执行方案。  
+  
+> [!NOTE]
+>  所有 <xref:System.ServiceModel.Description.IServiceBehavior> 方法会将 <xref:System.ServiceModel.Description.ServiceDescription?displayProperty=nameWithType> 和 <xref:System.ServiceModel.ServiceHostBase?displayProperty=nameWithType> 对象作为参数传递。 <xref:System.ServiceModel.Description.ServiceDescription> 参数仅用于自定义检查和插入；如果您修改了这些对象，则执行行为将不确定。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示了如何使用配置文件中所指定的服务行为来向服务应用程序中插入自定义错误处理程序。 在该示例中，错误处理程序捕获所有异常，并将它们转换为一个自定义 `GreetingFault` SOAP 错误，该自定义错误会随后返回给客户端。  
+  
+ 下面的 <xref:System.ServiceModel.Description.IServiceBehavior> 实现不添加任何绑定参数对象，而会将自定义 <xref:System.ServiceModel.Dispatcher.IErrorHandler?displayProperty=nameWithType> 对象添加到所有 <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A?displayProperty=nameWithType> 属性，并会验证服务行为所应用到的、<xref:System.ServiceModel.FaultContractAttribute?displayProperty=nameWithType> 类型为 `GreetingFault` 的服务的每个操作。  
+  
+ [!code-csharp[IErrorHandler#7](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/ierrorhandler.cs#7)]
+ [!code-vb[IErrorHandler#7](~/samples/snippets/visualbasic/VS_Snippets_CFX/ierrorhandler/vb/ierrorhandler.vb#7)]  
+  
+ 在该示例中，行为类还可实现 <xref:System.ServiceModel.Configuration.BehaviorExtensionElement?displayProperty=nameWithType>，这样就可通过在应用程序配置文件中使用服务行为来插入服务行为，具体请参见下面的代码示例。  
+  
+ [!code-xml[IErrorHandler#4](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/hostapplication.exe.config#4)]   
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public void Validate (System.ServiceModel.Description.ServiceDescription serviceDescription, System.ServiceModel.ServiceHostBase serviceHostBase);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Validate(class System.ServiceModel.Description.ServiceDescription serviceDescription, class System.ServiceModel.ServiceHostBase serviceHostBase) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.ServiceModel.Description.IServiceBehavior.Validate(System.ServiceModel.Description.ServiceDescription,System.ServiceModel.ServiceHostBase)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Validate(System::ServiceModel::Description::ServiceDescription ^ serviceDescription, System::ServiceModel::ServiceHostBase ^ serviceHostBase);" />
+      <MemberSignature Language="F#" Value="abstract member Validate : System.ServiceModel.Description.ServiceDescription * System.ServiceModel.ServiceHostBase -&gt; unit" Usage="iServiceBehavior.Validate (serviceDescription, serviceHostBase)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="serviceDescription" Type="System.ServiceModel.Description.ServiceDescription" />
+        <Parameter Name="serviceHostBase" Type="System.ServiceModel.ServiceHostBase" />
+      </Parameters>
+      <Docs>
+        <param name="serviceDescription">服务说明。</param>
+        <param name="serviceHostBase">当前正在构建的服务主机。</param>
+        <summary>用于检查服务主机和服务说明，从而确定服务是否可成功运行。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用 <xref:System.ServiceModel.Description.IServiceBehavior.Validate%2A> 方法以确定当前服务是否会依照方案正确执行。  
+  
+> [!NOTE]
+>  所有 <xref:System.ServiceModel.Description.IServiceBehavior> 方法会将 <xref:System.ServiceModel.Description.ServiceDescription?displayProperty=nameWithType> 和 <xref:System.ServiceModel.ServiceHostBase?displayProperty=nameWithType> 对象作为参数传递。 <xref:System.ServiceModel.Description.ServiceDescription> 参数仅用于自定义检查和插入；如果您修改了这些对象，则执行行为将不确定。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示了如何使用配置文件中所指定的服务行为来向服务应用程序中插入自定义错误处理程序。 在该示例中，错误处理程序捕获所有异常，并将它们转换为一个自定义 `GreetingFault` SOAP 错误，该自定义错误会随后返回给客户端。  
+  
+ 下面的 <xref:System.ServiceModel.Description.IServiceBehavior> 实现不添加任何绑定参数对象，而会将自定义 <xref:System.ServiceModel.Dispatcher.IErrorHandler?displayProperty=nameWithType> 对象添加到所有 <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A?displayProperty=nameWithType> 属性，并会验证服务行为所应用到的、<xref:System.ServiceModel.FaultContractAttribute?displayProperty=nameWithType> 类型为 `GreetingFault` 的服务的每个操作。  
+  
+ [!code-csharp[IErrorHandler#7](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/ierrorhandler.cs#7)]
+ [!code-vb[IErrorHandler#7](~/samples/snippets/visualbasic/VS_Snippets_CFX/ierrorhandler/vb/ierrorhandler.vb#7)]  
+  
+ 在该示例中，行为类还可实现 <xref:System.ServiceModel.Configuration.BehaviorExtensionElement?displayProperty=nameWithType>，这样就可通过在应用程序配置文件中使用服务行为来插入服务行为，具体请参见下面的代码示例。  
+  
+ [!code-xml[IErrorHandler#4](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/hostapplication.exe.config#4)]   
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

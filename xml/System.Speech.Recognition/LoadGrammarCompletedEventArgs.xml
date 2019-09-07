@@ -1,0 +1,178 @@
+<Type Name="LoadGrammarCompletedEventArgs" FullName="System.Speech.Recognition.LoadGrammarCompletedEventArgs">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="41cb8fa0a9f032353e55fa8be2ecfc097a8815d8" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70556508" /></Metadata><TypeSignature Language="C#" Value="public class LoadGrammarCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit LoadGrammarCompletedEventArgs extends System.ComponentModel.AsyncCompletedEventArgs" />
+  <TypeSignature Language="DocId" Value="T:System.Speech.Recognition.LoadGrammarCompletedEventArgs" />
+  <TypeSignature Language="VB.NET" Value="Public Class LoadGrammarCompletedEventArgs&#xA;Inherits AsyncCompletedEventArgs" />
+  <TypeSignature Language="C++ CLI" Value="public ref class LoadGrammarCompletedEventArgs : System::ComponentModel::AsyncCompletedEventArgs" />
+  <TypeSignature Language="F#" Value="type LoadGrammarCompletedEventArgs = class&#xA;    inherit AsyncCompletedEventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>System.Speech</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ComponentModel.AsyncCompletedEventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>为 <see cref="T:System.Speech.Recognition.SpeechRecognizer" /> 或 <see cref="T:System.Speech.Recognition.SpeechRecognitionEngine" /> 对象的 <see langword="LoadGrammarCompleted" /> 事件提供数据。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ `LoadGrammarCompletedEventArgs` 当 <xref:System.Speech.Recognition.SpeechRecognitionEngine>  对象引发 <xref:System.Speech.Recognition.SpeechRecognitionEngine.LoadGrammarCompleted?displayProperty=nameWithType> 其或对象引发 <xref:System.Speech.Recognition.SpeechRecognizer.LoadGrammarCompleted> 事件时，将创建的实例。 <xref:System.Speech.Recognition.SpeechRecognizer> 对方法的`LoadGrammarAsync`调用完成时，将引发事件。  
+  
+ 若要获取有关<xref:System.Speech.Recognition.Grammar>已加载对象的信息，请访问事件处理程序中的<xref:System.Speech.Recognition.LoadGrammarCompletedEventArgs.Grammar%2A>属性。  
+  
+ 如果识别器在操作过程<xref:System.ComponentModel.AsyncCompletedEventArgs.Error%2A>中遇到异常，则属性将设置为异常<xref:System.Speech.Recognition.Grammar.Loaded%2A> ，而关联<xref:System.Speech.Recognition.Grammar>的的属性可能是`false`。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个共享语音识别器，然后创建两种类型的语法来识别特定单词并接受免费听写。 该示例将所有创建的语法异步加载到识别器。  识别器<xref:System.Speech.Recognition.SpeechRecognizer.LoadGrammarCompleted>和<xref:System.Speech.Recognition.SpeechRecognizer.SpeechRecognized>事件的处理程序报告识别的结果以及用于执行识别的语法。  
+  
+```csharp  
+using System;  
+using System.Speech.Recognition;  
+  
+namespace SampleRecognition  
+{  
+  class Program  
+  {  
+    private static SpeechRecognizer recognizer;  
+    public static void Main(string[] args)  
+    {  
+  
+      // Initialize a shared speech recognition engine.  
+      recognizer = new SpeechRecognizer();  
+  
+        // Add a handler for the LoadGrammarCompleted event.  
+        recognizer.LoadGrammarCompleted +=  
+          new EventHandler<LoadGrammarCompletedEventArgs>(recognizer_LoadGrammarCompleted);  
+  
+        // Add a handler for the SpeechRecognized event.  
+        recognizer.SpeechRecognized +=  
+          new EventHandler<SpeechRecognizedEventArgs>(recognizer_SpeechRecognized);  
+  
+        // Add a handler for the StateChanged event.  
+        recognizer.StateChanged +=  
+          new EventHandler<StateChangedEventArgs>(recognizer_StateChanged);  
+  
+        // Create the "yesno" grammar and build it into a Grammar object.  
+        Choices yesChoices = new Choices(new string[] { "yes", "yup", "yah}" });  
+        SemanticResultValue yesValue =  
+            new SemanticResultValue(yesChoices, (bool)true);  
+        Choices noChoices = new Choices(new string[] { "no", "nope", "nah" });  
+        SemanticResultValue noValue =  
+            new SemanticResultValue(noChoices, (bool)false);  
+        SemanticResultKey yesNoKey =  
+            new SemanticResultKey("yesno", new Choices(new GrammarBuilder[] { yesValue, noValue }));  
+        Grammar yesnoGrammar = new Grammar(yesNoKey);  
+        yesnoGrammar.Name = "yesNo";  
+  
+        // Create the "done" grammar within the constructor of a Grammar object.  
+        Grammar doneGrammar =  
+        new Grammar(new GrammarBuilder(new Choices(new string[] { "done", "exit", "quit", "stop" })));  
+        doneGrammar.Name = "Done";  
+  
+        // Create a dictation grammar.  
+        Grammar dictation = new DictationGrammar();  
+        dictation.Name = "Dictation";  
+  
+        // Load grammars to the recognizer.  
+        recognizer.LoadGrammarAsync(yesnoGrammar);  
+        recognizer.LoadGrammarAsync(doneGrammar);  
+        recognizer.LoadGrammarAsync(dictation);  
+  
+        // Keep the console window open.  
+        Console.ReadLine();  
+      }  
+  
+    // Handle the SpeechRecognized event.  
+    static void recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)  
+    {  
+      Console.WriteLine("Grammar({0}): {1}", e.Result.Grammar.Name, e.Result.Text);  
+  
+      // Add event handler code here.  
+    }  
+  
+    // Handle the LoadGrammarCompleted event.   
+    static void recognizer_LoadGrammarCompleted(object sender, LoadGrammarCompletedEventArgs e)  
+    {  
+      string grammarName = e.Grammar.Name;  
+      bool grammarLoaded = e.Grammar.Loaded;  
+  
+      if (e.Error != null)  
+      {  
+  
+        Console.WriteLine("LoadGrammar for {0} failed with a {1}.",  
+        grammarName, e.Error.GetType().Name);  
+  
+        // Add exception handling code here.  
+      }  
+  
+      Console.WriteLine("Grammar {0} {1} loaded.",  
+      grammarName, (grammarLoaded) ? "is" : "is not");  
+    }  
+  
+    // Put the shared speech recognizer into "listening" mode.   
+    static void recognizer_StateChanged(object sender, StateChangedEventArgs e)  
+    {  
+      if (e.RecognizerState != RecognizerState.Stopped)  
+      {  
+        recognizer.EmulateRecognizeAsync("Start listening");  
+      }  
+    }  
+  }  
+}  
+  
+```  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="M:System.Speech.Recognition.SpeechRecognitionEngine.LoadGrammar(System.Speech.Recognition.Grammar)" />
+    <altmember cref="M:System.Speech.Recognition.SpeechRecognitionEngine.LoadGrammarAsync(System.Speech.Recognition.Grammar)" />
+    <altmember cref="M:System.Speech.Recognition.SpeechRecognizer.LoadGrammar(System.Speech.Recognition.Grammar)" />
+    <altmember cref="M:System.Speech.Recognition.SpeechRecognizer.LoadGrammarAsync(System.Speech.Recognition.Grammar)" />
+  </Docs>
+  <Members>
+    <Member MemberName="Grammar">
+      <MemberSignature Language="C#" Value="public System.Speech.Recognition.Grammar Grammar { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Speech.Recognition.Grammar Grammar" />
+      <MemberSignature Language="DocId" Value="P:System.Speech.Recognition.LoadGrammarCompletedEventArgs.Grammar" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Grammar As Grammar" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Speech::Recognition::Grammar ^ Grammar { System::Speech::Recognition::Grammar ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Grammar : System.Speech.Recognition.Grammar" Usage="System.Speech.Recognition.LoadGrammarCompletedEventArgs.Grammar" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Speech.Recognition.Grammar</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>完成加载的 <see cref="T:System.Speech.Recognition.Grammar" /> 对象。</summary>
+        <value>识别器加载的<see cref="T:System.Speech.Recognition.Grammar" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果识别器在操作过程<xref:System.ComponentModel.AsyncCompletedEventArgs.Error%2A>中遇到异常，则属性将设置为异常<xref:System.Speech.Recognition.Grammar.Loaded%2A> ，而关联<xref:System.Speech.Recognition.Grammar>的的属性可能是`false`。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Speech.Recognition.SpeechRecognitionEngine.LoadGrammar(System.Speech.Recognition.Grammar)" />
+        <altmember cref="M:System.Speech.Recognition.SpeechRecognitionEngine.LoadGrammarAsync(System.Speech.Recognition.Grammar)" />
+        <altmember cref="M:System.Speech.Recognition.SpeechRecognizer.LoadGrammar(System.Speech.Recognition.Grammar)" />
+        <altmember cref="M:System.Speech.Recognition.SpeechRecognizer.LoadGrammarAsync(System.Speech.Recognition.Grammar)" />
+      </Docs>
+    </Member>
+  </Members>
+</Type>

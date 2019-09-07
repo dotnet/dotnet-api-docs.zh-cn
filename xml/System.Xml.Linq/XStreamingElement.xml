@@ -1,0 +1,2082 @@
+<Type Name="XStreamingElement" FullName="System.Xml.Linq.XStreamingElement">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="51dd8522fdff19b0e24200cf0bb610ce293b51b7" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70549108" /></Metadata><TypeSignature Language="C#" Value="public class XStreamingElement" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XStreamingElement extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Xml.Linq.XStreamingElement" />
+  <TypeSignature Language="VB.NET" Value="Public Class XStreamingElement" />
+  <TypeSignature Language="C++ CLI" Value="public ref class XStreamingElement" />
+  <TypeSignature Language="F#" Value="type XStreamingElement = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.XDocument</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Xml.Linq</AssemblyName>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>表示支持延迟流输出的 XML 树中的元素。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此类允许您创建支持延迟流输出的 XML 树。 使用此类创建 XML 树的方式与使用<xref:System.Xml.Linq.XElement>创建 xml 树的方式非常类似。 但是，存在根本的差异。 使用 LINQ 查询在使用<xref:System.Xml.Linq.XElement>创建 xml 树时指定内容时，将在构造 xml 树时循环访问查询变量，并将查询的结果添加到 xml 树中。 相反，使用<xref:System.Xml.Linq.XStreamingElement>创建 xml 树时，对查询变量的引用将存储在 XML 树中，而不会进行迭代。 仅在序列化时循环访问查询。 这使您可以创建更大的 XML 树，同时保持较小的内存需求量。  
+  
+ 如果从输入源（如文本文件）进行流式处理，则可以读取非常大的文本文件，并生成一个非常大的 XML 文档，同时保持较小的内存需求量。  
+  
+ 另一种情况是，你有一个已加载到内存中的大型 XML 树，并且你想要创建文档的转换版本。 如果使用<xref:System.Xml.Linq.XElement>创建新的文档，则在转换完成后，内存中将有两个大型 XML 树。 但是，如果使用<xref:System.Xml.Linq.XStreamingElement>创建新的 XML 树，则可以有效地将工作集缩短一半。  
+  
+ 请注意，在调试使用<xref:System.Xml.Linq.XStreamingElement>的程序时，显示对象的值将导致调用其<xref:System.Xml.Linq.XStreamingElement.ToString%2A>方法。 这将导致对 XML 进行序列化。 如果流式处理元素查询的语义使得流式处理元素只能流式传输一次，则这可能会导致在调试过程中出现意外的行为。  
+  
+   
+  
+## Examples  
+ 下面的示例首先创建一个源 XML 树。 然后，它使用<xref:System.Xml.Linq.XElement>创建源 XML 树的转换。 此转换在内存中创建一个新树。 然后，它使用<xref:System.Xml.Linq.XStreamingElement>创建源 XML 树的转换。 在转换后的树序列化为控制台之前，此转换不会执行查询。 它的内存使用率较低。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XElement dstTree1 = new XElement("NewRoot",  
+                        from el in srcTree.Elements()  
+                        where (int)el >= 3  
+                        select new XElement("DifferentChild", (int)el)  
+                    );  
+  
+XStreamingElement dstTree2 = new XStreamingElement("NewRoot",  
+                        from el in srcTree.Elements()  
+                        where (int)el >= 3  
+                        select new XElement("DifferentChild", (int)el)  
+                    );  
+  
+Console.WriteLine(dstTree1);  
+Console.WriteLine("------");  
+Console.WriteLine(dstTree2);  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+        <Root>  
+            <Child>1</Child>  
+            <Child>2</Child>  
+            <Child>3</Child>  
+            <Child>4</Child>  
+            <Child>5</Child>  
+        </Root>  
+  
+Dim dstTree1 As XElement = _  
+    <NewRoot>  
+        <%= From el In srcTree.Elements _  
+            Where (el.Value >= 3) _  
+            Select <DifferentChild><%= el.Value %></DifferentChild> %>  
+    </NewRoot>  
+  
+Dim dstTree2 As XStreamingElement = New XStreamingElement("NewRoot", _  
+                From el In srcTree.Elements _  
+                Where el.Value >= 3 _  
+                Select <DifferentChild><%= el.Value %></DifferentChild> _  
+            )  
+  
+Console.WriteLine(dstTree1)  
+Console.WriteLine("------")  
+Console.WriteLine(dstTree2)  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```  
+<NewRoot>  
+  <DifferentChild>3</DifferentChild>  
+  <DifferentChild>4</DifferentChild>  
+  <DifferentChild>5</DifferentChild>  
+</NewRoot>  
+------  
+<NewRoot>  
+  <DifferentChild>3</DifferentChild>  
+  <DifferentChild>4</DifferentChild>  
+  <DifferentChild>5</DifferentChild>  
+</NewRoot>  
+```  
+  
+ 处理文本文件的一种方法是编写使用 `yield return` 构造一次流式处理一行文本文件的扩展方法。 然后可以编写以迟缓延迟方式处理文本文件的 LINQ 查询。 如果随后使用<xref:System.Xml.Linq.XStreamingElement>流式处理输出，则可以创建从文本文件到 XML 的转换，而不管源文本文件的大小是多少，都可以使用最少的内存量。  
+  
+ 下面的文本文件 People.txt 是本示例的源文件。  
+  
+```  
+#This is a comment  
+1,Tai,Yee,Writer  
+2,Nikolay,Grachev,Programmer  
+3,David,Wright,Inventor  
+```  
+  
+ 下面的代码包含以延迟方式流式处理文本文件中各行的扩展方法。  
+  
+```csharp  
+public static class StreamReaderSequence  
+{  
+    public static IEnumerable<string> Lines(this StreamReader source)  
+    {  
+        String line;  
+  
+        if (source == null)  
+            throw new ArgumentNullException("source");  
+        while ((line = source.ReadLine()) != null)  
+        {  
+            yield return line;  
+        }  
+    }  
+}  
+  
+class Program  
+{  
+    static void Main(string[] args)  
+    {  
+        StreamReader sr = new StreamReader("People.txt");  
+        XStreamingElement xmlTree = new XStreamingElement("Root",  
+            from line in sr.Lines()  
+            let items = line.Split(',')  
+            where !line.StartsWith("#")  
+            select new XElement("Person",  
+                       new XAttribute("ID", items[0]),  
+                       new XElement("First", items[1]),  
+                       new XElement("Last", items[2]),  
+                       new XElement("Occupation", items[3])  
+                   )  
+        );  
+        Console.WriteLine(xmlTree);  
+        sr.Close();  
+    }  
+}  
+```  
+  
+```vb  
+Module StreamReaderSequence  
+  
+    <Runtime.CompilerServices.Extension>  
+    Public Iterator Function Lines(source As IO.StreamReader) As IEnumerable(Of String)  
+        If source Is Nothing Then Throw New ArgumentNullException("source")  
+        Dim line As String = source.ReadLine()  
+        While (line <> Nothing)  
+            Yield line  
+            line = source.ReadLine()  
+        End While  
+    End Function  
+  
+End Module  
+  
+Module Module1  
+    Sub Main()  
+        Dim sr As New IO.StreamReader("People.txt")  
+        Dim xmlTree As New XStreamingElement("Root",  
+            From line In sr.Lines()  
+            Let items = line.Split(","c)  
+            Where Not line.StartsWith("#")  
+            Select <Person ID=<%= items(0) %>>  
+                       <First><%= items(1) %></First>  
+                       <Last><%= items(2) %></Last>  
+                       <Occupation><%= items(3) %></Occupation>  
+                   </Person>)  
+        Console.WriteLine(xmlTree)  
+        sr.Close()  
+    End Sub  
+End Module  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```xml  
+<Root>  
+  <Person ID="1">  
+    <First>Tai</First>  
+    <Last>Yee</Last>  
+    <Occupation>Writer</Occupation>  
+  </Person>  
+  <Person ID="2">  
+    <First>Nikolay</First>  
+    <Last>Grachev</Last>  
+    <Occupation>Programmer</Occupation>  
+  </Person>  
+  <Person ID="3">  
+    <First>David</First>  
+    <Last>Wright</Last>  
+    <Occupation>Inventor</Occupation>  
+  </Person>  
+</Root>  
+```  
+  
+ 有时，你必须转换任意大的 XML 文件并在编写你的应用程序时可以预测应用程序的内存需求量。 如果您试图用大 XML 文件填充 XML 树，则内存占用量将与文件大小成正比，也就是说会占用过多内存。 因此，您应改用流处理技术。  
+  
+ 某些标准查询运算符（如 <xref:System.Linq.Enumerable.OrderBy%2A>）可以循环访问其源、收集所有数据、对数据排序，最后生成序列中的第一项。 请注意，如果使用可在生成第一项之前具体化源的查询运算符，则不会使应用程序保持小的内存需求量。  
+  
+ 即使使用中所述的方法，如果尝试组装包含转换的文档的 XML 树，内存使用量可能会太大。  
+  
+ 下面的示例在[如何：流式处理可访问标头信息的 XML 片段](https://msdn.microsoft.com/library/01311522-9d03-4977-8641-2932c6f56092)的示例上构建。  
+  
+ 本示例使用 <xref:System.Xml.Linq.XStreamingElement> 的延迟执行功能对输出进行流式处理。  
+  
+ 请注意，自定义轴 (`StreamCustomerItem`) 经过专门编写，可以处理具有 `Customer`、`Name` 和 `Item` 元素，并且这些元素将按下面 Source.xml 文档排列的文档。 不过，更可靠的实现将会使用 XSD 验证源文档或将会准备一个更可靠的实现以分析无效文档。  
+  
+ 下面是源文档 Source.xml：  
+  
+```xml  
+<?xml version="1.0" encoding="utf-8" ?>   
+<Root>  
+  <Customer>  
+    <Name>A. Datum Corporation</Name>  
+    <Item>  
+      <Key>0001</Key>  
+    </Item>  
+    <Item>  
+      <Key>0002</Key>  
+    </Item>  
+    <Item>  
+      <Key>0003</Key>  
+    </Item>  
+    <Item>  
+      <Key>0004</Key>  
+    </Item>  
+  </Customer>  
+  <Customer>  
+    <Name>Fabrikam, Inc.</Name>  
+    <Item>  
+      <Key>0005</Key>  
+    </Item>  
+    <Item>  
+      <Key>0006</Key>  
+    </Item>  
+    <Item>  
+      <Key>0007</Key>  
+    </Item>  
+    <Item>  
+      <Key>0008</Key>  
+    </Item>  
+  </Customer>  
+  <Customer>  
+    <Name>Southridge Video</Name>  
+    <Item>  
+      <Key>0009</Key>  
+    </Item>  
+    <Item>  
+      <Key>0010</Key>  
+    </Item>  
+  </Customer>  
+</Root>  
+```  
+  
+ 下面的代码包含一个方法，该方法<xref:System.Xml.XmlReader>使用来流式传输源 XML。 它使用<xref:System.Xml.Linq.XStreamingElement>流式传输新的 XML。  
+  
+```csharp  
+static IEnumerable<XElement> StreamCustomerItem(string uri)  
+{  
+    using (XmlReader reader = XmlReader.Create(uri))  
+    {  
+        XElement name = null;  
+        XElement item = null;  
+  
+        reader.MoveToContent();  
+  
+        // Parse the file, save header information when encountered, and yield the  
+        // Item XElement objects as they are created.  
+  
+        // loop through Customer elements  
+        while (reader.Read())  
+        {  
+            if (reader.NodeType == XmlNodeType.Element  
+                && reader.Name == "Customer")  
+            {  
+                // move to Name element  
+                while (reader.Read())  
+                {  
+                    if (reader.NodeType == XmlNodeType.Element &&  
+                        reader.Name == "Name")  
+                    {  
+                        name = XElement.ReadFrom(reader) as XElement;  
+                        break;  
+                    }  
+                }  
+  
+                // loop through Item elements  
+                while (reader.Read())  
+                {  
+                    if (reader.NodeType == XmlNodeType.EndElement)  
+                        break;  
+                    if (reader.NodeType == XmlNodeType.Element  
+                        && reader.Name == "Item")  
+                    {  
+                        item = XElement.ReadFrom(reader) as XElement;  
+                        if (item != null)  
+                        {  
+                            XElement tempRoot = new XElement("Root",  
+                                new XElement(name)  
+                            );  
+                            tempRoot.Add(item);  
+                            yield return item;  
+                        }  
+                    }  
+                }  
+            }  
+        }  
+    }  
+}  
+  
+static void Main(string[] args)  
+{  
+    XStreamingElement root = new XStreamingElement("Root",  
+        from el in StreamCustomerItem("Source.xml")  
+        select new XElement("Item",  
+            new XElement("Customer", (string)el.Parent.Element("Name")),  
+            new XElement(el.Element("Key"))  
+        )  
+    );  
+    root.Save("Test.xml");  
+    Console.WriteLine(File.ReadAllText("Test.xml"));  
+}  
+```  
+  
+```vb  
+Iterator Function StreamCustomerItem(uri As String) As IEnumerable(Of XElement)  
+  
+    Dim name As XElement = Nothing  
+    Dim item As XElement = Nothing  
+  
+    Dim reader As XmlReader = XmlReader.Create(uri)  
+    reader.MoveToContent()  
+  
+    ' Parse the file, save header information when encountered, and yield the  
+    ' Item XElement objects as they are created.  
+  
+    ' Loop through Customer elements.  
+    While (reader.Read())  
+        If (reader.NodeType = XmlNodeType.Element And reader.Name = "Customer") Then  
+            While (reader.Read())  
+                ' Move to Name element  
+                If (reader.NodeType = XmlNodeType.Element And reader.Name = "Name") Then  
+                    name = CType(XElement.ReadFrom(reader), XElement)  
+                    Exit While  
+                End If  
+            End While  
+  
+            ' Loop through Item elements  
+            While (reader.Read())  
+                If (reader.NodeType = XmlNodeType.EndElement) Then  
+                    Exit While  
+                End If  
+  
+                If (reader.NodeType = XmlNodeType.Element And reader.Name = "Item") Then  
+                    item = CType(XElement.ReadFrom(reader), XElement)  
+                    If (Not (item Is Nothing)) Then  
+                        Dim tempRoot = New XElement("Root",  
+                            New XElement(name)  
+                        )  
+                        tempRoot.Add(item)  
+                        Yield item  
+                     End If  
+                End If  
+            End While  
+        End If  
+     End While  
+    reader.Close()  
+End Function  
+  
+Sub Main()  
+    Dim root As New XStreamingElement("Root",  
+        From el In StreamCustomerItem("c:\trash\Source.xml")  
+        Select New XElement("Item",  
+            New XElement("Customer", CStr(el.Parent.Element("Name"))),  
+            New XElement(el.Element("Key"))))  
+    root.Save("c:\trash\Test.xml")  
+    Console.WriteLine(System.IO.File.ReadAllText("c:\trash\Test.xml"))  
+End Sub  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```xml  
+<?xml version="1.0" encoding="utf-8"?>  
+<Root>  
+  <Item>  
+    <Customer>A. Datum Corporation</Customer>  
+    <Key>0001</Key>  
+  </Item>  
+  <Item>  
+    <Customer>A. Datum Corporation</Customer>  
+    <Key>0002</Key>  
+  </Item>  
+  <Item>  
+    <Customer>A. Datum Corporation</Customer>  
+    <Key>0003</Key>  
+  </Item>  
+  <Item>  
+    <Customer>A. Datum Corporation</Customer>  
+    <Key>0004</Key>  
+  </Item>  
+  <Item>  
+    <Customer>Fabrikam, Inc.</Customer>  
+    <Key>0005</Key>  
+  </Item>  
+  <Item>  
+    <Customer>Fabrikam, Inc.</Customer>  
+    <Key>0006</Key>  
+  </Item>  
+  <Item>  
+    <Customer>Fabrikam, Inc.</Customer>  
+    <Key>0007</Key>  
+  </Item>  
+  <Item>  
+    <Customer>Fabrikam, Inc.</Customer>  
+    <Key>0008</Key>  
+  </Item>  
+  <Item>  
+    <Customer>Southridge Video</Customer>  
+    <Key>0009</Key>  
+  </Item>  
+  <Item>  
+    <Customer>Southridge Video</Customer>  
+    <Key>0010</Key>  
+  </Item>  
+</Root>  
+```  
+  
+ ]]></format>
+    </remarks>
+    <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Xml.Linq.XStreamingElement" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 直到序列化之后，才<xref:System.Xml.Linq.XStreamingElement>会循环访问查询。 这与使用针对的内容<xref:System.Xml.Linq.XElement>的查询（其中的查询在构造新<xref:System.Xml.Linq.XElement>的时将循环访问）相反。  
+  
+ 有关可传递到此构造函数的有效内容的详细信息，请参阅[system.xml.linq.xelement> 和 XDocument 对象的有效内容](https://msdn.microsoft.com/library/aee2d319-5c5f-4b99-9bb4-2f58232577ae)。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XStreamingElement (System.Xml.Linq.XName name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.Linq.XName name) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.#ctor(System.Xml.Linq.XName)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (name As XName)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XStreamingElement(System::Xml::Linq::XName ^ name);" />
+      <MemberSignature Language="F#" Value="new System.Xml.Linq.XStreamingElement : System.Xml.Linq.XName -&gt; System.Xml.Linq.XStreamingElement" Usage="new System.Xml.Linq.XStreamingElement name" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+      </Parameters>
+      <Docs>
+        <param name="name">一个包含元素名称的 <see cref="T:System.Xml.Linq.XName" />。</param>
+        <summary>从指定的 <see cref="T:System.Xml.Linq.XElement" /> 初始化 <see cref="T:System.Xml.Linq.XName" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数创建不包含任何内容和属性的流式处理元素。  
+  
+ 存在从字符串到<xref:System.Xml.Linq.XName>的隐式转换。 此构造函数的典型用法是将字符串指定为参数，而不是创建新<xref:System.Xml.Linq.XName>的。  
+  
+   
+  
+## Examples  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XStreamingElement dstTree = new XStreamingElement("NewRoot",  
+                        from el in srcTree.Elements()  
+                        where (int)el >= 3  
+                        select new XElement("DifferentChild", (int)el)  
+                    );  
+  
+Console.WriteLine(dstTree);  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+        <Root>  
+            <Child>1</Child>  
+            <Child>2</Child>  
+            <Child>3</Child>  
+            <Child>4</Child>  
+            <Child>5</Child>  
+        </Root>  
+  
+Dim dstTree As XStreamingElement = New XStreamingElement("NewRoot", _  
+                From el In srcTree.Elements _  
+                Where el.Value >= 3 _  
+                Select <DifferentChild><%= el.Value %></DifferentChild> _  
+            )  
+  
+Console.WriteLine(dstTree)  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```  
+<NewRoot>  
+  <DifferentChild>3</DifferentChild>  
+  <DifferentChild>4</DifferentChild>  
+  <DifferentChild>5</DifferentChild>  
+</NewRoot>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XStreamingElement (System.Xml.Linq.XName name, object content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.Linq.XName name, object content) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.#ctor(System.Xml.Linq.XName,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (name As XName, content As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XStreamingElement(System::Xml::Linq::XName ^ name, System::Object ^ content);" />
+      <MemberSignature Language="F#" Value="new System.Xml.Linq.XStreamingElement : System.Xml.Linq.XName * obj -&gt; System.Xml.Linq.XStreamingElement" Usage="new System.Xml.Linq.XStreamingElement (name, content)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+        <Parameter Name="content" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="name">一个包含元素名称的 <see cref="T:System.Xml.Linq.XName" />。</param>
+        <param name="content">元素的内容。</param>
+        <summary>用指定的名称和内容初始化 <see cref="T:System.Xml.Linq.XStreamingElement" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数使用指定的内容和特性创建一个流式处理元素。  
+  
+ 存在从字符串到<xref:System.Xml.Linq.XName>的隐式转换。 此构造函数的典型用法是将字符串指定为参数，而不是创建新<xref:System.Xml.Linq.XName>的。  
+  
+ 直到序列化之后，才<xref:System.Xml.Linq.XStreamingElement>会循环访问查询。 这与使用针对的内容<xref:System.Xml.Linq.XElement>的查询（其中的查询在构造新<xref:System.Xml.Linq.XElement>的时将循环访问）相反。  
+  
+ 有关可传递到此构造函数的有效内容的详细信息，请参阅[system.xml.linq.xelement> 和 XDocument 对象的有效内容](https://msdn.microsoft.com/library/aee2d319-5c5f-4b99-9bb4-2f58232577ae)。  
+  
+   
+  
+## Examples  
+ 此示例使用以下名为 Source .xml 的 XML 文件：  
+  
+```xml  
+<?xml version="1.0" encoding="utf-8" ?>   
+<Root>  
+  <Child Key="01">  
+    <GrandChild>aaa</GrandChild>  
+  </Child>  
+  <Child Key="02">  
+    <GrandChild>bbb</GrandChild>  
+  </Child>  
+  <Child Key="03">  
+    <GrandChild>ccc</GrandChild>  
+  </Child>  
+</Root>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XStreamingElement (System.Xml.Linq.XName name, params object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.Linq.XName name, object[] content) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.#ctor(System.Xml.Linq.XName,System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (name As XName, ParamArray content As Object())" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XStreamingElement(System::Xml::Linq::XName ^ name, ... cli::array &lt;System::Object ^&gt; ^ content);" />
+      <MemberSignature Language="F#" Value="new System.Xml.Linq.XStreamingElement : System.Xml.Linq.XName * obj[] -&gt; System.Xml.Linq.XStreamingElement" Usage="new System.Xml.Linq.XStreamingElement (name, content)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="name" Type="System.Xml.Linq.XName" />
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute FrameworkAlternate="dotnet-uwp-10.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="name">一个包含元素名称的 <see cref="T:System.Xml.Linq.XName" />。</param>
+        <param name="content">元素的内容。</param>
+        <summary>用指定的名称和内容初始化 <see cref="T:System.Xml.Linq.XStreamingElement" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数使用指定的内容和特性创建一个流式处理元素。  
+  
+ 存在从字符串到<xref:System.Xml.Linq.XName>的隐式转换。 此构造函数的典型用法是将字符串指定为参数，而不是创建新<xref:System.Xml.Linq.XName>的。  
+  
+ 直到序列化之后，才<xref:System.Xml.Linq.XStreamingElement>会循环访问查询。 这与使用针对的内容<xref:System.Xml.Linq.XElement>的查询（其中的查询在构造新<xref:System.Xml.Linq.XElement>的时将循环访问）相反。  
+  
+ 有关可传递到此函数的有效内容的详细信息，请参阅[system.xml.linq.xelement> 和 XDocument 对象的有效内容](https://msdn.microsoft.com/library/aee2d319-5c5f-4b99-9bb4-2f58232577ae)。  
+  
+   
+  
+## Examples  
+ 此示例使用以下名为 Source .xml 的 XML 文件：  
+  
+```xml  
+<?xml version="1.0" encoding="utf-8" ?>   
+<Root>  
+  <Child Key="01">  
+    <GrandChild>aaa</GrandChild>  
+  </Child>  
+  <Child Key="02">  
+    <GrandChild>bbb</GrandChild>  
+  </Child>  
+  <Child Key="03">  
+    <GrandChild>ccc</GrandChild>  
+  </Child>  
+</Root>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Add">
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将指定的内容作为子级添加到此 <see cref="T:System.Xml.Linq.XStreamingElement" />。</summary>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (object content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(object content) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.Add(System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Add (content As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Add(System::Object ^ content);" />
+      <MemberSignature Language="F#" Value="member this.Add : obj -&gt; unit" Usage="xStreamingElement.Add content" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="content">要添加到流元素的内容。</param>
+        <summary>将指定的内容作为子级添加到此 <see cref="T:System.Xml.Linq.XStreamingElement" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数将指定的内容和特性添加<xref:System.Xml.Linq.XStreamingElement>到中。 虽然通常可以<xref:System.Xml.Linq.XStreamingElement>在单个语句中构造，但有时会更方便地以增量方式向流式处理元素添加内容。  
+  
+ 直到序列化之后，才<xref:System.Xml.Linq.XStreamingElement>会循环访问查询。 这与使用针对的内容<xref:System.Xml.Linq.XElement>的查询（其中的查询在构造新<xref:System.Xml.Linq.XElement>的时将循环访问）相反。  
+  
+ 有关可传递到此函数的有效内容的详细信息，请参阅[system.xml.linq.xelement> 和 XDocument 对象的有效内容](https://msdn.microsoft.com/library/aee2d319-5c5f-4b99-9bb4-2f58232577ae)。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个新<xref:System.Xml.Linq.XStreamingElement>的。 然后，它将两个查询添加到流式处理元素。 在对流式处理元素进行序列化之前，不会循环查询。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XStreamingElement dstTree = new XStreamingElement("NewRoot");  
+  
+dstTree.Add(  
+    from el in srcTree.Elements()  
+    where (int)el <= 1  
+    select new XElement("Child", (int)el)  
+);  
+  
+dstTree.Add(  
+    from el in srcTree.Elements()  
+    where (int)el >= 3  
+    select new XElement("DifferentChild", (int)el)  
+);  
+  
+Console.WriteLine(dstTree);  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+    <Root>  
+        <Child>1</Child>  
+        <Child>2</Child>  
+        <Child>3</Child>  
+        <Child>4</Child>  
+        <Child>5</Child>  
+    </Root>  
+  
+Dim dstTree As XStreamingElement = New XStreamingElement("NewRoot")  
+  
+dstTree.Add( _  
+    From el In srcTree.Elements() _  
+    Where el.Value <= 1 _  
+    Select <Child><%= el.Value %></Child> _  
+)  
+  
+dstTree.Add( _  
+    From el In srcTree.Elements() _  
+    Where el.Value >= 3 _  
+    Select <DifferentChild><%= el.Value %></DifferentChild> _  
+)  
+  
+Console.WriteLine(dstTree)  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```xml  
+<NewRoot>  
+  <Child>1</Child>  
+  <DifferentChild>3</DifferentChild>  
+  <DifferentChild>4</DifferentChild>  
+  <DifferentChild>5</DifferentChild>  
+</NewRoot>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (params object[] content);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(object[] content) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.Add(System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Add (ParamArray content As Object())" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Add(... cli::array &lt;System::Object ^&gt; ^ content);" />
+      <MemberSignature Language="F#" Value="member this.Add : obj[] -&gt; unit" Usage="xStreamingElement.Add content" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="content" Type="System.Object[]">
+          <Attributes>
+            <Attribute FrameworkAlternate="dotnet-uwp-10.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="content">要添加到流元素的内容。</param>
+        <summary>将指定的内容作为子级添加到此 <see cref="T:System.Xml.Linq.XStreamingElement" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数将指定的内容和特性添加<xref:System.Xml.Linq.XStreamingElement>到中。 虽然通常可以<xref:System.Xml.Linq.XStreamingElement>在单个语句中构造，但有时会更方便地以增量方式向流式处理元素添加内容。  
+  
+ 直到序列化之后，才<xref:System.Xml.Linq.XStreamingElement>会循环访问查询。 这与使用针对的内容<xref:System.Xml.Linq.XElement>的查询（其中的查询在构造新<xref:System.Xml.Linq.XElement>的时将循环访问）相反。  
+  
+ 有关可传递到此函数的有效内容的详细信息，请参阅[system.xml.linq.xelement> 和 XDocument 对象的有效内容](https://msdn.microsoft.com/library/aee2d319-5c5f-4b99-9bb4-2f58232577ae)。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个新<xref:System.Xml.Linq.XStreamingElement>的。 然后，它将两个查询添加到流式处理元素。 在对流式处理元素进行序列化之前，不会循环查询。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XStreamingElement dstTree = new XStreamingElement("NewRoot");  
+  
+dstTree.Add(  
+    from el in srcTree.Elements()  
+    where (int)el <= 1  
+    select new XElement("Child", (int)el)  
+);  
+  
+dstTree.Add(  
+    from el in srcTree.Elements()  
+    where (int)el >= 3  
+    select new XElement("DifferentChild", (int)el)  
+);  
+  
+Console.WriteLine(dstTree);  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+    <Root>  
+        <Child>1</Child>  
+        <Child>2</Child>  
+        <Child>3</Child>  
+        <Child>4</Child>  
+        <Child>5</Child>  
+    </Root>  
+  
+Dim dstTree As XStreamingElement = New XStreamingElement("NewRoot")  
+  
+dstTree.Add( _  
+    From el In srcTree.Elements() _  
+    Where el.Value <= 1 _  
+    Select <Child><%= el.Value %></Child> _  
+)  
+  
+dstTree.Add( _  
+    From el In srcTree.Elements() _  
+    Where el.Value >= 3 _  
+    Select <DifferentChild><%= el.Value %></DifferentChild> _  
+)  
+  
+Console.WriteLine(dstTree)  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```xml  
+<NewRoot>  
+  <Child>1</Child>  
+  <DifferentChild>3</DifferentChild>  
+  <DifferentChild>4</DifferentChild>  
+  <DifferentChild>5</DifferentChild>  
+</NewRoot>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public System.Xml.Linq.XName Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Linq.XName Name" />
+      <MemberSignature Language="DocId" Value="P:System.Xml.Linq.XStreamingElement.Name" />
+      <MemberSignature Language="VB.NET" Value="Public Property Name As XName" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Xml::Linq::XName ^ Name { System::Xml::Linq::XName ^ get(); void set(System::Xml::Linq::XName ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.Name : System.Xml.Linq.XName with get, set" Usage="System.Xml.Linq.XStreamingElement.Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Xml.Linq.XName</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置此流元素的名称。</summary>
+        <value>一个 <see cref="T:System.Xml.Linq.XName" />，其中包含此流元素的名称。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 此示例创建一个新的流式处理元素，然后打印该元素的名称。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XStreamingElement dstTree = new XStreamingElement("NewRoot",  
+                        from el in srcTree.Elements()  
+                        where (int)el >= 3  
+                        select new XElement("DifferentChild", (int)el)  
+                    );  
+  
+Console.WriteLine(dstTree.Name);  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+        <Root>  
+            <Child>1</Child>  
+            <Child>2</Child>  
+            <Child>3</Child>  
+            <Child>4</Child>  
+            <Child>5</Child>  
+        </Root>  
+  
+Dim dstTree As XStreamingElement = New XStreamingElement("NewRoot", _  
+                From el In srcTree.Elements _  
+                Where el.Value >= 3 _  
+                Select <DifferentChild><%= el.Value %></DifferentChild> _  
+            )  
+  
+Console.WriteLine(dstTree.Name)  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```  
+NewRoot  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Save">
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>序列化此流元素。 可以将输出保存到文件、<see cref="T:System.Xml.XmlTextWriter" />、<see cref="T:System.IO.TextWriter" /> 或 <see cref="T:System.Xml.XmlWriter" />。 还可以禁用格式设置（缩进）。</summary>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.Stream stream) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.Save(System.IO.Stream)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Save(System::IO::Stream ^ stream);" />
+      <MemberSignature Language="F#" Value="member this.Save : System.IO.Stream -&gt; unit" Usage="xStreamingElement.Save stream" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="stream">将此 <see cref="T:System.Xml.Linq.XDocument" /> 输出到的流。</param>
+        <summary>将此 <see cref="T:System.Xml.Linq.XStreamingElement" /> 输出到指定的 <see cref="T:System.IO.Stream" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将缩进序列化的 XML。 将删除所有无意义的空白，并会添加额外的空白，以便正确缩进 XML。 此方法的行为是不会保留无意义的空白。  
+  
+ 如果要控制空白，请使用<xref:System.Xml.Linq.XStreamingElement.Save%2A> <xref:System.Xml.Linq.SaveOptions>作为参数的的重载。 <xref:System.Xml.Linq.SaveOptions.DisableFormatting>使用选项保存未缩进的 XML。 这将导致编写器完全按 XML 树中的表示形式写入所有空格。  
+  
+ 如果<xref:System.Xml.Linq.SaveOptions.OmitDuplicateNamespaces>要删除重复的命名空间声明，请使用选项。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.TextWriter textWriter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.TextWriter textWriter) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.Save(System.IO.TextWriter)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Save(System::IO::TextWriter ^ textWriter);" />
+      <MemberSignature Language="F#" Value="member this.Save : System.IO.TextWriter -&gt; unit" Usage="xStreamingElement.Save textWriter" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="textWriter" Type="System.IO.TextWriter" />
+      </Parameters>
+      <Docs>
+        <param name="textWriter">将向其中写入 <see cref="T:System.IO.TextWriter" /> 的 <see cref="T:System.Xml.Linq.XStreamingElement" />。</param>
+        <summary>将此流元素序列化为 <see cref="T:System.IO.TextWriter" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将缩进序列化的 XML。 将删除所有无意义的空白，并会添加额外的空白，以便正确缩进 XML。 此方法的行为是不会保留 XML 树中无意义的空白节点。  
+  
+ 如果要控制空白，请使用将<xref:System.Xml.Linq.XStreamingElement.Save%2A> <xref:System.Xml.Linq.SaveOptions>作为参数的重载之一。 有关详细信息，请参阅在[加载或分析 XML 时保留空白](https://msdn.microsoft.com/library/093a7169-a04e-4638-b08c-d1cb98aa650d)，并[在序列化时保留空白区域](https://msdn.microsoft.com/library/fb146217-0a49-4efc-ac84-7265b91d3939)。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个源 xml 树，然后在源<xref:System.Xml.Linq.XStreamingElement> xml 树中使用查询对其进行实例化。 然后，它将流式处理元素<xref:System.IO.StringWriter>写入。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XStreamingElement dstTree = new XStreamingElement("NewRoot",  
+                        from el in srcTree.Elements()  
+                        where (int)el >= 3  
+                        select new XElement("DifferentChild", (int)el)  
+                    );  
+  
+StringBuilder sb = new StringBuilder();  
+dstTree.Save(new StringWriter(sb));  
+Console.WriteLine(sb.ToString());  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+    <Root>  
+        <Child>1</Child>  
+        <Child>2</Child>  
+        <Child>3</Child>  
+        <Child>4</Child>  
+        <Child>5</Child>  
+    </Root>  
+  
+Dim dstTree As XStreamingElement = New XStreamingElement("NewRoot", _  
+                        From el In srcTree.Elements() _  
+                        Where el.Value >= 3 _  
+                        Select <DifferentChild><%= el.Value %></DifferentChild> _  
+                    )  
+  
+Dim sb As StringBuilder = New StringBuilder()  
+dstTree.Save(New StringWriter(sb))  
+Console.WriteLine(sb.ToString())  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```xml  
+<?xml version="1.0" encoding="utf-16"?>  
+<NewRoot>  
+  <DifferentChild>3</DifferentChild>  
+  <DifferentChild>4</DifferentChild>  
+  <DifferentChild>5</DifferentChild>  
+</NewRoot>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (string fileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(string fileName) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.Save(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Save (fileName As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Save(System::String ^ fileName);" />
+      <MemberSignature Language="F#" Value="member this.Save : string -&gt; unit" Usage="xStreamingElement.Save fileName" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">一个包含文件名称的 <see cref="T:System.String" />。</param>
+        <summary>将此流元素序列化为文件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将缩进序列化的 XML。 将删除所有无意义的空白，并会添加额外的空白，以便正确缩进 XML。 此方法的行为是不会保留 XML 树中无意义的空白节点。  
+  
+ 如果要控制空白，请使用将<xref:System.Xml.Linq.XStreamingElement.Save%2A> <xref:System.Xml.Linq.SaveOptions>作为参数的重载之一。 有关详细信息，请参阅在[加载或分析 XML 时保留空白](https://msdn.microsoft.com/library/093a7169-a04e-4638-b08c-d1cb98aa650d)，并[在序列化时保留空白区域](https://msdn.microsoft.com/library/fb146217-0a49-4efc-ac84-7265b91d3939)。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个流式处理 XML 树。 然后，它将流式处理 XML 树序列化为文件。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XStreamingElement dstTree = new XStreamingElement("NewRoot",  
+                        from el in srcTree.Elements()  
+                        where (int)el >= 3  
+                        select new XElement("DifferentChild", (int)el)  
+                    );  
+  
+dstTree.Save("Test.xml");  
+Console.WriteLine(File.ReadAllText("Test.xml"));  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+    <Root>  
+        <Child>1</Child>  
+        <Child>2</Child>  
+        <Child>3</Child>  
+        <Child>4</Child>  
+        <Child>5</Child>  
+    </Root>  
+  
+Dim dstTree As XStreamingElement = New XStreamingElement("NewRoot", _  
+                        From el In srcTree.Elements() _  
+                        Where el.Value >= 3 _  
+                        Select <DifferentChild><%= el.Value %></DifferentChild> _  
+                    )  
+  
+dstTree.Save("Test.xml")  
+Console.WriteLine(File.ReadAllText("Test.xml"))  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```xml  
+<?xml version="1.0" encoding="utf-8"?>  
+<NewRoot>  
+  <DifferentChild>3</DifferentChild>  
+  <DifferentChild>4</DifferentChild>  
+  <DifferentChild>5</DifferentChild>  
+</NewRoot>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.Save(System.Xml.XmlWriter)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Save (writer As XmlWriter)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Save(System::Xml::XmlWriter ^ writer);" />
+      <MemberSignature Language="F#" Value="member this.Save : System.Xml.XmlWriter -&gt; unit" Usage="xStreamingElement.Save writer" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">将向其中写入 <see cref="T:System.Xml.XmlWriter" /> 的 <see cref="T:System.Xml.Linq.XElement" />。</param>
+        <summary>将此流元素序列化为 <see cref="T:System.Xml.XmlWriter" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的示例创建一个<xref:System.Xml.Linq.XStreamingElement>并将其<xref:System.Xml.XmlWriter>写入。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+StringBuilder sb = new StringBuilder();  
+XmlWriterSettings xws = new XmlWriterSettings();  
+xws.OmitXmlDeclaration = true;  
+using (XmlWriter xw = XmlWriter.Create(sb, xws))  
+{  
+    XStreamingElement dstTree = new XStreamingElement("NewRoot",  
+                            from el in srcTree.Elements()  
+                            where (int)el == 5  
+                            select new XElement("DifferentChild", (int)el)  
+                        );  
+  
+    dstTree.Save(xw);  
+}  
+Console.WriteLine(sb.ToString());  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+    <Root>  
+        <Child>1</Child>  
+        <Child>2</Child>  
+        <Child>3</Child>  
+        <Child>4</Child>  
+        <Child>5</Child>  
+    </Root>  
+  
+Dim sb As StringBuilder = New StringBuilder()  
+Dim xws As XmlWriterSettings = New XmlWriterSettings()  
+xws.OmitXmlDeclaration = True  
+Using xw As XmlWriter = XmlWriter.Create(sb, xws)  
+    Dim dstTree As XStreamingElement = New XStreamingElement("NewRoot", _  
+                            From el In srcTree.Elements() _  
+                            Where el.Value = 5 _  
+                            Select <DifferentChild><%= el.Value %></DifferentChild> _  
+                        )  
+    dstTree.Save(xw)  
+End Using  
+Console.WriteLine(sb.ToString())  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```xml  
+<NewRoot><DifferentChild>5</DifferentChild></NewRoot>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.Stream stream, System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.Stream stream, valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.Save(System.IO.Stream,System.Xml.Linq.SaveOptions)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Save(System::IO::Stream ^ stream, System::Xml::Linq::SaveOptions options);" />
+      <MemberSignature Language="F#" Value="member this.Save : System.IO.Stream * System.Xml.Linq.SaveOptions -&gt; unit" Usage="xStreamingElement.Save (stream, options)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="stream">将此 <see cref="T:System.Xml.Linq.XDocument" /> 输出到的流。</param>
+        <param name="options">一个 <see cref="T:System.Xml.Linq.SaveOptions" /> 对象，该对象指定格式设置行为。</param>
+        <summary>将此 <see cref="T:System.Xml.Linq.XStreamingElement" /> 输出到指定的 <see cref="T:System.IO.Stream" />，（可选）并指定格式设置行为。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下`options` ，设置为<xref:System.Xml.Linq.SaveOptions.None>。 此选项将删除所有无关的无意义空格，并添加适当的无意义空白，以便正确缩进 XML。  
+  
+ 如果要保存未缩进的 XML，请<xref:System.Xml.Linq.SaveOptions.DisableFormatting>指定的`options`标志。 这将导致编写器完全按 XML 树中的表示形式写入所有空格。  
+  
+ 如果<xref:System.Xml.Linq.SaveOptions.OmitDuplicateNamespaces>要删除重复的命名空间声明，请使用选项。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (System.IO.TextWriter textWriter, System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(class System.IO.TextWriter textWriter, valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.Save(System.IO.TextWriter,System.Xml.Linq.SaveOptions)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Save(System::IO::TextWriter ^ textWriter, System::Xml::Linq::SaveOptions options);" />
+      <MemberSignature Language="F#" Value="member this.Save : System.IO.TextWriter * System.Xml.Linq.SaveOptions -&gt; unit" Usage="xStreamingElement.Save (textWriter, options)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="textWriter" Type="System.IO.TextWriter" />
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
+      </Parameters>
+      <Docs>
+        <param name="textWriter">要将 XML 输出到的 <see cref="T:System.IO.TextWriter" />。</param>
+        <param name="options">指定格式设置行为的 <see cref="T:System.Xml.Linq.SaveOptions" />。</param>
+        <summary>将此流元素序列化为 <see cref="T:System.IO.TextWriter" />，可以选择禁用格式设置。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果要保存未缩进的 XML，请<xref:System.Xml.Linq.SaveOptions.DisableFormatting>指定的`options`标志。 这将导致编写器完全按 XML 树中的表示方式写入所有空格。  
+  
+ 如果要保存缩进的 XML，请勿为<xref:System.Xml.Linq.SaveOptions.DisableFormatting> `options`指定标志。 这将删除所有无关的无意义空格，并添加适当的无意义空白，以便正确缩进 XML。 这是默认行为，以及<xref:System.Xml.Linq.XElement.Save%2A> `options`不作为参数的方法的重载行为。  
+  
+ 有关详细信息，请参阅在[加载或分析 XML 时保留空白](https://msdn.microsoft.com/library/093a7169-a04e-4638-b08c-d1cb98aa650d)，并[在序列化时保留空白区域](https://msdn.microsoft.com/library/fb146217-0a49-4efc-ac84-7265b91d3939)。  
+  
+   
+  
+## Examples  
+ 下面的示例演示了此方法的两种用法。 第一次使用将保留空白。 第二个序列化<xref:System.Xml.Linq.XStreamingElement> ，并将设置为格式。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XStreamingElement dstTree = new XStreamingElement("NewRoot",  
+                        from el in srcTree.Elements()  
+                        where (int)el == 3  
+                        select new XElement("DifferentChild", (int)el)  
+                    );  
+  
+StringBuilder sb = new StringBuilder();  
+dstTree.Save(new StringWriter(sb), SaveOptions.DisableFormatting);  
+Console.WriteLine(sb.ToString());  
+Console.WriteLine("------");  
+sb = new StringBuilder();  
+dstTree.Save(new StringWriter(sb), SaveOptions.None);  
+Console.WriteLine(sb.ToString());  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+    <Root>  
+        <Child>1</Child>  
+        <Child>2</Child>  
+        <Child>3</Child>  
+        <Child>4</Child>  
+        <Child>5</Child>  
+    </Root>  
+  
+Dim dstTree As XStreamingElement = New XStreamingElement("NewRoot", _  
+                        From el In srcTree.Elements() _  
+                        Where el.Value = 3 _  
+                        Select <DifferentChild><%= el.Value %></DifferentChild> _  
+                    )  
+  
+Dim sb As StringBuilder = New StringBuilder()  
+dstTree.Save(New StringWriter(sb), SaveOptions.DisableFormatting)  
+Console.WriteLine(sb.ToString())  
+Console.WriteLine("------")  
+sb = New StringBuilder()  
+dstTree.Save(New StringWriter(sb), SaveOptions.None)  
+Console.WriteLine(sb.ToString())  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```xml  
+<?xml version="1.0" encoding="utf-16"?><NewRoot><DifferentChild>3</DifferentChild></NewRoot>  
+------  
+<?xml version="1.0" encoding="utf-16"?>  
+<NewRoot>  
+  <DifferentChild>3</DifferentChild>  
+</NewRoot>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save (string fileName, System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Save(string fileName, valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.Save(System.String,System.Xml.Linq.SaveOptions)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Save (fileName As String, options As SaveOptions)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Save(System::String ^ fileName, System::Xml::Linq::SaveOptions options);" />
+      <MemberSignature Language="F#" Value="member this.Save : string * System.Xml.Linq.SaveOptions -&gt; unit" Usage="xStreamingElement.Save (fileName, options)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fileName" Type="System.String" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="fileName">一个包含文件名称的 <see cref="T:System.String" />。</param>
+        <param name="options">一个 <see cref="T:System.Xml.Linq.SaveOptions" /> 对象，该对象指定格式设置行为。</param>
+        <summary>将此流元素序列化为文件，还可以选择禁用格式设置。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果要保存未缩进的 XML，请<xref:System.Xml.Linq.SaveOptions.DisableFormatting>指定的`options`标志。 这将导致编写器完全按 XML 树中的表示方式写入所有空格。  
+  
+ 如果要保存缩进的 XML，请勿为<xref:System.Xml.Linq.SaveOptions.DisableFormatting> `options`指定标志。 这将删除所有无关的无意义空格，并添加适当的无意义空白，以便正确缩进 XML。 这是默认行为，以及<xref:System.Xml.Linq.XElement.Save%2A> `options`不作为参数的方法的重载行为。  
+  
+ 有关详细信息，请参阅在[加载或分析 XML 时保留空白](https://msdn.microsoft.com/library/093a7169-a04e-4638-b08c-d1cb98aa650d)，并[在序列化时保留空白区域](https://msdn.microsoft.com/library/fb146217-0a49-4efc-ac84-7265b91d3939)。  
+  
+   
+  
+## Examples  
+ 下面的示例演示了此方法的两种用法。 第一次使用将保留空白。 第二个序列化<xref:System.Xml.Linq.XStreamingElement> ，并将设置为格式。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XStreamingElement dstTree = new XStreamingElement("NewRoot",  
+                        from el in srcTree.Elements()  
+                        where (int)el == 3  
+                        select new XElement("DifferentChild", (int)el)  
+                    );  
+  
+dstTree.Save("Test1.xml", SaveOptions.DisableFormatting);  
+dstTree.Save("Test2.xml", SaveOptions.None);  
+Console.WriteLine(File.ReadAllText("Test1.xml"));  
+Console.WriteLine("------");  
+Console.WriteLine(File.ReadAllText("Test2.xml"));  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+    <Root>  
+        <Child>1</Child>  
+        <Child>2</Child>  
+        <Child>3</Child>  
+        <Child>4</Child>  
+        <Child>5</Child>  
+    </Root>  
+  
+Dim dstTree As XStreamingElement = New XStreamingElement("NewRoot", _  
+                        From el In srcTree.Elements() _  
+                        Where el.Value = 3 _  
+                        Select <DifferentChild><%= el.Value %></DifferentChild> _  
+                    )  
+  
+dstTree.Save("Test1.xml", SaveOptions.DisableFormatting)  
+dstTree.Save("Test2.xml", SaveOptions.None)  
+Console.WriteLine(File.ReadAllText("Test1.xml"))  
+Console.WriteLine("------")  
+Console.WriteLine(File.ReadAllText("Test2.xml"))  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```  
+<?xml version="1.0" encoding="utf-8"?><NewRoot><DifferentChild>3</DifferentChild></NewRoot>  
+------  
+<?xml version="1.0" encoding="utf-8"?>  
+<NewRoot>  
+  <DifferentChild>3</DifferentChild>  
+</NewRoot>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="ToString">
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>返回此流元素的 XML，还可以选择禁用格式设置。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 请注意，在调试使用<xref:System.Xml.Linq.XStreamingElement>的程序时，显示对象的值将导致调用其<xref:System.Xml.Linq.XStreamingElement.ToString%2A>方法。 这将导致对 XML 进行序列化。 如果流式处理元素查询的语义使得流式处理元素只能流式传输一次，则这可能会导致在调试过程中出现意外的行为。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.ToString" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function ToString () As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::String ^ ToString();" />
+      <MemberSignature Language="F#" Value="override this.ToString : unit -&gt; string" Usage="xStreamingElement.ToString " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>返回此流元素的格式设置（缩进）XML。</summary>
+        <returns>包含缩进 XML 的 <see cref="T:System.String" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 请注意，在调试使用<xref:System.Xml.Linq.XStreamingElement>的程序时，显示对象的值将导致调用其<xref:System.Xml.Linq.XStreamingElement.ToString%2A>方法。 这将导致对 XML 进行序列化。 如果流式处理元素查询的语义使得流式处理元素只能流式传输一次，则这可能会导致在调试过程中出现意外的行为。  
+  
+   
+  
+## Examples  
+ 下面的示例演示了的<xref:System.Xml.Linq.XStreamingElement.ToString%2A>两种用法。 第一次使用将保留空白。 第二个序列化<xref:System.Xml.Linq.XStreamingElement> ，并将设置为格式。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XStreamingElement dstTree = new XStreamingElement("NewRoot",  
+                        from el in srcTree.Elements()  
+                        where (int)el == 3  
+                        select new XElement("DifferentChild", (int)el)  
+                    );  
+  
+Console.WriteLine(dstTree.ToString(SaveOptions.DisableFormatting));  
+Console.WriteLine("------");  
+Console.WriteLine(dstTree.ToString());  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+    <Root>  
+        <Child>1</Child>  
+        <Child>2</Child>  
+        <Child>3</Child>  
+        <Child>4</Child>  
+        <Child>5</Child>  
+    </Root>  
+  
+Dim dstTree As XStreamingElement = New XStreamingElement("NewRoot", _  
+                        From el In srcTree.Elements() _  
+                        Where el.Value = 3 _  
+                        Select <DifferentChild><%= el.Value %></DifferentChild> _  
+                    )  
+  
+Console.WriteLine(dstTree.ToString(SaveOptions.DisableFormatting))  
+Console.WriteLine("------")  
+Console.WriteLine(dstTree.ToString())  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```  
+<NewRoot><DifferentChild>3</DifferentChild></NewRoot>  
+------  
+<NewRoot>  
+  <DifferentChild>3</DifferentChild>  
+</NewRoot>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public string ToString (System.Xml.Linq.SaveOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(valuetype System.Xml.Linq.SaveOptions options) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.ToString(System.Xml.Linq.SaveOptions)" />
+      <MemberSignature Language="VB.NET" Value="Public Function ToString (options As SaveOptions) As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::String ^ ToString(System::Xml::Linq::SaveOptions options);" />
+      <MemberSignature Language="F#" Value="override this.ToString : System.Xml.Linq.SaveOptions -&gt; string" Usage="xStreamingElement.ToString options" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="options" Type="System.Xml.Linq.SaveOptions" />
+      </Parameters>
+      <Docs>
+        <param name="options">指定格式设置行为的 <see cref="T:System.Xml.Linq.SaveOptions" />。</param>
+        <summary>返回此流元素的 XML，还可以选择禁用格式设置。</summary>
+        <returns>包含 XML 的 <see cref="T:System.String" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 请注意，在调试使用<xref:System.Xml.Linq.XStreamingElement>的程序时，显示对象的值将导致调用其<xref:System.Xml.Linq.XStreamingElement.ToString%2A>方法。 这将导致对 XML 进行序列化。 如果流式处理元素查询的语义使得流式处理元素只能流式传输一次，则这可能会导致在调试过程中出现意外的行为。  
+  
+   
+  
+## Examples  
+ 下面的示例演示了的<xref:System.Xml.Linq.XStreamingElement.ToString%2A>两种用法。 第一次使用将保留空白。 第二个序列化<xref:System.Xml.Linq.XStreamingElement> ，并将设置为格式。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XStreamingElement dstTree = new XStreamingElement("NewRoot",  
+                        from el in srcTree.Elements()  
+                        where (int)el == 3  
+                        select new XElement("DifferentChild", (int)el)  
+                    );  
+  
+Console.WriteLine(dstTree.ToString(SaveOptions.DisableFormatting));  
+Console.WriteLine("------");  
+Console.WriteLine(dstTree.ToString());  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+    <Root>  
+        <Child>1</Child>  
+        <Child>2</Child>  
+        <Child>3</Child>  
+        <Child>4</Child>  
+        <Child>5</Child>  
+    </Root>  
+  
+Dim dstTree As XStreamingElement = New XStreamingElement("NewRoot", _  
+                        From el In srcTree.Elements() _  
+                        Where el.Value = 3 _  
+                        Select <DifferentChild><%= el.Value %></DifferentChild> _  
+                    )  
+  
+Console.WriteLine(dstTree.ToString(SaveOptions.DisableFormatting))  
+Console.WriteLine("------")  
+Console.WriteLine(dstTree.ToString())  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```  
+<NewRoot><DifferentChild>3</DifferentChild></NewRoot>  
+------  
+<NewRoot>  
+  <DifferentChild>3</DifferentChild>  
+</NewRoot>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteTo">
+      <MemberSignature Language="C#" Value="public void WriteTo (System.Xml.XmlWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteTo(class System.Xml.XmlWriter writer) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.Linq.XStreamingElement.WriteTo(System.Xml.XmlWriter)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub WriteTo (writer As XmlWriter)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void WriteTo(System::Xml::XmlWriter ^ writer);" />
+      <MemberSignature Language="F#" Value="member this.WriteTo : System.Xml.XmlWriter -&gt; unit" Usage="xStreamingElement.WriteTo writer" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.XDocument</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Xml.Linq</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">此方法将写入其中的 <see cref="T:System.Xml.XmlWriter" />。</param>
+        <summary>将此流元素写入 <see cref="T:System.Xml.XmlWriter" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的示例使用<xref:System.Xml.Linq.XStreamingElement>创建一个 XML 树。 然后，它将流式处理元素<xref:System.Xml.XmlWriter>写入。  
+  
+```csharp  
+XElement srcTree = new XElement("Root",  
+                       new XElement("Child", 1),  
+                       new XElement("Child", 2),  
+                       new XElement("Child", 3),  
+                       new XElement("Child", 4),  
+                       new XElement("Child", 5)  
+                   );  
+  
+XStreamingElement dstTree = new XStreamingElement("NewRoot",  
+                        from el in srcTree.Elements()  
+                        where (int)el == 3  
+                        select new XElement("DifferentChild", (int)el)  
+                    );  
+  
+StringBuilder sb = new StringBuilder();  
+XmlWriterSettings xws = new XmlWriterSettings();  
+xws.OmitXmlDeclaration = true;  
+xws.Indent = true;  
+  
+using (XmlWriter xw = XmlWriter.Create(sb, xws))  
+{  
+    dstTree.WriteTo(xw);  
+}  
+Console.WriteLine(sb.ToString());  
+```  
+  
+```vb  
+Dim srcTree As XElement = _  
+    <Root>  
+        <Child>1</Child>  
+        <Child>2</Child>  
+        <Child>3</Child>  
+        <Child>4</Child>  
+        <Child>5</Child>  
+    </Root>  
+  
+Dim dstTree As XStreamingElement = _   
+    New XStreamingElement("NewRoot", _  
+        From el In srcTree.Elements() _  
+        Where el.Value = 3 _  
+        Select <DifferentChild><%= el.Value %></DifferentChild> )  
+  
+Dim sb As StringBuilder = New StringBuilder()  
+Dim xws As XmlWriterSettings = New XmlWriterSettings()  
+xws.OmitXmlDeclaration = True  
+xws.Indent = True  
+  
+Using xw As XmlWriter = XmlWriter.Create(sb, xws)  
+    dstTree.WriteTo(xw)  
+End Using  
+Console.WriteLine(sb.ToString())  
+```  
+  
+ 该示例产生下面的输出：  
+  
+```xml  
+<NewRoot>  
+  <DifferentChild>3</DifferentChild>  
+</NewRoot>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/f0fe21e9-ee43-4a55-b91a-0800e5782c13">LINQ to XML</related>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
