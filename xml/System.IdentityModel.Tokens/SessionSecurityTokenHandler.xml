@@ -1,0 +1,996 @@
+<Type Name="SessionSecurityTokenHandler" FullName="System.IdentityModel.Tokens.SessionSecurityTokenHandler">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="a87da613926af9faf82add64d298b573be21ce43" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70437753" /></Metadata><TypeSignature Language="C#" Value="public class SessionSecurityTokenHandler : System.IdentityModel.Tokens.SecurityTokenHandler" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SessionSecurityTokenHandler extends System.IdentityModel.Tokens.SecurityTokenHandler" />
+  <TypeSignature Language="DocId" Value="T:System.IdentityModel.Tokens.SessionSecurityTokenHandler" />
+  <TypeSignature Language="VB.NET" Value="Public Class SessionSecurityTokenHandler&#xA;Inherits SecurityTokenHandler" />
+  <TypeSignature Language="C++ CLI" Value="public ref class SessionSecurityTokenHandler : System::IdentityModel::Tokens::SecurityTokenHandler" />
+  <TypeSignature Language="F#" Value="type SessionSecurityTokenHandler = class&#xA;    inherit SecurityTokenHandler" />
+  <AssemblyInfo>
+    <AssemblyName>System.IdentityModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.IdentityModel.Tokens.SecurityTokenHandler</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary><see cref="T:System.IdentityModel.Tokens.SecurityTokenHandler" />类型的 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 进程安全标志。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler>类序列化、反序列化和验证会话令牌。 会话令牌是类型<xref:System.IdentityModel.Tokens.SessionSecurityToken>为的令牌。 <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler>类将标记序列化为 cookie 格式。 默认情况下，类将标记序列化为 ws 安全会话 Feb2005 或 ws 安全会话 1.3 `<wsc:SecurityContextToken>`元素。 会话令牌由<xref:System.IdentityModel.Services.WSFederationAuthenticationModule> （WSFAM） <xref:System.IdentityModel.Services.SessionAuthenticationModule>和（SAM）用于存储有关会话的信息，这主要是与经过身份验证的<xref:System.Security.Claims.ClaimsPrincipal>用户和会话的开始和到期时间关联的。  
+  
+ 在被动方案中， <xref:System.IdentityModel.Services.WSFederationAuthenticationModule>从身份验证<xref:System.IdentityModel.Services.SessionAuthenticationModule>管道调用到（SAM），以从表示经过身份验证的<xref:System.Security.Claims.ClaimsPrincipal>用户的中创建会话令牌。 SAM 使用其配置<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler>的来创建令牌并将其序列化为 cookie （并在后续请求中从 cookie 反序列化令牌）。 SAM 使用其已配置<xref:System.IdentityModel.Services.CookieHandler>类的实例将 cookie 写入 HTTP 响应。 然后，将此 cookie 返回给客户端，并在后续的请求中，客户端可以提供 cookie，而不是向标识提供程序重新获取安全令牌。 有关会话如何与 WIF 操作的详细信息，请参阅[WIF 会话管理](~/docs/framework/security/wif-session-management.md)。  
+  
+> [!NOTE]
+>  SecurityTokenHandlers > 配置元素可用于<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler>指定负责保护应用程序会话的。 \< 在更改此配置设置时，开发人员应小心，因为配置错误的系统可能会导致应用程序受到损害。 例如，指定派生<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler>并将空的转换（CookieTransform）集合传递给基，会导致将用户标识序列化为未受保护的 cookie。 这会使攻击者能够修改身份，从而更改访问权限。  
+  
+ 如果会话令牌处于引用模式，即其<xref:System.IdentityModel.Tokens.SessionSecurityToken.IsReferenceMode%2A?displayProperty=nameWithType>属性为`true`，则会话令牌处理程序只会序列化在中<xref:System.IdentityModel.Tokens.SessionSecurityTokenCache>重新生成其密钥所需的会话令牌的属性。 默认情况下， <xref:System.IdentityModel.Tokens.SessionSecurityTokenCacheKey>类用于表示缓存键，而标记处理程序则<xref:System.IdentityModel.Tokens.SessionSecurityToken.ContextId%2A?displayProperty=nameWithType>写入令牌的和<xref:System.IdentityModel.Tokens.SessionSecurityToken.KeyGeneration%2A?displayProperty=nameWithType>属性。 如果会话令牌不在引用模式下（即<xref:System.IdentityModel.Tokens.SessionSecurityToken.IsReferenceMode%2A?displayProperty=nameWithType> ，属性为，则除了前面提到的属性外，处理程序还会`false`从令牌序列化的<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ApplyTransforms%2A>字节数组调用方法，并存储cookie 中的结果值。 有关如何序列化令牌的更多详细信息，请<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.WriteToken%28System.Xml.XmlWriter%2CSystem.IdentityModel.Tokens.SecurityToken%29?displayProperty=nameWithType>参阅方法。  
+  
+ <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.Transforms%2A>属性获取 <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ApplyTransforms%2A> 在方法中应用到会话令牌的转换的列表。 所有转换均派生自<xref:System.IdentityModel.CookieTransform>类。 在默认情况下<xref:System.IdentityModel.DeflateCookieTransform> ，将应用<xref:System.IdentityModel.ProtectedDataCookieTransform>和。 <xref:System.IdentityModel.ProtectedDataCookieTransform>使用数据保护 API （DPAPI）来保护 cookie 材料。 DPAPI 使用特定于计算机的密钥，该密钥在其保护算法中运行。 出于此原因，默认会话令牌处理程序在 Web 场方案中不可用，因为在这种情况下，在一台计算机上写入的令牌可能需要在另一台计算机上进行读取。 您可以使用多种策略来避免此问题。 例如，你可以：  
+  
+-   用替换默认<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler>值。 <xref:System.IdentityModel.Services.Tokens.MachineKeySessionSecurityTokenHandler> 允许你在配置文件中的 ASP.NET `<machineKey>`元素下指定签名和加密密钥。 <xref:System.IdentityModel.Services.Tokens.MachineKeySessionSecurityTokenHandler>  
+  
+-   为 global.asax.cs 文件中的<xref:System.IdentityModel.Services.FederatedAuthentication.FederationConfigurationCreated?displayProperty=nameWithType>事件提供处理程序，并将默认会话标记处理程序替换为具有包含<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler> <xref:System.IdentityModel.RsaSignatureCookieTransform>和<xref:System.IdentityModel.RsaEncryptionCookieTransform>的转换列表的实例。 可以通过调用采用转换列表的构造函数之一来创建新的实例。  
+  
+-   从<xref:System.IdentityModel.CookieTransform>基类派生自定义转换，并使用上面的方法将其包含在要应用的转换的列表中。  
+  
+-   从<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler>派生自定义令牌处理程序并实现你自己的机制。  
+  
+ 有关在 Web 场方案中使用会话的详细信息，请参阅[WIF 和 Web 场](~/docs/framework/security/wif-and-web-farms.md)。  
+  
+ 包含在默认标记处理程序集合中; 但是，你可以将其替换为自定义会话标记处理程序，方法是[ &lt;先&gt;在](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/remove.md) <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler> [ &lt;securityTokenHandlers &gt;  ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/securitytokenhandlers.md)元素从集合中删除默认处理程序，然后使用[ &lt;add&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/add.md)元素添加自定义令牌处理程序。 默认情况下，你可以通过在`<add>`元素下包含[ &lt;sessionTokenRequirement&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/sessiontokenrequirement.md)元素来指定默认的令牌生存期。 可以通过`<add>` <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.LoadCustomConfiguration%2A>重写方法来设计自定义标记处理程序，以便在元素下采用自定义配置元素，从而提供处理它们的逻辑。  
+  
+   
+  
+## Examples  
+ 下面的 XML 演示如何在配置中使用<xref:System.IdentityModel.Services.Tokens.MachineKeySessionSecurityTokenHandler>类的实例替换标记处理程序集合中的默认会话安全标记处理程序。  
+  
+```xml  
+<securityTokenHandlers>  
+  <remove type="System.IdentityModel.Tokens.SessionSecurityTokenHandler, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />  
+  <add type="System.IdentityModel.Services.Tokens.MachineKeySessionSecurityTokenHandler, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />  
+</securityTokenHandlers>  
+```  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.IdentityModel.Tokens.SessionSecurityTokenCache" />
+    <altmember cref="T:System.IdentityModel.Tokens.SessionSecurityToken" />
+    <altmember cref="T:System.IdentityModel.Services.Tokens.MachineKeySessionSecurityTokenHandler" />
+    <altmember cref="T:System.IdentityModel.CookieTransform" />
+    <related type="Article" href="https://msdn.microsoft.com/library/496a1735-cbb7-49d5-a6aa-dd5550462073">&lt;sessionTokenRequirement&gt;</related>
+    <related type="Article" href="https://msdn.microsoft.com/library/fc3cd7fa-2b45-4614-a44f-8fa9b9d15284">WIF 和 Web 场</related>
+    <related type="Article" href="https://msdn.microsoft.com/library/98bce126-18a9-401b-b20d-67ee462a5f8a">WIF 会话管理</related>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.IdentityModel.Tokens.SessionSecurityTokenHandler" /> 类的新实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SessionSecurityTokenHandler ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; SessionSecurityTokenHandler();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>初始化使用默认 Cookie 转换和令牌生存期的 <see cref="T:System.IdentityModel.Tokens.SessionSecurityTokenHandler" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 和属性初始化为 <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.DefaultLifetime> 和。 <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.DefaultCookieTransforms>  <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.TokenLifetime%2A> <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.Transforms%2A>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SessionSecurityTokenHandler (System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt; transforms);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.CookieTransform&gt; transforms) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.#ctor(System.Collections.ObjectModel.ReadOnlyCollection{System.IdentityModel.CookieTransform})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (transforms As ReadOnlyCollection(Of CookieTransform))" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; SessionSecurityTokenHandler(System::Collections::ObjectModel::ReadOnlyCollection&lt;System::IdentityModel::CookieTransform ^&gt; ^ transforms);" />
+      <MemberSignature Language="F#" Value="new System.IdentityModel.Tokens.SessionSecurityTokenHandler : System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt; -&gt; System.IdentityModel.Tokens.SessionSecurityTokenHandler" Usage="new System.IdentityModel.Tokens.SessionSecurityTokenHandler transforms" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="transforms" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="transforms">要在编码或解码 Cookie 时应用的转换。 设置 <see cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.Transforms" /> 属性。</param>
+        <summary>初始化使用指定的 cookie 转换  <see cref="T:System.IdentityModel.Tokens.SessionSecurityTokenHandler" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将 <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.TokenLifetime%2A> 属性初始化为 <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.DefaultLifetime>。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="transforms" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SessionSecurityTokenHandler (System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt; transforms, TimeSpan tokenLifetime);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.CookieTransform&gt; transforms, valuetype System.TimeSpan tokenLifetime) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.#ctor(System.Collections.ObjectModel.ReadOnlyCollection{System.IdentityModel.CookieTransform},System.TimeSpan)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (transforms As ReadOnlyCollection(Of CookieTransform), tokenLifetime As TimeSpan)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; SessionSecurityTokenHandler(System::Collections::ObjectModel::ReadOnlyCollection&lt;System::IdentityModel::CookieTransform ^&gt; ^ transforms, TimeSpan tokenLifetime);" />
+      <MemberSignature Language="F#" Value="new System.IdentityModel.Tokens.SessionSecurityTokenHandler : System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt; * TimeSpan -&gt; System.IdentityModel.Tokens.SessionSecurityTokenHandler" Usage="new System.IdentityModel.Tokens.SessionSecurityTokenHandler (transforms, tokenLifetime)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="transforms" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt;" />
+        <Parameter Name="tokenLifetime" Type="System.TimeSpan" />
+      </Parameters>
+      <Docs>
+        <param name="transforms">要在编码或解码 Cookie 时应用的转换。 设置 <see cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.Transforms" /> 属性。</param>
+        <param name="tokenLifetime">标牌的默认生存期。 设置 <see cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.TokenLifetime" /> 属性。</param>
+        <summary>初始化使用指定 Cookie 转换和令牌生存期的 <see cref="T:System.IdentityModel.Tokens.SessionSecurityTokenHandler" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="transforms" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="tokenLifetime" /> 小于或等于 <see cref="F:System.TimeSpan.Zero" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplyTransforms">
+      <MemberSignature Language="C#" Value="protected virtual byte[] ApplyTransforms (byte[] cookie, bool outbound);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance unsigned int8[] ApplyTransforms(unsigned int8[] cookie, bool outbound) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ApplyTransforms(System.Byte[],System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Function ApplyTransforms (cookie As Byte(), outbound As Boolean) As Byte()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual cli::array &lt;System::Byte&gt; ^ ApplyTransforms(cli::array &lt;System::Byte&gt; ^ cookie, bool outbound);" />
+      <MemberSignature Language="F#" Value="abstract member ApplyTransforms : byte[] * bool -&gt; byte[]&#xA;override this.ApplyTransforms : byte[] * bool -&gt; byte[]" Usage="sessionSecurityTokenHandler.ApplyTransforms (cookie, outbound)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cookie" Type="System.Byte[]" />
+        <Parameter Name="outbound" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="cookie">将转换的 cookie。</param>
+        <param name="outbound">如果应编码 cookie，则为 <see langword="true" />；如果应解码 cookie，则为 <see langword="false" />。</param>
+        <summary>将 <see cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.Transforms" /> 属性指定的转换应用于对指定 Cookie 进行编码或解码。</summary>
+        <returns>编码或解码的 cookie。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当对 cookie 转换进行编码时，将按照它们在<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.Transforms%2A>属性中出现的顺序应用。 当对 cookie 进行解码时，它们将按相反的顺序应用。  
+  
+ 从<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.WriteToken%2A> 和 <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ReadToken%2A> 方法调用以对 cookie 材料进行编码和解码。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><see cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.Transforms" /> 属性为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CanReadToken">
+      <MemberSignature Language="C#" Value="public override bool CanReadToken (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool CanReadToken(class System.Xml.XmlReader reader) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CanReadToken(System.Xml.XmlReader)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function CanReadToken (reader As XmlReader) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override bool CanReadToken(System::Xml::XmlReader ^ reader);" />
+      <MemberSignature Language="F#" Value="override this.CanReadToken : System.Xml.XmlReader -&gt; bool" Usage="sessionSecurityTokenHandler.CanReadToken reader" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">在 <see cref="T:System.Xml.XmlReader" /> 上传入 <see cref="T:System.IdentityModel.Tokens.SecurityToken" />。 读取器应定位在 <see langword="&lt;wsc:SecurityContextToken&gt;" /> 元素。</param>
+        <summary>返回一个值，该值指示读取器是否放置于 <see langword="&lt;wsc:SecurityContextToken&gt;" /> 元素处。</summary>
+        <returns>如果该读取器指向 <see langword="true" /> 元素，则为 <see langword="&lt;wsc:SecurityContextToken&gt;" />；否则为 <see langword="false" />。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="reader" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CanValidateToken">
+      <MemberSignature Language="C#" Value="public override bool CanValidateToken { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanValidateToken" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CanValidateToken" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property CanValidateToken As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property bool CanValidateToken { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.CanValidateToken : bool" Usage="System.IdentityModel.Tokens.SessionSecurityTokenHandler.CanValidateToken" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个值，该值指示此处理程序是否支持对 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 类型的标记进行验证。</summary>
+        <value>如果该处理器支持类型 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 标记的验证，则为 <see langword="true" />；否则为 <see langword="false" />。 总是为 <see langword="true" />。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CanWriteToken">
+      <MemberSignature Language="C#" Value="public override bool CanWriteToken { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanWriteToken" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CanWriteToken" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property CanWriteToken As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property bool CanWriteToken { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.CanWriteToken : bool" Usage="System.IdentityModel.Tokens.SessionSecurityTokenHandler.CanWriteToken" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取指示此处理程序能否写入 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 类型的标记的值。</summary>
+        <value>如果处理程序现在可以写入类型 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 的标记，则为 <see langword="true" />；否则为 <see langword="false" />。 总是为 <see langword="true" />。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CookieElementName">
+      <MemberSignature Language="C#" Value="public virtual string CookieElementName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CookieElementName" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CookieElementName" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable ReadOnly Property CookieElementName As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::String ^ CookieElementName { System::String ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.CookieElementName : string" Usage="System.IdentityModel.Tokens.SessionSecurityTokenHandler.CookieElementName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 Cookie 元素的名称。</summary>
+        <value>Cookie 元素的名称。 默认元素名称为 "Cookie"。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.WriteToken%2A> 和 <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ReadToken%2A> 方法中使用此属性来确定应在其下写入或读取编码标记材料的元素。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CookieNamespace" />
+        <altmember cref="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.WriteToken(System.IdentityModel.Tokens.SessionSecurityToken)" />
+        <altmember cref="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ReadToken(System.Byte[],System.IdentityModel.Selectors.SecurityTokenResolver)" />
+      </Docs>
+    </Member>
+    <Member MemberName="CookieNamespace">
+      <MemberSignature Language="C#" Value="public virtual string CookieNamespace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CookieNamespace" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CookieNamespace" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable ReadOnly Property CookieNamespace As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::String ^ CookieNamespace { System::String ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.CookieNamespace : string" Usage="System.IdentityModel.Tokens.SessionSecurityTokenHandler.CookieNamespace" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 Cookie 元素的命名空间。</summary>
+        <value>Cookie 元素的命名空间。 默认命名空间为<c>"http://schemas.microsoft.com/ws/2006/05/security"</c>。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.WriteToken%2A> 和 <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ReadToken%2A> 方法中使用此属性来确定应在其下写入或读取编码标记材料的元素的命名空间。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CookieElementName" />
+        <altmember cref="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.WriteToken(System.IdentityModel.Tokens.SessionSecurityToken)" />
+        <altmember cref="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ReadToken(System.Byte[],System.IdentityModel.Selectors.SecurityTokenResolver)" />
+      </Docs>
+    </Member>
+    <Member MemberName="CreateSessionSecurityToken">
+      <MemberSignature Language="C#" Value="public virtual System.IdentityModel.Tokens.SessionSecurityToken CreateSessionSecurityToken (System.Security.Claims.ClaimsPrincipal principal, string context, string endpointId, DateTime validFrom, DateTime validTo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IdentityModel.Tokens.SessionSecurityToken CreateSessionSecurityToken(class System.Security.Claims.ClaimsPrincipal principal, string context, string endpointId, valuetype System.DateTime validFrom, valuetype System.DateTime validTo) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CreateSessionSecurityToken(System.Security.Claims.ClaimsPrincipal,System.String,System.String,System.DateTime,System.DateTime)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function CreateSessionSecurityToken (principal As ClaimsPrincipal, context As String, endpointId As String, validFrom As DateTime, validTo As DateTime) As SessionSecurityToken" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IdentityModel::Tokens::SessionSecurityToken ^ CreateSessionSecurityToken(System::Security::Claims::ClaimsPrincipal ^ principal, System::String ^ context, System::String ^ endpointId, DateTime validFrom, DateTime validTo);" />
+      <MemberSignature Language="F#" Value="abstract member CreateSessionSecurityToken : System.Security.Claims.ClaimsPrincipal * string * string * DateTime * DateTime -&gt; System.IdentityModel.Tokens.SessionSecurityToken&#xA;override this.CreateSessionSecurityToken : System.Security.Claims.ClaimsPrincipal * string * string * DateTime * DateTime -&gt; System.IdentityModel.Tokens.SessionSecurityToken" Usage="sessionSecurityTokenHandler.CreateSessionSecurityToken (principal, context, endpointId, validFrom, validTo)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Tokens.SessionSecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="principal" Type="System.Security.Claims.ClaimsPrincipal" />
+        <Parameter Name="context" Type="System.String" />
+        <Parameter Name="endpointId" Type="System.String" />
+        <Parameter Name="validFrom" Type="System.DateTime" />
+        <Parameter Name="validTo" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="principal">声明主体。</param>
+        <param name="context">调用方定义的上下文字符串。</param>
+        <param name="endpointId">限定标识范围的终点的标示符。</param>
+        <param name="validFrom">标记变为有效的时间时刻。</param>
+        <param name="validTo">其后时间不再有效的时间时刻。</param>
+        <summary>创建基于指定声明主体和时间范围（在此时间范围内标记有效）的 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 。</summary>
+        <returns>生成的会话安全令牌。 将根据指定的参数设置新会话令牌上的属性。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="principal" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException"><see cref="P:System.IdentityModel.Tokens.SecurityTokenHandler.Configuration" /> 属性为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateToken">
+      <MemberSignature Language="C#" Value="public override System.IdentityModel.Tokens.SecurityToken CreateToken (System.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IdentityModel.Tokens.SecurityToken CreateToken(class System.IdentityModel.Tokens.SecurityTokenDescriptor tokenDescriptor) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CreateToken(System.IdentityModel.Tokens.SecurityTokenDescriptor)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function CreateToken (tokenDescriptor As SecurityTokenDescriptor) As SecurityToken" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::IdentityModel::Tokens::SecurityToken ^ CreateToken(System::IdentityModel::Tokens::SecurityTokenDescriptor ^ tokenDescriptor);" />
+      <MemberSignature Language="F#" Value="override this.CreateToken : System.IdentityModel.Tokens.SecurityTokenDescriptor -&gt; System.IdentityModel.Tokens.SecurityToken" Usage="sessionSecurityTokenHandler.CreateToken tokenDescriptor" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Tokens.SecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="tokenDescriptor" Type="System.IdentityModel.Tokens.SecurityTokenDescriptor" />
+      </Parameters>
+      <Docs>
+        <param name="tokenDescriptor">用于创建标记的标记说明符。</param>
+        <summary>创建基于指定标记描述符的安全令牌。</summary>
+        <returns>创建的安全令牌。 这将是 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 的实例。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 通过在标记描述符中使用以下属性，创建并返回会话安全令牌： <xref:System.IdentityModel.Tokens.SecurityTokenDescriptor.Subject%2A?displayProperty=nameWithType>和。 <xref:System.IdentityModel.Tokens.SecurityTokenDescriptor.Lifetime%2A?displayProperty=nameWithType> 如果在<xref:System.IdentityModel.Tokens.SecurityTokenHandlerConfiguration.SaveBootstrapContext%2A?displayProperty=nameWithType> <xref:System.IdentityModel.Tokens.SecurityTokenHandler.Configuration%2A>属性指定的`true`令牌处理程序配置上设置了该属性，则会从该<xref:System.IdentityModel.Tokens.SecurityTokenDescriptor.Token%2A?displayProperty=nameWithType>属性创建引导上下文，并将其保存在会话令牌中。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="tokenDescriptor" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException"><see cref="P:System.IdentityModel.Tokens.SecurityTokenHandler.Configuration" /> 属性为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultCookieTransforms">
+      <MemberSignature Language="C#" Value="public static readonly System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt; DefaultCookieTransforms;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.CookieTransform&gt; DefaultCookieTransforms" />
+      <MemberSignature Language="DocId" Value="F:System.IdentityModel.Tokens.SessionSecurityTokenHandler.DefaultCookieTransforms" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly DefaultCookieTransforms As ReadOnlyCollection(Of CookieTransform) " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Collections::ObjectModel::ReadOnlyCollection&lt;System::IdentityModel::CookieTransform ^&gt; ^ DefaultCookieTransforms;" />
+      <MemberSignature Language="F#" Value=" staticval mutable DefaultCookieTransforms : System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt;" Usage="System.IdentityModel.Tokens.SessionSecurityTokenHandler.DefaultCookieTransforms" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>一个只读集合，它包含要应用于 Cookie（<see cref="T:System.IdentityModel.DeflateCookieTransform" /> 和 <see cref="T:System.IdentityModel.ProtectedDataCookieTransform" />）的默认转换的列表。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultLifetime">
+      <MemberSignature Language="C#" Value="public static readonly TimeSpan DefaultLifetime;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype System.TimeSpan DefaultLifetime" />
+      <MemberSignature Language="DocId" Value="F:System.IdentityModel.Tokens.SessionSecurityTokenHandler.DefaultLifetime" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly DefaultLifetime As TimeSpan " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly TimeSpan DefaultLifetime;" />
+      <MemberSignature Language="F#" Value=" staticval mutable DefaultLifetime : TimeSpan" Usage="System.IdentityModel.Tokens.SessionSecurityTokenHandler.DefaultLifetime" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>一个常量，它指定 Cookie 的默认生存期为 10 小时。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DefaultTokenLifetime">
+      <MemberSignature Language="C#" Value="public static TimeSpan DefaultTokenLifetime { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.TimeSpan DefaultTokenLifetime" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.DefaultTokenLifetime" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly Property DefaultTokenLifetime As TimeSpan" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property TimeSpan DefaultTokenLifetime { TimeSpan get(); };" />
+      <MemberSignature Language="F#" Value="member this.DefaultTokenLifetime : TimeSpan" Usage="System.IdentityModel.Tokens.SessionSecurityTokenHandler.DefaultTokenLifetime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取默认的令牌生存期。</summary>
+        <value>默认的令牌生存期。 总是为 <see cref="F:System.IdentityModel.Tokens.SessionSecurityTokenHandler.DefaultLifetime" />。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetTokenTypeIdentifiers">
+      <MemberSignature Language="C#" Value="public override string[] GetTokenTypeIdentifiers ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string[] GetTokenTypeIdentifiers() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.GetTokenTypeIdentifiers" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetTokenTypeIdentifiers () As String()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override cli::array &lt;System::String ^&gt; ^ GetTokenTypeIdentifiers();" />
+      <MemberSignature Language="F#" Value="override this.GetTokenTypeIdentifiers : unit -&gt; string[]" Usage="sessionSecurityTokenHandler.GetTokenTypeIdentifiers " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>获取由处理程序处理的标记类型的标记标识符 URI。</summary>
+        <returns>由处理程序处理的标记类型的标识符 URI。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 支持以下类型的 Uri： 
+ 
+ - `http://schemas.microsoft.com/ws/2006/05/servicemodel/tokens/SecureConversation`
+ - `http://docs.oasis-open.org/ws-sx/ws-secureconversation/200512/sct`
+ - `http://schemas.xmlsoap.org/ws/2005/02/sc/sct`。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadCustomConfiguration">
+      <MemberSignature Language="C#" Value="public override void LoadCustomConfiguration (System.Xml.XmlNodeList customConfigElements);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void LoadCustomConfiguration(class System.Xml.XmlNodeList customConfigElements) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.LoadCustomConfiguration(System.Xml.XmlNodeList)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub LoadCustomConfiguration (customConfigElements As XmlNodeList)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void LoadCustomConfiguration(System::Xml::XmlNodeList ^ customConfigElements);" />
+      <MemberSignature Language="F#" Value="override this.LoadCustomConfiguration : System.Xml.XmlNodeList -&gt; unit" Usage="sessionSecurityTokenHandler.LoadCustomConfiguration customConfigElements" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="customConfigElements" Type="System.Xml.XmlNodeList" />
+      </Parameters>
+      <Docs>
+        <param name="customConfigElements">自定义配置元素。</param>
+        <summary>从 XML 加载自定义的配置。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 由配置基础结构调用以初始化<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler>实例。 从配置文件中的[ &lt; sessionTokenRequirement &gt;  ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/sessiontokenrequirement.md)元素的<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.TokenLifetime%2A> `lifetime`属性初始化属性。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="customConfigElements" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="customConfigElements" /> 指定的配置无效。 例如，它不包含 <see langword="&lt;sessionTokenRequirement&gt;" /> 元素，而包含多个 <see langword="&lt;sessionTokenRequirement&gt;" /> 元素，不能从 <see langword="lifetime" /> 特性中读取有效 <see cref="T:System.TimeSpan" /> 值，否则 <see langword="lifetime" /> 特性将指定小于 <see cref="F:System.TimeSpan.Zero" /> 的值。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/496a1735-cbb7-49d5-a6aa-dd5550462073">&lt;sessionTokenRequirement&gt;</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="ReadToken">
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>读取 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks
+
+[!INCLUDE [untrusted-data-method-note](~/includes/untrusted-data-method-note.md)]
+
+ 默认实现从 ws 安全对话 Feb2005 或 ws 安全会话 1.3 `<wsc:SecurityContextToken>`元素反序列化令牌。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="ReadToken">
+      <MemberSignature Language="C#" Value="public override System.IdentityModel.Tokens.SecurityToken ReadToken (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IdentityModel.Tokens.SecurityToken ReadToken(class System.Xml.XmlReader reader) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ReadToken(System.Xml.XmlReader)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function ReadToken (reader As XmlReader) As SecurityToken" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::IdentityModel::Tokens::SecurityToken ^ ReadToken(System::Xml::XmlReader ^ reader);" />
+      <MemberSignature Language="F#" Value="override this.ReadToken : System.Xml.XmlReader -&gt; System.IdentityModel.Tokens.SecurityToken" Usage="sessionSecurityTokenHandler.ReadToken reader" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Tokens.SecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">在 <see cref="T:System.Xml.XmlReader" /> 上传入 <see cref="T:System.IdentityModel.Tokens.SecurityToken" />。</param>
+        <summary>使用指定的 XML 读取器读取 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" />。</summary>
+        <returns>读取的会话安全令牌，<see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 的一个实例。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks
+
+[!INCLUDE [untrusted-data-method-note](~/includes/untrusted-data-method-note.md)]
+
+ 读取器必须位于 ws 安全对话 Feb2005 或 ws 安全会话 1.3 `<wsc:SecurityContextToken>`元素上。  
+  
+ 默认实现使用默认的<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ReadToken%28System.Xml.XmlReader%2CSystem.IdentityModel.Selectors.SecurityTokenResolver%29?displayProperty=nameWithType>标记解析器调用方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="reader" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.IdentityModel.Tokens.SecurityTokenException">读取器不放置在 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 或 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 无法读取。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadToken">
+      <MemberSignature Language="C#" Value="public virtual System.IdentityModel.Tokens.SecurityToken ReadToken (byte[] token, System.IdentityModel.Selectors.SecurityTokenResolver tokenResolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IdentityModel.Tokens.SecurityToken ReadToken(unsigned int8[] token, class System.IdentityModel.Selectors.SecurityTokenResolver tokenResolver) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ReadToken(System.Byte[],System.IdentityModel.Selectors.SecurityTokenResolver)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function ReadToken (token As Byte(), tokenResolver As SecurityTokenResolver) As SecurityToken" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IdentityModel::Tokens::SecurityToken ^ ReadToken(cli::array &lt;System::Byte&gt; ^ token, System::IdentityModel::Selectors::SecurityTokenResolver ^ tokenResolver);" />
+      <MemberSignature Language="F#" Value="override this.ReadToken : byte[] * System.IdentityModel.Selectors.SecurityTokenResolver -&gt; System.IdentityModel.Tokens.SecurityToken" Usage="sessionSecurityTokenHandler.ReadToken (token, tokenResolver)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Tokens.SecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token" Type="System.Byte[]" />
+        <Parameter Name="tokenResolver" Type="System.IdentityModel.Selectors.SecurityTokenResolver" />
+      </Parameters>
+      <Docs>
+        <param name="token">包含令牌的字节流。</param>
+        <param name="tokenResolver">要使用的令牌解析器。</param>
+        <summary>通过使用指定的标记解析器从字节流读取 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" />。</summary>
+        <returns>读取的 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks
+
+[!INCLUDE [untrusted-data-method-note](~/includes/untrusted-data-method-note.md)]
+
+ 默认实现<xref:System.Xml.XmlDictionaryReader>通过标记创建，并<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ReadToken%28System.Xml.XmlReader%2CSystem.IdentityModel.Selectors.SecurityTokenResolver%29?displayProperty=nameWithType>调用方法。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadToken">
+      <MemberSignature Language="C#" Value="public override System.IdentityModel.Tokens.SecurityToken ReadToken (System.Xml.XmlReader reader, System.IdentityModel.Selectors.SecurityTokenResolver tokenResolver);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IdentityModel.Tokens.SecurityToken ReadToken(class System.Xml.XmlReader reader, class System.IdentityModel.Selectors.SecurityTokenResolver tokenResolver) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ReadToken(System.Xml.XmlReader,System.IdentityModel.Selectors.SecurityTokenResolver)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function ReadToken (reader As XmlReader, tokenResolver As SecurityTokenResolver) As SecurityToken" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::IdentityModel::Tokens::SecurityToken ^ ReadToken(System::Xml::XmlReader ^ reader, System::IdentityModel::Selectors::SecurityTokenResolver ^ tokenResolver);" />
+      <MemberSignature Language="F#" Value="override this.ReadToken : System.Xml.XmlReader * System.IdentityModel.Selectors.SecurityTokenResolver -&gt; System.IdentityModel.Tokens.SecurityToken" Usage="sessionSecurityTokenHandler.ReadToken (reader, tokenResolver)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Tokens.SecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+        <Parameter Name="tokenResolver" Type="System.IdentityModel.Selectors.SecurityTokenResolver" />
+      </Parameters>
+      <Docs>
+        <param name="reader">在 <see cref="T:System.Xml.XmlReader" /> 上传入 <see cref="T:System.IdentityModel.Tokens.SecurityToken" />。</param>
+        <param name="tokenResolver">可用来解决 <see cref="T:System.IdentityModel.Selectors.SecurityTokenResolver" /> 的 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" />。</param>
+        <summary>使用指定的 XML 读取器和标记解析程序读取 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" />。</summary>
+        <returns>读取的会话安全令牌，<see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 的一个实例。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks
+
+[!INCLUDE [untrusted-data-method-note](~/includes/untrusted-data-method-note.md)]
+
+ 读取器必须位于 ws 安全对话 Feb2005 或 ws 安全会话 1.3 `<wsc:SecurityContextToken>`元素上。  
+  
+ 如果缓存了令牌材料，则会从令牌缓存（ <xref:System.IdentityModel.Tokens.SessionSecurityTokenCache>类的实例）中读取令牌。 `<wsc:SecurityContextToken>`否则，将从<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CookieElementName%2A>和<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CookieNamespace%2A>属性指定的元素的子元素读取令牌材料，并<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ApplyTransforms%2A>调用方法来解码 cookie。  
+  
+ 有关如何将会话令牌序列化为`<SecurityContextToken`元素的详细信息， <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.WriteToken%28System.Xml.XmlWriter%2CSystem.IdentityModel.Tokens.SecurityToken%29?displayProperty=nameWithType>请参阅方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="reader" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="tokenResolver" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.IdentityModel.Tokens.SecurityTokenException">读取器不放置在 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 或 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 无法读取。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetTransforms">
+      <MemberSignature Language="C#" Value="protected void SetTransforms (System.Collections.Generic.IEnumerable&lt;System.IdentityModel.CookieTransform&gt; transforms);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void SetTransforms(class System.Collections.Generic.IEnumerable`1&lt;class System.IdentityModel.CookieTransform&gt; transforms) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.SetTransforms(System.Collections.Generic.IEnumerable{System.IdentityModel.CookieTransform})" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub SetTransforms (transforms As IEnumerable(Of CookieTransform))" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void SetTransforms(System::Collections::Generic::IEnumerable&lt;System::IdentityModel::CookieTransform ^&gt; ^ transforms);" />
+      <MemberSignature Language="F#" Value="member this.SetTransforms : seq&lt;System.IdentityModel.CookieTransform&gt; -&gt; unit" Usage="sessionSecurityTokenHandler.SetTransforms transforms" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="transforms" Type="System.Collections.Generic.IEnumerable&lt;System.IdentityModel.CookieTransform&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="transforms">要使用的转换。</param>
+        <summary>设置要应用在 cookie 上的转换。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 设置由<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.Transforms%2A>属性返回的转换的列表。 当对 cookie 进行编码时，转换将按照它们在列表中的显示顺序进行应用。  
+  
+> [!WARNING]
+>  如果参数为`null`，则在调用以对 cookie 进行编码<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ApplyTransforms%2A>或解码时，方法将引发异常。 `transforms`  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TokenLifetime">
+      <MemberSignature Language="C#" Value="public virtual TimeSpan TokenLifetime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.TimeSpan TokenLifetime" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.TokenLifetime" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Property TokenLifetime As TimeSpan" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property TimeSpan TokenLifetime { TimeSpan get(); void set(TimeSpan value); };" />
+      <MemberSignature Language="F#" Value="member this.TokenLifetime : TimeSpan with get, set" Usage="System.IdentityModel.Tokens.SessionSecurityTokenHandler.TokenLifetime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.TimeSpan</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置标记生存期。</summary>
+        <value>标记生存期。 默认值为 <see cref="F:System.IdentityModel.Tokens.SessionSecurityTokenHandler.DefaultLifetime" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认情况下，如果[ &lt;在&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/sessiontokenrequirement.md)配置文件中<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.TokenLifetime%2A>指定 sessionTokenRequirement 元素，则通过<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.LoadCustomConfiguration%2A>方法将属性初始化为`lifetime`属性的值。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">发生设置小于或等于零的时间范围的尝试。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/496a1735-cbb7-49d5-a6aa-dd5550462073">&lt;sessionTokenRequirement&gt;</related>
+      </Docs>
+    </Member>
+    <Member MemberName="TokenType">
+      <MemberSignature Language="C#" Value="public override Type TokenType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type TokenType" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.TokenType" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property TokenType As Type" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property Type ^ TokenType { Type ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.TokenType : Type" Usage="System.IdentityModel.Tokens.SessionSecurityTokenHandler.TokenType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取此处理程序处理的标记的类型。</summary>
+        <value><see cref="T:System.Type" /> 的 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" />。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Transforms">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt; Transforms { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.IdentityModel.CookieTransform&gt; Transforms" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.Transforms" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Transforms As ReadOnlyCollection(Of CookieTransform)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Collections::ObjectModel::ReadOnlyCollection&lt;System::IdentityModel::CookieTransform ^&gt; ^ Transforms { System::Collections::ObjectModel::ReadOnlyCollection&lt;System::IdentityModel::CookieTransform ^&gt; ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Transforms : System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt;" Usage="System.IdentityModel.Tokens.SessionSecurityTokenHandler.Transforms" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.CookieTransform&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取要应用在 cookie 上的转换。</summary>
+        <value>要要应用在 cookie 上的转换列表。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 转换在<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ApplyTransforms%2A>方法中应用。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateSession">
+      <MemberSignature Language="C#" Value="protected virtual void ValidateSession (System.IdentityModel.Tokens.SessionSecurityToken securityToken);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void ValidateSession(class System.IdentityModel.Tokens.SessionSecurityToken securityToken) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ValidateSession(System.IdentityModel.Tokens.SessionSecurityToken)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub ValidateSession (securityToken As SessionSecurityToken)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void ValidateSession(System::IdentityModel::Tokens::SessionSecurityToken ^ securityToken);" />
+      <MemberSignature Language="F#" Value="abstract member ValidateSession : System.IdentityModel.Tokens.SessionSecurityToken -&gt; unit&#xA;override this.ValidateSession : System.IdentityModel.Tokens.SessionSecurityToken -&gt; unit" Usage="sessionSecurityTokenHandler.ValidateSession securityToken" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="securityToken" Type="System.IdentityModel.Tokens.SessionSecurityToken" />
+      </Parameters>
+      <Docs>
+        <param name="securityToken">要检查的标记。</param>
+        <summary>确定与指定标记相关联的会话是否有效。 通过检查指定标记的 <see cref="P:System.IdentityModel.Tokens.SecurityToken.ValidFrom" /> 和 <see cref="P:System.IdentityModel.Tokens.SecurityToken.ValidTo" /> 确定有效性。 如果该会话不再有效，则引发异常。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果<xref:System.IdentityModel.Tokens.SecurityToken.ValidFrom%2A>标记的属性设置为晚于<xref:System.DateTime.UtcNow%2A>的值，或者其<xref:System.IdentityModel.Tokens.SecurityToken.ValidTo%2A>属性设置为早于<xref:System.DateTime.UtcNow%2A>的值，则该标记无效。  
+  
+ 从<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ValidateToken%2A>方法调用以验证会话。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="securityToken" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException"><see cref="P:System.IdentityModel.Tokens.SecurityTokenHandler.Configuration" /> 属性为 <see langword="null" />。</exception>
+        <exception cref="T:System.IdentityModel.Tokens.SecurityTokenNotYetValidException">令牌的 <see cref="P:System.IdentityModel.Tokens.SecurityToken.ValidFrom" /> 属性迟于 <see cref="P:System.DateTime.UtcNow" />。</exception>
+        <exception cref="T:System.IdentityModel.Tokens.SecurityTokenExpiredException">该令牌的 <see cref="P:System.IdentityModel.Tokens.SecurityToken.ValidTo" /> 属性早于 <see cref="P:System.DateTime.UtcNow" />。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="ValidateToken">
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>确认一个象征和后退它的要求。</summary>
+        <altmember cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CanValidateToken" />
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="ValidateToken">
+      <MemberSignature Language="C#" Value="public override System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Security.Claims.ClaimsIdentity&gt; ValidateToken (System.IdentityModel.Tokens.SecurityToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.Security.Claims.ClaimsIdentity&gt; ValidateToken(class System.IdentityModel.Tokens.SecurityToken token) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ValidateToken(System.IdentityModel.Tokens.SecurityToken)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function ValidateToken (token As SecurityToken) As ReadOnlyCollection(Of ClaimsIdentity)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Collections::ObjectModel::ReadOnlyCollection&lt;System::Security::Claims::ClaimsIdentity ^&gt; ^ ValidateToken(System::IdentityModel::Tokens::SecurityToken ^ token);" />
+      <MemberSignature Language="F#" Value="override this.ValidateToken : System.IdentityModel.Tokens.SecurityToken -&gt; System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Security.Claims.ClaimsIdentity&gt;" Usage="sessionSecurityTokenHandler.ValidateToken token" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Security.Claims.ClaimsIdentity&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token" Type="System.IdentityModel.Tokens.SecurityToken" />
+      </Parameters>
+      <Docs>
+        <param name="token">要验证的令牌。 必须可从 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 中指定。</param>
+        <summary>验证指定的令牌并返回其声明。</summary>
+        <returns>令牌中包含的标识。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ValidateSession%2A>调用方法以验证令牌。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="token" />
+          <see langword="null" />.</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="token" /> 不可从 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 中指定。</exception>
+        <altmember cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CanValidateToken" />
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateToken">
+      <MemberSignature Language="C#" Value="public virtual System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Security.Claims.ClaimsIdentity&gt; ValidateToken (System.IdentityModel.Tokens.SessionSecurityToken token, string endpointId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.Security.Claims.ClaimsIdentity&gt; ValidateToken(class System.IdentityModel.Tokens.SessionSecurityToken token, string endpointId) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ValidateToken(System.IdentityModel.Tokens.SessionSecurityToken,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function ValidateToken (token As SessionSecurityToken, endpointId As String) As ReadOnlyCollection(Of ClaimsIdentity)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Collections::ObjectModel::ReadOnlyCollection&lt;System::Security::Claims::ClaimsIdentity ^&gt; ^ ValidateToken(System::IdentityModel::Tokens::SessionSecurityToken ^ token, System::String ^ endpointId);" />
+      <MemberSignature Language="F#" Value="override this.ValidateToken : System.IdentityModel.Tokens.SessionSecurityToken * string -&gt; System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Security.Claims.ClaimsIdentity&gt;" Usage="sessionSecurityTokenHandler.ValidateToken (token, endpointId)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Security.Claims.ClaimsIdentity&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token" Type="System.IdentityModel.Tokens.SessionSecurityToken" />
+        <Parameter Name="endpointId" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="token">要验证的令牌。 必须可从 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 中指定。</param>
+        <param name="endpointId">限定标识范围的终点的标示符。</param>
+        <summary>验证指定的会话令牌并返回其声明。</summary>
+        <returns>令牌中包含的标识。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 执行检查以确保指定的标记的作用域为指定的终结点 ID，如果是，则调用<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ValidateToken%28System.IdentityModel.Tokens.SecurityToken%29?displayProperty=nameWithType>方法; 否则，将<xref:System.IdentityModel.Tokens.SecurityTokenException>引发。  
+  
+> [!IMPORTANT]
+>  具有<xref:System.IdentityModel.Tokens.SessionSecurityToken.EndpointId%2A> `null`或空属性的会话令牌被视为全局范围。 这会带来潜在的安全风险。 出于此原因，应确保<xref:System.IdentityModel.Tokens.SessionSecurityToken.EndpointId%2A>在会话令牌中设置属性。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="token" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="endpointId" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="token" /> 不可从 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 中指定。</exception>
+        <exception cref="T:System.IdentityModel.Tokens.SecurityTokenException">指定令牌的 <see cref="P:System.IdentityModel.Tokens.SessionSecurityToken.EndpointId" /> 属性不为 <see langword="null" /> 或空并且其值不同于 <paramref name="endpointId" /> 参数指定的值。</exception>
+        <altmember cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CanValidateToken" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="WriteToken">
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>序列化标记。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认实现将令牌序列化为 ws 安全会话 Feb2005 或 ws 安全会话 1.3 `<wsc:SecurityContextToken>`元素。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CanWriteToken" />
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="WriteToken">
+      <MemberSignature Language="C#" Value="public virtual byte[] WriteToken (System.IdentityModel.Tokens.SessionSecurityToken sessionToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] WriteToken(class System.IdentityModel.Tokens.SessionSecurityToken sessionToken) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.WriteToken(System.IdentityModel.Tokens.SessionSecurityToken)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function WriteToken (sessionToken As SessionSecurityToken) As Byte()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual cli::array &lt;System::Byte&gt; ^ WriteToken(System::IdentityModel::Tokens::SessionSecurityToken ^ sessionToken);" />
+      <MemberSignature Language="F#" Value="override this.WriteToken : System.IdentityModel.Tokens.SessionSecurityToken -&gt; byte[]" Usage="sessionSecurityTokenHandler.WriteToken sessionToken" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sessionToken" Type="System.IdentityModel.Tokens.SessionSecurityToken" />
+      </Parameters>
+      <Docs>
+        <param name="sessionToken">要写入的标记。</param>
+        <summary>将指定令牌序列化为字节数组。</summary>
+        <returns>编码的字节数组。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 通过创建和 XML 编写器<xref:System.IO.MemoryStream>并<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.WriteToken%28System.Xml.XmlWriter%2CSystem.IdentityModel.Tokens.SecurityToken%29?displayProperty=nameWithType>调用方法，对指定的标记进行序列化。 有关更多详细信息，请参阅此重载。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="sessiontoken" /> 为 <see langword="null" />。</exception>
+        <altmember cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CanWriteToken" />
+      </Docs>
+    </Member>
+    <Member MemberName="WriteToken">
+      <MemberSignature Language="C#" Value="public override void WriteToken (System.Xml.XmlWriter writer, System.IdentityModel.Tokens.SecurityToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteToken(class System.Xml.XmlWriter writer, class System.IdentityModel.Tokens.SecurityToken token) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.SessionSecurityTokenHandler.WriteToken(System.Xml.XmlWriter,System.IdentityModel.Tokens.SecurityToken)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub WriteToken (writer As XmlWriter, token As SecurityToken)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void WriteToken(System::Xml::XmlWriter ^ writer, System::IdentityModel::Tokens::SecurityToken ^ token);" />
+      <MemberSignature Language="F#" Value="override this.WriteToken : System.Xml.XmlWriter * System.IdentityModel.Tokens.SecurityToken -&gt; unit" Usage="sessionSecurityTokenHandler.WriteToken (writer, token)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="System.Xml.XmlWriter" />
+        <Parameter Name="token" Type="System.IdentityModel.Tokens.SecurityToken" />
+      </Parameters>
+      <Docs>
+        <param name="writer">用于序列化令牌的 XML 编写器。</param>
+        <param name="token">要序列化的标记。 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 的一个实例。</param>
+        <summary>使用指定 XML 编写器序列化指定令牌。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认实现将指定的令牌序列化为 ws 安全会话 Feb2005 或 ws 安全会话 1.3 `<wsc:SecurityContextToken>`元素，具体取决于<xref:System.IdentityModel.Tokens.SessionSecurityToken.SecureConversationVersion%2A?displayProperty=nameWithType>属性的值。 属性序列化为 `Id` 特性。 <xref:System.IdentityModel.Tokens.SessionSecurityToken.Id%2A?displayProperty=nameWithType> 属性序列化为`<Identifier>`子元素。 <xref:System.IdentityModel.Tokens.SessionSecurityToken.ContextId%2A?displayProperty=nameWithType> 如果不`null`是<xref:System.IdentityModel.Tokens.SessionSecurityToken.KeyGeneration%2A?displayProperty=nameWithType> ，则将`<Instance>`属性序列化为元素。 最后，如果<xref:System.IdentityModel.Tokens.SessionSecurityToken.IsReferenceMode%2A?displayProperty=nameWithType>属性为`false`，则将整个标记序列化为二进制数组，并将其传递给<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ApplyTransforms%2A>要编码的方法。 然后，将编码的令牌作为 base64 编码值写入到由<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CookieElementName%2A>和<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CookieNamespace%2A>属性指定的元素和命名空间。 如果属性为`true`，则不序列化令牌。 <xref:System.IdentityModel.Tokens.SessionSecurityToken.IsReferenceMode%2A?displayProperty=nameWithType>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="writer" /> 为 <see langword="null" />。  
+  
+- 或 - 
+ <paramref name="token" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="token" /> 不可从 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 中指定。  
+  
+或 
+令牌的 <see cref="P:System.IdentityModel.Tokens.SessionSecurityToken.SecureConversationVersion" /> 指定处理程序不支持的 WS 安全对话的版本。</exception>
+        <altmember cref="P:System.IdentityModel.Tokens.SessionSecurityTokenHandler.CanWriteToken" />
+      </Docs>
+    </Member>
+  </Members>
+</Type>
