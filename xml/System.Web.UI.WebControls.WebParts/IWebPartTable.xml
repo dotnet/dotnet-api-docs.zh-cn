@@ -1,0 +1,139 @@
+<Type Name="IWebPartTable" FullName="System.Web.UI.WebControls.WebParts.IWebPartTable">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="f9162460bfa31b38311f9eccb017b952a67a78d6" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70727552" /></Metadata><TypeSignature Language="C#" Value="public interface IWebPartTable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IWebPartTable" />
+  <TypeSignature Language="DocId" Value="T:System.Web.UI.WebControls.WebParts.IWebPartTable" />
+  <TypeSignature Language="VB.NET" Value="Public Interface IWebPartTable" />
+  <TypeSignature Language="C++ CLI" Value="public interface class IWebPartTable" />
+  <TypeSignature Language="F#" Value="type IWebPartTable = interface" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>使用整个数据表定义一个用于连接两个服务器控件的提供者接口。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此接口设计为与 Web 部件连接一起使用。 在 Web 部件连接中，位于<xref:System.Web.UI.WebControls.WebParts.WebPartZoneBase>区域中的两个服务器控件建立连接并共享数据，其中一个控件充当使用者，另一个控件充当提供者。 在 Web 部件连接中共享数据的机制是接口实例，提供程序通过回调方法向使用者提供服务。 若要建立连接，使用者和提供程序都必须使用相同的接口类型来共享数据。 如果使用者不能识别提供程序发送的接口类型，仍可以通过转换器（ <xref:System.Web.UI.WebControls.WebParts.WebPartTransformer>对象）连接控件，将访问接口实例发送到的类型转换为使用者识别. 有关连接的详细信息， <xref:System.Web.UI.WebControls.WebParts.WebPartConnection>请参阅和[Web 部件连接概述](https://docs.microsoft.com/previous-versions/aspnet/ms178187(v=vs.100))。  
+  
+ <xref:System.Web.UI.WebControls.WebParts.IWebPartTable>接口是包含在 Web 部件控件集的提供程序接口，它是用于基于数据表创建连接的标准接口。 你还可以创建自定义接口以用于 Web 部件连接，但在许多数据驱动的 Web 应用程序中，基于公共字段创建连接（有关详细信息，请参阅<xref:System.Web.UI.WebControls.WebParts.IWebPartField>接口）、行（有关详细信息， <xref:System.Web.UI.WebControls.WebParts.IWebPartRow>请参阅接口），或数据源中的表。 在典型连接中， <xref:System.Web.UI.WebControls.WebParts.WebPart>作为提供者的控件将<xref:System.Web.UI.WebControls.WebParts.IWebPartTable>实现接口，并向使用者提供一个特殊的回调方法的接口实例。 例如，提供程序可能会为包含<xref:System.Web.UI.WebControls.WebParts.IWebPartTable>财务绩效数据的表实现接口。 作为<xref:System.Web.UI.WebControls.WebParts.WebPart>使用者的另一个控件将定义接收接口实例的特殊方法，然后可以提取数据并呈现图表以显示生成的信息。  
+  
+ <xref:System.Web.UI.WebControls.WebParts.IWebPartTable>接口有两个公开的成员。 属性返回有关封装<xref:System.ComponentModel.PropertyDescriptorCollection>在对象中的数据表的架构信息。 <xref:System.Web.UI.WebControls.WebParts.IWebPartTable.Schema%2A> 此<xref:System.Web.UI.WebControls.WebParts.IWebPartTable.GetTableData%2A>方法声明一个方法，当调用回调方法时，实现程序（如提供程序控件）使用该方法检索接口实例的表数据。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用<xref:System.Web.UI.WebControls.WebParts.IWebPartTable>接口在两个控件之间创建静态连接。 此代码示例包含三个部分：  
+  
+-   <xref:System.Web.UI.WebControls.WebParts.WebPart> 可 <xref:System.Web.UI.WebControls.WebParts.IWebPartTable> 使用接口形成连接的两个自定义控件的源代码，其中一个控件充当提供程序，另一个控件充当使用者。  
+  
+-   承载控件并以持久性格式声明静态连接的网页。  
+  
+-   示例代码运行时所发生的情况的说明。  
+  
+ 此代码示例的第一部分是两个自定义控件的源代码。 首先是实现<xref:System.Web.UI.WebControls.WebParts.IWebPartTable>接口的提供程序的代码。 为简单起见，在本示例中，提供程序创建了包含一些数据的表，而不是连接到数据库。 `GetConnectionInterface`方法用作提供程序的连接点，后者是将接口实例返回给使用者的回调方法。 对于使用者，它会在名`SetConnectionInterface`为的方法中从提供程序中检索接口实例，该实例`ConnectionConsumer`使用特性进行标记。 检索接口的实例后，使用者在其`OnPreRender`方法中调用提供程序中<xref:System.Web.UI.WebControls.WebParts.IWebPartTable.GetTableData%2A>方法的实现，以检索实际数据并将其写入页面。  
+  
+ 要使代码示例运行，必须编译此源代码。 可以显式编译该程序集，并将生成的程序集放在网站的 Bin 文件夹或全局程序集缓存中。 或者，你可以将源代码放在站点的 App_Code 文件夹中，在此文件夹中，它将在运行时动态编译。 此代码示例使用动态编译。 有关演示如何编译的演练，请参阅[演练：开发和使用自定义 Web 服务器控件](https://msdn.microsoft.com/library/6d90782a-a1a4-45a6-b2d4-cf6362b83b08)。  
+  
+ [!code-csharp[WebParts_IWebPartTable_Overview#2](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_IWebPartTable_Overview/CS/ITableSample.cs#2)]
+ [!code-vb[WebParts_IWebPartTable_Overview#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_IWebPartTable_Overview/VB/ITableSample.vb#2)]  
+  
+ 此代码示例的第二部分是声明静态连接并承载控件的网页。 页面顶部附近是`Register`声明 App_Code 目录中包含的源代码的命名空间的指令。 使用`<asp:webpartconnection>`元素声明连接。 自定义使用者和提供程序控件是在`<zonetemplate>` `<asp:webpartzone>`元素内的元素中声明的，在元素中，这是必需的，它们必须位于继承自<xref:System.Web.UI.WebControls.WebParts.WebPartZoneBase>类的区域内。  
+  
+ [!code-aspx-csharp[WebParts_IWebPartRow_Overview#1](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_IWebPartRow_Overview/CS/defaultcs.aspx#1)]
+ [!code-aspx-vb[WebParts_IWebPartRow_Overview#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_IWebPartRow_Overview/VB/defaultvb.aspx#1)]  
+  
+ 在浏览器中加载页面。 使用者控件显示从指定的表提供的数据，提供程序通过<xref:System.Web.UI.WebControls.WebParts.IWebPartTable>接口的实例提供该数据。  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartConnection" />
+    <altmember cref="T:System.Web.UI.WebControls.WebParts.IWebPartField" />
+    <altmember cref="T:System.Web.UI.WebControls.WebParts.IWebPartRow" />
+    <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)">ASP.NET Web 部件控件</related>
+    <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178187(v=vs.100)">Web 部件连接概述</related>
+  </Docs>
+  <Members>
+    <Member MemberName="GetTableData">
+      <MemberSignature Language="C#" Value="public void GetTableData (System.Web.UI.WebControls.WebParts.TableCallback callback);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void GetTableData(class System.Web.UI.WebControls.WebParts.TableCallback callback) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.IWebPartTable.GetTableData(System.Web.UI.WebControls.WebParts.TableCallback)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub GetTableData (callback As TableCallback)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void GetTableData(System::Web::UI::WebControls::WebParts::TableCallback ^ callback);" />
+      <MemberSignature Language="F#" Value="abstract member GetTableData : System.Web.UI.WebControls.WebParts.TableCallback -&gt; unit" Usage="iWebPartTable.GetTableData callback" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.Web.UI.WebControls.WebParts.TableCallback" />
+      </Parameters>
+      <Docs>
+        <param name="callback">一个 <see cref="T:System.Web.UI.WebControls.WebParts.TableCallback" /> 委托，包含接收数据的方法的地址。</param>
+        <summary>返回表的数据，该表正由接口用作两个 <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> 控件之间的连接基础。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用此方法可检索接口传递的数据表值。 提供程序实现此方法，当使用者准备处理或呈现数据时，使用者会在该点调用它。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示<xref:System.Web.UI.WebControls.WebParts.IWebPartTable.GetTableData%2A>方法的实现和使用。 完整的示例显示在<xref:System.Web.UI.WebControls.WebParts.IWebPartTable>接口的类概述中。 提供程序控件实现<xref:System.Web.UI.WebControls.WebParts.IWebPartTable.GetTableData%2A>方法，并返回指定表中的数据。 使用者控件在其<xref:System.Web.UI.WebControls.WebParts.IWebPartTable.GetTableData%2A> `OnPreRender`方法中调用方法，以便可以将数据的值写入页面。  
+  
+ [!code-csharp[WebParts_IWebPartTable_Overview#2](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_IWebPartTable_Overview/CS/ITableSample.cs#2)]
+ [!code-vb[WebParts_IWebPartTable_Overview#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_IWebPartTable_Overview/VB/ITableSample.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Schema">
+      <MemberSignature Language="C#" Value="public System.ComponentModel.PropertyDescriptorCollection Schema { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.PropertyDescriptorCollection Schema" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.IWebPartTable.Schema" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Schema As PropertyDescriptorCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::ComponentModel::PropertyDescriptorCollection ^ Schema { System::ComponentModel::PropertyDescriptorCollection ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Schema : System.ComponentModel.PropertyDescriptorCollection" Usage="System.Web.UI.WebControls.WebParts.IWebPartTable.Schema" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取用于在两个 <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> 控件之间共享数据的数据表的架构信息。</summary>
+        <value>描述数据的 <see cref="T:System.ComponentModel.PropertyDescriptorCollection" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性提供有关<xref:System.Web.UI.WebControls.WebParts.IWebPartTable>实例中的数据的属性信息。 <xref:System.Web.UI.WebControls.WebParts.IWebPartTable.Schema%2A>属性所引用的架构和表中的数据之间存在隐式协定。 协定是，对于<xref:System.ComponentModel.PropertyDescriptor> <xref:System.Web.UI.WebControls.WebParts.IWebPartTable.Schema%2A>属性中的每个对象，您可以对<xref:System.ComponentModel.PropertyDescriptor.GetValue%2A>表数据的元素调用以获取表的列或行中的值。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何实现和使用<xref:System.Web.UI.WebControls.WebParts.IWebPartTable.Schema%2A>属性。 完整的示例显示在<xref:System.Web.UI.WebControls.WebParts.IWebPartTable>接口的类概述中。 提供程序控件实现<xref:System.Web.UI.WebControls.WebParts.IWebPartTable.Schema%2A>属性。 然后，使用者控件在其`RenderContents`方法中<xref:System.Web.UI.WebControls.WebParts.IWebPartTable.Schema%2A>查询属性，以检索有关表的信息，因为它将表数据写入页。  
+  
+ [!code-csharp[WebParts_IWebPartTable_Overview#2](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_IWebPartTable_Overview/CS/ITableSample.cs#2)]
+ [!code-vb[WebParts_IWebPartTable_Overview#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_IWebPartTable_Overview/VB/ITableSample.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.ComponentModel.PropertyDescriptorCollection" />
+      </Docs>
+    </Member>
+  </Members>
+</Type>

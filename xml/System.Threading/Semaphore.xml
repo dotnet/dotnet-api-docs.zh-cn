@@ -1,0 +1,988 @@
+<Type Name="Semaphore" FullName="System.Threading.Semaphore">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="4d612444124f1e9e0d4b84aef281ef295eb335ce" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70608809" /></Metadata><TypeSignature Language="C#" Value="public sealed class Semaphore : System.Threading.WaitHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit Semaphore extends System.Threading.WaitHandle" />
+  <TypeSignature Language="DocId" Value="T:System.Threading.Semaphore" />
+  <TypeSignature Language="VB.NET" Value="Public NotInheritable Class Semaphore&#xA;Inherits WaitHandle" />
+  <TypeSignature Language="C++ CLI" Value="public ref class Semaphore sealed : System::Threading::WaitHandle" />
+  <TypeSignature Language="F#" Value="type Semaphore = class&#xA;    inherit WaitHandle" />
+  <AssemblyInfo>
+    <AssemblyName>System.Threading</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Threading.WaitHandle</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+      <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>限制可同时访问某一资源或资源池的线程数。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Threading.Semaphore>使用类控制对资源池的访问。 线程通过调用<xref:System.Threading.WaitHandle.WaitOne%2A> <xref:System.Threading.WaitHandle>从类继承的方法进入信号量，并通过调用<xref:System.Threading.Semaphore.Release%2A>方法释放信号量。  
+  
+ 每次线程进入信号量时，信号量的计数都将减少，并在线程释放信号量时递增。 如果计数为零，则后续请求会阻塞，直到其他线程释放信号量。 当所有线程都已释放信号量后，计数将达到创建信号量时指定的最大值。  
+  
+ 没有保证的顺序，如 FIFO 或 LIFO，其中阻塞的线程进入信号量。  
+  
+ 通过重复调用<xref:System.Threading.WaitHandle.WaitOne%2A>方法，线程可以多次进入信号量。 若要释放部分或全部这些项，线程可以多次调用无参数<xref:System.Threading.Semaphore.Release>方法重载，或者可以<xref:System.Threading.Semaphore.Release%28System.Int32%29>调用方法重载来指定要释放的项数。  
+  
+ 在<xref:System.Threading.Semaphore>对<xref:System.Threading.WaitHandle.WaitOne%2A> 或 <xref:System.Threading.Semaphore.Release%2A> 的调用中，类不强制执行线程标识。 编程人员应负责确保线程不会过多地释放信号量。 例如，假定信号量的最大计数为 2 并且线程 A 和线程 B 都进入了该信号量。 如果线程 B 中的编程错误导致其调用<xref:System.Threading.Semaphore.Release%2A>了两次，则两次调用都将成功。 信号灯计数已满，当线程 A 最终调用 <xref:System.Threading.Semaphore.Release%2A> 时，<xref:System.Threading.SemaphoreFullException> 抛出。  
+  
+ 信号量分为两种类型：本地信号量和命名系统信号量。 如果使用接受名称<xref:System.Threading.Semaphore>的构造函数创建对象，则该对象将与该名称的操作系统信号量关联。 命名系统信号量在整个操作系统中均可见，可用于同步进程的活动。 可以创建多个<xref:System.Threading.Semaphore>表示同一命名系统信号量的对象，并且可以<xref:System.Threading.Semaphore.OpenExisting%2A>使用方法打开现有的已命名系统信号量。  
+  
+ 局部信号量仅存在于进程内。 进程中引用本地 <xref:System.Threading.Semaphore> 对象的所有线程都可以使用本地 mutex。 每<xref:System.Threading.Semaphore>个对象都是一个单独的本地信号量。  
+  
+   
+  
+## Examples  
+ 下面的代码示例创建一个信号量，其最大计数为3，初始计数为零。 该示例启动五个线程，这会阻止等待信号量。 主线程使用<xref:System.Threading.Semaphore.Release%28System.Int32%29>方法重载将信号量计数增加到其最大值，从而允许三个线程进入信号量。 每个线程使用<xref:System.Threading.Thread.Sleep%2A?displayProperty=nameWithType>方法等待一秒，以模拟工作，然后<xref:System.Threading.Semaphore.Release>调用方法重载以释放信号量。 每次释放信号灯时，都将显示以前的信号量计数。 控制台消息跟踪信号量使用。 每个线程的模拟工作时间间隔略有增加，使输出更易于读取。  
+  
+ [!code-cpp[System.Threading.Semaphore2#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.Semaphore2/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.Semaphore2#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.Semaphore2/CS/source.cs#1)]
+ [!code-vb[System.Threading.Semaphore2#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.Semaphore2/VB/source.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <threadsafe>此类型是线程安全的。</threadsafe>
+    <related type="Article" href="~/docs/standard/threading/index.md">托管线程处理</related>
+    <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">Semaphore</related>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Threading.Semaphore" /> 类的新实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Semaphore (int initialCount, int maximumCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 initialCount, int32 maximumCount) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.#ctor(System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (initialCount As Integer, maximumCount As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Semaphore(int initialCount, int maximumCount);" />
+      <MemberSignature Language="F#" Value="new System.Threading.Semaphore : int * int -&gt; System.Threading.Semaphore" Usage="new System.Threading.Semaphore (initialCount, maximumCount)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Security.SecuritySafeCritical</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="initialCount" Type="System.Int32" />
+        <Parameter Name="maximumCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="initialCount">可以同时授予的信号量的初始请求数。</param>
+        <param name="maximumCount">可以同时授予的信号量的最大请求数。</param>
+        <summary>初始化 <see cref="T:System.Threading.Semaphore" /> 类的新实例，并指定初始入口数和最大并发入口数。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数初始化未命名的信号量。 使用此类信号量的实例的所有线程都必须具有对该实例的引用。  
+  
+ 如果`initialCount` <xref:System.Threading.WaitHandle.WaitOne%2A> `maximumCount` `initialCount`小于，则效果与当前线程已调用（减）次时相同。 `maximumCount` 如果你不希望为创建信号量的线程保留任何条目，请对`maximumCount`和`initialCount`使用相同的数字。  
+  
+   
+  
+## Examples  
+ 下面的示例创建一个信号量，其最大计数为3，初始计数为零。 该示例启动五个线程，这会阻止等待信号量。 主线程使用<xref:System.Threading.Semaphore.Release%28System.Int32%29>方法重载将信号量计数增加到其最大值，从而允许三个线程进入信号量。 每个线程使用<xref:System.Threading.Thread.Sleep%2A?displayProperty=nameWithType>方法等待一秒，以模拟工作，然后<xref:System.Threading.Semaphore.Release>调用方法重载以释放信号量。 每次释放信号灯时，都将显示以前的信号量计数。 控制台消息跟踪信号量使用。 每个线程的模拟工作时间间隔略有增加，使输出更易于读取。  
+  
+ [!code-cpp[System.Threading.Semaphore2#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.Semaphore2/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.Semaphore2#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.Semaphore2/CS/source.cs#1)]
+ [!code-vb[System.Threading.Semaphore2#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.Semaphore2/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="initialCount" /> 大于 <paramref name="maximumCount" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maximumCount" /> 小于 1。  
+  
+- 或 - 
+ <paramref name="initialCount" /> 小于 0。</exception>
+        <related type="Article" href="~/docs/standard/threading/index.md">托管线程处理</related>
+        <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">Semaphore</related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Semaphore (int initialCount, int maximumCount, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 initialCount, int32 maximumCount, string name) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.#ctor(System.Int32,System.Int32,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (initialCount As Integer, maximumCount As Integer, name As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Semaphore(int initialCount, int maximumCount, System::String ^ name);" />
+      <MemberSignature Language="F#" Value="new System.Threading.Semaphore : int * int * string -&gt; System.Threading.Semaphore" Usage="new System.Threading.Semaphore (initialCount, maximumCount, name)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="initialCount" Type="System.Int32" />
+        <Parameter Name="maximumCount" Type="System.Int32" />
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="initialCount">可以同时授予的信号量的初始请求数。</param>
+        <param name="maximumCount">可以同时授予的信号量的最大请求数。</param>
+        <param name="name">命名系统信号量对象的名称。</param>
+        <summary>初始化 <see cref="T:System.Threading.Semaphore" /> 类的新实例，并指定初始入口数和最大并发入口数，根据需要指定系统信号灯对象的名称。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数初始化<xref:System.Threading.Semaphore>对象，该对象表示已命名的系统信号量。 可以创建多个<xref:System.Threading.Semaphore>表示同一命名系统信号量的对象。  
+  
+ 如果已命名的系统信号量不存在，则将使用和`initialCount` `maximumCount`指定的初始计数和最大计数来创建它。 如果已命名的系统信号量已`initialCount`存在`maximumCount` ，则不使用和，尽管无效值仍然会导致异常。 如果需要确定是否创建了已命名的系统信号量，请<xref:System.Threading.Semaphore.%23ctor%28System.Int32%2CSystem.Int32%2CSystem.String%2CSystem.Boolean%40%29>改用构造函数重载。  
+  
+> [!IMPORTANT]
+>  使用此构造函数重载时，建议的做法是为`initialCount`和`maximumCount`指定相同的数字。 如果`initialCount` <xref:System.Threading.WaitHandle.WaitOne%2A> `maximumCount` `initialCount`小于，并且创建了已命名的系统信号量，则效果与当前线程已调用（减）次时相同。 `maximumCount` 但是，使用此构造函数重载无法确定是否创建了已命名的系统信号量。  
+  
+ 如果为`null` `name`指定或空字符串，则将创建本地信号量，就像您已调用<xref:System.Threading.Semaphore.%23ctor%28System.Int32%2CSystem.Int32%29>构造函数重载一样。  
+  
+ 因为命名的信号量在整个操作系统中均可见，所以它们可用于跨进程边界协调资源使用。  
+  
+ 若要确定是否存在已命名的系统信号量，请使用<xref:System.Threading.Semaphore.OpenExisting%2A>方法。 此<xref:System.Threading.Semaphore.OpenExisting%2A>方法尝试打开现有的已命名信号量，并在系统信号量不存在时引发异常。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示命名信号量的跨进程行为。 该示例创建一个名为的信号量，其最大计数为5，初始计数为5。 该程序对<xref:System.Threading.WaitHandle.WaitOne%2A>方法进行了三次调用。 因此，如果从两个命令窗口运行已编译的示例，则第三次调用<xref:System.Threading.WaitHandle.WaitOne%2A>时会阻止第二个副本。 释放程序的第一个副本中的一个或多个项以解除阻止第二个副本。  
+  
+ [!code-cpp[System.Threading.Semaphore.ctor named 3#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 3/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.Semaphore.ctor named 3#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 3/CS/source.cs#1)]
+ [!code-vb[System.Threading.Semaphore.ctor named 3#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 3/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="initialCount" /> 大于 <paramref name="maximumCount" />。  
+  
+或 
+ <paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maximumCount" /> 小于 1。  
+  
+- 或 - 
+ <paramref name="initialCount" /> 小于 0。</exception>
+        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">命名信号量存在且具有访问控制安全性，用户不具有 <see cref="F:System.Security.AccessControl.SemaphoreRights.FullControl" />。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名信号量，可能是由于其他类型的等待句柄具有相同名称。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码以创建已命名的系统信号量。 关联枚举：<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />。  
+  
+安全操作： <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />。</permission>
+        <related type="Article" href="~/docs/standard/threading/index.md">托管线程处理</related>
+        <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">Semaphore</related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Semaphore (int initialCount, int maximumCount, string name, out bool createdNew);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 initialCount, int32 maximumCount, string name, [out] bool&amp; createdNew) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.#ctor(System.Int32,System.Int32,System.String,System.Boolean@)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (initialCount As Integer, maximumCount As Integer, name As String, ByRef createdNew As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Semaphore(int initialCount, int maximumCount, System::String ^ name, [Runtime::InteropServices::Out] bool % createdNew);" />
+      <MemberSignature Language="F#" Value="new System.Threading.Semaphore : int * int * string *  -&gt; System.Threading.Semaphore" Usage="new System.Threading.Semaphore (initialCount, maximumCount, name, createdNew)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="initialCount" Type="System.Int32" />
+        <Parameter Name="maximumCount" Type="System.Int32" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="createdNew" Type="System.Boolean" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="initialCount">可以同时满足的信号量的初始请求数。</param>
+        <param name="maximumCount">可以同时满足的信号量的最大请求数。</param>
+        <param name="name">命名系统信号量对象的名称。</param>
+        <param name="createdNew">在此方法返回时，如果创建了本地信号量（即，如果 <paramref name="name" /> 为 <see langword="null" /> 或空字符串）或指定的命名系统信号量，则包含 <see langword="true" />；如果指定的命名系统信号量已存在，则为 <see langword="false" />。 此参数未经初始化即被传递。</param>
+        <summary>初始化 <see cref="T:System.Threading.Semaphore" /> 类的新实例，并指定初始入口数和最大并发入口数，还可以选择指定系统信号量对象的名称，以及指定一个变量来接收指示是否创建了新系统信号量的值。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数初始化<xref:System.Threading.Semaphore>对象，该对象表示已命名的系统信号量。 可以创建多个<xref:System.Threading.Semaphore>表示同一命名系统信号量的对象。  
+  
+ 如果已命名的系统信号量不存在，则将使用和`initialCount` `maximumCount`指定的初始计数和最大计数来创建它。 如果已命名的系统信号量已`initialCount`存在`maximumCount` ，则不使用和，尽管无效值仍然会导致异常。 使用`createdNew`确定是否已创建系统信号量。  
+  
+ 如果`initialCount` `maximumCount` <xref:System.Threading.WaitHandle.WaitOne%2A> `initialCount`小于，并且`createdNew`为，则其效果与当前线程已调用（减）次时相同。 `true`  `maximumCount`  
+  
+ 如果为`null` `name`指定或空字符串，则将创建本地信号量，就像您已调用<xref:System.Threading.Semaphore.%23ctor%28System.Int32%2CSystem.Int32%29>构造函数重载一样。 在此示例中`createdNew` ，始终`true`为。  
+  
+ 因为命名的信号量在整个操作系统中均可见，所以它们可用于跨进程边界协调资源使用。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示命名信号量的跨进程行为。 该示例创建一个名为的信号量，其最大计数为5，初始计数为2。 也就是说，它为调用构造函数的线程保留了三个条目。 如果`createNew` <xref:System.Threading.WaitHandle.WaitOne%2A>为`false`，则该程序对方法进行三次调用。 因此，如果从两个命令窗口运行已编译的示例，则第三次调用<xref:System.Threading.WaitHandle.WaitOne%2A>时会阻止第二个副本。 释放程序的第一个副本中的一个或多个项以解除阻止第二个副本。  
+  
+ [!code-cpp[System.Threading.Semaphore.ctor named 4#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 4/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.Semaphore.ctor named 4#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 4/CS/source.cs#1)]
+ [!code-vb[System.Threading.Semaphore.ctor named 4#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 4/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="initialCount" /> 大于 <paramref name="maximumCount" />。  
+  
+- 或 - 
+ <paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maximumCount" /> 小于 1。  
+  
+或 
+ <paramref name="initialCount" /> 小于 0。</exception>
+        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">命名信号量存在且具有访问控制安全性，用户不具有 <see cref="F:System.Security.AccessControl.SemaphoreRights.FullControl" />。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名信号量，可能是由于其他类型的等待句柄具有相同名称。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码以创建已命名的系统信号量。 关联枚举：<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />。  
+  
+安全操作： <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />。</permission>
+        <related type="Article" href="~/docs/standard/threading/index.md">托管线程处理</related>
+        <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">Semaphore</related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Semaphore (int initialCount, int maximumCount, string name, out bool createdNew, System.Security.AccessControl.SemaphoreSecurity semaphoreSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 initialCount, int32 maximumCount, string name, [out] bool&amp; createdNew, class System.Security.AccessControl.SemaphoreSecurity semaphoreSecurity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.#ctor(System.Int32,System.Int32,System.String,System.Boolean@,System.Security.AccessControl.SemaphoreSecurity)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Semaphore(int initialCount, int maximumCount, System::String ^ name, [Runtime::InteropServices::Out] bool % createdNew, System::Security::AccessControl::SemaphoreSecurity ^ semaphoreSecurity);" />
+      <MemberSignature Language="F#" Value="new System.Threading.Semaphore : int * int * string *  * System.Security.AccessControl.SemaphoreSecurity -&gt; System.Threading.Semaphore" Usage="new System.Threading.Semaphore (initialCount, maximumCount, name, createdNew, semaphoreSecurity)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="initialCount" Type="System.Int32" Index="0" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="maximumCount" Type="System.Int32" Index="1" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="name" Type="System.String" Index="2" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="createdNew" Type="System.Boolean" RefType="out" Index="3" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="semaphoreSecurity" Type="System.Security.AccessControl.SemaphoreSecurity" Index="4" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="initialCount">可以同时满足的信号量的初始请求数。</param>
+        <param name="maximumCount">可以同时满足的信号量的最大请求数。</param>
+        <param name="name">命名系统信号量对象的名称。</param>
+        <param name="createdNew">在此方法返回时，如果创建了本地信号量（即，如果 <paramref name="name" /> 为 <see langword="null" /> 或空字符串）或指定的命名系统信号量，则包含 <see langword="true" />；如果指定的命名系统信号量已存在，则为 <see langword="false" />。 此参数未经初始化即被传递。</param>
+        <param name="semaphoreSecurity">一个 <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> 对象，表示应用于已命名的系统信号量的访问控制安全性。</param>
+        <summary>初始化 <see cref="T:System.Threading.Semaphore" /> 类的新实例，并指定初始入口数和最大并发入口数，可以选择指定系统信号量对象的名称，指定一个变量来接收指示是否创建了新系统信号量的值，以及指定系统信号量的安全访问控制。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用此构造函数可在创建已命名的系统信号量时对其应用访问控制安全性，从而阻止其他代码控制信号量。  
+  
+ 此构造函数初始化<xref:System.Threading.Semaphore>对象，该对象表示已命名的系统信号量。 可以创建多个<xref:System.Threading.Semaphore>表示同一命名系统信号量的对象。  
+  
+ 如果已命名的系统信号量不存在，则将使用指定的访问控制安全性来创建它。 如果已命名的信号量存在，则将忽略指定的访问控制安全性。  
+  
+> [!NOTE]
+>  调用方对新创建<xref:System.Threading.Semaphore>的对象拥有完全控制权， `semaphoreSecurity`即使拒绝或无法向当前用户授予某些访问权限。 但是，如果当前用户尝试使用构造函数<xref:System.Threading.Semaphore> <xref:System.Threading.Semaphore.OpenExisting%2A>或方法获取表示相同命名信号量的另一个对象，则会应用 Windows 访问控制安全性。  
+  
+ 如果已命名的系统信号量不存在，则将使用和`initialCount` `maximumCount`指定的初始计数和最大计数来创建它。 如果已命名的系统信号量已`initialCount`存在`maximumCount` ，则不使用和，尽管无效值仍然会导致异常。 `createdNew`使用参数确定系统信号量是否是由此构造函数创建的。  
+  
+ 如果`initialCount` `maximumCount` <xref:System.Threading.WaitHandle.WaitOne%2A> `initialCount`小于，并且`createdNew`为，则其效果与当前线程已调用（减）次时相同。 `true`  `maximumCount`  
+  
+ 如果为`null` `name`指定或空字符串，则将创建本地信号量，就像您已调用<xref:System.Threading.Semaphore.%23ctor%28System.Int32%2CSystem.Int32%29>构造函数重载一样。 在此示例中`createdNew` ，始终`true`为。  
+  
+ 因为命名的信号量在整个操作系统中均可见，所以它们可用于跨进程边界协调资源使用。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示具有访问控制安全性的命名信号量的跨进程行为。 该示例使用<xref:System.Threading.Semaphore.OpenExisting%28System.String%29>方法重载来测试是否存在已命名的信号量。 如果该信号量不存在，则将创建该信号量的最大计数为2且具有访问控制安全性，这会拒绝当前用户使用该信号量，但会授予读取和更改信号量权限的权限。 如果从两个命令窗口运行已编译的示例，第二个副本将在调用<xref:System.Threading.Semaphore.OpenExisting%28System.String%29>方法时引发访问冲突异常。 捕获到异常，该示例使用<xref:System.Threading.Semaphore.OpenExisting%28System.String%2CSystem.Security.AccessControl.SemaphoreRights%29>方法重载打开具有读取和更改权限所需权限的信号量。  
+  
+ 更改权限后，会打开信号量，其中包含进入和释放所需的权限。 如果从第三个命令窗口运行已编译的示例，该示例将使用新的权限运行。  
+  
+ [!code-cpp[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/CS/source.cs#1)]
+ [!code-vb[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="initialCount" /> 大于 <paramref name="maximumCount" />。  
+  
+或 
+ <paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maximumCount" /> 小于 1。  
+  
+- 或 - 
+ <paramref name="initialCount" /> 小于 0。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">命名信号量存在且具有访问控制安全性，用户不具有 <see cref="F:System.Security.AccessControl.SemaphoreRights.FullControl" />。</exception>
+        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名信号量，可能是由于其他类型的等待句柄具有相同名称。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码以创建已命名的系统信号量。 关联的枚举<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />：。 安全操作： <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />。</permission>
+        <related type="Article" href="~/docs/standard/threading/index.md">托管线程处理</related>
+        <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">Semaphore</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public System.Security.AccessControl.SemaphoreSecurity GetAccessControl ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.AccessControl.SemaphoreSecurity GetAccessControl() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.GetAccessControl" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetAccessControl () As SemaphoreSecurity" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Security::AccessControl::SemaphoreSecurity ^ GetAccessControl();" />
+      <MemberSignature Language="F#" Value="member this.GetAccessControl : unit -&gt; System.Security.AccessControl.SemaphoreSecurity" Usage="semaphore.GetAccessControl " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.SemaphoreSecurity</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>获取已命名的系统信号量的访问控制安全性。</summary>
+        <returns>一个 <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> 对象，表示已命名系统信号量的访问控制安全性。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法使用以下标志组合（使用按位 "或" 运算组合）搜索权限： <xref:System.Security.AccessControl.AccessControlSections.Access?displayProperty=nameWithType>、 <xref:System.Security.AccessControl.AccessControlSections.Owner?displayProperty=nameWithType>和 <xref:System.Security.AccessControl.AccessControlSections.Group?displayProperty=nameWithType> 。  <xref:System.Threading.Semaphore.GetAccessControl%2A>  
+  
+ 用户必须具有<xref:System.Security.AccessControl.SemaphoreRights.ReadPermissions?displayProperty=nameWithType>调用此方法的权限，并且必须已使用<xref:System.Security.AccessControl.SemaphoreRights.ReadPermissions?displayProperty=nameWithType>权限打开该信号量。  
+  
+ 在本地信号灯上，访问控制安全性是不相关的。 如果对象不表示已命名的系统信号量，则此方法将<xref:System.Security.AccessControl.SemaphoreSecurity>返回一个对象，该对象向任何用户授予所有权限。 <xref:System.Threading.Semaphore>  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示具有访问控制安全性的命名信号量的跨进程行为。 该示例使用<xref:System.Threading.Semaphore.OpenExisting%28System.String%29>方法重载来测试是否存在已命名的信号量。  
+  
+ 如果该信号量不存在，则将创建该信号量的最大计数为2且具有访问控制安全性，这会拒绝当前用户使用该信号量，但会授予读取和更改信号量权限的权限。  
+  
+ 如果从两个命令窗口运行已编译的示例，第二个副本将在调用<xref:System.Threading.Semaphore.OpenExisting%28System.String%29>方法时引发访问冲突异常。 捕获到异常，该示例使用<xref:System.Threading.Semaphore.OpenExisting%28System.String%2CSystem.Security.AccessControl.SemaphoreRights%29>方法重载打开具有读取和更改权限所需权限的信号量。 系统信号量的访问控制安全性是使用<xref:System.Threading.Semaphore.GetAccessControl%2A>方法获取的。  
+  
+ 更改权限后，会打开信号量，其中包含进入和释放所需的权限。 如果从第三个命令窗口运行已编译的示例，该示例将使用新的权限运行。  
+  
+ [!code-cpp[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/CS/source.cs#1)]
+ [!code-vb[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.UnauthorizedAccessException">当前的 <see cref="T:System.Threading.Semaphore" /> 对象表示已命名的系统信号灯，且用户不具备 <see cref="F:System.Security.AccessControl.SemaphoreRights.ReadPermissions" /> 权限。  
+  
+或 
+当前的 <see cref="T:System.Threading.Semaphore" /> 对象表示已命名的系统信号灯，且 <see cref="F:System.Security.AccessControl.SemaphoreRights.ReadPermissions" /> 权限不开放。</exception>
+        <exception cref="T:System.NotSupportedException">不支持 Windows 98 或 Windows Millennium Edition。</exception>
+        <related type="Article" href="~/docs/standard/threading/index.md">托管线程处理</related>
+        <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">Semaphore</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="OpenExisting">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>打开指定名称为信号量（如果已经存在）。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="OpenExisting">
+      <MemberSignature Language="C#" Value="public static System.Threading.Semaphore OpenExisting (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Semaphore OpenExisting(string name) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.OpenExisting(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function OpenExisting (name As String) As Semaphore" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Threading::Semaphore ^ OpenExisting(System::String ^ name);" />
+      <MemberSignature Language="F#" Value="static member OpenExisting : string -&gt; System.Threading.Semaphore" Usage="System.Threading.Semaphore.OpenExisting name" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Threading.Semaphore</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">要打开的系统信号量的名称。</param>
+        <summary>打开指定名称为信号量（如果已经存在）。</summary>
+        <returns>一个对象，表示已命名的系统信号量。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此<xref:System.Threading.Semaphore.OpenExisting%2A>方法尝试打开指定的命名信号量。 如果系统信号量不存在，此方法将引发异常，而不是创建系统信号量。 若要在不存在系统信号量时创建它，请使用<xref:System.Threading.Semaphore.%23ctor%2A> `name`具有参数的构造函数之一。  
+  
+ 即使返回的对象表示相同的命名系统信号量`name` ，对此方法使用与<xref:System.Threading.Semaphore>相同的值的多个调用不一定会返回相同的对象。  
+  
+ 此方法重载等效于调用<xref:System.Threading.Semaphore.OpenExisting%2A>方法重载，并使用按位 "或" 运算来指定<xref:System.Security.AccessControl.SemaphoreRights.Synchronize?displayProperty=nameWithType>和<xref:System.Security.AccessControl.SemaphoreRights.Modify?displayProperty=nameWithType>权限。  
+  
+ 指定标志后，线程可以进入信号量， <xref:System.Security.AccessControl.SemaphoreRights.Modify?displayProperty=nameWithType>指定标志允许线程调用<xref:System.Threading.Semaphore.Release%2A>方法。 <xref:System.Security.AccessControl.SemaphoreRights.Synchronize?displayProperty=nameWithType>  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示具有访问控制安全性的命名信号量的跨进程行为。 该示例使用<xref:System.Threading.Semaphore.OpenExisting%28System.String%29>方法重载来测试是否存在已命名的信号量。  
+  
+ 如果该信号量不存在，则将创建该信号量的最大计数为2且具有访问控制安全性，这会拒绝当前用户使用该信号量，但会授予读取和更改信号量权限的权限。  
+  
+ 如果从两个命令窗口运行已编译的示例，第二个副本将在调用<xref:System.Threading.Semaphore.OpenExisting%28System.String%29>方法重载时引发访问冲突异常。 捕获到异常，该示例使用<xref:System.Threading.Semaphore.OpenExisting%28System.String%2CSystem.Security.AccessControl.SemaphoreRights%29>方法重载打开具有读取和更改权限所需权限的信号量。  
+  
+ 更改权限后，将以输入和释放信号的权限打开该信号量。 如果从第三个命令窗口运行已编译的示例，该示例将使用新的权限运行。  
+  
+ [!code-cpp[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/CS/source.cs#1)]
+ [!code-vb[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
+  
+或 
+ <paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">命名的信号量不存在。</exception>
+        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">存在该命名信号量，但用户没有使用它时所需的安全访问权限。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码来打开已命名的系统信号量。 关联的枚举<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />：。  
+  
+安全操作： <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />。</permission>
+        <related type="Article" href="~/docs/standard/threading/index.md">托管线程处理</related>
+        <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">Semaphore</related>
+      </Docs>
+    </Member>
+    <Member MemberName="OpenExisting">
+      <MemberSignature Language="C#" Value="public static System.Threading.Semaphore OpenExisting (string name, System.Security.AccessControl.SemaphoreRights rights);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Semaphore OpenExisting(string name, valuetype System.Security.AccessControl.SemaphoreRights rights) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.OpenExisting(System.String,System.Security.AccessControl.SemaphoreRights)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function OpenExisting (name As String, rights As SemaphoreRights) As Semaphore" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Threading::Semaphore ^ OpenExisting(System::String ^ name, System::Security::AccessControl::SemaphoreRights rights);" />
+      <MemberSignature Language="F#" Value="static member OpenExisting : string * System.Security.AccessControl.SemaphoreRights -&gt; System.Threading.Semaphore" Usage="System.Threading.Semaphore.OpenExisting (name, rights)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Semaphore</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" Index="0" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="rights" Type="System.Security.AccessControl.SemaphoreRights" Index="1" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="name">要打开的系统信号量的名称。</param>
+        <param name="rights">表示所需的安全访问权限的枚举值的按位组合。</param>
+        <summary>用安全访问权限打开指定名称为信号量（如果已经存在）。</summary>
+        <returns>一个对象，表示已命名的系统信号量。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 参数必须包括允许线程<xref:System.Security.AccessControl.SemaphoreRights.Synchronize?displayProperty=nameWithType>进入信号量的标志，以及<xref:System.Security.AccessControl.SemaphoreRights.Modify?displayProperty=nameWithType>允许线程调用<xref:System.Threading.Semaphore.Release%2A>方法的标志。 `rights`  
+  
+ 此<xref:System.Threading.Semaphore.OpenExisting%2A>方法尝试打开现有的已命名信号量。 如果系统信号量不存在，此方法将引发异常，而不是创建系统信号量。 若要在不存在系统信号量时创建它，请使用<xref:System.Threading.Semaphore.%23ctor%2A> `name`具有参数的构造函数之一。  
+  
+ 即使返回的对象表示相同的命名系统信号量`name` ，对此方法使用与<xref:System.Threading.Semaphore>相同的值的多个调用不一定会返回相同的对象。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示具有访问控制安全性的命名信号量的跨进程行为。 该示例使用<xref:System.Threading.Semaphore.OpenExisting%28System.String%29>方法重载来测试是否存在已命名的信号量。  
+  
+ 如果该信号量不存在，则将创建该信号量的最大计数为2且具有访问控制安全性，这会拒绝当前用户使用该信号量，但会授予读取和更改信号量权限的权限。  
+  
+ 如果从两个命令窗口运行已编译的示例，第二个副本将在调用<xref:System.Threading.Semaphore.OpenExisting%28System.String%29>方法时引发访问冲突异常。 捕获到异常，该示例使用<xref:System.Threading.Semaphore.OpenExisting%28System.String%2CSystem.Security.AccessControl.SemaphoreRights%29>方法重载打开具有读取和更改权限所需权限的信号量。  
+  
+ 更改权限后，将以输入和释放信号的权限打开该信号量。 如果从第三个命令窗口运行已编译的示例，该示例将使用新的权限运行。  
+  
+ [!code-cpp[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/CS/source.cs#1)]
+ [!code-vb[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
+  
+- 或 - 
+ <paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">命名的信号量不存在。</exception>
+        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">已命名的信号量存在，但用户不具备所需的安全访问权限。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于调用非托管代码以创建已命名的系统信号量。 关联枚举：<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />。  
+  
+安全操作： <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />。</permission>
+        <related type="Article" href="~/docs/standard/threading/index.md">托管线程处理</related>
+        <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">Semaphore</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Release">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>退出信号量。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Release">
+      <MemberSignature Language="C#" Value="public int Release ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 Release() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.Release" />
+      <MemberSignature Language="VB.NET" Value="Public Function Release () As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; int Release();" />
+      <MemberSignature Language="F#" Value="member this.Release : unit -&gt; int" Usage="semaphore.Release " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netstandard-2.1">
+          <AttributeName>System.Runtime.ConstrainedExecution.PrePrepareMethod</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>退出信号量并返回前一个计数。</summary>
+        <returns>调用 <see cref="Overload:System.Threading.Semaphore.Release" /> 方法前信号量的计数。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 线程通常使用<xref:System.Threading.WaitHandle.WaitOne%2A>方法进入信号量，并且通常使用此方法重载来退出。  
+  
+ <xref:System.Threading.SemaphoreFullException>如果<xref:System.Threading.Semaphore.Release%2A>方法引发，则不一定表示调用线程出现问题。 其他线程中的编程错误可能导致该线程退出信号量的次数超过了输入的时间。  
+  
+ 如果当前<xref:System.Threading.Semaphore>的对象表示已命名的系统信号量，则用户<xref:System.Security.AccessControl.SemaphoreRights.Modify?displayProperty=nameWithType>必须具有权限，并且必须已使用<xref:System.Security.AccessControl.SemaphoreRights.Modify?displayProperty=nameWithType>权限打开该信号量。  
+  
+   
+  
+## Examples  
+ 下面的代码示例创建一个信号量，其最大计数为3，初始计数为零。 该示例启动五个线程，这会阻止等待信号量。 主线程使用<xref:System.Threading.Semaphore.Release%28System.Int32%29>方法重载将信号量计数增加到其最大值，从而允许三个线程进入信号量。 每个线程使用<xref:System.Threading.Thread.Sleep%2A?displayProperty=nameWithType>方法等待一秒，以模拟工作，然后<xref:System.Threading.Semaphore.Release>调用方法重载以释放信号量。  
+  
+ 每次释放信号灯时，都将显示以前的信号量计数。 控制台消息跟踪信号量使用。 每个线程的模拟工作时间间隔略有增加，使输出更易于读取。  
+  
+ [!code-cpp[System.Threading.Semaphore2#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.Semaphore2/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.Semaphore2#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.Semaphore2/CS/source.cs#1)]
+ [!code-vb[System.Threading.Semaphore2#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.Semaphore2/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Threading.SemaphoreFullException">信号量计数已是最大值。</exception>
+        <exception cref="T:System.IO.IOException">发生已命名信号量的 Win32 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">当前信号量表示一个已命名的系统信号量，但用户不具备 <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" />。  
+  
+或 
+当前信号量表示一个已命名的系统信号量，但它未用 <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> 打开。</exception>
+        <related type="Article" href="~/docs/standard/threading/index.md">托管线程处理</related>
+        <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">Semaphore</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Release">
+      <MemberSignature Language="C#" Value="public int Release (int releaseCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 Release(int32 releaseCount) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.Release(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Release (releaseCount As Integer) As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; int Release(int releaseCount);" />
+      <MemberSignature Language="F#" Value="member this.Release : int -&gt; int" Usage="semaphore.Release releaseCount" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="releaseCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="releaseCount">退出信号量的次数。</param>
+        <summary>以指定的次数退出信号量并返回前一个计数。</summary>
+        <returns>调用 <see cref="Overload:System.Threading.Semaphore.Release" /> 方法前信号量的计数。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果某个线程多次进入了信号量，此方法重载允许使用一次调用来还原整个信号量计数。  
+  
+ <xref:System.Threading.SemaphoreFullException>如果<xref:System.Threading.Semaphore.Release%2A>方法引发，则不一定表示调用线程出现问题。 其他线程中的编程错误可能导致该线程退出信号量的次数超过了输入的时间。  
+  
+ 如果当前<xref:System.Threading.Semaphore>的对象表示已命名的系统信号量，则用户<xref:System.Security.AccessControl.SemaphoreRights.Modify?displayProperty=nameWithType>必须具有权限，并且必须已使用<xref:System.Security.AccessControl.SemaphoreRights.Modify?displayProperty=nameWithType>权限打开该信号量。  
+  
+   
+  
+## Examples  
+ 下面的代码示例创建一个信号量，其最大计数为3，初始计数为零。 该示例启动五个线程，这会阻止等待信号量。 主线程使用<xref:System.Threading.Semaphore.Release%28System.Int32%29>方法重载将信号量计数增加到其最大值，从而允许三个线程进入信号量。 每个线程使用<xref:System.Threading.Thread.Sleep%2A?displayProperty=nameWithType>方法等待一秒，以模拟工作，然后<xref:System.Threading.Semaphore.Release>调用方法重载以释放信号量。  
+  
+ 每次释放信号灯时，都将显示以前的信号量计数。 控制台消息跟踪信号量使用。 每个线程的模拟工作时间间隔略有增加，使输出更易于读取。  
+  
+ [!code-cpp[System.Threading.Semaphore2#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.Semaphore2/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.Semaphore2#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.Semaphore2/CS/source.cs#1)]
+ [!code-vb[System.Threading.Semaphore2#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.Semaphore2/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="releaseCount" /> 小于 1。</exception>
+        <exception cref="T:System.Threading.SemaphoreFullException">信号量计数已是最大值。</exception>
+        <exception cref="T:System.IO.IOException">发生已命名信号量的 Win32 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">当前信号量表示一个已命名的系统信号量，但用户不具备 <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> 权限。  
+  
+或 
+当前信号量表示一个已命名的系统信号量，但它不是以 <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> 权限打开的。</exception>
+        <related type="Article" href="~/docs/standard/threading/index.md">托管线程处理</related>
+        <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">Semaphore</related>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAccessControl">
+      <MemberSignature Language="C#" Value="public void SetAccessControl (System.Security.AccessControl.SemaphoreSecurity semaphoreSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessControl(class System.Security.AccessControl.SemaphoreSecurity semaphoreSecurity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.SetAccessControl(System.Security.AccessControl.SemaphoreSecurity)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void SetAccessControl(System::Security::AccessControl::SemaphoreSecurity ^ semaphoreSecurity);" />
+      <MemberSignature Language="F#" Value="member this.SetAccessControl : System.Security.AccessControl.SemaphoreSecurity -&gt; unit" Usage="semaphore.SetAccessControl semaphoreSecurity" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="semaphoreSecurity" Type="System.Security.AccessControl.SemaphoreSecurity" Index="0" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="semaphoreSecurity">一个 <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> 对象，表示应用于已命名的系统信号量的访问控制安全性。</param>
+        <summary>设置已命名的系统信号量的访问控制安全性。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 只能在代表命名系统信号量的<xref:System.Threading.Semaphore>对象上设置访问控制安全性。  
+  
+ 用户必须具有<xref:System.Security.AccessControl.SemaphoreRights.ChangePermissions?displayProperty=nameWithType>调用此方法的权限，并且必须已使用<xref:System.Security.AccessControl.SemaphoreRights.ChangePermissions?displayProperty=nameWithType>权限打开该信号量。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示具有访问控制安全性的命名信号量的跨进程行为。 该示例使用<xref:System.Threading.Semaphore.OpenExisting%28System.String%29>方法重载来测试是否存在已命名的信号量。  
+  
+ 如果该信号量不存在，则将创建该信号量的最大计数为2且具有访问控制安全性，这会拒绝当前用户使用该信号量，但会授予读取和更改信号量权限的权限。  
+  
+ 如果从两个命令窗口运行已编译的示例，第二个副本将在调用<xref:System.Threading.Semaphore.OpenExisting%28System.String%29>方法时引发访问冲突异常。 捕获到异常，该示例使用<xref:System.Threading.Semaphore.OpenExisting%28System.String%2CSystem.Security.AccessControl.SemaphoreRights%29>方法重载打开具有读取和更改权限所需权限的信号量。  
+  
+ 更改权限后，使用<xref:System.Threading.Semaphore.SetAccessControl%2A>方法，将以输入和释放所需的权限打开信号量。 如果从第三个命令窗口运行已编译的示例，该示例将使用新的权限运行。  
+  
+ [!code-cpp[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/CPP/source.cpp#1)]
+ [!code-csharp[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/CS/source.cs#1)]
+ [!code-vb[System.Threading.Semaphore.ctor named 5a#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.Semaphore.ctor named 5a/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="semaphoreSecurity" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">用户不具备 <see cref="F:System.Security.AccessControl.SemaphoreRights.ChangePermissions" /> 权限。  
+  
+或 
+信号量不是以 <see cref="F:System.Security.AccessControl.SemaphoreRights.ChangePermissions" /> 权限打开的。</exception>
+        <exception cref="T:System.NotSupportedException">当前 <see cref="T:System.Threading.Semaphore" /> 对象不表示已命名的系统信号量。</exception>
+        <related type="Article" href="~/docs/standard/threading/index.md">托管线程处理</related>
+        <related type="Article" href="~/docs/standard/threading/semaphore-and-semaphoreslim.md">Semaphore</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="TryOpenExisting">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>打开指定名称为信号量（如果已经存在)，并返回指示操作是否成功的值。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="TryOpenExisting">
+      <MemberSignature Language="C#" Value="public static bool TryOpenExisting (string name, out System.Threading.Semaphore result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryOpenExisting(string name, [out] class System.Threading.Semaphore&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.TryOpenExisting(System.String,System.Threading.Semaphore@)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function TryOpenExisting (name As String, ByRef result As Semaphore) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool TryOpenExisting(System::String ^ name, [Runtime::InteropServices::Out] System::Threading::Semaphore ^ % result);" />
+      <MemberSignature Language="F#" Value="static member TryOpenExisting : string *  -&gt; bool" Usage="System.Threading.Semaphore.TryOpenExisting (name, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="result" Type="System.Threading.Semaphore" RefType="out" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="name">要打开的系统信号量的名称。</param>
+        <param name="result">当此方法返回时，如果调用成功，则包含表示命名信号的 <see cref="T:System.Threading.Semaphore" /> 对象；否则为 <see langword="null" />。 该参数未经初始化即被处理。</param>
+        <summary>打开指定名称为信号量（如果已经存在），并返回指示操作是否成功的值。</summary>
+        <returns>如果命名信号量成功打开，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果命名信号量不存在，则此方法不会创建它。 若要在不存在系统信号量时创建它，请使用<xref:System.Threading.Semaphore.%23ctor%2A> `name`具有参数的构造函数之一。  
+  
+ 如果不确定是否存在已命名的信号量，请使用此方法重载， <xref:System.Threading.Semaphore.OpenExisting%28System.String%29>而不是方法重载，这会在信号量不存在时引发异常。  
+  
+ 此方法重载等效于调用<xref:System.Threading.Semaphore.TryOpenExisting%2A>方法重载，并使用按位 "或" 运算来指定<xref:System.Security.AccessControl.SemaphoreRights.Synchronize?displayProperty=nameWithType>和<xref:System.Security.AccessControl.SemaphoreRights.Modify?displayProperty=nameWithType>权限。 指定标志后，线程可以进入信号量， <xref:System.Security.AccessControl.SemaphoreRights.Modify?displayProperty=nameWithType>指定标志允许线程调用<xref:System.Threading.Semaphore.Release%2A>方法。 <xref:System.Security.AccessControl.SemaphoreRights.Synchronize?displayProperty=nameWithType>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
+  
+或 
+ <paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">存在该命名信号量，但用户没有使用它时所需的安全访问权限。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="TryOpenExisting">
+      <MemberSignature Language="C#" Value="public static bool TryOpenExisting (string name, System.Security.AccessControl.SemaphoreRights rights, out System.Threading.Semaphore result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryOpenExisting(string name, valuetype System.Security.AccessControl.SemaphoreRights rights, [out] class System.Threading.Semaphore&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Semaphore.TryOpenExisting(System.String,System.Security.AccessControl.SemaphoreRights,System.Threading.Semaphore@)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function TryOpenExisting (name As String, rights As SemaphoreRights, ByRef result As Semaphore) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool TryOpenExisting(System::String ^ name, System::Security::AccessControl::SemaphoreRights rights, [Runtime::InteropServices::Out] System::Threading::Semaphore ^ % result);" />
+      <MemberSignature Language="F#" Value="static member TryOpenExisting : string * System.Security.AccessControl.SemaphoreRights *  -&gt; bool" Usage="System.Threading.Semaphore.TryOpenExisting (name, rights, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" Index="0" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="rights" Type="System.Security.AccessControl.SemaphoreRights" Index="1" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="result" Type="System.Threading.Semaphore" RefType="out" Index="2" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="name">要打开的系统信号量的名称。</param>
+        <param name="rights">表示所需的安全访问权限的枚举值的按位组合。</param>
+        <param name="result">当此方法返回时，如果调用成功，则包含表示命名信号的 <see cref="T:System.Threading.Semaphore" /> 对象；否则为 <see langword="null" /> 。 该参数未经初始化即被处理。</param>
+        <summary>用安全访问权限打开指定名称为信号量（如果已经存在），并返回指示操作是否成功的值。</summary>
+        <returns>如果命名信号量成功打开，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果命名信号量不存在，则此方法不会创建它。 若要在不存在系统信号量时创建它，请使用<xref:System.Threading.Semaphore.%23ctor%2A> `name`具有参数的构造函数之一。  
+  
+ 如果不确定是否存在已命名的信号量，请使用此方法重载， <xref:System.Threading.Semaphore.OpenExisting%28System.String%2CSystem.Security.AccessControl.SemaphoreRights%29>而不是方法重载，这会在信号量不存在时引发异常。  
+  
+ 参数必须包括允许线程<xref:System.Security.AccessControl.SemaphoreRights.Synchronize?displayProperty=nameWithType>进入信号量的标志，以及<xref:System.Security.AccessControl.SemaphoreRights.Modify?displayProperty=nameWithType>允许线程调用<xref:System.Threading.Semaphore.Release%2A>方法的标志。 `rights`  
+  
+ 即使返回的对象表示相同的命名系统信号量`name` ，对此方法使用与<xref:System.Threading.Semaphore>相同的值的多个调用不一定会返回相同的对象。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
+  
+或 
+ <paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">存在该命名信号量，但用户没有使用它时所需的安全访问权限。</exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

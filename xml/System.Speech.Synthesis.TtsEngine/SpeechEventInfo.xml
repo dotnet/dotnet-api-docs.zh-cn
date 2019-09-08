@@ -1,0 +1,797 @@
+<Type Name="SpeechEventInfo" FullName="System.Speech.Synthesis.TtsEngine.SpeechEventInfo">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="94ce54252ffa9ab3f37762c9ea8e4e801ac5885b" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70600098" /></Metadata><TypeSignature Language="C#" Value="public struct SpeechEventInfo : IEquatable&lt;System.Speech.Synthesis.TtsEngine.SpeechEventInfo&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit SpeechEventInfo extends System.ValueType implements class System.IEquatable`1&lt;valuetype System.Speech.Synthesis.TtsEngine.SpeechEventInfo&gt;" />
+  <TypeSignature Language="DocId" Value="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" />
+  <TypeSignature Language="VB.NET" Value="Public Structure SpeechEventInfo&#xA;Implements IEquatable(Of SpeechEventInfo)" />
+  <TypeSignature Language="C++ CLI" Value="public value class SpeechEventInfo : IEquatable&lt;System::Speech::Synthesis::TtsEngine::SpeechEventInfo&gt;" />
+  <TypeSignature Language="F#" Value="type SpeechEventInfo = struct" />
+  <AssemblyInfo>
+    <AssemblyName>System.Speech</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IEquatable&lt;System.Speech.Synthesis.TtsEngine.SpeechEventInfo&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ComponentModel.ImmutableObject(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>用于指定事件的类型及其将生成的参数（如果有的话）作为文本呈现到语音一部分由自定义复合语音引擎。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 自定义语音<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>合成引擎通过向<xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite.AddEvents%2A>传递到的实现<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml.Speak%2A>的<xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite>引擎站点对象成员提供相应的实例，请求在语音平台下生成事件。<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml.AddLexicon%2A>、和<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml.RemoveLexicon%2A>。  
+  
+   
+  
+## Examples  
+ 下面<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml>的示例是继承自的自定义语音合成实现的一部分，并使用<xref:System.Speech.Synthesis.TtsEngine.TextFragment>、 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>、 <xref:System.Speech.Synthesis.TtsEngine.FragmentState>和<xref:System.Speech.Synthesis.TtsEngine.TtsEventId>  
+  
+ 的实现<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml.Speak%2A>  
+  
+1.  接收实例的<xref:System.Speech.Synthesis.TtsEngine.TextFragment>数组，并创建`Speak`要在基础合成<xref:System.Speech.Synthesis.TtsEngine.TextFragment>引擎上传递给方法的新的实例数组。  
+  
+2.  <xref:System.Speech.Synthesis.TtsEngine.FragmentState.Action%2A> <xref:System.Speech.Synthesis.TtsEngine.FragmentState> <xref:System.Speech.Synthesis.TtsEngine.TextFragment.State%2A> 如果在 <xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction.Speak> 每个<xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction> 实例的属性返回的的属性中找到枚举 <xref:System.Speech.Synthesis.TtsEngine.TextFragment> 值，则实现  
+  
+    -   将 Americanism 转换为要口述的文本中的 Britishisms。  
+  
+    -   如果提供<xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite.EventInterest%2A> <xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite> 给实现 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo> 的接口上的属性支持事件类型，则使用实例创建事件来驱动合成器进度计量。 <xref:System.Speech.Synthesis.TtsEngine.TtsEventId.WordBoundary>  
+  
+3.  然后，将使用修改后<xref:System.Speech.Synthesis.TtsEngine.TextFragment>的数组调用语音呈现引擎。  
+  
+```  
+private const int WordBoundaryFlag = 1 << (int)TtsEventId.WordBoundary;  
+private readonly char[] spaces = new char[] { ' ', '\t', '\r', '\n' };  
+internal struct UsVsUk  
+{  
+  internal string UK;  
+  internal string US;  
+}  
+  
+override public void Speak (TextFragment [] frags, IntPtr wfx, ITtsEngineSite site)  
+{  
+  TextFragment [] newFrags=new TextFragment[frags.Length];  
+  
+  for (int i=0;i<frags.Length;i++){  
+    newFrags[i].State=frags[i].State;  
+    //truncate  
+    newFrags[i].TextToSpeak = frags[i].TextToSpeak.Substring(frags[i].TextOffset,  
+                               frags[i].TextLength);  
+    newFrags[i].TextLength = newFrags[i].TextToSpeak.Length;  
+    newFrags[i].TextOffset = 0;  
+    if (newFrags[i].State.Action == TtsEngineAction.Speak) {  
+      //Us to UK conversion  
+      foreach (UsVsUk term in TransList) {  
+      newFrags[i].TextToSpeak.Replace(term.US, term.UK);  
+      }  
+      //Generate progress meter events if supported  
+      if ((site.EventInterest & WordBoundaryFlag) != 0) {  
+      string[] subs = newFrags[i].TextToSpeak.Split(spaces);  
+  
+      foreach (string s in subs) {  
+        int offset = newFrags[i].TextOffset;  
+        SpeechEventInfo spEvent = new SpeechEventInfo((Int16)TtsEventId.WordBoundary,   
+                (Int16)EventParameterType.Undefined,   
+                 s.Length, new IntPtr(offset));  
+        offset += s.Length;  
+        if (s.Trim().Length > 0) {  
+          SpeechEventInfo[] events = new SpeechEventInfo[1];  
+          events[0] = spEvent;  
+          site.AddEvents(events, 1);  
+        }  
+      }  
+      }  
+    }  
+  }  
+  
+  _baseSynthesize.Speak(newFrags, wfx, site);  
+  
+}  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SpeechEventInfo (short eventId, short parameterType, int param1, IntPtr param2);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int16 eventId, int16 parameterType, int32 param1, native int param2) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.#ctor(System.Int16,System.Int16,System.Int32,System.IntPtr)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (eventId As Short, parameterType As Short, param1 As Integer, param2 As IntPtr)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; SpeechEventInfo(short eventId, short parameterType, int param1, IntPtr param2);" />
+      <MemberSignature Language="F#" Value="new System.Speech.Synthesis.TtsEngine.SpeechEventInfo : int16 * int16 * int * nativeint -&gt; System.Speech.Synthesis.TtsEngine.SpeechEventInfo" Usage="new System.Speech.Synthesis.TtsEngine.SpeechEventInfo (eventId, parameterType, param1, param2)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="eventId" Type="System.Int16" />
+        <Parameter Name="parameterType" Type="System.Int16" />
+        <Parameter Name="param1" Type="System.Int32" />
+        <Parameter Name="param2" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="eventId">指示 <see cref="T:System.Speech.Synthesis.TtsEngine.TtsEventId" /> 对象将处理的语音平台事件的类型的 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 实例。</param>
+        <param name="parameterType">指示将如何解释 <paramref name="param2" /> 的 <see langword="System.IntPtr" /> 引用和暗示 <paramref name="param1" /> 用法的 <see cref="T:System.Speech.Synthesis.TtsEngine.EventParameterType" /> 实例。</param>
+        <param name="param1">当要构造的 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 实例要求的事件生成，要传递到语音平台的整数值。  
+  
+此整数的确切含义隐式依赖于 <paramref name="parameterType" />的值。</param>
+        <param name="param2">一个引用对象的 <see langword="System.IntPtr" /> 实例。 当要构造的 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 实例请求的事件生成，要传递到语音平台。  
+  
+必须是明显地通过值定义的引用的类型 <paramref name="parameterType" />。 值 <see langword="System.IntPtr.Zero" />。</param>
+        <summary>构造相应的 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 用于`parameterType`、 `param1`及其<xref:System.Speech.Synthesis.TtsEngine.TtsEventId> `eventId`含义的允许值由所请求的事件类型决定，由用于的的成员指定。 `param2`  
+  
+ 有关`parameterType`、 `param1`和的适当值的详细信息，请参阅文档 `param2` <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.EventId%2A>  
+  
+ 可以通过的合成器引擎站点<xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite.EventInterest%2A> <xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite>实现上的属性获取可由语音平台基础结构处理的事件类型。  
+  
+   
+  
+## Examples  
+ 下面<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml>的示例是继承自的自定义语音合成实现的一部分，并使用<xref:System.Speech.Synthesis.TtsEngine.TextFragment>、 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>、 <xref:System.Speech.Synthesis.TtsEngine.FragmentState>和<xref:System.Speech.Synthesis.TtsEngine.TtsEventId>  
+  
+ 的实现<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml.Speak%2A>  
+  
+1.  接收实例的<xref:System.Speech.Synthesis.TtsEngine.TextFragment>数组，并创建`Speak`要在基础合成<xref:System.Speech.Synthesis.TtsEngine.TextFragment>引擎上传递给方法的新的实例数组。  
+  
+2.  <xref:System.Speech.Synthesis.TtsEngine.FragmentState.Action%2A> <xref:System.Speech.Synthesis.TtsEngine.FragmentState> <xref:System.Speech.Synthesis.TtsEngine.TextFragment.State%2A> 如果在 <xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction.Speak> 每个<xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction> 实例的属性返回的的属性中找到枚举 <xref:System.Speech.Synthesis.TtsEngine.TextFragment> 值，则实现  
+  
+    -   将 Americanism 转换为要口述的文本中的 Britishisms。  
+  
+    -   如果提供<xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite.EventInterest%2A> <xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite> 给实现 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo> 的接口上的属性支持事件类型，则使用实例创建事件来驱动合成器进度计量。 <xref:System.Speech.Synthesis.TtsEngine.TtsEventId.WordBoundary>  
+  
+3.  然后，将使用修改后<xref:System.Speech.Synthesis.TtsEngine.TextFragment>的数组调用语音呈现引擎。  
+  
+```  
+private const int WordBoundaryFlag = 1 << (int)TtsEventId.WordBoundary;  
+private readonly char[] spaces = new char[] { ' ', '\t', '\r', '\n' };  
+internal struct UsVsUk  
+{  
+  internal string UK;  
+  internal string US;  
+}  
+  
+override public void Speak (TextFragment [] frags, IntPtr wfx, ITtsEngineSite site)  
+{  
+  TextFragment [] newFrags=new TextFragment[frags.Length];  
+  
+  for (int i=0;i<frags.Length;i++){  
+    newFrags[i].State=frags[i].State;  
+    //truncate  
+    newFrags[i].TextToSpeak = frags[i].TextToSpeak.Substring(frags[i].TextOffset,  
+                               frags[i].TextLength);  
+    newFrags[i].TextLength = newFrags[i].TextToSpeak.Length;  
+    newFrags[i].TextOffset = 0;  
+    if (newFrags[i].State.Action == TtsEngineAction.Speak) {  
+      //Us to UK conversion  
+      foreach (UsVsUk term in TransList) {  
+      newFrags[i].TextToSpeak.Replace(term.US, term.UK);  
+      }  
+      //Generate progress meter events if supported  
+      if ((site.EventInterest & WordBoundaryFlag) != 0) {  
+      string[] subs = newFrags[i].TextToSpeak.Split(spaces);  
+  
+      foreach (string s in subs) {  
+        int offset = newFrags[i].TextOffset;  
+        SpeechEventInfo spEvent = new SpeechEventInfo((Int16)TtsEventId.WordBoundary,   
+                (Int16)EventParameterType.Undefined,   
+                 s.Length, new IntPtr(offset));  
+        offset += s.Length;  
+        if (s.Trim().Length > 0) {  
+          SpeechEventInfo[] events = new SpeechEventInfo[1];  
+          events[0] = spEvent;  
+          site.AddEvents(events, 1);  
+        }  
+      }  
+      }  
+    }  
+  }  
+  
+  _baseSynthesize.Speak(newFrags, wfx, site);  
+  
+}  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Equals">
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>确定 <c>SpeechEventInfo</c> 实例是否等同于另一个对象。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Equals(System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function Equals (obj As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override bool Equals(System::Object ^ obj);" />
+      <MemberSignature Language="F#" Value="override this.Equals : obj -&gt; bool" Usage="speechEventInfo.Equals obj" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">要计算的对象。</param>
+        <summary>确定指定的对象是否为 <c>SpeechEventInfo</c> 的实例，并与当前 <c>SpeechEventInfo</c> 实例是否相等。</summary>
+        <returns>如果 <paramref name="obj" /> 等于当前 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 对象，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (System.Speech.Synthesis.TtsEngine.SpeechEventInfo other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(valuetype System.Speech.Synthesis.TtsEngine.SpeechEventInfo other) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Equals(System.Speech.Synthesis.TtsEngine.SpeechEventInfo)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Equals (other As SpeechEventInfo) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool Equals(System::Speech::Synthesis::TtsEngine::SpeechEventInfo other);" />
+      <MemberSignature Language="F#" Value="override this.Equals : System.Speech.Synthesis.TtsEngine.SpeechEventInfo -&gt; bool" Usage="speechEventInfo.Equals other" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IEquatable`1.Equals(`0)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="System.Speech.Synthesis.TtsEngine.SpeechEventInfo" />
+      </Parameters>
+      <Docs>
+        <param name="other">要计算的 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 对象。</param>
+        <summary>确定指定的 <c>SpeechEventInfo</c> 对象与 <c>SpeechEventInfo</c> 的当前实例是否相等。</summary>
+        <returns>如果 <paramref name="other" /> 等于当前 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 对象，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EventId">
+      <MemberSignature Language="C#" Value="public short EventId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int16 EventId" />
+      <MemberSignature Language="DocId" Value="P:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.EventId" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property EventId As Short" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property short EventId { short get(); };" />
+      <MemberSignature Language="F#" Value="member this.EventId : int16" Usage="System.Speech.Synthesis.TtsEngine.SpeechEventInfo.EventId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取和设置 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 实例用于请求的语音平台事件。</summary>
+        <value>返回作为 <see langword="short" /> 的 <see cref="T:System.Speech.Synthesis.TtsEngine.TtsEventId" /> 的成员，指示该事件类型 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 对象将生成。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml>的示例是继承自的自定义语音合成实现的一部分，并使用<xref:System.Speech.Synthesis.TtsEngine.TextFragment>、 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>、 <xref:System.Speech.Synthesis.TtsEngine.FragmentState>和<xref:System.Speech.Synthesis.TtsEngine.TtsEventId>  
+  
+ 的实现<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml.Speak%2A>  
+  
+1.  接收实例的<xref:System.Speech.Synthesis.TtsEngine.TextFragment>数组，并创建`Speak`要在基础合成<xref:System.Speech.Synthesis.TtsEngine.TextFragment>引擎上传递给方法的新的实例数组。  
+  
+2.  <xref:System.Speech.Synthesis.TtsEngine.FragmentState.Action%2A> <xref:System.Speech.Synthesis.TtsEngine.FragmentState> <xref:System.Speech.Synthesis.TtsEngine.TextFragment.State%2A> 如果在 <xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction.Speak> 每个<xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction> 实例的属性返回的的属性中找到枚举 <xref:System.Speech.Synthesis.TtsEngine.TextFragment> 值，则实现  
+  
+    -   将 Americanism 转换为要口述的文本中的 Britishisms。  
+  
+    -   如果提供<xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite.EventInterest%2A> <xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite> 给实现 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo> 的接口上的属性支持事件类型，则使用实例创建事件来驱动合成器进度计量。 <xref:System.Speech.Synthesis.TtsEngine.TtsEventId.WordBoundary>  
+  
+         上<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>的参数，包括<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.EventId%2A>用于记录通过`LogSpeechEvent`方法生成的事件。  
+  
+3.  然后，将使用修改后<xref:System.Speech.Synthesis.TtsEngine.TextFragment>的数组调用语音呈现引擎。  
+  
+```  
+private const int WordBoundaryFlag = 1 << (int)TtsEventId.WordBoundary;  
+private readonly char[] spaces = new char[] { ' ', '\t', '\r', '\n' };  
+internal struct UsVsUk  
+{  
+  internal string UK;  
+  internal string US;  
+}  
+  
+override public void Speak (TextFragment [] frags, IntPtr wfx, ITtsEngineSite site)  
+{  
+  TextFragment [] newFrags=new TextFragment[frags.Length];  
+  
+  for (int i=0;i<frags.Length;i++){  
+    newFrags[i].State=frags[i].State;  
+    //truncate  
+    newFrags[i].TextToSpeak = frags[i].TextToSpeak.Substring(frags[i].TextOffset,  
+                               frags[i].TextLength);  
+    newFrags[i].TextLength = newFrags[i].TextToSpeak.Length;  
+    newFrags[i].TextOffset = 0;  
+    if (newFrags[i].State.Action == TtsEngineAction.Speak) {  
+      //Us to UK conversion  
+      foreach (UsVsUk term in TransList) {  
+      newFrags[i].TextToSpeak.Replace(term.US, term.UK);  
+      }  
+      //Generate progress meter events if supported  
+      if ((site.EventInterest & WordBoundaryFlag) != 0) {  
+      string[] subs = newFrags[i].TextToSpeak.Split(spaces);  
+  
+      foreach (string s in subs) {  
+        int offset = newFrags[i].TextOffset;  
+        SpeechEventInfo spEvent = new SpeechEventInfo((Int16)TtsEventId.WordBoundary,   
+                (Int16)EventParameterType.Undefined,   
+                 s.Length, new IntPtr(offset));  
+         LogSpeechEvent(spEvent.EventId,   
+                        spEvent.ParameterType,   
+                        spEvent.Param1,  
+                        spEvent.Param2);  
+        offset += s.Length;  
+        if (s.Trim().Length > 0) {  
+          SpeechEventInfo[] events = new SpeechEventInfo[1];  
+          events[0] = spEvent;  
+          site.AddEvents(events, 1);  
+        }  
+      }  
+      }  
+    }  
+  }  
+  
+  _baseSynthesize.Speak(newFrags, wfx, site);  
+  
+}  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.GetHashCode" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetHashCode () As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override int GetHashCode();" />
+      <MemberSignature Language="F#" Value="override this.GetHashCode : unit -&gt; int" Usage="speechEventInfo.GetHashCode " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>提供 <c>SpeechEventInfo</c> 对象的哈希代码。</summary>
+        <returns><see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 对象的哈希代码。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static bool operator == (System.Speech.Synthesis.TtsEngine.SpeechEventInfo event1, System.Speech.Synthesis.TtsEngine.SpeechEventInfo event2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype System.Speech.Synthesis.TtsEngine.SpeechEventInfo event1, valuetype System.Speech.Synthesis.TtsEngine.SpeechEventInfo event2) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.op_Equality(System.Speech.Synthesis.TtsEngine.SpeechEventInfo,System.Speech.Synthesis.TtsEngine.SpeechEventInfo)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Operator == (event1 As SpeechEventInfo, event2 As SpeechEventInfo) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool operator ==(System::Speech::Synthesis::TtsEngine::SpeechEventInfo event1, System::Speech::Synthesis::TtsEngine::SpeechEventInfo event2);" />
+      <MemberSignature Language="F#" Value="static member ( = ) : System.Speech.Synthesis.TtsEngine.SpeechEventInfo * System.Speech.Synthesis.TtsEngine.SpeechEventInfo -&gt; bool" Usage="event1 = event2" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="event1" Type="System.Speech.Synthesis.TtsEngine.SpeechEventInfo" />
+        <Parameter Name="event2" Type="System.Speech.Synthesis.TtsEngine.SpeechEventInfo" />
+      </Parameters>
+      <Docs>
+        <param name="event1">要与 <paramref name="event2" /> 比较的 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 对象。</param>
+        <param name="event2">要与 <paramref name="event1" /> 比较的 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 对象。</param>
+        <summary>确定两个 <c>SpeechEventInfo</c> 实例是否相等。</summary>
+        <returns>如果 <paramref name="event1" /> 与 <paramref name="event2" /> 相同，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[此运算符的等效方法为<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Equals%28System.Speech.Synthesis.TtsEngine.SpeechEventInfo%29?displayProperty=nameWithType>。]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static bool operator != (System.Speech.Synthesis.TtsEngine.SpeechEventInfo event1, System.Speech.Synthesis.TtsEngine.SpeechEventInfo event2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype System.Speech.Synthesis.TtsEngine.SpeechEventInfo event1, valuetype System.Speech.Synthesis.TtsEngine.SpeechEventInfo event2) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.op_Inequality(System.Speech.Synthesis.TtsEngine.SpeechEventInfo,System.Speech.Synthesis.TtsEngine.SpeechEventInfo)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Operator != (event1 As SpeechEventInfo, event2 As SpeechEventInfo) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool operator !=(System::Speech::Synthesis::TtsEngine::SpeechEventInfo event1, System::Speech::Synthesis::TtsEngine::SpeechEventInfo event2);" />
+      <MemberSignature Language="F#" Value="static member op_Inequality : System.Speech.Synthesis.TtsEngine.SpeechEventInfo * System.Speech.Synthesis.TtsEngine.SpeechEventInfo -&gt; bool" Usage="System.Speech.Synthesis.TtsEngine.SpeechEventInfo.op_Inequality (event1, event2)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="event1" Type="System.Speech.Synthesis.TtsEngine.SpeechEventInfo" />
+        <Parameter Name="event2" Type="System.Speech.Synthesis.TtsEngine.SpeechEventInfo" />
+      </Parameters>
+      <Docs>
+        <param name="event1">要与 <paramref name="event2" /> 比较的 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 对象。</param>
+        <param name="event2">要与 <paramref name="event1" /> 比较的 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 对象。</param>
+        <summary>确定两个 <c>SpeechEventInfo</c> 实例是否不相等。</summary>
+        <returns>如果 <paramref name="event1" /> 与 <paramref name="event2" /> 不同，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[此运算符的等效方法为<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Equals%28System.Speech.Synthesis.TtsEngine.SpeechEventInfo%29?displayProperty=nameWithType>。]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Param1">
+      <MemberSignature Language="C#" Value="public int Param1 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Param1" />
+      <MemberSignature Language="DocId" Value="P:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param1" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Param1 As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int Param1 { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.Param1 : int" Usage="System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param1" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取和设置 <see langword="integer" /> 值（构造函数中的 <paramref name="param1" />），此值需要传递至语音平台以生成 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 的当前实例用于请求的事件。</summary>
+        <value>返回生成 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 的当前实例指定的事件时，要传递到语音平台的 <see langword="integer" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 的<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param1%2A> <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.EventId%2A> <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.ParameterType%2A> <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>属性的要求和含义由实例的和属性的值唯一决定。 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>  
+  
+ 有关如何使用<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param1%2A>的详细信息，请参阅<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.EventId%2A>文档。  
+  
+   
+  
+## Examples  
+ 下面<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml>的示例是继承自的自定义语音合成实现的一部分，并使用<xref:System.Speech.Synthesis.TtsEngine.TextFragment>、 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>、 <xref:System.Speech.Synthesis.TtsEngine.FragmentState>和<xref:System.Speech.Synthesis.TtsEngine.TtsEventId>  
+  
+ 的实现<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml.Speak%2A>  
+  
+1.  接收实例的<xref:System.Speech.Synthesis.TtsEngine.TextFragment>数组，并创建`Speak`要在基础合成<xref:System.Speech.Synthesis.TtsEngine.TextFragment>引擎上传递给方法的新的实例数组。  
+  
+2.  <xref:System.Speech.Synthesis.TtsEngine.FragmentState.Action%2A> <xref:System.Speech.Synthesis.TtsEngine.FragmentState> <xref:System.Speech.Synthesis.TtsEngine.TextFragment.State%2A> 如果在 <xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction.Speak> 每个<xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction> 实例的属性返回的的属性中找到枚举 <xref:System.Speech.Synthesis.TtsEngine.TextFragment> 值，则实现  
+  
+    -   将 Americanism 转换为要口述的文本中的 Britishisms。  
+  
+    -   如果提供<xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite.EventInterest%2A> <xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite> 给实现 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo> 的接口上的属性支持事件类型，则使用实例创建事件来驱动合成器进度计量。 <xref:System.Speech.Synthesis.TtsEngine.TtsEventId.WordBoundary>  
+  
+         上<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>的参数，包括<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param1%2A>用于记录通过`LogSpeechEvent`方法生成的事件。  
+  
+3.  然后，将使用修改后<xref:System.Speech.Synthesis.TtsEngine.TextFragment>的数组调用语音呈现引擎。  
+  
+```  
+private const int WordBoundaryFlag = 1 << (int)TtsEventId.WordBoundary;  
+private readonly char[] spaces = new char[] { ' ', '\t', '\r', '\n' };  
+internal struct UsVsUk  
+{  
+  internal string UK;  
+  internal string US;  
+}  
+  
+override public void Speak (TextFragment [] frags, IntPtr wfx, ITtsEngineSite site)  
+{  
+  TextFragment [] newFrags=new TextFragment[frags.Length];  
+  
+  for (int i=0;i<frags.Length;i++){  
+    newFrags[i].State=frags[i].State;  
+    //truncate  
+    newFrags[i].TextToSpeak = frags[i].TextToSpeak.Substring(frags[i].TextOffset,  
+                               frags[i].TextLength);  
+    newFrags[i].TextLength = newFrags[i].TextToSpeak.Length;  
+    newFrags[i].TextOffset = 0;  
+    if (newFrags[i].State.Action == TtsEngineAction.Speak) {  
+      //Us to UK conversion  
+      foreach (UsVsUk term in TransList) {  
+      newFrags[i].TextToSpeak.Replace(term.US, term.UK);  
+      }  
+      //Generate progress meter events if supported  
+      if ((site.EventInterest & WordBoundaryFlag) != 0) {  
+      string[] subs = newFrags[i].TextToSpeak.Split(spaces);  
+  
+      foreach (string s in subs) {  
+        int offset = newFrags[i].TextOffset;  
+        SpeechEventInfo spEvent = new SpeechEventInfo((Int16)TtsEventId.WordBoundary,   
+                (Int16)EventParameterType.Undefined,   
+                 s.Length, new IntPtr(offset));  
+         LogSpeechEvent(spEvent.EventId,   
+                        spEvent.ParameterType,   
+                        spEvent.Param1,  
+                        spEvent.Param2);  
+        offset += s.Length;  
+        if (s.Trim().Length > 0) {  
+          SpeechEventInfo[] events = new SpeechEventInfo[1];  
+          events[0] = spEvent;  
+          site.AddEvents(events, 1);  
+        }  
+      }  
+      }  
+    }  
+  }  
+  
+  _baseSynthesize.Speak(newFrags, wfx, site);  
+  
+}  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Param2">
+      <MemberSignature Language="C#" Value="public IntPtr Param2 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance native int Param2" />
+      <MemberSignature Language="DocId" Value="P:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param2" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Param2 As IntPtr" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property IntPtr Param2 { IntPtr get(); };" />
+      <MemberSignature Language="F#" Value="member this.Param2 : nativeint" Usage="System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param2" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取和设置 <see langword="System.IntPtr" /> 实例（构造函数中的 <paramref name="param2" />），此实例引用需要传递至语音平台以生成 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 的当前实例用于请求的事件。</summary>
+        <value>返回生成 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 的当前实例指定的事件时，引用要传递到语音平台的对象的 <see langword="System.IntPtr" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 对<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param2%2A>属性`System.IntPtr` <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.ParameterType%2A>的引用的<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo> 要求 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.EventId%2A> 是唯一由实例的和属性的值确定的。 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>  
+  
+ 有关如何使用<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param2%2A>的详细信息，请参阅<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.EventId%2A>文档。  
+  
+   
+  
+## Examples  
+ 下面<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml>的示例是继承自的自定义语音合成实现的一部分，并使用<xref:System.Speech.Synthesis.TtsEngine.TextFragment>、 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>、 <xref:System.Speech.Synthesis.TtsEngine.FragmentState>和<xref:System.Speech.Synthesis.TtsEngine.TtsEventId>  
+  
+ 的实现<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml.Speak%2A>  
+  
+1.  接收实例的<xref:System.Speech.Synthesis.TtsEngine.TextFragment>数组，并创建`Speak`要在基础合成<xref:System.Speech.Synthesis.TtsEngine.TextFragment>引擎上传递给方法的新的实例数组。  
+  
+2.  <xref:System.Speech.Synthesis.TtsEngine.FragmentState.Action%2A> <xref:System.Speech.Synthesis.TtsEngine.FragmentState> <xref:System.Speech.Synthesis.TtsEngine.TextFragment.State%2A> 如果在 <xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction.Speak> 每个<xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction> 实例的属性返回的的属性中找到枚举 <xref:System.Speech.Synthesis.TtsEngine.TextFragment> 值，则实现  
+  
+    -   将 Americanism 转换为要口述的文本中的 Britishisms。  
+  
+    -   如果提供<xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite.EventInterest%2A> <xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite> 给实现 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo> 的接口上的属性支持事件类型，则使用实例创建事件来驱动合成器进度计量。 <xref:System.Speech.Synthesis.TtsEngine.TtsEventId.WordBoundary>  
+  
+         上<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>的参数，包括<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param2%2A>用于记录通过`LogSpeechEvent`方法生成的事件。  
+  
+3.  然后，将使用修改后<xref:System.Speech.Synthesis.TtsEngine.TextFragment>的数组调用语音呈现引擎。  
+  
+```  
+private const int WordBoundaryFlag = 1 << (int)TtsEventId.WordBoundary;  
+private readonly char[] spaces = new char[] { ' ', '\t', '\r', '\n' };  
+internal struct UsVsUk  
+{  
+  internal string UK;  
+  internal string US;  
+}  
+  
+override public void Speak (TextFragment [] frags, IntPtr wfx, ITtsEngineSite site)  
+{  
+  TextFragment [] newFrags=new TextFragment[frags.Length];  
+  
+  for (int i=0;i<frags.Length;i++){  
+    newFrags[i].State=frags[i].State;  
+    //truncate  
+    newFrags[i].TextToSpeak = frags[i].TextToSpeak.Substring(frags[i].TextOffset,  
+                               frags[i].TextLength);  
+    newFrags[i].TextLength = newFrags[i].TextToSpeak.Length;  
+    newFrags[i].TextOffset = 0;  
+    if (newFrags[i].State.Action == TtsEngineAction.Speak) {  
+      //Us to UK conversion  
+      foreach (UsVsUk term in TransList) {  
+      newFrags[i].TextToSpeak.Replace(term.US, term.UK);  
+      }  
+      //Generate progress meter events if supported  
+      if ((site.EventInterest & WordBoundaryFlag) != 0) {  
+      string[] subs = newFrags[i].TextToSpeak.Split(spaces);  
+  
+      foreach (string s in subs) {  
+        int offset = newFrags[i].TextOffset;  
+        SpeechEventInfo spEvent = new SpeechEventInfo((Int16)TtsEventId.WordBoundary,   
+                (Int16)EventParameterType.Undefined,   
+                 s.Length, new IntPtr(offset));  
+         LogSpeechEvent(spEvent.EventId,   
+                        spEvent.ParameterType,   
+                        spEvent.Param1,  
+                        spEvent.Param2);  
+        offset += s.Length;  
+        if (s.Trim().Length > 0) {  
+          SpeechEventInfo[] events = new SpeechEventInfo[1];  
+          events[0] = spEvent;  
+          site.AddEvents(events, 1);  
+        }  
+      }  
+      }  
+    }  
+  }  
+  
+  _baseSynthesize.Speak(newFrags, wfx, site);  
+  
+}  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ParameterType">
+      <MemberSignature Language="C#" Value="public short ParameterType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int16 ParameterType" />
+      <MemberSignature Language="DocId" Value="P:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.ParameterType" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property ParameterType As Short" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property short ParameterType { short get(); };" />
+      <MemberSignature Language="F#" Value="member this.ParameterType : int16" Usage="System.Speech.Synthesis.TtsEngine.SpeechEventInfo.ParameterType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int16</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>返回当前 <see cref="P:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param2" /> 对象上的 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 参数返回的 <see langword="IntPtr" /> 所指向的对象的数据类型。</summary>
+        <value>一个 <see langword="short" /> 值，该值对应于 <see cref="T:System.Speech.Synthesis.TtsEngine.EventParameterType" /> 枚举的成员并指示由 <see cref="P:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param2" /> 参数返回的<see langword="IntPtr" /> 所指向的对象的数据类型，并且该类型用作当前 <see cref="T:System.Speech.Synthesis.TtsEngine.SpeechEventInfo" /> 对象中构造函数的第二参数。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 对<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param2%2A>属性`System.IntPtr` <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.ParameterType%2A>的引用的<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo> 要求 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.EventId%2A> 是唯一由实例的和属性的值确定的。 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>  
+  
+ 有关如何使用<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.Param2%2A>的详细信息，请参阅<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.EventId%2A>文档。  
+  
+   
+  
+## Examples  
+ 下面<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml>的示例是继承自的自定义语音合成实现的一部分，并使用<xref:System.Speech.Synthesis.TtsEngine.TextFragment>、 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>、 <xref:System.Speech.Synthesis.TtsEngine.FragmentState>和<xref:System.Speech.Synthesis.TtsEngine.TtsEventId>  
+  
+ 的实现<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml.Speak%2A>  
+  
+1.  接收实例的<xref:System.Speech.Synthesis.TtsEngine.TextFragment>数组，并创建`Speak`要在基础合成<xref:System.Speech.Synthesis.TtsEngine.TextFragment>引擎上传递给方法的新的实例数组。  
+  
+2.  <xref:System.Speech.Synthesis.TtsEngine.FragmentState.Action%2A> <xref:System.Speech.Synthesis.TtsEngine.FragmentState> <xref:System.Speech.Synthesis.TtsEngine.TextFragment.State%2A> 如果在 <xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction.Speak> 每个<xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction> 实例的属性返回的的属性中找到枚举 <xref:System.Speech.Synthesis.TtsEngine.TextFragment> 值，则实现  
+  
+    -   将 Americanism 转换为要口述的文本中的 Britishisms。  
+  
+    -   如果提供<xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite.EventInterest%2A> <xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite> 给实现 <xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo> 的接口上的属性支持事件类型，则使用实例创建事件来驱动合成器进度计量。 <xref:System.Speech.Synthesis.TtsEngine.TtsEventId.WordBoundary>  
+  
+         上<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo>的参数，包括<xref:System.Speech.Synthesis.TtsEngine.SpeechEventInfo.ParameterType%2A>用于记录通过`LogSpeechEvent`方法生成的事件。  
+  
+3.  然后，将使用修改后<xref:System.Speech.Synthesis.TtsEngine.TextFragment>的数组调用语音呈现引擎。  
+  
+```  
+private const int WordBoundaryFlag = 1 << (int)TtsEventId.WordBoundary;  
+private readonly char[] spaces = new char[] { ' ', '\t', '\r', '\n' };  
+internal struct UsVsUk  
+{  
+  internal string UK;  
+  internal string US;  
+}  
+  
+override public void Speak (TextFragment [] frags, IntPtr wfx, ITtsEngineSite site)  
+{  
+  TextFragment [] newFrags=new TextFragment[frags.Length];  
+  
+  for (int i=0;i<frags.Length;i++){  
+    newFrags[i].State=frags[i].State;  
+    //truncate  
+    newFrags[i].TextToSpeak = frags[i].TextToSpeak.Substring(frags[i].TextOffset,  
+                               frags[i].TextLength);  
+    newFrags[i].TextLength = newFrags[i].TextToSpeak.Length;  
+    newFrags[i].TextOffset = 0;  
+    if (newFrags[i].State.Action == TtsEngineAction.Speak) {  
+      //Us to UK conversion  
+      foreach (UsVsUk term in TransList) {  
+      newFrags[i].TextToSpeak.Replace(term.US, term.UK);  
+      }  
+      //Generate progress meter events if supported  
+      if ((site.EventInterest & WordBoundaryFlag) != 0) {  
+      string[] subs = newFrags[i].TextToSpeak.Split(spaces);  
+  
+      foreach (string s in subs) {  
+        int offset = newFrags[i].TextOffset;  
+        SpeechEventInfo spEvent = new SpeechEventInfo((Int16)TtsEventId.WordBoundary,   
+                (Int16)EventParameterType.Undefined,   
+                 s.Length, new IntPtr(offset));  
+         LogSpeechEvent(spEvent.EventId,   
+                        spEvent.ParameterType,   
+                        spEvent.Param1,  
+                        spEvent.Param2);  
+        offset += s.Length;  
+        if (s.Trim().Length > 0) {  
+          SpeechEventInfo[] events = new SpeechEventInfo[1];  
+          events[0] = spEvent;  
+          site.AddEvents(events, 1);  
+        }  
+      }  
+      }  
+    }  
+  }  
+  
+  _baseSynthesize.Speak(newFrags, wfx, site);  
+  
+}  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
