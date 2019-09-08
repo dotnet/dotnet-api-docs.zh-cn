@@ -1,0 +1,315 @@
+<Type Name="TrackingService" FullName="System.Workflow.Runtime.Tracking.TrackingService">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="931d7533220943ba73c8cebdb36dcf44bbcc1d9f" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70718522" /></Metadata><TypeSignature Language="C#" Value="public abstract class TrackingService : System.Workflow.Runtime.Hosting.WorkflowRuntimeService" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit TrackingService extends System.Workflow.Runtime.Hosting.WorkflowRuntimeService" />
+  <TypeSignature Language="DocId" Value="T:System.Workflow.Runtime.Tracking.TrackingService" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class TrackingService&#xA;Inherits WorkflowRuntimeService" />
+  <TypeSignature Language="C++ CLI" Value="public ref class TrackingService abstract : System::Workflow::Runtime::Hosting::WorkflowRuntimeService" />
+  <TypeSignature Language="F#" Value="type TrackingService = class&#xA;    inherit WorkflowRuntimeService" />
+  <AssemblyInfo>
+    <AssemblyName>System.Workflow.Runtime</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Workflow.Runtime.Hosting.WorkflowRuntimeService</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8">
+      <AttributeName>System.Obsolete("The System.Workflow.* types are deprecated.  Instead, please use the new types from System.Activities.*")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>提供在跟踪服务与运行时跟踪基础结构之间的基本接口。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  [!INCLUDE[DeprecatedContent](~/includes/deprecatedcontent-md.md)]  
+  
+ 跟踪服务负责向工作流运行时引擎提供跟踪通道和跟踪配置文件。 工作流运行时引擎为它具有 <xref:System.Workflow.Runtime.Tracking.TrackingChannel> 的每个工作流实例从跟踪服务请求一个 <xref:System.Workflow.Runtime.Tracking.TrackingProfile>。 工作流运时引擎使用此 <xref:System.Workflow.Runtime.Tracking.TrackingChannel> 发送与该工作流实例关联的跟踪记录。 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 包含指定一组跟踪事件的跟踪点，运行时跟踪基础结构应为这些事件发送跟踪记录。 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 还可以指定在其中一个跟踪事件发生时要从工作流实例中提取的数据。  
+  
+ 运行时跟踪基础结构使用 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 以筛选由工作流实例发出的跟踪事件。 在发出了与 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 中的跟踪点匹配的跟踪事件时，运行时跟踪基础结构将从工作流实例中提取在 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 中指定的任何数据，并将此数据和有关跟踪事件的信息包装在跟踪记录中。 然后，将通过与工作流实例关联的 <xref:System.Workflow.Runtime.Tracking.TrackingChannel> 发送此跟踪记录。 跟踪记录可能为以下某一类型：  
+  
+ <xref:System.Workflow.Runtime.Tracking.ActivityTrackingRecord>  
+  
+ <xref:System.Workflow.Runtime.Tracking.UserTrackingRecord>  
+  
+ <xref:System.Workflow.Runtime.Tracking.WorkflowTrackingRecord>  
+  
+ 主机应用程序可以通过它选择的任何方式使用跟踪记录。 例如，宿主应用程序可以将跟踪信息存储在数据库中并使用它来实现复杂的用户界面，或者，它可以使用该信息将需要某种操作的情况通知管理员。 通过调用 <xref:System.Workflow.Runtime.WorkflowRuntime.AddService%2A?displayProperty=nameWithType> 或在应用程序配置文件中包括适当的条目，您可以向工作流运行时引擎注册跟踪服务。  
+  
+ 所有跟踪服务都必须从 <xref:System.Workflow.Runtime.Tracking.TrackingService> 抽象类继承。 此类在跟踪服务与运行时跟踪基础结构之间定义基本接口。 工作流运行时引擎通过调用某个重载 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 方法或 <xref:System.Type> 方法，为特定工作流实例或工作流 <xref:System.Workflow.Runtime.Tracking.TrackingService.GetProfile%2A> 请求 <xref:System.Workflow.Runtime.Tracking.TrackingService.TryGetProfile%2A>。 工作流运行时引擎调用 <xref:System.Workflow.Runtime.Tracking.TrackingService.GetTrackingChannel%2A> 以请求 <xref:System.Workflow.Runtime.Tracking.TrackingChannel>。  
+  
+ 在创建工作流实例或从持久性存储区中加载工作流实例时，工作流跟踪运行时将调用 <xref:System.Workflow.Runtime.Tracking.TrackingService.GetProfile%2A> 和 <xref:System.Workflow.Runtime.Tracking.TrackingService.TryGetProfile%2A> 方法。 与这些调用关联的系统开销对于跟踪服务而言可能很大（举例来说，多个数据库调用）。 您可以在跟踪服务中实现 <xref:System.Workflow.Runtime.Tracking.IProfileNotification> 接口以避开这种基于调用的机制，并使用事件将 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 的更改通知工作流运行时引擎。 对于实现 <xref:System.Workflow.Runtime.Tracking.IProfileNotification> 接口的跟踪服务，工作流运行时引擎将订阅 <xref:System.Workflow.Runtime.Tracking.IProfileNotification.ProfileUpdated> 和 <xref:System.Workflow.Runtime.Tracking.IProfileNotification.ProfileRemoved> 事件。 当它的某个跟踪配置文件发生更改时，跟踪服务可以引发适当的事件。 <xref:System.Workflow.Runtime.Tracking.SqlTrackingService> 类实现了此接口。  
+  
+ 工作流运行时引擎调用 <xref:System.Workflow.Runtime.Tracking.TrackingService.TryReloadProfile%2A> 方法，以测试 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 是否已因为主机或服务在工作流实例上显式调用了 <xref:System.Workflow.Runtime.WorkflowInstance.ReloadTrackingProfiles%2A> 而更新或被移除。 此过程使宿主或服务能够动态地更改正用于特定工作流实例的跟踪配置文件。  
+  
+ ]]></format>
+    </remarks>
+    <block subset="none" type="overrides"><para>-当从<see cref="T:System.Workflow.Runtime.Tracking.TrackingService" />继承时，必须重写以下成员：<see cref="M:System.Workflow.Runtime.Tracking.TrackingService.GetProfile(System.Guid)" />  
+  
+-   <see cref="M:System.Workflow.Runtime.Tracking.TrackingService.GetProfile(System.Type,System.Version)" />  
+  
+-   <see cref="M:System.Workflow.Runtime.Tracking.TrackingService.TryGetProfile(System.Type,System.Workflow.Runtime.Tracking.TrackingProfile@)" />  
+  
+-   <see cref="M:System.Workflow.Runtime.Tracking.TrackingService.GetTrackingChannel(System.Workflow.Runtime.Tracking.TrackingParameters)" />  
+  
+-   <see cref="M:System.Workflow.Runtime.Tracking.TrackingService.TryReloadProfile(System.Type,System.Guid,System.Workflow.Runtime.Tracking.TrackingProfile@)" /></para></block>
+    <altmember cref="T:System.Workflow.Runtime.Tracking.IProfileNotification" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected TrackingService ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Tracking.TrackingService.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; TrackingService();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>在派生类中实现时，初始化 <see cref="T:System.Workflow.Runtime.Tracking.TrackingService" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的示例演示如何为具有从 `TerminationTrackingService` 派生的类型的 `TrackingService` 对象创建新实例。 此示例摘自“终止跟踪服务”SDK 示例。 有关详细信息，请参阅[终止跟踪服务示例](https://msdn.microsoft.com/library/29b7c0d7-cece-4bb9-96d0-c5b6c6e14439)。  
+  
+ [!code-csharp[WF_Samples#111](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets1.cs#111)]
+ [!code-vb[WF_Samples#111](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets1.vb#111)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="GetProfile">
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>必须在派生类中重写，并且在实现后为指定的工作流实例或工作流类型获取跟踪配置文件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 跟踪服务负责管理可用于特定工作流类型和特定工作流实例的跟踪配置文件。 可以采用您选择的任何方式实现此管理。 例如，您可以为每个工作流 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 和工作流实例返回相同的 <xref:System.Type>；或者，您可以管理工作流实例、工作流 <xref:System.Type> 和 <xref:System.Version> 引用的跟踪配置文件的复杂存储。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="GetProfile">
+      <MemberSignature Language="C#" Value="protected internal abstract System.Workflow.Runtime.Tracking.TrackingProfile GetProfile (Guid workflowInstanceId);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.Workflow.Runtime.Tracking.TrackingProfile GetProfile(valuetype System.Guid workflowInstanceId) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Tracking.TrackingService.GetProfile(System.Guid)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Function GetProfile (workflowInstanceId As Guid) As TrackingProfile" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract System::Workflow::Runtime::Tracking::TrackingProfile ^ GetProfile(Guid workflowInstanceId);" />
+      <MemberSignature Language="F#" Value="abstract member GetProfile : Guid -&gt; System.Workflow.Runtime.Tracking.TrackingProfile" Usage="trackingService.GetProfile workflowInstanceId" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Workflow.Runtime.Tracking.TrackingProfile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="workflowInstanceId" Type="System.Guid" />
+      </Parameters>
+      <Docs>
+        <param name="workflowInstanceId">工作流实例的 <see cref="T:System.Guid" />。</param>
+        <summary>必须在派生类中重写，并且在实现后为指定的工作流实例返回跟踪配置文件。</summary>
+        <returns>指定工作流实例的跟踪配置文件。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 跟踪服务负责管理可用于特定工作流类型和特定工作流实例的跟踪配置文件。 可以采用您选择的任何方式实现此管理。 例如，您可以为每个工作流 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 和工作流实例返回相同的 <xref:System.Type>；或者，您可以管理工作流实例、工作流 <xref:System.Type> 和 <xref:System.Version> 引用的跟踪配置文件的复杂存储。  
+  
+   
+  
+## Examples  
+ 下面的示例演示 `GetProfile` 方法的实现。 在本例中，`GetProfile` 方法的若干重载将调用单一的私有 `GetProfile` 方法，后者将返回硬编码的默认跟踪配置文件。 此示例摘自“终止跟踪服务”SDK 示例。 有关详细信息，请参阅[终止跟踪服务示例](https://msdn.microsoft.com/library/29b7c0d7-cece-4bb9-96d0-c5b6c6e14439)。  
+  
+ [!code-csharp[WF_Samples#115](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets1.cs#115)]
+ [!code-vb[WF_Samples#115](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets1.vb#115)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetProfile">
+      <MemberSignature Language="C#" Value="protected internal abstract System.Workflow.Runtime.Tracking.TrackingProfile GetProfile (Type workflowType, Version profileVersionId);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.Workflow.Runtime.Tracking.TrackingProfile GetProfile(class System.Type workflowType, class System.Version profileVersionId) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Tracking.TrackingService.GetProfile(System.Type,System.Version)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Function GetProfile (workflowType As Type, profileVersionId As Version) As TrackingProfile" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract System::Workflow::Runtime::Tracking::TrackingProfile ^ GetProfile(Type ^ workflowType, Version ^ profileVersionId);" />
+      <MemberSignature Language="F#" Value="abstract member GetProfile : Type * Version -&gt; System.Workflow.Runtime.Tracking.TrackingProfile" Usage="trackingService.GetProfile (workflowType, profileVersionId)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Workflow.Runtime.Tracking.TrackingProfile</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="workflowType" Type="System.Type" />
+        <Parameter Name="profileVersionId" Type="System.Version" />
+      </Parameters>
+      <Docs>
+        <param name="workflowType">工作流的 <see cref="T:System.Type" />。</param>
+        <param name="profileVersionId">跟踪配置文件的 <see cref="T:System.Version" />。</param>
+        <summary>必须在派生类中重写，并且在实现后为指定的工作流 <see cref="T:System.Type" /> 返回由版本限定的跟踪配置文件。</summary>
+        <returns>指定工作流类型的跟踪配置文件。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 跟踪服务负责管理可用于特定工作流类型和特定工作流实例的跟踪配置文件。 可以采用您选择的任何方式实现此管理。 例如，您可以为每个工作流 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 和工作流实例返回相同的 <xref:System.Type>；或者，您可以管理工作流实例、工作流 <xref:System.Type> 和 <xref:System.Version> 引用的跟踪配置文件的复杂存储。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetTrackingChannel">
+      <MemberSignature Language="C#" Value="protected internal abstract System.Workflow.Runtime.Tracking.TrackingChannel GetTrackingChannel (System.Workflow.Runtime.Tracking.TrackingParameters parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.Workflow.Runtime.Tracking.TrackingChannel GetTrackingChannel(class System.Workflow.Runtime.Tracking.TrackingParameters parameters) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Tracking.TrackingService.GetTrackingChannel(System.Workflow.Runtime.Tracking.TrackingParameters)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Function GetTrackingChannel (parameters As TrackingParameters) As TrackingChannel" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract System::Workflow::Runtime::Tracking::TrackingChannel ^ GetTrackingChannel(System::Workflow::Runtime::Tracking::TrackingParameters ^ parameters);" />
+      <MemberSignature Language="F#" Value="abstract member GetTrackingChannel : System.Workflow.Runtime.Tracking.TrackingParameters -&gt; System.Workflow.Runtime.Tracking.TrackingChannel" Usage="trackingService.GetTrackingChannel parameters" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Workflow.Runtime.Tracking.TrackingChannel</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Workflow.Runtime.Tracking.TrackingParameters" />
+      </Parameters>
+      <Docs>
+        <param name="parameters">与工作流实例关联的 <see cref="T:System.Workflow.Runtime.Tracking.TrackingParameters" />。</param>
+        <summary>必须在派生类中重写，并且在实现后返回运行时跟踪基础结构用于向跟踪服务发送跟踪记录的通道。</summary>
+        <returns>用于向跟踪服务发送跟踪记录的 <see cref="T:System.Workflow.Runtime.Tracking.TrackingChannel" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 运行时跟踪基础结构按照每个跟踪服务为每个工作流实例使用一个 <xref:System.Workflow.Runtime.Tracking.TrackingChannel>。 工作流运行时引擎对每个跟踪服务调用 <xref:System.Workflow.Runtime.Tracking.TrackingService.GetTrackingChannel%2A>，以便为该服务获取 <xref:System.Workflow.Runtime.Tracking.TrackingChannel>。 您可以使用传入 <xref:System.Workflow.Runtime.Tracking.TrackingParameters> 的信息将为跟踪服务在 <xref:System.Workflow.Runtime.Tracking.TrackingChannel> 上发送的跟踪数据与特定的根工作流实例关联。  
+  
+   
+  
+## Examples  
+ 下面的示例演示 `GetTrackingChannel` 方法的实现。 此示例摘自“终止跟踪服务”SDK 示例。 有关详细信息，请参阅[终止跟踪服务示例](https://msdn.microsoft.com/library/29b7c0d7-cece-4bb9-96d0-c5b6c6e14439)。  
+  
+ [!code-csharp[WF_Samples#113](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets1.cs#113)]
+ [!code-vb[WF_Samples#113](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets1.vb#113)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryGetProfile">
+      <MemberSignature Language="C#" Value="protected internal abstract bool TryGetProfile (Type workflowType, out System.Workflow.Runtime.Tracking.TrackingProfile profile);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance bool TryGetProfile(class System.Type workflowType, [out] class System.Workflow.Runtime.Tracking.TrackingProfile&amp; profile) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Tracking.TrackingService.TryGetProfile(System.Type,System.Workflow.Runtime.Tracking.TrackingProfile@)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Function TryGetProfile (workflowType As Type, ByRef profile As TrackingProfile) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract bool TryGetProfile(Type ^ workflowType, [Runtime::InteropServices::Out] System::Workflow::Runtime::Tracking::TrackingProfile ^ % profile);" />
+      <MemberSignature Language="F#" Value="abstract member TryGetProfile : Type *  -&gt; bool" Usage="trackingService.TryGetProfile (workflowType, profile)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="workflowType" Type="System.Type" />
+        <Parameter Name="profile" Type="System.Workflow.Runtime.Tracking.TrackingProfile" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="workflowType">要为其获取跟踪配置文件的工作流的 <see cref="T:System.Type" />。</param>
+        <param name="profile">此方法返回时，将包含要加载的 <see cref="T:System.Workflow.Runtime.Tracking.TrackingProfile" />。 此参数未经初始化即被传递。</param>
+        <summary>必须在派生类中重写，并且在实现后为指定的工作流类型（如果有）检索跟踪配置文件。</summary>
+        <returns>如果指定工作流 <see langword="true" /> 的 <see cref="T:System.Workflow.Runtime.Tracking.TrackingProfile" /> 可用，则为 <see cref="T:System.Type" />；否则为 <see langword="false" />。 如果为 <see langword="true" />，则会在 <see cref="T:System.Workflow.Runtime.Tracking.TrackingProfile" /> 中返回 <paramref name="profile" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 跟踪服务负责管理可用于特定工作流类型和特定工作流实例的跟踪配置文件。 可以采用您选择的任何方式实现此管理。 例如，您可以为每个工作流 <xref:System.Workflow.Runtime.Tracking.TrackingProfile> 和工作流实例返回相同的 <xref:System.Type>；或者，您可以管理工作流实例、工作流 <xref:System.Type> 和 <xref:System.Version> 引用的跟踪配置文件的复杂存储。  
+  
+   
+  
+## Examples  
+ 下面的示例演示 `TryGetProfile` 方法的实现，该方法调用私有 `GetProfile` 方法。 此示例摘自“终止跟踪服务”SDK 示例。 有关详细信息，请参阅[终止跟踪服务示例](https://msdn.microsoft.com/library/29b7c0d7-cece-4bb9-96d0-c5b6c6e14439)。  
+  
+ [!code-csharp[Wf_samples#209](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets19.cs#209)]
+ [!code-vb[Wf_samples#209](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets19.vb#209)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryReloadProfile">
+      <MemberSignature Language="C#" Value="protected internal abstract bool TryReloadProfile (Type workflowType, Guid workflowInstanceId, out System.Workflow.Runtime.Tracking.TrackingProfile profile);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance bool TryReloadProfile(class System.Type workflowType, valuetype System.Guid workflowInstanceId, [out] class System.Workflow.Runtime.Tracking.TrackingProfile&amp; profile) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Tracking.TrackingService.TryReloadProfile(System.Type,System.Guid,System.Workflow.Runtime.Tracking.TrackingProfile@)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Function TryReloadProfile (workflowType As Type, workflowInstanceId As Guid, ByRef profile As TrackingProfile) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract bool TryReloadProfile(Type ^ workflowType, Guid workflowInstanceId, [Runtime::InteropServices::Out] System::Workflow::Runtime::Tracking::TrackingProfile ^ % profile);" />
+      <MemberSignature Language="F#" Value="abstract member TryReloadProfile : Type * Guid *  -&gt; bool" Usage="trackingService.TryReloadProfile (workflowType, workflowInstanceId, profile)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="workflowType" Type="System.Type" />
+        <Parameter Name="workflowInstanceId" Type="System.Guid" />
+        <Parameter Name="profile" Type="System.Workflow.Runtime.Tracking.TrackingProfile" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="workflowType">工作流实例的 <see cref="T:System.Type" />。</param>
+        <param name="workflowInstanceId">工作流实例的 <see cref="T:System.Guid" />。</param>
+        <param name="profile">此方法返回时，将包含要加载的 <see cref="T:System.Workflow.Runtime.Tracking.TrackingProfile" />。 此参数未经初始化即被传递。</param>
+        <summary>必须在派生类中重写，并且在实现后为指定的工作流实例检索新的跟踪配置文件（如果跟踪配置文件自上次加载后已更改）。</summary>
+        <returns>如果应加载新的 <see cref="T:System.Workflow.Runtime.Tracking.TrackingProfile" />，则为 <see langword="true" />；否则为 <see langword="false" />。 如果为 <see langword="true" />，则会在 <see cref="T:System.Workflow.Runtime.Tracking.TrackingProfile" /> 中返回 <paramref name="profile" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 运行时跟踪基础结构调用 <xref:System.Workflow.Runtime.Tracking.TrackingService.TryReloadProfile%2A> 以确定是否应为指定的工作流实例加载新的 <xref:System.Workflow.Runtime.Tracking.TrackingProfile>。 如果需要新的 <xref:System.Workflow.Runtime.Tracking.TrackingProfile>，它将在 `profile` 中返回。 如果希望运行时跟踪基础结构停止跟踪某个工作流实例，则跟踪服务应返回 `true`，并将 `profile` 设置为等于空引用（在 Visual Basic 中为 `Nothing`）。 跟踪服务可以采用您选择的任何方式使用 `workflowType` 或 `workflowInstanceId`，以确定是否应重新加载跟踪配置文件。 例如，<xref:System.Workflow.Runtime.Tracking.SqlTrackingService> 只使用 `workflowInstanceId` 来决定是否应重新加载跟踪配置文件。 运行时跟踪基础结构根据其自己的跟踪语义或响应对工作流实例调用 <xref:System.Workflow.Runtime.Tracking.TrackingService.TryReloadProfile%2A> 的宿主或服务，以调用 <xref:System.Workflow.Runtime.WorkflowInstance.ReloadTrackingProfiles%2A?displayProperty=nameWithType>。  
+  
+   
+  
+## Examples  
+ 下面的示例演示 `TryReloadProfile` 方法的基本实现。 此示例摘自“终止跟踪服务”SDK 示例。 有关详细信息，请参阅[终止跟踪服务示例](https://msdn.microsoft.com/library/29b7c0d7-cece-4bb9-96d0-c5b6c6e14439)。  
+  
+ [!code-csharp[WF_Samples#116](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets1.cs#116)]
+ [!code-vb[WF_Samples#116](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets1.vb#116)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

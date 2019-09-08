@@ -1,0 +1,815 @@
+<Type Name="WindowChrome" FullName="System.Windows.Shell.WindowChrome">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="14e9a2b90ef7b92a87ed16dda0d9c379c641d0f6" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70581878" /></Metadata><TypeSignature Language="C#" Value="public class WindowChrome : System.Windows.Freezable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit WindowChrome extends System.Windows.Freezable" />
+  <TypeSignature Language="DocId" Value="T:System.Windows.Shell.WindowChrome" />
+  <TypeSignature Language="VB.NET" Value="Public Class WindowChrome&#xA;Inherits Freezable" />
+  <TypeSignature Language="C++ CLI" Value="public ref class WindowChrome : System::Windows::Freezable" />
+  <TypeSignature Language="F#" Value="type WindowChrome = class&#xA;    inherit Freezable" />
+  <AssemblyInfo>
+    <AssemblyName>PresentationFramework</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Windows.Freezable</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>表示一个对象，它描述窗口非工作区区域的自定义。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 利用<xref:System.Windows.Shell.WindowChrome>类，您可以将 Windows Presentation Foundation （WPF）内容扩展到通常为操作系统的窗口管理器保留的窗口的非工作区。  
+  
+## <a name="standard-windows"></a>标准窗口  
+ 标准窗口由两个重叠矩形组成。 外部矩形是*非工作区*，通常称为*chrome*。 它由操作系统的窗口管理器进行绘制和管理。 其维度由标准操作系统设置确定。 非客户端框架提供了标准的窗口功能和行为。 其中包括标题按钮（最小化、最大化和关闭）、窗口边框、调整大小和移动行为、应用程序图标和标题，以及 "系统" 菜单。 内部矩形是*工作区*。 它包含应用程序的内容，由应用程序进行绘制和管理。 有关 WPF 应用程序中的 windows 的详细信息，请参阅[Wpf 窗口概述](~/docs/framework/wpf/app-development/wpf-windows-overview.md)。  
+  
+ 下图显示了标准窗口的各个部分。  
+  
+ ![Window 元素](~/add/media/windowoverviewfigure1.PNG "Window 元素")  
+  
+## <a name="custom-windows"></a>自定义窗口  
+ 可以通过将<xref:System.Windows.Window.WindowStyle%2A?displayProperty=nameWithType>属性设置为<xref:System.Windows.WindowStyle.None>或，使用<xref:System.Windows.Shell.WindowChrome>类自定义窗口边框。  
+  
+### <a name="windowstylenone"></a>WindowStyle  
+ 自定义 WPF 应用程序窗口外观的一种方法是将<xref:System.Windows.Window.WindowStyle%2A?displayProperty=nameWithType>属性设置为。 <xref:System.Windows.WindowStyle.None> 这将从窗口中删除非客户端框架并仅离开工作区，您可以将自定义样式应用到该区域。 但是，在删除非客户端框架时，还会丢失系统功能和所提供的行为，例如标题按钮和窗口大小调整。 另一个副作用是窗口在最大化时将覆盖 Windows 任务栏。 通过<xref:System.Windows.WindowStyle.None?displayProperty=nameWithType>设置，你可以创建完全自定义的应用程序，但也需要在应用程序中实现自定义逻辑来模拟标准窗口行为。  
+  
+### <a name="windowchrome"></a>WindowChrome  
+ 若要在保留其标准功能的同时自定义窗口，可以<xref:System.Windows.Shell.WindowChrome>使用类。 <xref:System.Windows.Shell.WindowChrome>类将窗口框架的功能与视觉对象隔开，并使你能够控制应用程序窗口的客户端和非工作区之间的边界。 通过<xref:System.Windows.Shell.WindowChrome>使用类，您可以通过扩展工作区以覆盖非工作区来将 WPF 内容置于窗口框架中。 同时，它将通过两个不可见区域保留系统行为;*调整边框*和*标题*区的大小。  
+  
+ 使用<xref:System.Windows.Shell.WindowChrome>类创建自定义窗口分为两个主要部分。 首先，通过设置<xref:System.Windows.Shell.WindowChrome>对象上公开的属性来自定义窗口的非客户端部分。 然后，为窗口提供一个模板，该模板定义扩展到非工作区的应用程序部分。<xref:System.Windows.Shell.WindowChrome>对象上公开的属性为<xref:System.Windows.Shell.WindowChrome.ResizeBorderThickness%2A>、 <xref:System.Windows.Shell.WindowChrome.CaptionHeight%2A> <xref:System.Windows.Shell.WindowChrome.CornerRadius%2A>、和<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>。  
+  
+ <xref:System.Windows.Shell.WindowChrome.ResizeBorderThickness%2A>属性指定应用程序窗口外的不可见边框，用户可以单击并拖动它来调整窗口的大小。  
+  
+ <xref:System.Windows.Shell.WindowChrome.CaptionHeight%2A>属性在窗口顶部指定一个不可见的区域，该区域启用通常与标题栏关联的系统行为。 这些行为包括：单击并拖动以移动窗口，双击以最大化窗口，并右键单击以显示 "系统" 菜单。  
+  
+ 调整边框和标题区的大小不包含任何可视元素;它们仅定义响应输入和启用标准系统提供的窗口行为的区域。  
+  
+ <xref:System.Windows.Shell.WindowChrome.CornerRadius%2A>属性指定窗口的角的舍入量。 如果为窗口启用了玻璃框架，则此属性不起作用。  
+  
+ <xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>属性指定窗口周围的玻璃帧的宽度。 默认情况下，它使用<xref:System.Windows.SystemParameters.WindowNonClientFrameThickness%2A>属性指定的系统值来模拟标准窗口的外观。 使用玻璃帧时，"最小化"、"最大化" 和 "关闭" 的标题按钮是可见的，并且是交互式的。 应用程序负责显示应用程序图标和标题文本。 可以设置<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>属性，使玻璃框架更宽或更小。  
+  
+> [!CAUTION]
+>  更改<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>属性时，标题按钮的大小不会更改。 如果玻璃框架顶部的高度小于标题按钮的高度，则标题按钮将不完全可见。  
+  
+ 若要使自定义窗口不具有玻璃框架，请将<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>属性设置为统一值0。 这将禁用并隐藏标准标题按钮。  
+  
+ 若要扩展玻璃帧以覆盖整个窗口，请将<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>属性设置为任意一侧的负值。 如果任何<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>一侧的属性都设置为负值，则其强制值将<xref:System.Windows.Shell.WindowChrome.GlassFrameCompleteThickness%2A>等于。  
+  
+> [!NOTE]
+>  Aero 是对 Windows Vista 中引入的 Windows 桌面的外观和功能的一组可视化增强功能。 Aero 更为直观易懂的功能之一是半透明的玻璃窗口边框。 Windows Aero 由桌面窗口管理器（DWM）的桌面合成功能启用。  
+  
+ 并非所有操作系统都支持 Windows Aero 玻璃效果，可在支持的操作系统上禁用它。 如果 Windows Aero 不可用，则不会显示玻璃框架，无论<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>属性值如何。 此属性指定的边框区域将显示为黑色。<xref:System.Windows.SystemParameters.IsGlassEnabled%2A>检查属性以验证是否可以使用 Windows Aero 玻璃效果。 如果 "玻璃效果" 不可用，则应提供一种不使用玻璃帧的替代窗口样式，或通过将窗口样式设置为 null 来使用 "标准" 窗口。  
+  
+ 通过指定定义框架内容的外观和行为的 System.windows.controls.controltemplate>，可将 WPF 内容扩展到窗口框架。 将 System.windows.controls.controltemplate> 的 TargetType 设置为要自定义的窗口的类型。  
+  
+```xaml
+<ControlTemplate TargetType="{x:Type local:MainWindow}">  
+```  
+  
+ 默认情况下，位于窗口非工作区内的任何可视元素部分都不是交互式的。 若要启用非工作区中的交互式元素，请将 IsHitTestVisibleInChrome 附加属性附加到元素，并将其设置为 true。  
+  
+ 以下 XAML 标记显示了使用 WindowChrome 类自定义窗口所需的主要元素。  
+  
+```xaml
+<Style x:Key="StandardStyle" TargetType="{x:Type local:MainWindow}">  
+    <Setter Property="shell:WindowChrome.WindowChrome">  
+        <Setter.Value>  
+            <shell:WindowChrome />  
+        </Setter.Value>  
+    </Setter>  
+    <Setter Property="Template">  
+        <Setter.Value>  
+            <ControlTemplate TargetType="{x:Type local:MainWindow}">  
+                <Grid>  
+                    <Border Background="White"  
+                            Margin="{Binding Source={x:Static shell:SystemParameters2.Current}, Path=WindowNonClientFrameThickness}">  
+                        <ContentPresenter Content="{TemplateBinding Content}" />  
+                    </Border>  
+                    <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"   
+                               VerticalAlignment="Top" HorizontalAlignment="Left"   
+                               Margin="36,8,0,0"/>  
+                    <Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Icon}"  
+                           VerticalAlignment="Top" HorizontalAlignment="Left"  
+                           Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(shell:WindowChrome.WindowChrome).ResizeBorderThickness}"   
+                           Width="{Binding Source={x:Static shell:SystemParameters2.Current}, Path=SmallIconSize.Width}"  
+                           shell:WindowChrome.IsHitTestVisibleInChrome="True"/>  
+                </Grid>  
+            </ControlTemplate>  
+        </Setter.Value>  
+    </Setter>  
+</Style>  
+```  
+  
+ 第一个资源库将 WindowChrome 附加到窗口中。 它使用 "WindowChrome" 属性的所有默认值，这会使窗口类似于 "标准" 窗口。  
+  
+```xaml
+<Setter Property="shell:WindowChrome.WindowChrome">  
+    <Setter.Value>  
+        <shell:WindowChrome />  
+    </Setter.Value>  
+</Setter>  
+```  
+  
+ 窗口模板必须指定内容表示器，以显示应用程序中指定的窗口的内容。 默认情况下，WindowChrome 类将工作区扩展为涵盖非客户端边框。 若要发现玻璃帧，需要指定 System.windows.controls.contentpresenter> 周围的边距。 此标记指定围绕内容表示器的白色背景，以模拟标准窗口的外观。 它还指定绑定到 WindowNonClientFrameThickness 属性的边距，此属性获取框架的默认系统宽度。  
+  
+```xaml
+<Border Background="White"  
+    Margin="{Binding Source={x:Static shell:SystemParameters2.Current}, Path=WindowNonClientFrameThickness}">  
+    <ContentPresenter Content="{TemplateBinding Content}" />  
+</Border>  
+```  
+  
+ WindowChrome 类不显示应用程序图标和标题;它们必须作为自定义内容添加到边框。 下面的 XAML 将添加一个图像和一个 textblock 以显示该图标和标题。 这两个元素都绑定到窗口中的相应属性。 图像宽度绑定到 SmallIconSize 宽度，这将获取图标的默认系统大小。 已在图像上设置 IsHitTestVisibleInChrome 附加属性，使其能够接收鼠标事件。  
+  
+```xaml
+<Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Icon}"  
+       VerticalAlignment="Top" HorizontalAlignment="Left"  
+       Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(shell:WindowChrome.WindowChrome).ResizeBorderThickness}"   
+       Width="{Binding Source={x:Static shell:SystemParameters2.Current}, Path=SmallIconSize.Width}"  
+       shell:WindowChrome.IsHitTestVisibleInChrome="True"/>  
+  
+<TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"   
+           VerticalAlignment="Top" HorizontalAlignment="Left"   
+           Margin="36,8,0,0"/>  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public WindowChrome ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Shell.WindowChrome.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; WindowChrome();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.Windows.Shell.WindowChrome" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CaptionHeight">
+      <MemberSignature Language="C#" Value="public double CaptionHeight { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 CaptionHeight" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Shell.WindowChrome.CaptionHeight" />
+      <MemberSignature Language="VB.NET" Value="Public Property CaptionHeight As Double" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property double CaptionHeight { double get(); void set(double value); };" />
+      <MemberSignature Language="F#" Value="member this.CaptionHeight : double with get, set" Usage="System.Windows.Shell.WindowChrome.CaptionHeight" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置窗口顶部标题区域的高度。</summary>
+        <value>标题区域的高度。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Windows.Shell.WindowChrome.CaptionHeight%2A>设置属性以指定窗口顶部的区域，该区域启用通常与标题栏关联的系统行为。 这些行为包括双击以最大化窗口，右键单击打开 "系统" 菜单，然后单击并拖动以移动窗口。 此属性可设置为任何非负双精度值。  
+  
+ <xref:System.Windows.Shell.WindowChrome.CaptionHeight%2A>属性定义的区域从顶部调整大小边框的下边缘开始，并向下扩展指定的量。 它跨越右侧和左侧大小调整边框内的窗口宽度。 此区域没有任何与之关联的可视元素;它仅用于定义对标题栏行为进行响应的区域。 默认情况下，窗口的标题区内的任何可视元素部分都不是交互式的。 若要启用标题区中的交互式元素，请<xref:System.Windows.Shell.WindowChrome.IsHitTestVisibleInChrome%2A>将附加属性附加到元素，并将`true`其设置为。  
+  
+<a name="dependencyPropertyInfo_CaptionHeight"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Shell.WindowChrome.CaptionHeightProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CaptionHeightProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty CaptionHeightProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty CaptionHeightProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Shell.WindowChrome.CaptionHeightProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly CaptionHeightProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ CaptionHeightProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable CaptionHeightProperty : System.Windows.DependencyProperty" Usage="System.Windows.Shell.WindowChrome.CaptionHeightProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Shell.WindowChrome.CaptionHeight" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CornerRadius">
+      <MemberSignature Language="C#" Value="public System.Windows.CornerRadius CornerRadius { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Windows.CornerRadius CornerRadius" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Shell.WindowChrome.CornerRadius" />
+      <MemberSignature Language="VB.NET" Value="Public Property CornerRadius As CornerRadius" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Windows::CornerRadius CornerRadius { System::Windows::CornerRadius get(); void set(System::Windows::CornerRadius value); };" />
+      <MemberSignature Language="F#" Value="member this.CornerRadius : System.Windows.CornerRadius with get, set" Usage="System.Windows.Shell.WindowChrome.CornerRadius" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.CornerRadius</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，该值表示圆形窗口边角的度数。</summary>
+        <value>一个描述倒圆的量的值。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Windows.Shell.WindowChrome.CornerRadius%2A>设置属性以指定窗口角处的舍入量。 此属性可设置为任何非负双精度值。 这些值可以是不一致的。  
+  
+ 此属性不会影响具有 Windows Aero 玻璃帧的最大化窗口或窗口。 仅当未启用 Windows Aero （也称为桌面窗口管理器）或<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>将属性设置为0时，它才有效。 确定鼠标是否在调整大小边框上时，非工作<xref:System.Windows.Shell.WindowChrome.CornerRadius%2A>区中的命中测试不会考虑到。 如果 radius 相对<xref:System.Windows.Shell.WindowChrome.ResizeBorderThickness%2A>于太大，则用户可能无法使用鼠标执行对角调整大小。  
+  
+<a name="dependencyPropertyInfo_CornerRadius"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Shell.WindowChrome.CornerRadiusProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CornerRadiusProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty CornerRadiusProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty CornerRadiusProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Shell.WindowChrome.CornerRadiusProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly CornerRadiusProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ CornerRadiusProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable CornerRadiusProperty : System.Windows.DependencyProperty" Usage="System.Windows.Shell.WindowChrome.CornerRadiusProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Shell.WindowChrome.CornerRadius" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateInstanceCore">
+      <MemberSignature Language="C#" Value="protected override System.Windows.Freezable CreateInstanceCore ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.Windows.Freezable CreateInstanceCore() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Shell.WindowChrome.CreateInstanceCore" />
+      <MemberSignature Language="VB.NET" Value="Protected Overrides Function CreateInstanceCore () As Freezable" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; override System::Windows::Freezable ^ CreateInstanceCore();" />
+      <MemberSignature Language="F#" Value="override this.CreateInstanceCore : unit -&gt; System.Windows.Freezable" Usage="windowChrome.CreateInstanceCore " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Freezable</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>创建 <see cref="T:System.Windows.Shell.WindowChrome" /> 类的新实例。</summary>
+        <returns>此类的新实例。</returns>
+        <remarks>To be added.</remarks>
+        <altmember cref="M:System.Windows.Freezable.CreateInstanceCore" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetIsHitTestVisibleInChrome">
+      <MemberSignature Language="C#" Value="public static bool GetIsHitTestVisibleInChrome (System.Windows.IInputElement inputElement);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool GetIsHitTestVisibleInChrome(class System.Windows.IInputElement inputElement) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Shell.WindowChrome.GetIsHitTestVisibleInChrome(System.Windows.IInputElement)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function GetIsHitTestVisibleInChrome (inputElement As IInputElement) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool GetIsHitTestVisibleInChrome(System::Windows::IInputElement ^ inputElement);" />
+      <MemberSignature Language="F#" Value="static member GetIsHitTestVisibleInChrome : System.Windows.IInputElement -&gt; bool" Usage="System.Windows.Shell.WindowChrome.GetIsHitTestVisibleInChrome inputElement" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputElement" Type="System.Windows.IInputElement" />
+      </Parameters>
+      <Docs>
+        <param name="inputElement">从中读取属性值的输入元素。</param>
+        <summary>从指定的输入元素获取 <see cref="P:System.Windows.Shell.WindowChrome.IsHitTestVisibleInChrome" /> 附加属性的值。</summary>
+        <returns><see cref="P:System.Windows.Shell.WindowChrome.IsHitTestVisibleInChrome" /> 附加属性的值。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="inputElement" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="inputElement" /> 不是 <see cref="T:System.Windows.DependencyObject" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetResizeGripDirection">
+      <MemberSignature Language="C#" Value="public static System.Windows.Shell.ResizeGripDirection GetResizeGripDirection (System.Windows.IInputElement inputElement);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Windows.Shell.ResizeGripDirection GetResizeGripDirection(class System.Windows.IInputElement inputElement) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Shell.WindowChrome.GetResizeGripDirection(System.Windows.IInputElement)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function GetResizeGripDirection (inputElement As IInputElement) As ResizeGripDirection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Windows::Shell::ResizeGripDirection GetResizeGripDirection(System::Windows::IInputElement ^ inputElement);" />
+      <MemberSignature Language="F#" Value="static member GetResizeGripDirection : System.Windows.IInputElement -&gt; System.Windows.Shell.ResizeGripDirection" Usage="System.Windows.Shell.WindowChrome.GetResizeGripDirection inputElement" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Shell.ResizeGripDirection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputElement" Type="System.Windows.IInputElement" />
+      </Parameters>
+      <Docs>
+        <param name="inputElement">从中读取属性值的输入元素。</param>
+        <summary>从指定的输入元素获取 <see cref="P:System.Windows.Shell.WindowChrome.ResizeGripDirection" /> 附加属性的值。</summary>
+        <returns><see cref="P:System.Windows.Shell.WindowChrome.ResizeGripDirection" /> 附加属性的值。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="inputElement" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="inputElement" /> 不是 <see cref="T:System.Windows.DependencyObject" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetWindowChrome">
+      <MemberSignature Language="C#" Value="public static System.Windows.Shell.WindowChrome GetWindowChrome (System.Windows.Window window);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Windows.Shell.WindowChrome GetWindowChrome(class System.Windows.Window window) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Shell.WindowChrome.GetWindowChrome(System.Windows.Window)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Windows::Shell::WindowChrome ^ GetWindowChrome(System::Windows::Window ^ window);" />
+      <MemberSignature Language="F#" Value="static member GetWindowChrome : System.Windows.Window -&gt; System.Windows.Shell.WindowChrome" Usage="System.Windows.Shell.WindowChrome.GetWindowChrome window" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Shell.WindowChrome</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="window" Type="System.Windows.Window" />
+      </Parameters>
+      <Docs>
+        <param name="window">从中读取属性值的 <see cref="T:System.Windows.Window" />。</param>
+        <summary>从指定的 <see cref="P:System.Windows.Shell.WindowChrome.WindowChrome" /> 中获取 <see cref="T:System.Windows.Window" /> 附加属性的值。</summary>
+        <returns>附件到指定 <see cref="T:System.Windows.Shell.WindowChrome" /> 的  <see cref="T:System.Windows.Window" /> 实例。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="window" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GlassFrameCompleteThickness">
+      <MemberSignature Language="C#" Value="public static System.Windows.Thickness GlassFrameCompleteThickness { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.Windows.Thickness GlassFrameCompleteThickness" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Shell.WindowChrome.GlassFrameCompleteThickness" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly Property GlassFrameCompleteThickness As Thickness" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property System::Windows::Thickness GlassFrameCompleteThickness { System::Windows::Thickness get(); };" />
+      <MemberSignature Language="F#" Value="member this.GlassFrameCompleteThickness : System.Windows.Thickness" Usage="System.Windows.Shell.WindowChrome.GlassFrameCompleteThickness" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Thickness</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取统一的粗细为 -1。</summary>
+        <value>在所有情况下，统一宽度值为 -1。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 提供<xref:System.Windows.Shell.WindowChrome.GlassFrameCompleteThickness%2A>此属性是为了使你能够将玻璃框架的厚度设置为命名属性。 将<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>属性设置为<xref:System.Windows.Shell.WindowChrome.GlassFrameCompleteThickness%2A>等于，以将玻璃框扩展到整个窗口。 如果任何<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>一侧的属性都设置为负值，则其强制值将<xref:System.Windows.Shell.WindowChrome.GlassFrameCompleteThickness%2A>等于。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GlassFrameThickness">
+      <MemberSignature Language="C#" Value="public System.Windows.Thickness GlassFrameThickness { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Windows.Thickness GlassFrameThickness" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Shell.WindowChrome.GlassFrameThickness" />
+      <MemberSignature Language="VB.NET" Value="Public Property GlassFrameThickness As Thickness" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Windows::Thickness GlassFrameThickness { System::Windows::Thickness get(); void set(System::Windows::Thickness value); };" />
+      <MemberSignature Language="F#" Value="member this.GlassFrameThickness : System.Windows.Thickness with get, set" Usage="System.Windows.Shell.WindowChrome.GlassFrameThickness" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Thickness</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，该值表示窗口周围透明边框的宽度。</summary>
+        <value>窗口周围玻璃边框的宽度。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>设置属性以指定 Windows Aero 玻璃框架扩展到窗口的工作区中的量。 默认情况下，玻璃帧将使用系统值来模拟标准窗口的外观。 如果启用了 Windows Aero，则会启用标准标题按钮（最大化、最小化和关闭），并进行交互。 若要使自定义窗口不具有玻璃框架，请将此粗细设置为统一值0。 这将禁用标准标题按钮。  
+  
+ 若要扩展玻璃帧以覆盖整个窗口，请将<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>属性设置为任意一侧的负值。 如果任何<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>一侧的属性都设置为负值，则其强制值将<xref:System.Windows.Shell.WindowChrome.GlassFrameCompleteThickness%2A>等于。 此<xref:System.Windows.Shell.WindowChrome.GlassFrameCompleteThickness%2A>属性作为一个实用工具提供，可让你将玻璃框的宽度设置为一个已命名的属性，该属性可在整个窗口内扩展玻璃。  
+  
+ 并非所有操作系统都支持 Windows Aero 玻璃效果，可在支持的操作系统上禁用它。 如果 Windows Aero 不可用，则不会显示玻璃框架，无论<xref:System.Windows.Shell.WindowChrome.GlassFrameThickness%2A>属性值如何。 你应检查<xref:System.Windows.SystemParameters.IsGlassEnabled%2A>属性以验证是否可以使用 Windows Aero 玻璃效果。 如果玻璃效果不可用，则应提供不使用玻璃帧的替代窗口样式。  
+  
+<a name="dependencyPropertyInfo_GlassFrameThickness"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Shell.WindowChrome.GlassFrameThicknessProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GlassFrameThicknessProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty GlassFrameThicknessProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty GlassFrameThicknessProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Shell.WindowChrome.GlassFrameThicknessProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly GlassFrameThicknessProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ GlassFrameThicknessProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable GlassFrameThicknessProperty : System.Windows.DependencyProperty" Usage="System.Windows.Shell.WindowChrome.GlassFrameThicknessProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Shell.WindowChrome.GlassFrameThickness" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsHitTestVisibleInChromeProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty IsHitTestVisibleInChromeProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty IsHitTestVisibleInChromeProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Shell.WindowChrome.IsHitTestVisibleInChromeProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly IsHitTestVisibleInChromeProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ IsHitTestVisibleInChromeProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable IsHitTestVisibleInChromeProperty : System.Windows.DependencyProperty" Usage="System.Windows.Shell.WindowChrome.IsHitTestVisibleInChromeProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Shell.WindowChrome.IsHitTestVisibleInChrome" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NonClientFrameEdges">
+      <MemberSignature Language="C#" Value="public System.Windows.Shell.NonClientFrameEdges NonClientFrameEdges { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Windows.Shell.NonClientFrameEdges NonClientFrameEdges" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Shell.WindowChrome.NonClientFrameEdges" />
+      <MemberSignature Language="VB.NET" Value="Public Property NonClientFrameEdges As NonClientFrameEdges" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Windows::Shell::NonClientFrameEdges NonClientFrameEdges { System::Windows::Shell::NonClientFrameEdges get(); void set(System::Windows::Shell::NonClientFrameEdges value); };" />
+      <MemberSignature Language="F#" Value="member this.NonClientFrameEdges : System.Windows.Shell.NonClientFrameEdges with get, set" Usage="System.Windows.Shell.WindowChrome.NonClientFrameEdges" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Shell.NonClientFrameEdges</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，该值表示窗口框架边缘是否归客户端所有。</summary>
+        <value>枚举值的按位组合，这些值指定客户端不能拥有的帧的边缘。  
+  
+已注册的默认值为 <see cref="F:System.Windows.Shell.NonClientFrameEdges.None" />。 有关什么可以影响值的详细信息，请参阅 [Dependency Property Value Precedence（依赖项属性值优先级）](~/docs/framework/wpf/advanced/dependency-property-value-precedence.md)。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+<a name="dependencyPropertyInfo_NonClientFrameEdges"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Shell.WindowChrome.NonClientFrameEdgesProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">“Left, Right, Top, Bottom”不是有效的值。 至少一个边缘必须属于客户端。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="NonClientFrameEdgesProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty NonClientFrameEdgesProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty NonClientFrameEdgesProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Shell.WindowChrome.NonClientFrameEdgesProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly NonClientFrameEdgesProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ NonClientFrameEdgesProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable NonClientFrameEdgesProperty : System.Windows.DependencyProperty" Usage="System.Windows.Shell.WindowChrome.NonClientFrameEdgesProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Shell.WindowChrome.NonClientFrameEdges" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ResizeBorderThickness">
+      <MemberSignature Language="C#" Value="public System.Windows.Thickness ResizeBorderThickness { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Windows.Thickness ResizeBorderThickness" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Shell.WindowChrome.ResizeBorderThickness" />
+      <MemberSignature Language="VB.NET" Value="Public Property ResizeBorderThickness As Thickness" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Windows::Thickness ResizeBorderThickness { System::Windows::Thickness get(); void set(System::Windows::Thickness value); };" />
+      <MemberSignature Language="F#" Value="member this.ResizeBorderThickness : System.Windows.Thickness with get, set" Usage="System.Windows.Shell.WindowChrome.ResizeBorderThickness" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Thickness</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，该值表示边框的宽度，用于调整窗口大小尺寸。</summary>
+        <value>用于调整窗口的边框宽度。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Windows.Shell.WindowChrome.ResizeBorderThickness%2A>设置属性以指定用户可在其中单击并拖动以调整窗口大小的区域的宽度。 当鼠标指针移到大小调整边框上时，鼠标指针将变为调整大小箭头。  
+  
+ 此属性可设置为任何非负双精度值。 这些值可以是不一致的。 默认情况下，重设大小边框将使用系统值来模拟标准窗口的行为。  
+  
+ 此区域仅用于定义用于调整窗口大小的区域;它没有任何与之关联的可视元素。 但是，它会影响调整边框内的元素的布局。  
+  
+<a name="dependencyPropertyInfo_ResizeBorderThickness"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Shell.WindowChrome.ResizeBorderThicknessProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ResizeBorderThicknessProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty ResizeBorderThicknessProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty ResizeBorderThicknessProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Shell.WindowChrome.ResizeBorderThicknessProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly ResizeBorderThicknessProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ ResizeBorderThicknessProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable ResizeBorderThicknessProperty : System.Windows.DependencyProperty" Usage="System.Windows.Shell.WindowChrome.ResizeBorderThicknessProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Shell.WindowChrome.ResizeBorderThickness" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ResizeGripDirectionProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty ResizeGripDirectionProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty ResizeGripDirectionProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Shell.WindowChrome.ResizeGripDirectionProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly ResizeGripDirectionProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ ResizeGripDirectionProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable ResizeGripDirectionProperty : System.Windows.DependencyProperty" Usage="System.Windows.Shell.WindowChrome.ResizeGripDirectionProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Shell.WindowChrome.ResizeGripDirection" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetIsHitTestVisibleInChrome">
+      <MemberSignature Language="C#" Value="public static void SetIsHitTestVisibleInChrome (System.Windows.IInputElement inputElement, bool hitTestVisible);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetIsHitTestVisibleInChrome(class System.Windows.IInputElement inputElement, bool hitTestVisible) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Shell.WindowChrome.SetIsHitTestVisibleInChrome(System.Windows.IInputElement,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub SetIsHitTestVisibleInChrome (inputElement As IInputElement, hitTestVisible As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void SetIsHitTestVisibleInChrome(System::Windows::IInputElement ^ inputElement, bool hitTestVisible);" />
+      <MemberSignature Language="F#" Value="static member SetIsHitTestVisibleInChrome : System.Windows.IInputElement * bool -&gt; unit" Usage="System.Windows.Shell.WindowChrome.SetIsHitTestVisibleInChrome (inputElement, hitTestVisible)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputElement" Type="System.Windows.IInputElement" />
+        <Parameter Name="hitTestVisible" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="inputElement">要在其上设置 <see cref="P:System.Windows.Shell.WindowChrome.IsHitTestVisibleInChrome" /> 附加属性的元素。</param>
+        <param name="hitTestVisible">要设置的属性值。</param>
+        <summary>设置指定输入元素上的 <see cref="P:System.Windows.Shell.WindowChrome.IsHitTestVisibleInChrome" /> 附加属性的值。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="inputElement" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="inputElement" /> 不是 <see cref="T:System.Windows.DependencyObject" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetResizeGripDirection">
+      <MemberSignature Language="C#" Value="public static void SetResizeGripDirection (System.Windows.IInputElement inputElement, System.Windows.Shell.ResizeGripDirection direction);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetResizeGripDirection(class System.Windows.IInputElement inputElement, valuetype System.Windows.Shell.ResizeGripDirection direction) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Shell.WindowChrome.SetResizeGripDirection(System.Windows.IInputElement,System.Windows.Shell.ResizeGripDirection)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub SetResizeGripDirection (inputElement As IInputElement, direction As ResizeGripDirection)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void SetResizeGripDirection(System::Windows::IInputElement ^ inputElement, System::Windows::Shell::ResizeGripDirection direction);" />
+      <MemberSignature Language="F#" Value="static member SetResizeGripDirection : System.Windows.IInputElement * System.Windows.Shell.ResizeGripDirection -&gt; unit" Usage="System.Windows.Shell.WindowChrome.SetResizeGripDirection (inputElement, direction)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="inputElement" Type="System.Windows.IInputElement" />
+        <Parameter Name="direction" Type="System.Windows.Shell.ResizeGripDirection" />
+      </Parameters>
+      <Docs>
+        <param name="inputElement">要在其上设置 <see cref="P:System.Windows.Shell.WindowChrome.ResizeGripDirection" /> 附加属性的元素。</param>
+        <param name="direction">要设置的属性值。</param>
+        <summary>设置指定输入元素上的 <see cref="P:System.Windows.Shell.WindowChrome.ResizeGripDirection" /> 附加属性的值。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="inputElement" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="inputElement" /> 不是 <see cref="T:System.Windows.DependencyObject" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetWindowChrome">
+      <MemberSignature Language="C#" Value="public static void SetWindowChrome (System.Windows.Window window, System.Windows.Shell.WindowChrome chrome);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetWindowChrome(class System.Windows.Window window, class System.Windows.Shell.WindowChrome chrome) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Shell.WindowChrome.SetWindowChrome(System.Windows.Window,System.Windows.Shell.WindowChrome)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void SetWindowChrome(System::Windows::Window ^ window, System::Windows::Shell::WindowChrome ^ chrome);" />
+      <MemberSignature Language="F#" Value="static member SetWindowChrome : System.Windows.Window * System.Windows.Shell.WindowChrome -&gt; unit" Usage="System.Windows.Shell.WindowChrome.SetWindowChrome (window, chrome)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="window" Type="System.Windows.Window" />
+        <Parameter Name="chrome" Type="System.Windows.Shell.WindowChrome" />
+      </Parameters>
+      <Docs>
+        <param name="window">对其设置 <see cref="T:System.Windows.Window" /> 附加属性的 <see cref="P:System.Windows.Shell.WindowChrome.WindowChrome" />。</param>
+        <param name="chrome">要设置的 <see cref="T:System.Windows.Shell.WindowChrome" /> 的实例。</param>
+        <summary>设置指定的 <see cref="P:System.Windows.Shell.WindowChrome.WindowChrome" /> 的 <see cref="T:System.Windows.Window" /> 附加属性的值。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="window" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="UseAeroCaptionButtons">
+      <MemberSignature Language="C#" Value="public bool UseAeroCaptionButtons { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool UseAeroCaptionButtons" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Shell.WindowChrome.UseAeroCaptionButtons" />
+      <MemberSignature Language="VB.NET" Value="Public Property UseAeroCaptionButtons As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool UseAeroCaptionButtons { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.UseAeroCaptionButtons : bool with get, set" Usage="System.Windows.Shell.WindowChrome.UseAeroCaptionButtons" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，表示是对 Windows Aero 标题按钮启用的命中测试是否可用。</summary>
+        <value>如果在标题按钮上启用命中测试，则为 <see langword="true" />；否则为 <see langword="false" />。 已注册的默认值为 <see langword="true" />。 有关什么可以影响值的详细信息，请参阅 [Dependency Property Value Precedence（依赖项属性值优先级）](~/docs/framework/wpf/advanced/dependency-property-value-precedence.md)。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认的 Windows Aero 标题按钮为 "关闭"、"最大化/还原" 和 "最小化"。 如果不使用 Windows Aero 标题按钮，则应为用户提供一种替代方法来完成这些任务。  
+  
+<a name="dependencyPropertyInfo_UseAeroCaptionButtons"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Shell.WindowChrome.UseAeroCaptionButtonsProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Windows.SystemCommands.CloseWindow(System.Windows.Window)" />
+        <altmember cref="M:System.Windows.SystemCommands.MaximizeWindow(System.Windows.Window)" />
+        <altmember cref="M:System.Windows.SystemCommands.MinimizeWindow(System.Windows.Window)" />
+        <altmember cref="M:System.Windows.SystemCommands.RestoreWindow(System.Windows.Window)" />
+      </Docs>
+    </Member>
+    <Member MemberName="UseAeroCaptionButtonsProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty UseAeroCaptionButtonsProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty UseAeroCaptionButtonsProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Shell.WindowChrome.UseAeroCaptionButtonsProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly UseAeroCaptionButtonsProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ UseAeroCaptionButtonsProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable UseAeroCaptionButtonsProperty : System.Windows.DependencyProperty" Usage="System.Windows.Shell.WindowChrome.UseAeroCaptionButtonsProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Shell.WindowChrome.UseAeroCaptionButtons" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WindowChrome">
+      <MemberSignature Language="C#" Value="see GetWindowChrome, and SetWindowChrome" />
+      <MemberSignature Language="ILAsm" Value="see GetWindowChrome, and SetWindowChrome" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Shell.WindowChrome.WindowChrome" />
+      <MemberSignature Language="VB.NET" Value="see GetWindowChrome, and SetWindowChrome" />
+      <MemberSignature Language="F#" Value="see GetWindowChrome, and SetWindowChrome" Usage="see GetWindowChrome, and SetWindowChrome" />
+      <MemberType>AttachedProperty</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>获取或设置附加到窗口的 <see cref="T:System.Windows.Shell.WindowChrome" /> 的实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+<a name="dependencyPropertyInfo_WindowChrome"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Shell.WindowChrome.WindowChromeProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WindowChromeProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty WindowChromeProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty WindowChromeProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Shell.WindowChrome.WindowChromeProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly WindowChromeProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ WindowChromeProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable WindowChromeProperty : System.Windows.DependencyProperty" Usage="System.Windows.Shell.WindowChrome.WindowChromeProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Shell.WindowChrome.WindowChrome" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

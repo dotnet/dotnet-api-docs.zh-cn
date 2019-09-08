@@ -1,0 +1,970 @@
+<Type Name="CancellationToken" FullName="System.Threading.CancellationToken">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="8e87e718e7f09a2a0268c9b34074e51a7a390b3d" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70605639" /></Metadata><TypeSignature Language="C#" Value="public struct CancellationToken" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit CancellationToken extends System.ValueType" />
+  <TypeSignature Language="DocId" Value="T:System.Threading.CancellationToken" />
+  <TypeSignature Language="VB.NET" Value="Public Structure CancellationToken" />
+  <TypeSignature Language="C++ CLI" Value="public value class CancellationToken" />
+  <TypeSignature Language="F#" Value="type CancellationToken = struct" />
+  <AssemblyInfo>
+    <AssemblyName>System.Threading.Tasks</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime</AssemblyName>
+    <AssemblyVersion>4.2.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+      <AttributeName>System.Diagnostics.DebuggerDisplay("IsCancellationRequested = {IsCancellationRequested}")</AttributeName>
+    </Attribute>
+    <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+      <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+    </Attribute>
+    <Attribute FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1">
+      <AttributeName>System.Runtime.CompilerServices.IsReadOnly</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>传播有关应取消操作的通知。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 启用<xref:System.Threading.CancellationToken>线程、线程池工作项或<xref:System.Threading.Tasks.Task>对象之间的协作取消。 可以通过实例化<xref:System.Threading.CancellationTokenSource>对象来创建取消标记，该对象管理从其<xref:System.Threading.CancellationTokenSource.Token%2A?displayProperty=nameWithType>属性检索的取消标记。 然后，将取消标记传递给应接收取消通知的任意数量的线程、任务或操作。 标记无法用于启动取消。 当拥有对象调用<xref:System.Threading.CancellationTokenSource.Cancel%2A?displayProperty=nameWithType>时，取消标记的每个副本上的<xref:System.Threading.CancellationToken.IsCancellationRequested%2A>属性都设置为`true`。 接收通知的对象可以采用任何适当的方式进行响应。  
+  
+ 有关详细信息和代码示例，请参阅[托管线程中的取消](~/docs/standard/threading/cancellation-in-managed-threads.md)。  
+  
+   
+  
+## Examples  
+ 下面的示例使用随机数生成器来模拟数据收集应用程序，该应用程序从第11个不同乐器读取10个整数值。 如果值为零，则指示度量值对一个检测失败，在这种情况下，应取消该操作，而不应计算整体平均值。  
+  
+ 为了处理可能取消的操作，此示例实例化一个<xref:System.Threading.CancellationTokenSource>对象，该对象生成一个传递<xref:System.Threading.Tasks.TaskFactory>给对象的取消标记。 <xref:System.Threading.Tasks.TaskFactory>对象反过来将取消标记传递给负责收集特定检测的读取的每个任务。 调用<xref:System.Threading.Tasks.TaskFactory.ContinueWhenAll%60%602%28System.Threading.Tasks.Task%7B%60%600%7D%5B%5D%2CSystem.Func%7BSystem.Threading.Tasks.Task%7B%60%600%7D%5B%5D%2C%60%601%7D%2CSystem.Threading.CancellationToken%29?displayProperty=nameWithType>方法以确保仅在成功收集所有读数后计算平均值。 如果任务未被取消，则调用<xref:System.Threading.Tasks.TaskFactory.ContinueWhenAll%2A?displayProperty=nameWithType>方法将引发异常。  
+  
+ [!code-csharp[System.Threading.CancellationTokenSource.Class#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.threading.cancellationtokensource.class/cs/cancel1.cs#1)]
+ [!code-vb[System.Threading.CancellationTokenSource.Class#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.threading.cancellationtokensource.class/vb/cancel1.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <threadsafe>的所有公共和受保护<see cref="T:System.Threading.CancellationToken" />的成员都是线程安全的，可从多个线程并发使用。</threadsafe>
+    <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+    <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CancellationToken (bool canceled);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool canceled) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.#ctor(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (canceled As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; CancellationToken(bool canceled);" />
+      <MemberSignature Language="F#" Value="new System.Threading.CancellationToken : bool -&gt; System.Threading.CancellationToken" Usage="new System.Threading.CancellationToken canceled" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="canceled" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="canceled">标记的已取消状态。</param>
+        <summary>初始化 <see cref="T:System.Threading.CancellationToken" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用此构造函数创建的标记将保留在由`canceled`参数指定的已取消状态。 如果`canceled` <xref:System.Threading.CancellationToken.CanBeCanceled%2A>为`false`，则和 <xref:System.Threading.CancellationToken.IsCancellationRequested%2A> 都将为 `false` 。  
+  
+ 如果`canceled` <xref:System.Threading.CancellationToken.CanBeCanceled%2A>为`true`，则和 <xref:System.Threading.CancellationToken.IsCancellationRequested%2A> 都将为 `true` 。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <Member MemberName="CanBeCanceled">
+      <MemberSignature Language="C#" Value="public bool CanBeCanceled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanBeCanceled" />
+      <MemberSignature Language="DocId" Value="P:System.Threading.CancellationToken.CanBeCanceled" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property CanBeCanceled As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool CanBeCanceled { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.CanBeCanceled : bool" Usage="System.Threading.CancellationToken.CanBeCanceled" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取此标记是否能处于已取消状态。</summary>
+        <value>如果此令牌能够处于已取消状态，则为 <see langword="true" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果<xref:System.Threading.CancellationToken.CanBeCanceled%2A> <xref:System.Threading.CancellationToken.IsCancellationRequested%2A> `true`返回`false`，则保证令牌永远不会转换为已取消状态，这意味着将永远不会返回。 静态<xref:System.Threading.CancellationToken.None%2A?displayProperty=nameWithType>属性返回一个无法取消的取消标记。  
+  
+ 您可以选择使用此属性来确定在检查<xref:System.Threading.CancellationToken.IsCancellationRequested%2A>属性值之前是否可以取消取消标记，以确定是否已取消。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Equals">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>确定当前的 <see cref="T:System.Threading.CancellationToken" /> 实例是否等于指定的标记。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object other) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.Equals(System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function Equals (other As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override bool Equals(System::Object ^ other);" />
+      <MemberSignature Language="F#" Value="override this.Equals : obj -&gt; bool" Usage="cancellationToken.Equals other" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="other">要与此实例进行比较的其他对象。</param>
+        <summary>确定当前的 <see cref="T:System.Threading.CancellationToken" /> 实例是否等于指定的 <see cref="T:System.Object" />。</summary>
+        <returns>如果 <paramref name="other" /> 是 <see cref="T:System.Threading.CancellationToken" /> 且这两个实例相等，则为 <see langword="true" />；否则为 <see langword="false" />。 有关详细信息，请参阅备注部分。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+## Remarks  
+
+如果满足以下任一条件，则两个取消标记相等： 
+
+- 它们与相同<xref:System.Threading.CancellationTokenSource>。
+
+- 它们都是从公共<xref:System.Threading.CancellationToken>构造函数构造的，它们<xref:System.Threading.CancellationToken.IsCancellationRequested?displayProperty=nameWithType>的值相等。
+
+- 这两个取消标记的值<xref:System.Threading.CancellationToken.None?displayProperty=nameWithType>为。
+
+       ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">已释放关联的 <see cref="T:System.Threading.CancellationTokenSource" />。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public bool Equals (System.Threading.CancellationToken other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Equals(valuetype System.Threading.CancellationToken other) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.Equals(System.Threading.CancellationToken)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Equals (other As CancellationToken) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool Equals(System::Threading::CancellationToken other);" />
+      <MemberSignature Language="F#" Value="override this.Equals : System.Threading.CancellationToken -&gt; bool" Usage="cancellationToken.Equals other" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="other">要与此实例进行比较的其他 <see cref="T:System.Threading.CancellationToken" />。</param>
+        <summary>确定当前的 <see cref="T:System.Threading.CancellationToken" /> 实例是否等于指定的标记。</summary>
+        <returns>如果实例相等，则为 <see langword="true" />；否则为 <see langword="false" />。 有关详细信息，请参阅备注部分。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+## Remarks  
+
+如果满足以下任一条件，则两个取消标记相等： 
+
+- 它们与相同<xref:System.Threading.CancellationTokenSource>。
+
+- 它们都是从公共<xref:System.Threading.CancellationToken>构造函数构造的，它们<xref:System.Threading.CancellationToken.IsCancellationRequested?displayProperty=nameWithType>的值相等。
+
+- 这两个取消标记的值<xref:System.Threading.CancellationToken.None?displayProperty=nameWithType>为。
+
+       ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.GetHashCode" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetHashCode () As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override int GetHashCode();" />
+      <MemberSignature Language="F#" Value="override this.GetHashCode : unit -&gt; int" Usage="cancellationToken.GetHashCode " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>作为 <see cref="T:System.Threading.CancellationToken" /> 的哈希函数。</summary>
+        <returns>当前 <see cref="T:System.Threading.CancellationToken" /> 实例的哈希代码。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsCancellationRequested">
+      <MemberSignature Language="C#" Value="public bool IsCancellationRequested { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCancellationRequested" />
+      <MemberSignature Language="DocId" Value="P:System.Threading.CancellationToken.IsCancellationRequested" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property IsCancellationRequested As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IsCancellationRequested { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsCancellationRequested : bool" Usage="System.Threading.CancellationToken.IsCancellationRequested" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取是否已请求取消此标记。</summary>
+        <value>如果此令牌已请求取消，则为 <see langword="true" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性指示是否已为此标记请求取消，无论是通过最初以已取消状态构造的令牌，还是通过对关联<xref:System.Threading.CancellationTokenSource.Cancel%2A> <xref:System.Threading.CancellationTokenSource>的令牌调用。  
+  
+ 如果此属性为`true`，则只保证已请求取消。 它不保证每个已注册的处理程序已完成执行，也不保证取消请求已完成传播到所有已注册的处理程序。 可能需要更多的同步，尤其是在同时取消相关对象的情况下。  
+  
+   
+  
+## Examples  
+ 下面是一个简单的示例，在<xref:System.Threading.CancellationToken.IsCancellationRequested%2A>属性返回`true`之前执行服务器进程。  
+  
+ [!code-csharp[System.Threading.Tasks.CancellationToken.IsCancellationRequested#12](~/samples/snippets/csharp/VS_Snippets_CLR_System/System.Threading.Tasks.CancellationToken.IsCancellationRequested/cs/cancellation.cs#12)]
+ [!code-vb[System.Threading.Tasks.CancellationToken.IsCancellationRequested#12](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/System.Threading.Tasks.CancellationToken.IsCancellationRequested/vb/cancelthreads.vb#12)]  
+  
+ 该示例实例化<xref:System.Threading.CancellationTokenSource>一个对象，该对象控制对取消标记的访问。 然后，它定义了两个线程过程。 第一个定义为用于汇集键盘的 lambda 表达式，当按下 "C" 键时，将调用<xref:System.Threading.CancellationTokenSource.Cancel%2A?displayProperty=nameWithType>以将取消标记设置为 "已取消" 状态。 第二个是参数化方法`ServerClass.StaticMethod`，它执行循环， <xref:System.Threading.CancellationToken.IsCancellationRequested%2A>直到属性为`true`。  
+  
+ 然后，主线程将启动两个线程和块，直到执行`ServerClass.StaticMethod`方法的线程终止。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="public static System.Threading.CancellationToken None { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.Threading.CancellationToken None" />
+      <MemberSignature Language="DocId" Value="P:System.Threading.CancellationToken.None" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly Property None As CancellationToken" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property System::Threading::CancellationToken None { System::Threading::CancellationToken get(); };" />
+      <MemberSignature Language="F#" Value="member this.None : System.Threading.CancellationToken" Usage="System.Threading.CancellationToken.None" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Threading.CancellationToken</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>返回一个空 <see cref="T:System.Threading.CancellationToken" /> 值。</summary>
+        <value>一个空取消标记。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性返回的取消标记无法取消;也就是说，其<xref:System.Threading.CancellationToken.CanBeCanceled%2A>属性为`false`。  
+  
+ 你还可以使用C# [default （CancellationToken）](~/docs/csharp/language-reference/keywords/default.md)语句创建空取消标记。 
+
+ 两个空取消标记始终相等。
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static bool operator == (System.Threading.CancellationToken left, System.Threading.CancellationToken right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype System.Threading.CancellationToken left, valuetype System.Threading.CancellationToken right) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.op_Equality(System.Threading.CancellationToken,System.Threading.CancellationToken)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Operator == (left As CancellationToken, right As CancellationToken) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool operator ==(System::Threading::CancellationToken left, System::Threading::CancellationToken right);" />
+      <MemberSignature Language="F#" Value="static member ( = ) : System.Threading.CancellationToken * System.Threading.CancellationToken -&gt; bool" Usage="left = right" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Threading.CancellationToken" />
+        <Parameter Name="right" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="left">第一个实例。</param>
+        <param name="right">第二个实例。</param>
+        <summary>确定两个 <see cref="T:System.Threading.CancellationToken" /> 实例是否相等。</summary>
+        <returns>如果实例相等，则为 <see langword="true" />；否则为 <see langword="false" />。有关详细信息，请参阅备注部分。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+## Remarks  
+
+如果满足以下任一条件，则两个取消标记相等： 
+
+- 它们与相同<xref:System.Threading.CancellationTokenSource>。
+
+- 它们都是从公共<xref:System.Threading.CancellationToken>构造函数构造的，它们<xref:System.Threading.CancellationToken.IsCancellationRequested?displayProperty=nameWithType>的值相等。
+
+- 这两个取消标记的值<xref:System.Threading.CancellationToken.None?displayProperty=nameWithType>为。
+       ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">已释放关联的 <see cref="T:System.Threading.CancellationTokenSource" />。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static bool operator != (System.Threading.CancellationToken left, System.Threading.CancellationToken right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype System.Threading.CancellationToken left, valuetype System.Threading.CancellationToken right) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.op_Inequality(System.Threading.CancellationToken,System.Threading.CancellationToken)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Operator != (left As CancellationToken, right As CancellationToken) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool operator !=(System::Threading::CancellationToken left, System::Threading::CancellationToken right);" />
+      <MemberSignature Language="F#" Value="static member op_Inequality : System.Threading.CancellationToken * System.Threading.CancellationToken -&gt; bool" Usage="System.Threading.CancellationToken.op_Inequality (left, right)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Threading.CancellationToken" />
+        <Parameter Name="right" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="left">第一个实例。</param>
+        <param name="right">第二个实例。</param>
+        <summary>确定两个 <see cref="T:System.Threading.CancellationToken" /> 实例是否不相等。</summary>
+        <returns>如果实例不相等，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+## Remarks  
+
+有关相等的定义，请参见<xref:System.Threading.CancellationToken.Equals%2A>方法。 
+       ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">已释放关联的 <see cref="T:System.Threading.CancellationTokenSource" />。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Register">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>注册一个将在取消此 <see cref="T:System.Threading.CancellationToken" /> 时调用的委托。</summary>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Register">
+      <MemberSignature Language="C#" Value="public System.Threading.CancellationTokenRegistration Register (Action callback);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.CancellationTokenRegistration Register(class System.Action callback) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.Register(System.Action)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Register (callback As Action) As CancellationTokenRegistration" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Threading::CancellationTokenRegistration Register(Action ^ callback);" />
+      <MemberSignature Language="F#" Value="member this.Register : Action -&gt; System.Threading.CancellationTokenRegistration" Usage="cancellationToken.Register callback" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.CancellationTokenRegistration</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.Action" />
+      </Parameters>
+      <Docs>
+        <param name="callback">要在取消 <see cref="T:System.Threading.CancellationToken" /> 时执行的委托。</param>
+        <summary>注册一个将在取消此 <see cref="T:System.Threading.CancellationToken" /> 时调用的委托。</summary>
+        <returns>可用于注销回调的 <see cref="T:System.Threading.CancellationTokenRegistration" /> 实例。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果此标记已处于 "已取消" 状态，则委托将立即和同步运行。 此方法调用将传播委托生成的任何异常。  
+  
+ 当前<xref:System.Threading.ExecutionContext>与委托一起捕获，并将在执行时使用。 
+
+ 不捕获<xref:System.Threading.SynchronizationContext>当前。
+ 
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">关联 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="callback" /> 为 null。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/8838dd75-18ed-4b8b-b322-cd4531faac64">如何：注册取消请求的回调</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Register">
+      <MemberSignature Language="C#" Value="public System.Threading.CancellationTokenRegistration Register (Action callback, bool useSynchronizationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.CancellationTokenRegistration Register(class System.Action callback, bool useSynchronizationContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.Register(System.Action,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Register (callback As Action, useSynchronizationContext As Boolean) As CancellationTokenRegistration" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Threading::CancellationTokenRegistration Register(Action ^ callback, bool useSynchronizationContext);" />
+      <MemberSignature Language="F#" Value="member this.Register : Action * bool -&gt; System.Threading.CancellationTokenRegistration" Usage="cancellationToken.Register (callback, useSynchronizationContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.CancellationTokenRegistration</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.Action" />
+        <Parameter Name="useSynchronizationContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="callback">要在取消 <see cref="T:System.Threading.CancellationToken" /> 时执行的委托。</param>
+        <param name="useSynchronizationContext">一个值，该值指示是否捕获当前 <see cref="T:System.Threading.SynchronizationContext" /> 并在调用 <paramref name="callback" /> 时使用。</param>
+        <summary>注册一个将在取消此 <see cref="T:System.Threading.CancellationToken" /> 时调用的委托。</summary>
+        <returns>可用于注销回调的 <see cref="T:System.Threading.CancellationTokenRegistration" /> 实例。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果此标记已处于 "已取消" 状态，则委托将立即和同步运行。 此方法调用将传播委托生成的任何异常。  
+  
+ 当前<xref:System.Threading.ExecutionContext>与委托一起捕获，并将在执行时使用。 
+
+ 如果`useSynchronizationContext` <xref:System.Threading.SynchronizationContext>为`true`，则当前的（如果存在）还将与委托一起捕获，并在执行时使用。 否则， <xref:System.Threading.SynchronizationContext>将不会捕获。
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">关联 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="callback" /> 为 null。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/8838dd75-18ed-4b8b-b322-cd4531faac64">如何：注册取消请求的回调</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Register">
+      <MemberSignature Language="C#" Value="public System.Threading.CancellationTokenRegistration Register (Action&lt;object&gt; callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.CancellationTokenRegistration Register(class System.Action`1&lt;object&gt; callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.Register(System.Action{System.Object},System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Register (callback As Action(Of Object), state As Object) As CancellationTokenRegistration" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Threading::CancellationTokenRegistration Register(Action&lt;System::Object ^&gt; ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="member this.Register : Action&lt;obj&gt; * obj -&gt; System.Threading.CancellationTokenRegistration" Usage="cancellationToken.Register (callback, state)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.CancellationTokenRegistration</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.Action&lt;System.Object&gt;" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="callback">要在取消 <see cref="T:System.Threading.CancellationToken" /> 时执行的委托。</param>
+        <param name="state">要在调用委托时传递给 <paramref name="callback" /> 的状态。 这可能为 null。</param>
+        <summary>注册一个将在取消此 <see cref="T:System.Threading.CancellationToken" /> 时调用的委托。</summary>
+        <returns>可用于注销回调的 <see cref="T:System.Threading.CancellationTokenRegistration" /> 实例。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果此标记已处于 "已取消" 状态，则委托将立即和同步运行。 此方法调用将传播委托生成的任何异常。  
+  
+ 当前<xref:System.Threading.ExecutionContext>与委托一起捕获，并将在执行时使用。 
+
+ 不捕获<xref:System.Threading.SynchronizationContext>当前。
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">关联 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="callback" /> 为 null。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/8838dd75-18ed-4b8b-b322-cd4531faac64">如何：注册取消请求的回调</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Register">
+      <MemberSignature Language="C#" Value="public System.Threading.CancellationTokenRegistration Register (Action&lt;object&gt; callback, object state, bool useSynchronizationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.CancellationTokenRegistration Register(class System.Action`1&lt;object&gt; callback, object state, bool useSynchronizationContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.Register(System.Action{System.Object},System.Object,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Register (callback As Action(Of Object), state As Object, useSynchronizationContext As Boolean) As CancellationTokenRegistration" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Threading::CancellationTokenRegistration Register(Action&lt;System::Object ^&gt; ^ callback, System::Object ^ state, bool useSynchronizationContext);" />
+      <MemberSignature Language="F#" Value="member this.Register : Action&lt;obj&gt; * obj * bool -&gt; System.Threading.CancellationTokenRegistration" Usage="cancellationToken.Register (callback, state, useSynchronizationContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.CancellationTokenRegistration</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.Action&lt;System.Object&gt;" />
+        <Parameter Name="state" Type="System.Object" />
+        <Parameter Name="useSynchronizationContext" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="callback">要在取消 <see cref="T:System.Threading.CancellationToken" /> 时执行的委托。</param>
+        <param name="state">要在调用委托时传递给 <paramref name="callback" /> 的状态。 这可能为 null。</param>
+        <param name="useSynchronizationContext">一个布尔值，该值指示是否捕获当前 <see cref="T:System.Threading.SynchronizationContext" /> 并在调用 <paramref name="callback" /> 时使用它。</param>
+        <summary>注册一个将在取消此 <see cref="T:System.Threading.CancellationToken" /> 时调用的委托。</summary>
+        <returns>可用于注销回调的 <see cref="T:System.Threading.CancellationTokenRegistration" /> 实例。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果此标记已处于 "已取消" 状态，则委托将立即和同步运行。 此方法调用将传播委托生成的任何异常。  
+  
+ 当前<xref:System.Threading.ExecutionContext>与委托一起捕获，并将在执行时使用。 
+
+ 如果`useSynchronizationContext` <xref:System.Threading.SynchronizationContext>为`true`，则当前的（如果存在）还将与委托一起捕获，并在执行时使用。 否则， <xref:System.Threading.SynchronizationContext>将不会捕获。
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">关联 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="callback" /> 为 null。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/8838dd75-18ed-4b8b-b322-cd4531faac64">如何：注册取消请求的回调</related>
+      </Docs>
+    </Member>
+    <Member MemberName="ThrowIfCancellationRequested">
+      <MemberSignature Language="C#" Value="public void ThrowIfCancellationRequested ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ThrowIfCancellationRequested() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.ThrowIfCancellationRequested" />
+      <MemberSignature Language="VB.NET" Value="Public Sub ThrowIfCancellationRequested ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void ThrowIfCancellationRequested();" />
+      <MemberSignature Language="F#" Value="member this.ThrowIfCancellationRequested : unit -&gt; unit" Usage="cancellationToken.ThrowIfCancellationRequested " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>如果已请求取消此标记，则引发 <see cref="T:System.OperationCanceledException" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法提供等效于的功能：  
+  
+ C#  
+  
+```csharp  
+if (token.IsCancellationRequested)   
+    throw new OperationCanceledException(token);  
+```  
+  
+```vb  
+If token.IsCancellationRequested Then  
+    Throw New OperationCanceledException(token)  
+End If  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.OperationCanceledException">已请求取消此标记。</exception>
+        <exception cref="T:System.ObjectDisposedException">关联 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/how-to-cancel-a-task-and-its-children.md">如何：取消任务及其子级</related>
+      </Docs>
+    </Member>
+    <Member MemberName="UnsafeRegister">
+      <MemberSignature Language="C#" Value="public System.Threading.CancellationTokenRegistration UnsafeRegister (Action&lt;object&gt; callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.CancellationTokenRegistration UnsafeRegister(class System.Action`1&lt;object&gt; callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationToken.UnsafeRegister(System.Action{System.Object},System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Function UnsafeRegister (callback As Action(Of Object), state As Object) As CancellationTokenRegistration" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Threading::CancellationTokenRegistration UnsafeRegister(Action&lt;System::Object ^&gt; ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="member this.UnsafeRegister : Action&lt;obj&gt; * obj -&gt; System.Threading.CancellationTokenRegistration" Usage="cancellationToken.UnsafeRegister (callback, state)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.CancellationTokenRegistration</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.Action&lt;System.Object&gt;" Index="0" FrameworkAlternate="netcore-3.0" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="netcore-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="callback">要在取消 <see cref="T:System.Threading.CancellationToken" /> 时执行的委托。</param>
+        <param name="state">要在调用委托时传递给 <paramref name="callback" /> 的状态。  这可能是 <see langword="null" />。</param>
+        <summary>注册一个在取消此 <see cref="T:System.Threading.CancellationToken" /> 时调用的委托。</summary>
+        <returns>可用于注销回调的对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+            If this token is already in the canceled state, the delegate is run immediately and synchronously.
+            Any exception the delegate generates is propagated out of this method call.
+            
+不<xref:System.Threading.ExecutionContext>会捕获，也不会流向回调的调用。
+            ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="callback" /> 为 null。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WaitHandle">
+      <MemberSignature Language="C#" Value="public System.Threading.WaitHandle WaitHandle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Threading.WaitHandle WaitHandle" />
+      <MemberSignature Language="DocId" Value="P:System.Threading.CancellationToken.WaitHandle" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property WaitHandle As WaitHandle" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Threading::WaitHandle ^ WaitHandle { System::Threading::WaitHandle ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.WaitHandle : System.Threading.WaitHandle" Usage="System.Threading.CancellationToken.WaitHandle" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.WaitHandle</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取在取消标记时收到信号的 <see cref="T:System.Threading.WaitHandle" />。</summary>
+        <value>在取消标记时收到信号的 <see cref="T:System.Threading.WaitHandle" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果访问此属性， <xref:System.Threading.WaitHandle>则会实例化。 最好只在必要时使用此属性，然后在最早的时机释放关联<xref:System.Threading.CancellationTokenSource>的实例（释放源将释放此分配的句柄）。 不应直接关闭或释放该句柄。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">关联 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/6e2aa49b-fc84-4bcf-962b-17db98b7edcb">如何：侦听具有等待句柄的取消请求</related>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
