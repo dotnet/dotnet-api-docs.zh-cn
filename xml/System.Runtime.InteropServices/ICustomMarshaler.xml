@@ -1,0 +1,365 @@
+<Type Name="ICustomMarshaler" FullName="System.Runtime.InteropServices.ICustomMarshaler">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="13c83388836e7692ce136d212905f87ecc88668b" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70700892" /></Metadata><TypeSignature Language="C#" Value="public interface ICustomMarshaler" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ICustomMarshaler" />
+  <TypeSignature Language="DocId" Value="T:System.Runtime.InteropServices.ICustomMarshaler" />
+  <TypeSignature Language="VB.NET" Value="Public Interface ICustomMarshaler" />
+  <TypeSignature Language="C++ CLI" Value="public interface class ICustomMarshaler" />
+  <TypeSignature Language="F#" Value="type ICustomMarshaler = interface" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.InteropServices</AssemblyName>
+    <AssemblyVersion>4.2.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>提供用于处理方法调用的自定义包装器。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 封送拆收器在新旧接口的功能之间提供桥梁。 自定义封送具有以下优势：  
+  
+-   它使设计为使用旧接口的客户端应用程序也可以使用实现新接口的服务器。  
+  
+-   它允许生成的客户端应用程序使用新接口来处理实现旧接口的服务器。  
+  
+ 如果某个接口引入了不同的封送行为，或以不同方式向组件对象模型（COM）公开的接口，则可以设计自定义封送拆收器而不是使用互操作封送拆收器。 通过使用自定义封送拆收器，你可以最大程度地减少新 .NET Framework 组件和现有 COM 组件之间的差异。  
+  
+ 例如，假设您正在开发一个名`INew`为的托管接口。 如果通过标准 COM 可调用包装器（CCW）向 COM 公开此接口，则它具有与托管接口相同的方法，并使用互操作封送拆收器中内置的封送规则。 现在假设所谓`IOld`的已知 COM 接口已提供与`INew`接口相同的功能。 通过设计自定义封送拆收器，你可以提供`IOld`的非托管实现，它只是将调用委托`INew`给接口的托管实现。 因此，自定义封送拆收器充当托管和非托管接口之间的桥梁。  
+  
+> [!NOTE]
+>  从托管代码调用到仅调度接口上的非托管代码时，不会调用自定义封送拆收器。  
+  
+## <a name="defining-the-marshaling-type"></a>定义封送处理类型  
+ 在可以生成自定义封送拆收器之前，必须定义将被封送的托管和非托管接口。 这些接口通常执行相同的功能，但以不同方式向托管和非托管对象公开。  
+  
+ 托管编译器从元数据生成托管接口，生成的接口看起来像其他任何托管接口。 下面的示例演示一个典型接口。  
+  
+ [!code-cpp[System.Runtime.InteropServices.ICustomMarshaler#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/cpp/source.cpp#1)]
+ [!code-csharp[System.Runtime.InteropServices.ICustomMarshaler#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/cs/source.cs#1)]
+ [!code-vb[System.Runtime.InteropServices.ICustomMarshaler#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/vb/source.vb#1)]  
+  
+ 可以在接口定义语言（IDL）中定义非托管类型，并将其与 Microsoft 接口定义语言（MIDL）编译器一起编译。 在 library 语句中定义接口，并为其分配一个具有通用唯一标识符（UUID）特性的接口 ID，如下面的示例所示。  
+  
+```  
+ [uuid(9B2BAADA-0705-11D3-A0CD-00C04FA35826)]  
+library OldLib {  
+     [uuid(9B2BAADD-0705-11D3-A0CD-00C04FA35826)]  
+     interface IOld : IUnknown  
+         HRESULT OldMethod();  
+}  
+```  
+  
+ MIDL 编译器将生成多个输出文件。 如果在旧 .idl 中定义了接口，则输出文件 Old_i 将使用接口的接口`const`标识符（IID）定义一个变量，如下例所示。  
+  
+```  
+const IID IID_IOld = {0x9B2BAADD,0x0705,0x11D3,{0xA0,0xCD,0x00,0xC0,0x4F,0xA3,0x58,0x26}};  
+```  
+  
+ 旧 .h 文件也由 MIDL 生成。 它包含可C++在C++源代码中包含的接口的定义。  
+  
+## <a name="implementing-the-icustommarshaler-interface"></a>实现 ICustomMarshaler 接口  
+ 自定义封送拆收<xref:System.Runtime.InteropServices.ICustomMarshaler>器必须实现接口，才能向运行时提供适当的包装。  
+  
+ 下面C#的代码显示必须由所有自定义封送拆收器实现的基接口。  
+  
+ [!code-cpp[System.Runtime.InteropServices.ICustomMarshaler#2](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/cpp/source.cpp#2)]
+ [!code-csharp[System.Runtime.InteropServices.ICustomMarshaler#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/cs/source.cs#2)]
+ [!code-vb[System.Runtime.InteropServices.ICustomMarshaler#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/vb/source.vb#2)]  
+  
+ <xref:System.Runtime.InteropServices.ICustomMarshaler>接口包括提供转换支持、清除支持和有关要封送的数据的信息的方法。  
+  
+|操作的类型|ICustomMarshaler 方法|说明|  
+|-----------------------|-----------------------------|-----------------|  
+|转换（从本机到托管代码）|<xref:System.Runtime.InteropServices.ICustomMarshaler.MarshalNativeToManaged%2A>|将指向本机数据的指针封送到托管对象。 此方法返回一个自定义运行时可调用包装（RCW），该包装器可以封送作为参数传递的非托管接口。 封送拆收器应为该类型返回自定义 RCW 的实例。|  
+|转换（从托管代码到本机代码）|<xref:System.Runtime.InteropServices.ICustomMarshaler.MarshalManagedToNative%2A>|将托管对象封送到指向本机数据的指针。 此方法返回一个自定义 COM 可调用包装器（CCW），它可以封送作为参数传递的托管接口。 封送拆收器应返回该类型的自定义 CCW 的实例。|  
+|清理（本机代码）|<xref:System.Runtime.InteropServices.ICustomMarshaler.CleanUpNativeData%2A>|允许封送拆收器清理由<xref:System.Runtime.InteropServices.ICustomMarshaler.MarshalManagedToNative%2A>方法返回的本机数据（CCW）。|  
+|清除（托管代码）|<xref:System.Runtime.InteropServices.ICustomMarshaler.CleanUpManagedData%2A>|允许封送拆收器清理由<xref:System.Runtime.InteropServices.ICustomMarshaler.MarshalNativeToManaged%2A>方法返回的托管数据（RCW）。|  
+|信息（关于本机代码）|<xref:System.Runtime.InteropServices.ICustomMarshaler.GetNativeDataSize%2A>|返回要封送处理的非托管数据的大小。|  
+  
+### <a name="conversion"></a>转换  
+ <xref:System.Runtime.InteropServices.ICustomMarshaler.MarshalNativeToManaged%2A?displayProperty=nameWithType>  
+  
+ 将指向本机数据的指针封送到托管对象。 此方法返回一个自定义运行时可调用包装（RCW），该包装器可以封送作为参数传递的非托管接口。 封送拆收器应为该类型返回自定义 RCW 的实例。  
+  
+ <xref:System.Runtime.InteropServices.ICustomMarshaler.MarshalManagedToNative%2A?displayProperty=nameWithType>  
+  
+ 将托管对象封送到指向本机数据的指针。 此方法返回一个自定义 COM 可调用包装器（CCW），它可以封送作为参数传递的托管接口。 封送拆收器应返回该类型的自定义 CCW 的实例。  
+  
+### <a name="cleanup"></a>清理  
+ <xref:System.Runtime.InteropServices.ICustomMarshaler.CleanUpNativeData%2A?displayProperty=nameWithType>  
+  
+ 允许封送拆收器清理由<xref:System.Runtime.InteropServices.ICustomMarshaler.MarshalManagedToNative%2A>方法返回的本机数据（CCW）。  
+  
+ <xref:System.Runtime.InteropServices.ICustomMarshaler.CleanUpManagedData%2A?displayProperty=nameWithType>  
+  
+ 允许封送拆收器清理由<xref:System.Runtime.InteropServices.ICustomMarshaler.MarshalNativeToManaged%2A>方法返回的托管数据（RCW）。  
+  
+### <a name="size-information"></a>大小信息  
+ <xref:System.Runtime.InteropServices.ICustomMarshaler.GetNativeDataSize%2A?displayProperty=nameWithType>  
+  
+ 返回要封送处理的非托管数据的大小。  
+  
+## <a name="implementing-the-getinstance-method"></a>实现 GetInstance 方法  
+ 除了<xref:System.Runtime.InteropServices.ICustomMarshaler>实现接口外，自定义封送拆收器`static`还必须`GetInstance`实现一个名<xref:System.String>为的方法，该方法接受作为参数<xref:System.Runtime.InteropServices.ICustomMarshaler>并且具有返回类型。 此`static`方法由公共语言运行时的 COM 互操作层调用，以实例化自定义封送拆收器的实例。 传递给`GetInstance`的字符串是一个 cookie，该方法可用于自定义返回的自定义封送拆收器。  
+  
+```  
+static ICustomMarshaler *GetInstance(String *pstrCookie);  
+```  
+  
+## <a name="applying-marshalasattribute"></a>应用 MarshalAsAttribute  
+ 若要使用自定义封送拆收器<xref:System.Runtime.InteropServices.MarshalAsAttribute> ，必须将特性应用于要封送的参数或字段。  
+  
+ 还必须将<xref:System.Runtime.InteropServices.UnmanagedType.CustomMarshaler?displayProperty=nameWithType>枚举值传递<xref:System.Runtime.InteropServices.MarshalAsAttribute>到构造函数。 此外，还必须指定<xref:System.Runtime.InteropServices.MarshalAsAttribute.MarshalType>包含以下命名参数之一的字段：  
+  
+-   <xref:System.Runtime.InteropServices.MarshalAsAttribute.MarshalType>（必需）：自定义封送拆收器的程序集限定名称。 名称应包括自定义封送拆收器的命名空间和类。 如果未在中使用自定义封送拆收器，则必须指定定义它的程序集的名称。  
+  
+    > [!NOTE]
+    >  您可以使用<xref:System.Runtime.InteropServices.MarshalAsAttribute.MarshalTypeRef>字段而不是<xref:System.Runtime.InteropServices.MarshalAsAttribute.MarshalType>字段。 <xref:System.Runtime.InteropServices.MarshalAsAttribute.MarshalTypeRef>采用更易于指定的类型。  
+  
+-   <xref:System.Runtime.InteropServices.MarshalAsAttribute.MarshalCookie>（可选）：传递到自定义封送拆收器的 cookie。 可以使用 cookie 向封送拆收器提供附加信息。 例如，如果使用相同的封送拆收器来提供多个包装，cookie 会标识特定包装。 Cookie 传递给`GetInstance`封送拆收器的方法。  
+  
+ <xref:System.Runtime.InteropServices.MarshalAsAttribute>属性标识自定义封送拆收器，使其可以激活适当的包装。 然后，公共语言运行时的互操作服务将检查属性，并在第一次需要封送参数（参数或字段）时创建自定义封送拆收器。  
+  
+ 然后，运行时调用<xref:System.Runtime.InteropServices.ICustomMarshaler.MarshalNativeToManaged%2A>自<xref:System.Runtime.InteropServices.ICustomMarshaler.MarshalManagedToNative%2A>定义封送拆收器上的和方法，以激活正确的包装程序来处理调用。  
+  
+## <a name="using-a-custom-marshaler"></a>使用自定义封送拆收器  
+ 自定义封送拆收器完成后，可以将其用作特定类型的自定义包装器。 下面的示例演示了`IUserData`托管接口的定义：  
+  
+ [!code-cpp[System.Runtime.InteropServices.ICustomMarshaler#3](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/cpp/source.cpp#3)]
+ [!code-csharp[System.Runtime.InteropServices.ICustomMarshaler#3](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/cs/source.cs#3)]
+ [!code-vb[System.Runtime.InteropServices.ICustomMarshaler#3](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/vb/source.vb#3)]  
+  
+ 在下面的示例中， `IUserData`接口`NewOldMarshaler`使用自定义封送拆收器来使非托管`IOld`客户端应用`DoSomeStuff`程序将接口传递到方法。 如前面的示例所`DoSomeStuff`示，方法`INew`的托管说明采用接口， `DoSomeStuff`而`IOld`非托管版本采用接口指针，如以下示例中所示。  
+  
+```  
+[uuid(9B2BAADA-0705-11D3-A0CD-00C04FA35826)]  
+library UserLib {  
+     [uuid(9B2BABCD-0705-11D3-A0CD-00C04FA35826)]  
+     interface IUserData : IUnknown  
+         HRESULT DoSomeStuff(IUnknown* pIOld);  
+}  
+```  
+  
+ 通过导出的托管定义`IUserData`生成的类型库将生成在此示例中显示的非托管定义，而不是标准定义。 应用于该`INew` 方法 `DoSomeStuff` 的托管定义中的参数的特性指示该参数使用自定义封送拆收器，如下面的示例所示。 <xref:System.Runtime.InteropServices.MarshalAsAttribute>  
+  
+ [!code-cpp[System.Runtime.InteropServices.ICustomMarshaler#4](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/cpp/source.cpp#4)]
+ [!code-csharp[System.Runtime.InteropServices.ICustomMarshaler#4](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/cs/source.cs#4)]
+ [!code-vb[System.Runtime.InteropServices.ICustomMarshaler#4](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/vb/source.vb#4)]  
+  
+ [!code-cpp[System.Runtime.InteropServices.ICustomMarshaler#5](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/cpp/source.cpp#5)]
+ [!code-csharp[System.Runtime.InteropServices.ICustomMarshaler#5](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/cs/source.cs#5)]
+ [!code-vb[System.Runtime.InteropServices.ICustomMarshaler#5](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.runtime.interopservices.icustommarshaler/vb/source.vb#5)]  
+  
+ 在前面的示例中，提供给<xref:System.Runtime.InteropServices.MarshalAsAttribute>特性的第一个参数<xref:System.Runtime.InteropServices.UnmanagedType.CustomMarshaler?displayProperty=nameWithType>是枚举值`UnmanagedType.CustomMarshaler`。  
+  
+ 第二个参数是<xref:System.Runtime.InteropServices.MarshalAsAttribute.MarshalType>字段，它提供自定义封送拆收器的程序集限定名称。 此名称包含自定义封送拆收器（`MarshalType="MyCompany.NewOldMarshaler"`）的命名空间和类。  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CleanUpManagedData">
+      <MemberSignature Language="C#" Value="public void CleanUpManagedData (object ManagedObj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CleanUpManagedData(object ManagedObj) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Runtime.InteropServices.ICustomMarshaler.CleanUpManagedData(System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub CleanUpManagedData (ManagedObj As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void CleanUpManagedData(System::Object ^ ManagedObj);" />
+      <MemberSignature Language="F#" Value="abstract member CleanUpManagedData : obj -&gt; unit" Usage="iCustomMarshaler.CleanUpManagedData ManagedObj" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime.InteropServices</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ManagedObj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="ManagedObj">要销毁的托管对象。</param>
+        <summary>不再需要时执行必要的托管数据的清除。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CleanUpNativeData">
+      <MemberSignature Language="C#" Value="public void CleanUpNativeData (IntPtr pNativeData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CleanUpNativeData(native int pNativeData) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Runtime.InteropServices.ICustomMarshaler.CleanUpNativeData(System.IntPtr)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub CleanUpNativeData (pNativeData As IntPtr)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void CleanUpNativeData(IntPtr pNativeData);" />
+      <MemberSignature Language="F#" Value="abstract member CleanUpNativeData : nativeint -&gt; unit" Usage="iCustomMarshaler.CleanUpNativeData pNativeData" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime.InteropServices</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pNativeData" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="pNativeData">指向要销毁的非托管数据的指针。</param>
+        <summary>不再需要时执行必要的非托管数据的清除。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetNativeDataSize">
+      <MemberSignature Language="C#" Value="public int GetNativeDataSize ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetNativeDataSize() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Runtime.InteropServices.ICustomMarshaler.GetNativeDataSize" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetNativeDataSize () As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; int GetNativeDataSize();" />
+      <MemberSignature Language="F#" Value="abstract member GetNativeDataSize : unit -&gt; int" Usage="iCustomMarshaler.GetNativeDataSize " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime.InteropServices</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>返回要封送的本机数据的大小。</summary>
+        <returns>本机数据的大小（以字节为单位）。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MarshalManagedToNative">
+      <MemberSignature Language="C#" Value="public IntPtr MarshalManagedToNative (object ManagedObj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance native int MarshalManagedToNative(object ManagedObj) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Runtime.InteropServices.ICustomMarshaler.MarshalManagedToNative(System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Function MarshalManagedToNative (ManagedObj As Object) As IntPtr" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; IntPtr MarshalManagedToNative(System::Object ^ ManagedObj);" />
+      <MemberSignature Language="F#" Value="abstract member MarshalManagedToNative : obj -&gt; nativeint" Usage="iCustomMarshaler.MarshalManagedToNative ManagedObj" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime.InteropServices</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ManagedObj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="ManagedObj">要转换的托管对象。</param>
+        <summary>将托管数据转换为非托管数据。</summary>
+        <returns>指向托管对象的 COM 视图的指针。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MarshalNativeToManaged">
+      <MemberSignature Language="C#" Value="public object MarshalNativeToManaged (IntPtr pNativeData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object MarshalNativeToManaged(native int pNativeData) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Runtime.InteropServices.ICustomMarshaler.MarshalNativeToManaged(System.IntPtr)" />
+      <MemberSignature Language="VB.NET" Value="Public Function MarshalNativeToManaged (pNativeData As IntPtr) As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Object ^ MarshalNativeToManaged(IntPtr pNativeData);" />
+      <MemberSignature Language="F#" Value="abstract member MarshalNativeToManaged : nativeint -&gt; obj" Usage="iCustomMarshaler.MarshalNativeToManaged pNativeData" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime.InteropServices</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pNativeData" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="pNativeData">指向要包装的非托管数据的指针。</param>
+        <summary>将非托管数据转换为托管数据。</summary>
+        <returns>表示 COM 数据的托管视图的对象。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
