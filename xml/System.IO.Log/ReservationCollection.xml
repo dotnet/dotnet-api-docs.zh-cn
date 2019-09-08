@@ -1,0 +1,627 @@
+<Type Name="ReservationCollection" FullName="System.IO.Log.ReservationCollection">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="0b5f7c5e00b035f2197d50e122641e5237cd5df1" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70459823" /></Metadata><TypeSignature Language="C#" Value="public abstract class ReservationCollection : System.Collections.Generic.ICollection&lt;long&gt;, System.Collections.Generic.IEnumerable&lt;long&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ReservationCollection extends System.Object implements class System.Collections.Generic.ICollection`1&lt;int64&gt;, class System.Collections.Generic.IEnumerable`1&lt;int64&gt;, class System.Collections.IEnumerable" />
+  <TypeSignature Language="DocId" Value="T:System.IO.Log.ReservationCollection" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class ReservationCollection&#xA;Implements ICollection(Of Long), IEnumerable(Of Long)" />
+  <TypeSignature Language="C++ CLI" Value="public ref class ReservationCollection abstract : System::Collections::Generic::ICollection&lt;long&gt;, System::Collections::Generic::IEnumerable&lt;long&gt;" />
+  <TypeSignature Language="F#" Value="type ReservationCollection = class&#xA;    interface ICollection&lt;int64&gt;&#xA;    interface seq&lt;int64&gt;&#xA;    interface IEnumerable" />
+  <AssemblyInfo>
+    <AssemblyName>System.IO.Log</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.ICollection&lt;System.Int64&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;System.Int64&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;T&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary><span data-ttu-id="86929-101">管理在记录序列中生成的空间预留的集合。</span><span class="sxs-lookup"><span data-stu-id="86929-101">Manages the collection of space reservations made in a record sequence.</span></span></summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="86929-102">此类表示在记录序列中生成的一组预留区域。</span><span class="sxs-lookup"><span data-stu-id="86929-102">This class represents a set of reservation areas that are made in a record sequence.</span></span> <span data-ttu-id="86929-103">向集合中添加项可分配新的预留。</span><span class="sxs-lookup"><span data-stu-id="86929-103">Adding items to the collection allocates new reservations.</span></span> <span data-ttu-id="86929-104">从集合中移除项可释放这些预留。</span><span class="sxs-lookup"><span data-stu-id="86929-104">Removing items from the collection frees those reservations.</span></span>  
+  
+ <span data-ttu-id="86929-105">如果应用程序包含以后要写入日志中，但无法立即写入的数据，则会在日志中保留空间。</span><span class="sxs-lookup"><span data-stu-id="86929-105">An application reserves space in the log when it has data that is to be written to the log in the future, but cannot write it immediately.</span></span> <span data-ttu-id="86929-106">预留可保证在能够写入数据时将其写入到日志中。</span><span class="sxs-lookup"><span data-stu-id="86929-106">Reservations provide a guarantee that the data can be written to the log when the data is available to be written.</span></span> <span data-ttu-id="86929-107">使用日志时，应用程序通常会在封送处理区域中保留一条或多条日志记录。</span><span class="sxs-lookup"><span data-stu-id="86929-107">When using logs, applications often reserve one or more log records in a marshaling area.</span></span> <span data-ttu-id="86929-108">您必须在追加记录之前保留记录。</span><span class="sxs-lookup"><span data-stu-id="86929-108">You must reserve records prior to appending them.</span></span>  
+  
+ <span data-ttu-id="86929-109">预留可用于保证可以在提交数据之前完成操作；否则，将回滚更改。</span><span class="sxs-lookup"><span data-stu-id="86929-109">Reservations can be used to guarantee that an operation can be completed before the data is committed; otherwise, the changes are rolled back.</span></span> <span data-ttu-id="86929-110">此外，还可以用于在日志中记录“撤消操作”。</span><span class="sxs-lookup"><span data-stu-id="86929-110">It can also be used to record an "undo action" in the log.</span></span> <span data-ttu-id="86929-111">在回滚操作期间，如果事务资源管理器 (RM) 中断，RM 必须能够恢复其状态。</span><span class="sxs-lookup"><span data-stu-id="86929-111">During a rollback operation, a transactional resource manager (RM) must be able to recover its state if the RM is interrupted during the rollback operation.</span></span> <span data-ttu-id="86929-112">通过使用预留区域，RM 可以在使用日志之前在其中预留空间。</span><span class="sxs-lookup"><span data-stu-id="86929-112">By using a reservation area, an RM can reserve space in a log before it is used.</span></span>  
+  
+ <span data-ttu-id="86929-113"><xref:System.IO.Log.IRecordSequence.ReserveAndAppend%2A> 方法可以保留空间和/或追加数据，具体取决于在进行调用时指定的参数。</span><span class="sxs-lookup"><span data-stu-id="86929-113">The <xref:System.IO.Log.IRecordSequence.ReserveAndAppend%2A> method can either reserve space or append data, or both, depending on the parameters that are specified when making the call.</span></span> <span data-ttu-id="86929-114">随着事务中工作的进展，应用程序可以追加撤消信息并为补偿记录保留空间。</span><span class="sxs-lookup"><span data-stu-id="86929-114">As work progresses in a transaction, an application can append the undo information and reserve space for compensation records.</span></span> <span data-ttu-id="86929-115">在回滚操作期间，创建的补偿记录指示撤消的针对磁盘的操作。</span><span class="sxs-lookup"><span data-stu-id="86929-115">During a rollback operation, compensation records that are created indicate what has been undone on the disk.</span></span> <span data-ttu-id="86929-116">这些记录是使用以前保留的空间追加的。</span><span class="sxs-lookup"><span data-stu-id="86929-116">The records are appended using space that has been previously reserved.</span></span> <span data-ttu-id="86929-117">这可保证在执行回滚操作时，RM 不会出现日志空间不足的问题（这是一种错误状态）。</span><span class="sxs-lookup"><span data-stu-id="86929-117">This guarantees that an RM does not run out of log space, which is a fatal condition, while performing a rollback operation.</span></span> <span data-ttu-id="86929-118">如果在事务过程中日志填满，应用程序可以安全地回滚事务，而不会损坏持久数据。</span><span class="sxs-lookup"><span data-stu-id="86929-118">If a log fills up during a transaction, an application can safely roll back a transaction without corrupting durable data.</span></span>  
+  
+ <span data-ttu-id="86929-119">CLFS 是符合 ARIES 的日志记录系统，用于进行预写日志记录。</span><span class="sxs-lookup"><span data-stu-id="86929-119">CLFS is an ARIES-compliant logging system, meant for write-ahead logging.</span></span> <span data-ttu-id="86929-120">在预写日志记录中，应用程序在执行操作之前先写入撤消记录，从而保留它在日志中写入补偿记录（可能在回滚期间使用）所占用的空间量。</span><span class="sxs-lookup"><span data-stu-id="86929-120">In write-ahead logging, an application writes an undo record before it performs the operation, reserving the amount of space it takes in the log to write a compensating record, which may be used during rollback.</span></span> <span data-ttu-id="86929-121">以后，在实际写入补偿记录时，将使用保留的空间。</span><span class="sxs-lookup"><span data-stu-id="86929-121">Later, the reserved space is used when the compensation record is actually written.</span></span>  
+  
+ <span data-ttu-id="86929-122">应用程序可以在任意给定时间保留或访问较长的空间（它们是互相排斥的操作）。</span><span class="sxs-lookup"><span data-stu-id="86929-122">Applications can either reserve or access long space at any given time (they are mutually exclusive operations).</span></span> <span data-ttu-id="86929-123">将提交记录写入到日志中后，应用程序可以释放为补偿记录预留的空间。</span><span class="sxs-lookup"><span data-stu-id="86929-123">After a commit record is written to the log, an application can free up the reservations for the compensation records.</span></span> <span data-ttu-id="86929-124">可通过调用 <xref:System.IO.Log.ReservationCollection.FreeReservation%2A> 或 <xref:System.IO.Log.IRecordSequence.ReserveAndAppend%2A> 方法来完成此操作。</span><span class="sxs-lookup"><span data-stu-id="86929-124">This action can be done by calling either the <xref:System.IO.Log.ReservationCollection.FreeReservation%2A> or <xref:System.IO.Log.IRecordSequence.ReserveAndAppend%2A> method.</span></span> <span data-ttu-id="86929-125">调用 <xref:System.IO.Log.IRecordSequence.ReserveAndAppend%2A> 方法可保证操作是原子操作；而调用 <xref:System.IO.Log.ReservationCollection.FreeReservation%2A> 方法则无法保证操作是原子操作。</span><span class="sxs-lookup"><span data-stu-id="86929-125">Calling the <xref:System.IO.Log.IRecordSequence.ReserveAndAppend%2A> method guarantees that the operation is atomic, while calling the <xref:System.IO.Log.ReservationCollection.FreeReservation%2A> method does not.</span></span>  
+  
+ <span data-ttu-id="86929-126">在释放记录时，释放的记录必须与上次调用 <xref:System.IO.Log.IRecordSequence.ReserveAndAppend%2A> 方法时保留的记录相同。</span><span class="sxs-lookup"><span data-stu-id="86929-126">When you free records, you must free the same records that you reserved together in a previous call to the <xref:System.IO.Log.IRecordSequence.ReserveAndAppend%2A> method.</span></span>  
+  
+> [!NOTE]
+>  <span data-ttu-id="86929-127"><xref:System.IO.Log.IRecordSequence> 实现必须实现 <xref:System.IO.Log.ReservationCollection.MakeReservation%2A> 和 <xref:System.IO.Log.ReservationCollection.FreeReservation%2A> 方法才能执行实际的预留分配和释放。</span><span class="sxs-lookup"><span data-stu-id="86929-127">Your implementation of <xref:System.IO.Log.IRecordSequence> must implement the <xref:System.IO.Log.ReservationCollection.MakeReservation%2A> and <xref:System.IO.Log.ReservationCollection.FreeReservation%2A> methods to perform the actual reservation allocation and deallocation.</span></span> <span data-ttu-id="86929-128">此外，在将记录写入保留空间时，该实现还必须调用 <xref:System.IO.Log.ReservationCollection.ReservationFreed%2A>。</span><span class="sxs-lookup"><span data-stu-id="86929-128">In addition, your implementation must also call <xref:System.IO.Log.ReservationCollection.ReservationFreed%2A> when a record is written into a reserved space.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="86929-129">如下面的示例所示，可以通过两种方式执行预留。</span><span class="sxs-lookup"><span data-stu-id="86929-129">Reservations can be performed in two ways as shown in the following examples.</span></span> <span data-ttu-id="86929-130">您可以采用示例中的做法可靠地进行处理。</span><span class="sxs-lookup"><span data-stu-id="86929-130">You can adopt the practices in the samples for robust processing.</span></span> <span data-ttu-id="86929-131">请注意，只有在使用基于 CLFS 的 <xref:System.IO.Log.LogRecordSequence> 类时才能执行此任务。</span><span class="sxs-lookup"><span data-stu-id="86929-131">Notice that this task can only be performed when using the CLFS-based <xref:System.IO.Log.LogRecordSequence> class.</span></span>  
+  
+```  
+//Using the ReserveAndAppend Method  
+ReservationCollection reservations = recordSequence.CreateReservationCollection();  
+long[] lengthOfUndoRecords = new long[] { 1000 };  
+recordSequence.ReserveAndAppend(recordData,  
+                                                     userSqn,  
+                                                     previousSqn,  
+                                                     RecordSequenceAppendOptions.None,  
+                                                     reservations,  
+                                                     lengthOfUndoRecords);  
+recordSequence.Append(undoRecordData,    // If necessary …  
+                                    userSqn,  
+                                    previousSqn,  
+                                    RecordSequenceAppendOptions.ForceFlush,  
+                                    reservations);  
+  
+// Using the Manual Approach  
+ReservationCollection reservations = recordSequence.CreateReservationCollection();  
+reservations.Add(lengthOfUndoRecord);  
+try  
+{  
+   recordSequence.Append(recordData, userSqn, previousSqn, RecordAppendOptions.None);  
+}  
+catch (Exception)  
+{  
+   reservations.Remove(lengthOfUndoRecord);  
+   throw;  
+}  
+  
+recordSequence.Append(undoRecordData, userSqn, previousSqn, RecordAppendOptions.ForceFlush, reservations);  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ReservationCollection ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; ReservationCollection();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="86929-132">初始化 <see cref="T:System.IO.Log.ReservationCollection" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="86929-132">Initializes a new instance of the <see cref="T:System.IO.Log.ReservationCollection" /> class.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (long size);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Add(int64 size) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.Add(System.Int64)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Add (size As Long)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void Add(long size);" />
+      <MemberSignature Language="F#" Value="abstract member Add : int64 -&gt; unit&#xA;override this.Add : int64 -&gt; unit" Usage="reservationCollection.Add size" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.Generic.ICollection`1.Add(`0)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size"><span data-ttu-id="86929-133">请求的预留的大小（以字节为单位）。</span><span class="sxs-lookup"><span data-stu-id="86929-133">The size of the requested reservation, in bytes.</span></span></param>
+        <summary><span data-ttu-id="86929-134">分配预留并将其添加到集合中。</span><span class="sxs-lookup"><span data-stu-id="86929-134">Allocates a reservation and adds it to the collection.</span></span> <span data-ttu-id="86929-135">不能继承此方法。</span><span class="sxs-lookup"><span data-stu-id="86929-135">This method cannot be inherited.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ <span data-ttu-id="86929-136">下面的示例演示如何以手动方式生成预留。</span><span class="sxs-lookup"><span data-stu-id="86929-136">The following example shows how to manually make a reservation.</span></span> <span data-ttu-id="86929-137">请注意，只有在使用基于 CLFS 的 <xref:System.IO.Log.LogRecordSequence> 类时才能执行此任务。</span><span class="sxs-lookup"><span data-stu-id="86929-137">Notice that this task can only be performed when using the CLFS-based <xref:System.IO.Log.LogRecordSequence> class.</span></span>  
+  
+```  
+ReservationCollection reservations = recordSequence.CreateReservationCollection();  
+reservations.Add(lengthOfUndoRecord);  
+try  
+{  
+   recordSequence.Append(recordData, userSqn, previousSqn, RecordAppendOptions.None);  
+}  
+catch (Exception)  
+{  
+   reservations.Remove(lengthOfUndoRecord);  
+   throw;  
+}  
+  
+recordSequence.Append(undoRecordData, userSqn, previousSqn, RecordAppendOptions.ForceFlush, reservations);  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><span data-ttu-id="86929-138"><paramref name="archiveTail" /> 不在此序列的基序列号和最后一个序列号之间。</span><span class="sxs-lookup"><span data-stu-id="86929-138"><paramref name="archiveTail" /> is not between the base and last sequence numbers of this sequence.</span></span></exception>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="86929-139"><paramref name="size" /> 无效或超过最大预留大小。</span><span class="sxs-lookup"><span data-stu-id="86929-139"><paramref name="size" /> is invalid or exceeds maximum reservation size.</span></span></exception>
+        <exception cref="T:System.IO.IOException"><span data-ttu-id="86929-140">创建存档快照时发生 I/O 错误。</span><span class="sxs-lookup"><span data-stu-id="86929-140">An I/O error occurs when creating the archive snapshot.</span></span></exception>
+        <exception cref="T:System.ObjectDisposedException"><span data-ttu-id="86929-141">该方法是在序列已释放之后调用的。</span><span class="sxs-lookup"><span data-stu-id="86929-141">The method was called after the sequence has been disposed of.</span></span></exception>
+        <exception cref="T:System.OutOfMemoryException"><span data-ttu-id="86929-142">没有足够的内存来继续执行该程序。</span><span class="sxs-lookup"><span data-stu-id="86929-142">There is not enough memory to continue the execution of the program.</span></span></exception>
+        <exception cref="T:System.UnauthorizedAccessException"><span data-ttu-id="86929-143">操作系统拒绝了对指定的日志存储区的访问。</span><span class="sxs-lookup"><span data-stu-id="86929-143">Access for the specified log store is denied by the operating system.</span></span></exception>
+        <exception cref="T:System.IO.Log.SequenceFullException"><span data-ttu-id="86929-144">记录序列已满。</span><span class="sxs-lookup"><span data-stu-id="86929-144">The record sequence is full.</span></span></exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Clear() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.Clear" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Clear ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void Clear();" />
+      <MemberSignature Language="F#" Value="abstract member Clear : unit -&gt; unit&#xA;override this.Clear : unit -&gt; unit" Usage="reservationCollection.Clear " />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.Generic.ICollection`1.Clear</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="86929-145">释放集合中的所有预留。</span><span class="sxs-lookup"><span data-stu-id="86929-145">Releases all of the reservations in the collection.</span></span> <span data-ttu-id="86929-146">不能继承此方法。</span><span class="sxs-lookup"><span data-stu-id="86929-146">This method cannot be inherited.</span></span></summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="86929-147"><paramref name="size" /> 无效或超过最大预留大小。</span><span class="sxs-lookup"><span data-stu-id="86929-147"><paramref name="size" /> is invalid or exceeds maximum reservation size.</span></span></exception>
+        <exception cref="T:System.IO.IOException"><span data-ttu-id="86929-148">创建存档快照时发生 I/O 错误。</span><span class="sxs-lookup"><span data-stu-id="86929-148">An I/O error occurs when creating the archive snapshot.</span></span></exception>
+        <exception cref="T:System.ObjectDisposedException"><span data-ttu-id="86929-149">该方法是在序列已释放之后调用的。</span><span class="sxs-lookup"><span data-stu-id="86929-149">The method was called after the sequence has been disposed of.</span></span></exception>
+        <exception cref="T:System.OutOfMemoryException"><span data-ttu-id="86929-150">没有足够的内存来继续执行该程序。</span><span class="sxs-lookup"><span data-stu-id="86929-150">There is not enough memory to continue the execution of the program.</span></span></exception>
+        <exception cref="T:System.IO.Log.SequenceFullException"><span data-ttu-id="86929-151">记录序列已满。</span><span class="sxs-lookup"><span data-stu-id="86929-151">The record sequence is full.</span></span></exception>
+        <exception cref="T:System.UnauthorizedAccessException"><span data-ttu-id="86929-152">操作系统拒绝了对指定的日志存储区的访问。</span><span class="sxs-lookup"><span data-stu-id="86929-152">Access for the specified log store is denied by the operating system.</span></span></exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Contains">
+      <MemberSignature Language="C#" Value="public bool Contains (long size);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Contains(int64 size) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.Contains(System.Int64)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Contains (size As Long) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool Contains(long size);" />
+      <MemberSignature Language="F#" Value="abstract member Contains : int64 -&gt; bool&#xA;override this.Contains : int64 -&gt; bool" Usage="reservationCollection.Contains size" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.Generic.ICollection`1.Contains(`0)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size"><span data-ttu-id="86929-153">要在集合中查找的大小。</span><span class="sxs-lookup"><span data-stu-id="86929-153">The size to locate in the collection.</span></span></param>
+        <summary><span data-ttu-id="86929-154">确定是否已生成指定大小的预留。</span><span class="sxs-lookup"><span data-stu-id="86929-154">Determines whether a reservation of the specified size has been made.</span></span> <span data-ttu-id="86929-155">不能继承此方法。</span><span class="sxs-lookup"><span data-stu-id="86929-155">This method cannot be inherited.</span></span></summary>
+        <returns><span data-ttu-id="86929-156">如果已生成至少一个指定大小的预留，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="86929-156"><see langword="true" /> if at least one reservation of the specified size has been made; otherwise, <see langword="false" />.</span></span></returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException"><span data-ttu-id="86929-157">该方法是在序列已释放之后调用的。</span><span class="sxs-lookup"><span data-stu-id="86929-157">The method was called after the sequence has been disposed of.</span></span></exception>
+        <exception cref="T:System.OutOfMemoryException"><span data-ttu-id="86929-158">没有足够的内存来继续执行该程序。</span><span class="sxs-lookup"><span data-stu-id="86929-158">There is not enough memory to continue the execution of the program.</span></span></exception>
+        <exception cref="T:System.UnauthorizedAccessException"><span data-ttu-id="86929-159">操作系统拒绝了对指定的日志存储区的访问。</span><span class="sxs-lookup"><span data-stu-id="86929-159">Access for the specified log store is denied by the operating system.</span></span></exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (long[] array, int arrayIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(int64[] array, int32 arrayIndex) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.CopyTo(System.Int64[],System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub CopyTo (array As Long(), arrayIndex As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void CopyTo(cli::array &lt;long&gt; ^ array, int arrayIndex);" />
+      <MemberSignature Language="F#" Value="abstract member CopyTo : int64[] * int -&gt; unit&#xA;override this.CopyTo : int64[] * int -&gt; unit" Usage="reservationCollection.CopyTo (array, arrayIndex)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="System.Int64[]" />
+        <Parameter Name="arrayIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array"><span data-ttu-id="86929-160">作为复制目标的数组。</span><span class="sxs-lookup"><span data-stu-id="86929-160">The array that is the destination of the copy.</span></span></param>
+        <param name="arrayIndex"><span data-ttu-id="86929-161">数组中开始复制的位置的索引（从零开始）。</span><span class="sxs-lookup"><span data-stu-id="86929-161">The zero-based index in the array at which copying begins.</span></span></param>
+        <summary><span data-ttu-id="86929-162">从目标数组的指定索引处开始，将整个集合复制到一维数组。</span><span class="sxs-lookup"><span data-stu-id="86929-162">Copies the entire collection to a one-dimensional array, starting at the specified index of the target array.</span></span> <span data-ttu-id="86929-163">不能继承此方法。</span><span class="sxs-lookup"><span data-stu-id="86929-163">This method cannot be inherited.</span></span></summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><span data-ttu-id="86929-164"><paramref name="array" /> 或 <paramref name="arrayIndex" /> 为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="86929-164"><paramref name="array" /> or <paramref name="arrayIndex" /> is <see langword="null" />.</span></span></exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><span data-ttu-id="86929-165"><paramref name="arrayIndex" /> 小于零，或者大于或等于 <paramref name="array" /> 的长度。</span><span class="sxs-lookup"><span data-stu-id="86929-165"><paramref name="arrayIndex" /> is less than zero, or greater than or equal to the length of <paramref name="array" />.</span></span></exception>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="86929-166">指定的数组中没有足够的空间来复制数据。</span><span class="sxs-lookup"><span data-stu-id="86929-166">There is not enough space in the specified array to copy the data.</span></span>  
+  
+<span data-ttu-id="86929-167">或</span><span class="sxs-lookup"><span data-stu-id="86929-167">-or-</span></span> 
+ <span data-ttu-id="86929-168"><paramref name="array" /> 不是一维数组，它是请求的操作支持的唯一类型。</span><span class="sxs-lookup"><span data-stu-id="86929-168"><paramref name="array" /> is not a single dimensional array, which is the only type supported for the requested action.</span></span></exception>
+        <exception cref="T:System.ObjectDisposedException"><span data-ttu-id="86929-169">该方法是在序列已释放之后调用的。</span><span class="sxs-lookup"><span data-stu-id="86929-169">The method was called after the sequence has been disposed of.</span></span></exception>
+        <exception cref="T:System.OutOfMemoryException"><span data-ttu-id="86929-170">没有足够的内存来继续执行该程序。</span><span class="sxs-lookup"><span data-stu-id="86929-170">There is not enough memory to continue the execution of the program.</span></span></exception>
+        <exception cref="T:System.UnauthorizedAccessException"><span data-ttu-id="86929-171">操作系统拒绝了对指定的日志存储区的访问。</span><span class="sxs-lookup"><span data-stu-id="86929-171">Access for the specified log store is denied by the operating system.</span></span></exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
+      <MemberSignature Language="DocId" Value="P:System.IO.Log.ReservationCollection.Count" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Count As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int Count { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.Count : int" Usage="System.IO.Log.ReservationCollection.Count" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Collections.Generic.ICollection`1.Count</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="86929-172">获取此集合中的预留数。</span><span class="sxs-lookup"><span data-stu-id="86929-172">Gets the number of reservations in the collection.</span></span></summary>
+        <value><span data-ttu-id="86929-173">集合中的预留数。</span><span class="sxs-lookup"><span data-stu-id="86929-173">The number of reservations in the collection.</span></span></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~ReservationCollection ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.Finalize" />
+      <MemberSignature Language="VB.NET" Value="Finalize ()" />
+      <MemberSignature Language="C++ CLI" Value="!ReservationCollection ()" />
+      <MemberSignature Language="F#" Value="override this.Finalize : unit -&gt; unit" Usage="reservationCollection.Finalize " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="86929-174">允许 <see cref="T:System.IO.Log.ReservationCollection" /> 在垃圾收集器销毁资源之前将这些资源释放。</span><span class="sxs-lookup"><span data-stu-id="86929-174">Allows the <see cref="T:System.IO.Log.ReservationCollection" /> to free resources before it is destroyed by the garbage collector.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FreeReservation">
+      <MemberSignature Language="C#" Value="protected abstract void FreeReservation (long size);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void FreeReservation(int64 size) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.FreeReservation(System.Int64)" />
+      <MemberSignature Language="VB.NET" Value="Protected MustOverride Sub FreeReservation (size As Long)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; abstract void FreeReservation(long size);" />
+      <MemberSignature Language="F#" Value="abstract member FreeReservation : int64 -&gt; unit" Usage="reservationCollection.FreeReservation size" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size"><span data-ttu-id="86929-175">要释放的预留的大小。</span><span class="sxs-lookup"><span data-stu-id="86929-175">The size of the reservation to release.</span></span></param>
+        <summary><span data-ttu-id="86929-176">在派生类中重写时，释放指定大小的预留。</span><span class="sxs-lookup"><span data-stu-id="86929-176">When overridden in a derived class, releases a reservation of the specified size.</span></span></summary>
+        <remarks>To be added.</remarks>
+        <block subset="none" type="overrides"><para><span data-ttu-id="86929-177">从 <see cref="T:System.IO.Log.ReservationCollection" /> 继承时，必须实现此方法才能实际释放记录序列中的空间。</span><span class="sxs-lookup"><span data-stu-id="86929-177">When you inherit from <see cref="T:System.IO.Log.ReservationCollection" />, you must implement this method to actually release space in the record sequence.</span></span> <span data-ttu-id="86929-178">不应在此方法完成后调用 <see cref="M:System.IO.Log.ReservationCollection.ReservationFreed(System.Int64)" />；系统将处理此逻辑。</span><span class="sxs-lookup"><span data-stu-id="86929-178">You should not call <see cref="M:System.IO.Log.ReservationCollection.ReservationFreed(System.Int64)" /> when this method is complete; that logic is handled for you.</span></span>  
+  
+<span data-ttu-id="86929-179">在释放记录时，释放的记录必须与上次调用 <see cref="Overload:System.IO.Log.IRecordSequence.ReserveAndAppend" /> 方法时保留的记录相同。</span><span class="sxs-lookup"><span data-stu-id="86929-179">When you free records, you must free the same records that you reserved together in a previous call to the <see cref="Overload:System.IO.Log.IRecordSequence.ReserveAndAppend" /> method.</span></span></para></block>
+      </Docs>
+    </Member>
+    <Member MemberName="GetBestMatchingReservation">
+      <MemberSignature Language="C#" Value="protected long GetBestMatchingReservation (long size);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance int64 GetBestMatchingReservation(int64 size) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.GetBestMatchingReservation(System.Int64)" />
+      <MemberSignature Language="VB.NET" Value="Protected Function GetBestMatchingReservation (size As Long) As Long" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; long GetBestMatchingReservation(long size);" />
+      <MemberSignature Language="F#" Value="member this.GetBestMatchingReservation : int64 -&gt; int64" Usage="reservationCollection.GetBestMatchingReservation size" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size"><span data-ttu-id="86929-180">必须匹配的预留的大小。</span><span class="sxs-lookup"><span data-stu-id="86929-180">The size of the reservation that must be fit.</span></span></param>
+        <summary><span data-ttu-id="86929-181">在派生类中重写时，获取给定大小的最佳匹配预留。</span><span class="sxs-lookup"><span data-stu-id="86929-181">When overridden in a derived class, gets the best matching reservation for a given size.</span></span></summary>
+        <returns><span data-ttu-id="86929-182">集合中大于或等于指定大小的预留；或者，如果此类预留不存在，则为 -1。</span><span class="sxs-lookup"><span data-stu-id="86929-182">A reservation from the collection that is greater than or equal to the specified size, or -1 if no such reservation exists.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="86929-183">将保留空间中的记录追加到记录序列时，通常会调用此方法。</span><span class="sxs-lookup"><span data-stu-id="86929-183">This method is typically called when appending a record from reserved space to a record sequence.</span></span> <span data-ttu-id="86929-184">当此方法返回时，已从集合中移除了具有返回大小的预留。</span><span class="sxs-lookup"><span data-stu-id="86929-184">When it returns, a reservation of the returned size has been removed from the collection.</span></span> <span data-ttu-id="86929-185">如果由于某种原因未实际访问保留空间，则应调用 <xref:System.IO.Log.ReservationCollection.ReservationMade%2A> 方法以确保 <xref:System.IO.Log.ReservationCollection> 准确地表示记录序列中的保留空间量。</span><span class="sxs-lookup"><span data-stu-id="86929-185">If, for some reason, the reserved space is not actually accessed, the <xref:System.IO.Log.ReservationCollection.ReservationMade%2A> method should be called to ensure that the <xref:System.IO.Log.ReservationCollection> accurately represents the amount of reserved space in the record sequence.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerator&lt;long&gt; GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;int64&gt; GetEnumerator() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.GetEnumerator" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetEnumerator () As IEnumerator(Of Long)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Collections::Generic::IEnumerator&lt;long&gt; ^ GetEnumerator();" />
+      <MemberSignature Language="F#" Value="abstract member GetEnumerator : unit -&gt; System.Collections.Generic.IEnumerator&lt;int64&gt;&#xA;override this.GetEnumerator : unit -&gt; System.Collections.Generic.IEnumerator&lt;int64&gt;" Usage="reservationCollection.GetEnumerator " />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.Generic.IEnumerable`1.GetEnumerator</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerator&lt;System.Int64&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="86929-186">返回一个可以循环访问 <see cref="T:System.IO.Log.ReservationCollection" /> 的枚举器。</span><span class="sxs-lookup"><span data-stu-id="86929-186">Returns an enumerator that can iterate through the <see cref="T:System.IO.Log.ReservationCollection" />.</span></span> <span data-ttu-id="86929-187">不能继承此方法。</span><span class="sxs-lookup"><span data-stu-id="86929-187">This method cannot be inherited.</span></span></summary>
+        <returns><span data-ttu-id="86929-188">一个可循环访问 <see cref="T:System.IO.Log.ReservationCollection" /> 的枚举数。</span><span class="sxs-lookup"><span data-stu-id="86929-188">An enumerator that can iterate through the <see cref="T:System.IO.Log.ReservationCollection" />.</span></span></returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="86929-189">操作由于以下原因之一而无效：</span><span class="sxs-lookup"><span data-stu-id="86929-189">The operation is invalid for one of the following reasons:</span></span> 
+<span data-ttu-id="86929-190">-   枚举已经终止。</span><span class="sxs-lookup"><span data-stu-id="86929-190">-   The enumeration has ended.</span></span>  
+  
+<span data-ttu-id="86929-191">-   集合已修改。</span><span class="sxs-lookup"><span data-stu-id="86929-191">-   The collection has been modified.</span></span>  
+  
+<span data-ttu-id="86929-192">-   枚举尚未开始。</span><span class="sxs-lookup"><span data-stu-id="86929-192">-   The enumeration has not been started.</span></span> <span data-ttu-id="86929-193">必须调用 <see cref="M:System.Collections.IEnumerator.MoveNext" />。</span><span class="sxs-lookup"><span data-stu-id="86929-193">A call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> must be made.</span></span></exception>
+        <exception cref="T:System.ObjectDisposedException"><span data-ttu-id="86929-194">该方法是在序列已释放之后调用的。</span><span class="sxs-lookup"><span data-stu-id="86929-194">The method was called after the sequence has been disposed of.</span></span></exception>
+        <exception cref="T:System.OutOfMemoryException"><span data-ttu-id="86929-195">没有足够的内存来继续执行该程序。</span><span class="sxs-lookup"><span data-stu-id="86929-195">There is not enough memory to continue the execution of the program.</span></span></exception>
+        <exception cref="T:System.UnauthorizedAccessException"><span data-ttu-id="86929-196">操作系统拒绝了对指定的日志存储区的访问。</span><span class="sxs-lookup"><span data-stu-id="86929-196">Access for the specified log store is denied by the operating system.</span></span></exception>
+      </Docs>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberSignature Language="DocId" Value="P:System.IO.Log.ReservationCollection.IsReadOnly" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property IsReadOnly As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IsReadOnly { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsReadOnly : bool" Usage="System.IO.Log.ReservationCollection.IsReadOnly" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.Collections.Generic.ICollection`1.IsReadOnly</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="86929-197">获取一个值，指示集合是否为只读集合。</span><span class="sxs-lookup"><span data-stu-id="86929-197">Gets a value that indicates whether the collection is read-only.</span></span></summary>
+        <value><span data-ttu-id="86929-198">此属性始终返回 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="86929-198">This property always returns <see langword="false" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="86929-199"><xref:System.IO.Log.ReservationCollection> 始终不是只读的。</span><span class="sxs-lookup"><span data-stu-id="86929-199">A <xref:System.IO.Log.ReservationCollection> is never read-only.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MakeReservation">
+      <MemberSignature Language="C#" Value="protected abstract void MakeReservation (long size);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void MakeReservation(int64 size) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.MakeReservation(System.Int64)" />
+      <MemberSignature Language="VB.NET" Value="Protected MustOverride Sub MakeReservation (size As Long)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; abstract void MakeReservation(long size);" />
+      <MemberSignature Language="F#" Value="abstract member MakeReservation : int64 -&gt; unit" Usage="reservationCollection.MakeReservation size" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size"><span data-ttu-id="86929-200">要分配的预留的大小。</span><span class="sxs-lookup"><span data-stu-id="86929-200">The size of the reservation to allocate.</span></span></param>
+        <summary><span data-ttu-id="86929-201">在派生类中重写时，分配指定大小的预留。</span><span class="sxs-lookup"><span data-stu-id="86929-201">When overridden in a derived class, allocates a reservation of the specified size.</span></span></summary>
+        <remarks>To be added.</remarks>
+        <block subset="none" type="overrides"><para><span data-ttu-id="86929-202">从 <see cref="T:System.IO.Log.ReservationCollection" /> 继承时，必须实现此方法才能实际保留记录序列中的空间。</span><span class="sxs-lookup"><span data-stu-id="86929-202">When you inherit from <see cref="T:System.IO.Log.ReservationCollection" />, you must implement this method to actually reserve space in the record sequence.</span></span> <span data-ttu-id="86929-203">不应在此方法完成后调用 <see cref="M:System.IO.Log.ReservationCollection.ReservationMade(System.Int64)" />；系统将处理此逻辑。</span><span class="sxs-lookup"><span data-stu-id="86929-203">You should not call <see cref="M:System.IO.Log.ReservationCollection.ReservationMade(System.Int64)" /> when this method is complete; that logic is handled for you.</span></span></para></block>
+      </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public bool Remove (long item);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Remove(int64 item) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.Remove(System.Int64)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Remove (item As Long) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool Remove(long item);" />
+      <MemberSignature Language="F#" Value="abstract member Remove : int64 -&gt; bool&#xA;override this.Remove : int64 -&gt; bool" Usage="reservationCollection.Remove item" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.Generic.ICollection`1.Remove(`0)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="item"><span data-ttu-id="86929-204">要释放的预留的大小。</span><span class="sxs-lookup"><span data-stu-id="86929-204">The size of the reservation to release.</span></span></param>
+        <summary><span data-ttu-id="86929-205">释放指定大小的预留（如果已生成）。</span><span class="sxs-lookup"><span data-stu-id="86929-205">Releases a reservation of the specified size, if one has been made.</span></span> <span data-ttu-id="86929-206">不能继承此方法。</span><span class="sxs-lookup"><span data-stu-id="86929-206">This method cannot be inherited.</span></span></summary>
+        <returns><span data-ttu-id="86929-207">如果已找到并移除指定大小的预留，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="86929-207"><see langword="true" /> if a reservation of the specified size was found and removed; otherwise, <see langword="false" />.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ <span data-ttu-id="86929-208">下面的示例演示如何以手动方式生成预留。</span><span class="sxs-lookup"><span data-stu-id="86929-208">The following example shows how to manually make a reservation.</span></span> <span data-ttu-id="86929-209">请注意，只有在使用基于 CLFS 的 <xref:System.IO.Log.LogRecordSequence> 类时才能执行此任务。</span><span class="sxs-lookup"><span data-stu-id="86929-209">Notice that this task can only be performed when using the CLFS-based <xref:System.IO.Log.LogRecordSequence> class.</span></span>  
+  
+```  
+ReservationCollection reservations = recordSequence.CreateReservationCollection();  
+reservations.Add(lengthOfUndoRecord);  
+try  
+{  
+   recordSequence.Append(recordData, userSqn, previousSqn, RecordAppendOptions.None);  
+}  
+catch (Exception)  
+{  
+   reservations.Remove(lengthOfUndoRecord);  
+   throw;  
+}  
+  
+recordSequence.Append(undoRecordData, userSqn, previousSqn, RecordAppendOptions.ForceFlush, reservations);  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="86929-210">在指定的预留集合中找不到足以容纳提供的记录的预留。</span><span class="sxs-lookup"><span data-stu-id="86929-210">No reservation large enough to fit the provided record can be found in the specified reservation collection.</span></span></exception>
+        <exception cref="T:System.IO.IOException"><span data-ttu-id="86929-211">创建存档快照时发生 I/O 错误。</span><span class="sxs-lookup"><span data-stu-id="86929-211">An I/O error occurs when creating the archive snapshot.</span></span></exception>
+        <exception cref="T:System.ObjectDisposedException"><span data-ttu-id="86929-212">该方法是在序列已释放之后调用的。</span><span class="sxs-lookup"><span data-stu-id="86929-212">The method was called after the sequence has been disposed of.</span></span></exception>
+        <exception cref="T:System.OutOfMemoryException"><span data-ttu-id="86929-213">没有足够的内存来继续执行该程序。</span><span class="sxs-lookup"><span data-stu-id="86929-213">There is not enough memory to continue the execution of the program.</span></span></exception>
+        <exception cref="T:System.IO.Log.SequenceFullException"><span data-ttu-id="86929-214">记录序列已满。</span><span class="sxs-lookup"><span data-stu-id="86929-214">The record sequence is full.</span></span></exception>
+        <exception cref="T:System.UnauthorizedAccessException"><span data-ttu-id="86929-215">操作系统拒绝了对指定的日志存储区的访问。</span><span class="sxs-lookup"><span data-stu-id="86929-215">Access for the specified log store is denied by the operating system.</span></span></exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ReservationFreed">
+      <MemberSignature Language="C#" Value="protected void ReservationFreed (long size);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void ReservationFreed(int64 size) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.ReservationFreed(System.Int64)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub ReservationFreed (size As Long)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void ReservationFreed(long size);" />
+      <MemberSignature Language="F#" Value="member this.ReservationFreed : int64 -&gt; unit" Usage="reservationCollection.ReservationFreed size" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size"><span data-ttu-id="86929-216">已释放的预留的大小。</span><span class="sxs-lookup"><span data-stu-id="86929-216">The size of the reservation that has been released.</span></span></param>
+        <summary><span data-ttu-id="86929-217">在派生类中重写时，指示已释放了预留。</span><span class="sxs-lookup"><span data-stu-id="86929-217">When overridden in a derived class, indicates that a reservation has been released.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="86929-218">从 <xref:System.IO.Log.ReservationCollection> 中继承时，如果由于某种原因（从集合中移除预留除外）释放预留，则必须调用此方法。</span><span class="sxs-lookup"><span data-stu-id="86929-218">When you inherit from <xref:System.IO.Log.ReservationCollection>, you must call this method when a reservation is released for a reason other than removing it from the collection.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReservationMade">
+      <MemberSignature Language="C#" Value="protected void ReservationMade (long size);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void ReservationMade(int64 size) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.ReservationMade(System.Int64)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub ReservationMade (size As Long)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void ReservationMade(long size);" />
+      <MemberSignature Language="F#" Value="member this.ReservationMade : int64 -&gt; unit" Usage="reservationCollection.ReservationMade size" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="size" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="size"><span data-ttu-id="86929-219">已生成的预留的大小。</span><span class="sxs-lookup"><span data-stu-id="86929-219">The size of the reservation that has been made.</span></span></param>
+        <summary><span data-ttu-id="86929-220">在派生类中重写时，指示已生成了预留。</span><span class="sxs-lookup"><span data-stu-id="86929-220">When overridden in a derived class, indicates that a reservation has been made.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="86929-221">从 <xref:System.IO.Log.ReservationCollection> 中继承时，如果预留是在对 <xref:System.IO.Log.ReservationCollection.Add%2A> 的调用以外生成的，则必须调用此方法。</span><span class="sxs-lookup"><span data-stu-id="86929-221">When you inherit from <xref:System.IO.Log.ReservationCollection>, you must call this method when a reservation is made outside of a call to <xref:System.IO.Log.ReservationCollection.Add%2A>.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.ReservationCollection.System#Collections#IEnumerable#GetEnumerator" />
+      <MemberSignature Language="VB.NET" Value="Function GetEnumerator () As IEnumerator Implements IEnumerable.GetEnumerator" />
+      <MemberSignature Language="C++ CLI" Value=" virtual System::Collections::IEnumerator ^ System.Collections.IEnumerable.GetEnumerator() = System::Collections::IEnumerable::GetEnumerator;" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.Collections.IEnumerable.GetEnumerator</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="86929-222">返回一个可以循环访问 <see cref="T:System.IO.Log.ReservationCollection" /> 的枚举器。</span><span class="sxs-lookup"><span data-stu-id="86929-222">Returns an enumerator that can iterate through the <see cref="T:System.IO.Log.ReservationCollection" />.</span></span> <span data-ttu-id="86929-223">不能继承此方法。</span><span class="sxs-lookup"><span data-stu-id="86929-223">This method cannot be inherited.</span></span></summary>
+        <returns><span data-ttu-id="86929-224">一个可循环访问 <see cref="T:System.IO.Log.ReservationCollection" /> 的枚举数。</span><span class="sxs-lookup"><span data-stu-id="86929-224">An enumerator that can iterate through the <see cref="T:System.IO.Log.ReservationCollection" />.</span></span></returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="86929-225">操作由于以下原因之一而无效：</span><span class="sxs-lookup"><span data-stu-id="86929-225">The operation is invalid for one of the following reasons:</span></span> 
+<span data-ttu-id="86929-226">-   枚举已经终止。</span><span class="sxs-lookup"><span data-stu-id="86929-226">-   The enumeration has ended.</span></span>  
+  
+<span data-ttu-id="86929-227">-   集合已修改。</span><span class="sxs-lookup"><span data-stu-id="86929-227">-   The collection has been modified.</span></span>  
+  
+<span data-ttu-id="86929-228">-   枚举尚未开始。</span><span class="sxs-lookup"><span data-stu-id="86929-228">-   The enumeration has not been started.</span></span> <span data-ttu-id="86929-229">必须调用 <see cref="M:System.Collections.IEnumerator.MoveNext" />。</span><span class="sxs-lookup"><span data-stu-id="86929-229">A call to <see cref="M:System.Collections.IEnumerator.MoveNext" /> must be made.</span></span></exception>
+        <exception cref="T:System.ObjectDisposedException"><span data-ttu-id="86929-230">该方法是在序列已释放之后调用的。</span><span class="sxs-lookup"><span data-stu-id="86929-230">The method was called after the sequence has been disposed of.</span></span></exception>
+        <exception cref="T:System.OutOfMemoryException"><span data-ttu-id="86929-231">没有足够的内存来继续执行该程序。</span><span class="sxs-lookup"><span data-stu-id="86929-231">There is not enough memory to continue the execution of the program.</span></span></exception>
+        <exception cref="T:System.UnauthorizedAccessException"><span data-ttu-id="86929-232">操作系统拒绝了对指定的日志存储区的访问。</span><span class="sxs-lookup"><span data-stu-id="86929-232">Access for the specified log store is denied by the operating system.</span></span></exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
