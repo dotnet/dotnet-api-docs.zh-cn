@@ -1,0 +1,2793 @@
+<Type Name="LogRecordSequence" FullName="System.IO.Log.LogRecordSequence">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="529094e0b93ef6d522e16aaeb2cefe24ae5e44a6" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70454733" /></Metadata><TypeSignature Language="C#" Value="public sealed class LogRecordSequence : IDisposable, System.IO.Log.IRecordSequence" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit LogRecordSequence extends System.Object implements class System.IDisposable, class System.IO.Log.IRecordSequence" />
+  <TypeSignature Language="DocId" Value="T:System.IO.Log.LogRecordSequence" />
+  <TypeSignature Language="VB.NET" Value="Public NotInheritable Class LogRecordSequence&#xA;Implements IDisposable, IRecordSequence" />
+  <TypeSignature Language="C++ CLI" Value="public ref class LogRecordSequence sealed : IDisposable, System::IO::Log::IRecordSequence" />
+  <TypeSignature Language="F#" Value="type LogRecordSequence = class&#xA;    interface IRecordSequence&#xA;    interface IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>System.IO.Log</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IO.Log.IRecordSequence</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>表示存储在 <see cref="T:System.IO.Log.LogStore" /> 中的记录序列。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.IO.Log.LogRecordSequence> 类提供记录序列接口在公用日志文件系统 (CLFS) 日志之上的实现。 除了标准的面向记录的功能外，该类还提供了一个策略模型，用于避免出现日志已满的情况并对同一个物理文件上的客户端进行多路复用。 它与 <xref:System.IO.Log.LogStore> 类一起使用，该类提供了直接操作和管理 CLFS 日志文件的接口。 <xref:System.IO.Log.LogStore> 类和 <xref:System.IO.Log.LogRecordSequence> 类之间的关系类似于磁盘文件和 <xref:System.IO.FileStream> 对象之间的关系。 磁盘文件提供实际存储区，并具有长度和上次访问时间等属性，而 <xref:System.IO.FileStream> 对象提供文件的视图，利用该视图可以从实际存储区中读取以及向其中写入数据。 与之类似，<xref:System.IO.Log.LogStore> 类具有策略和磁盘范围集合等属性；而 <xref:System.IO.Log.LogRecordSequence> 类提供面向记录的数据读取和写入机制。  
+  
+   
+  
+## Examples  
+ 此示例演示如何使用 <xref:System.IO.Log.LogRecordSequence> 类：  
+  
+ [!code-csharp[S_UELogRecordSequence#0](~/samples/snippets/csharp/VS_Snippets_CFX/s_uelogrecordsequence/cs/mylogrecordsequence.cs#0)]
+ [!code-vb[S_UELogRecordSequence#0](~/samples/snippets/visualbasic/VS_Snippets_CFX/s_uelogrecordsequence/vb/mylogrecordsequence.vb#0)]  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.IO.Log.LogRecordSequence" /> 类的新实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LogRecordSequence (System.IO.Log.LogStore logStore);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Log.LogStore logStore) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.#ctor(System.IO.Log.LogStore)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; LogRecordSequence(System::IO::Log::LogStore ^ logStore);" />
+      <MemberSignature Language="F#" Value="new System.IO.Log.LogRecordSequence : System.IO.Log.LogStore -&gt; System.IO.Log.LogRecordSequence" Usage="new System.IO.Log.LogRecordSequence logStore" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="logStore" Type="System.IO.Log.LogStore" />
+      </Parameters>
+      <Docs>
+        <param name="logStore">此记录序列应使用的 <see cref="T:System.IO.Log.LogStore" />。</param>
+        <summary>使用指定的日志存储区初始化 <see cref="T:System.IO.Log.LogRecordSequence" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 缓冲区大小确定了可追加或读取的记录的最大大小。 在此构造函数中，将默认值设置为 64。 将所需的缓冲区数量设置为 10。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="logStore" /> 无效。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LogRecordSequence (string path, System.IO.FileMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string path, valuetype System.IO.FileMode mode) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.#ctor(System.String,System.IO.FileMode)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (path As String, mode As FileMode)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; LogRecordSequence(System::String ^ path, System::IO::FileMode mode);" />
+      <MemberSignature Language="F#" Value="new System.IO.Log.LogRecordSequence : string * System.IO.FileMode -&gt; System.IO.Log.LogRecordSequence" Usage="new System.IO.Log.LogRecordSequence (path, mode)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+      </Parameters>
+      <Docs>
+        <param name="path">要打开的日志存储区的基文件的相对或绝对路径。</param>
+        <param name="mode">用于确定如何打开或创建存储区的 <see cref="T:System.IO.FileMode" /> 值之一。</param>
+        <summary>使用指定的日志存储区路径和访问模式初始化 <see cref="T:System.IO.Log.LogRecordSequence" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数使用指定的路径和模式初始化它打开的新 <xref:System.IO.Log.LogRecordSequence> 对象上的新 <xref:System.IO.Log.LogStore>。 为其指定了存储区的读/写访问权限，并打开了存储区以共享读访问权限。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="path" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="path" /> 为空字符串 ("")。  
+  
+或 
+ <paramref name="path" /> 仅包含空白。  
+  
+或 
+ <paramref name="path" /> 包含一个或多个无效字符。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="mode" /> 包含无效值。</exception>
+        <exception cref="T:System.IO.FileNotFoundException">无法找到该文件。</exception>
+        <exception cref="T:System.IO.IOException">打开日志存储区时发生了 I/O 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.NotSupportedException">不支持此操作。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.PlatformNotSupportedException">无法使用 <see cref="T:System.IO.Log.LogRecordSequence" />，因为没有安装所需的公用日志文件系统 (CLFS) 组件。 如果可行，请为您的平台安装 CLFS 组件，或使用 <see cref="T:System.IO.Log.FileRecordSequence" /> 类。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LogRecordSequence (System.IO.Log.LogStore logStore, int bufferSize, int bufferCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.IO.Log.LogStore logStore, int32 bufferSize, int32 bufferCount) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.#ctor(System.IO.Log.LogStore,System.Int32,System.Int32)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; LogRecordSequence(System::IO::Log::LogStore ^ logStore, int bufferSize, int bufferCount);" />
+      <MemberSignature Language="F#" Value="new System.IO.Log.LogRecordSequence : System.IO.Log.LogStore * int * int -&gt; System.IO.Log.LogRecordSequence" Usage="new System.IO.Log.LogRecordSequence (logStore, bufferSize, bufferCount)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="logStore" Type="System.IO.Log.LogStore" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="bufferCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="logStore">此记录序列应使用的 <see cref="T:System.IO.Log.LogStore" />。</param>
+        <param name="bufferSize">所需的缓冲区大小（以字节为单位）。 缓冲区大小确定了可追加或读取的记录的最大大小。</param>
+        <param name="bufferCount">所需的缓冲区数量。</param>
+        <summary>使用指定的日志存储区、每个记录的缓冲区大小以及缓冲区数量来初始化 <see cref="T:System.IO.Log.LogRecordSequence" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果要指定 `bufferSize` 和 `bufferCount` 值，而不是使用 `bufferSize` 的默认值 64 以及 `bufferCount` 的默认值 10，则可以使用此构造函数。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="logStore" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="bufferSize" /> 为负数或零。  
+  
+或 
+ <paramref name="bufferCount" /> 为负数或零。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LogRecordSequence (string path, System.IO.FileMode mode, System.IO.FileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.#ctor(System.String,System.IO.FileMode,System.IO.FileAccess)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (path As String, mode As FileMode, access As FileAccess)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; LogRecordSequence(System::String ^ path, System::IO::FileMode mode, System::IO::FileAccess access);" />
+      <MemberSignature Language="F#" Value="new System.IO.Log.LogRecordSequence : string * System.IO.FileMode * System.IO.FileAccess -&gt; System.IO.Log.LogRecordSequence" Usage="new System.IO.Log.LogRecordSequence (path, mode, access)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+      </Parameters>
+      <Docs>
+        <param name="path">要打开的日志存储区的基文件的相对或绝对路径。</param>
+        <param name="mode">用于确定如何打开或创建存储区的 <see cref="T:System.IO.FileMode" /> 值之一。</param>
+        <param name="access">用于确定 <see cref="T:System.IO.FileAccess" /> 可以如何访问文件的 <see cref="T:System.IO.Log.LogStore" /> 值之一。</param>
+        <summary>使用指定的日志存储区路径以及访问和共享模式来初始化 <see cref="T:System.IO.Log.LogRecordSequence" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数使用指定的路径、模式和访问权限来初始化它打开的新 <xref:System.IO.Log.LogRecordSequence> 对象上的新 <xref:System.IO.Log.LogStore>， 并打开了存储区以共享读访问权限。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="path" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="path" /> 为空字符串 ("")。  
+  
+或 
+ <paramref name="path" /> 仅包含空白。  
+  
+- 或 - 
+ <paramref name="path" /> 包含一个或多个无效字符。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="mode" /> 包含无效值。</exception>
+        <exception cref="T:System.IO.FileNotFoundException">无法找到该文件。</exception>
+        <exception cref="T:System.IO.IOException">打开日志存储区时发生了 I/O 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.NotSupportedException">不支持此操作。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.PlatformNotSupportedException">无法使用 <see cref="T:System.IO.Log.LogRecordSequence" />，因为没有安装所需的公用日志文件系统 (CLFS) 组件。 如果可行，请为您的平台安装 CLFS 组件，或使用 <see cref="T:System.IO.Log.FileRecordSequence" /> 类。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LogRecordSequence (string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.#ctor(System.String,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (path As String, mode As FileMode, access As FileAccess, share As FileShare)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; LogRecordSequence(System::String ^ path, System::IO::FileMode mode, System::IO::FileAccess access, System::IO::FileShare share);" />
+      <MemberSignature Language="F#" Value="new System.IO.Log.LogRecordSequence : string * System.IO.FileMode * System.IO.FileAccess * System.IO.FileShare -&gt; System.IO.Log.LogRecordSequence" Usage="new System.IO.Log.LogRecordSequence (path, mode, access, share)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="share" Type="System.IO.FileShare" />
+      </Parameters>
+      <Docs>
+        <param name="path">要打开的日志存储区的基文件的相对或绝对路径。</param>
+        <param name="mode">用于确定如何打开或创建存储区的 <see cref="T:System.IO.FileMode" /> 值之一。</param>
+        <param name="access">用于确定 <see cref="T:System.IO.FileAccess" /> 可以如何访问文件的 <see cref="T:System.IO.Log.LogStore" /> 值之一。</param>
+        <param name="share">用于确定日志存储区将如何在进程之间共享的 <see cref="T:System.IO.FileShare" /> 值之一。</param>
+        <summary>使用指定的日志存储区路径和访问模式初始化 <see cref="T:System.IO.Log.LogRecordSequence" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数使用指定的路径、模式和访问权限来初始化它打开的新 <xref:System.IO.Log.LogRecordSequence> 对象上的新 <xref:System.IO.Log.LogStore>， 并打开了存储区以共享指定的访问权限。  
+  
+   
+  
+## Examples  
+ 此示例演示如何使用此 <xref:System.IO.Log.LogRecordSequence> 构造函数：  
+  
+ [!code-csharp[S_UELogRecordSequence#1](~/samples/snippets/csharp/VS_Snippets_CFX/s_uelogrecordsequence/cs/mylogrecordsequence.cs#1)]
+ [!code-vb[S_UELogRecordSequence#1](~/samples/snippets/visualbasic/VS_Snippets_CFX/s_uelogrecordsequence/vb/mylogrecordsequence.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="path" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="path" /> 为空字符串 ("")。  
+  
+或 
+ <paramref name="path" /> 仅包含空白。  
+  
+- 或 - 
+ <paramref name="path" /> 包含一个或多个无效字符。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="mode" /> 包含无效值。</exception>
+        <exception cref="T:System.IO.FileNotFoundException">无法找到该文件。</exception>
+        <exception cref="T:System.IO.IOException">打开日志存储区时发生了 I/O 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.NotSupportedException">不支持此操作。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.PlatformNotSupportedException">无法使用 <see cref="T:System.IO.Log.LogRecordSequence" />，因为没有安装所需的公用日志文件系统 (CLFS) 组件。 如果可行，请为您的平台安装 CLFS 组件，或使用 <see cref="T:System.IO.Log.FileRecordSequence" /> 类。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LogRecordSequence (string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, int bufferCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share, int32 bufferSize, int32 bufferCount) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.#ctor(System.String,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (path As String, mode As FileMode, access As FileAccess, share As FileShare, bufferSize As Integer, bufferCount As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; LogRecordSequence(System::String ^ path, System::IO::FileMode mode, System::IO::FileAccess access, System::IO::FileShare share, int bufferSize, int bufferCount);" />
+      <MemberSignature Language="F#" Value="new System.IO.Log.LogRecordSequence : string * System.IO.FileMode * System.IO.FileAccess * System.IO.FileShare * int * int -&gt; System.IO.Log.LogRecordSequence" Usage="new System.IO.Log.LogRecordSequence (path, mode, access, share, bufferSize, bufferCount)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="share" Type="System.IO.FileShare" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="bufferCount" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="path">要打开的日志存储区的基文件的相对或绝对路径。</param>
+        <param name="mode">用于确定如何打开或创建存储区的 <see cref="T:System.IO.FileMode" /> 值之一。</param>
+        <param name="access">用于确定 <see cref="T:System.IO.FileAccess" /> 可以如何访问文件的 <see cref="T:System.IO.Log.LogStore" /> 值之一。</param>
+        <param name="share">用于确定日志存储区将如何在进程之间共享的 <see cref="T:System.IO.FileShare" /> 值之一。</param>
+        <param name="bufferSize">所需的缓冲区大小（以字节为单位）。 缓冲区大小确定了可追加或读取的记录的最大大小。</param>
+        <param name="bufferCount">所需的缓冲区数量。</param>
+        <summary>使用指定的日志存储区路径、文件权限、访问和共享模式以及记录的缓冲区大小和计数来初始化 <see cref="T:System.IO.Log.LogRecordSequence" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数使用指定的路径、模式和访问权限来初始化它打开的新 <xref:System.IO.Log.LogRecordSequence> 对象上的新 <xref:System.IO.Log.LogStore>， 并打开了存储区以共享指定的访问权限。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="path" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="path" /> 为空字符串 ("")。  
+  
+或 
+ <paramref name="path" /> 仅包含空白。  
+  
+或 
+ <paramref name="path" /> 包含一个或多个无效字符。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="mode" /> 包含无效值。</exception>
+        <exception cref="T:System.IO.FileNotFoundException">无法找到该文件。</exception>
+        <exception cref="T:System.IO.IOException">打开日志存储区时发生了 I/O 错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.NotSupportedException">不支持此操作。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.PlatformNotSupportedException">无法使用 <see cref="T:System.IO.Log.LogRecordSequence" />，因为没有安装所需的公用日志文件系统 (CLFS) 组件。 如果可行，请为您的平台安装 CLFS 组件，或使用 <see cref="T:System.IO.Log.FileRecordSequence" /> 类。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public LogRecordSequence (string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, int bufferSize, int bufferCount, System.Security.AccessControl.FileSecurity fileSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share, int32 bufferSize, int32 bufferCount, class System.Security.AccessControl.FileSecurity fileSecurity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.#ctor(System.String,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,System.Int32,System.Int32,System.Security.AccessControl.FileSecurity)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; LogRecordSequence(System::String ^ path, System::IO::FileMode mode, System::IO::FileAccess access, System::IO::FileShare share, int bufferSize, int bufferCount, System::Security::AccessControl::FileSecurity ^ fileSecurity);" />
+      <MemberSignature Language="F#" Value="new System.IO.Log.LogRecordSequence : string * System.IO.FileMode * System.IO.FileAccess * System.IO.FileShare * int * int * System.Security.AccessControl.FileSecurity -&gt; System.IO.Log.LogRecordSequence" Usage="new System.IO.Log.LogRecordSequence (path, mode, access, share, bufferSize, bufferCount, fileSecurity)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="mode" Type="System.IO.FileMode" />
+        <Parameter Name="access" Type="System.IO.FileAccess" />
+        <Parameter Name="share" Type="System.IO.FileShare" />
+        <Parameter Name="bufferSize" Type="System.Int32" />
+        <Parameter Name="bufferCount" Type="System.Int32" />
+        <Parameter Name="fileSecurity" Type="System.Security.AccessControl.FileSecurity" />
+      </Parameters>
+      <Docs>
+        <param name="path">要打开的日志存储区的基文件的相对或绝对路径。</param>
+        <param name="mode">一个有效的 <see cref="T:System.IO.FileMode" /> 值，用于确定如何打开或创建存储区。</param>
+        <param name="access">一个有效的 <see cref="T:System.IO.FileAccess" /> 值，用于确定如何访问日志存储区。</param>
+        <param name="share">一个有效的 <see cref="T:System.IO.FileShare" /> 值，用于确定日志存储区将如何在进程之间共享。</param>
+        <param name="bufferSize">所需的缓冲区大小（以字节为单位）。 缓冲区大小确定了可追加或读取的记录的最大大小。</param>
+        <param name="bufferCount">所需的缓冲区数量。</param>
+        <param name="fileSecurity">一个有效的 <see cref="T:System.Security.AccessControl.FileSecurity" /> 值，指定在必须创建存储区的情况下，要为新创建的存储区设置的安全性。</param>
+        <summary>初始化 <see cref="T:System.IO.Log.LogRecordSequence" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="path" /> 指定的文件无效。  
+  
+- 或 - 
+指定的日志存储区文件名无效。  
+  
+- 或 - 
+ <paramref name="mode" /> 的值为 <see cref="F:System.IO.FileMode.CreateNew" />，在没有写访问权限的情况下无法使用它。  
+  
+或 
+ <paramref name="mode" /> 的值为 <see cref="F:System.IO.FileMode.OpenOrCreate" />，在没有写访问权限的情况下无法使用它。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">一个或多个自变量超出范围。</exception>
+        <exception cref="T:System.IO.FileNotFoundException">无法找到由 <paramref name="path" /> 指定的文件。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+或 
+无法访问 <paramref name="path" /> 指定的文件，因为另一个进程正在使用该文件。  
+  
+- 或 - 
+无法创建 <paramref name="path" /> 指定的文件，因为该文件或目录已存在。  
+  
+- 或 - 
+日志句柄无法绑定到线程池。  
+  
+- 或 - 
+指定的日志文件格式或版本无效。</exception>
+        <exception cref="T:System.NotSupportedException">不支持此操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.PlatformNotSupportedException">无法使用 <see cref="T:System.IO.Log.LogRecordSequence" />，因为没有安装所需的公用日志文件系统 (CLFS) 组件。 如果可行，请为您的平台安装 CLFS 组件，或使用 <see cref="T:System.IO.Log.FileRecordSequence" /> 类。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AdvanceBaseSequenceNumber">
+      <MemberSignature Language="C#" Value="public void AdvanceBaseSequenceNumber (System.IO.Log.SequenceNumber newBaseSequenceNumber);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AdvanceBaseSequenceNumber(valuetype System.IO.Log.SequenceNumber newBaseSequenceNumber) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.AdvanceBaseSequenceNumber(System.IO.Log.SequenceNumber)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub AdvanceBaseSequenceNumber (newBaseSequenceNumber As SequenceNumber)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void AdvanceBaseSequenceNumber(System::IO::Log::SequenceNumber newBaseSequenceNumber);" />
+      <MemberSignature Language="F#" Value="abstract member AdvanceBaseSequenceNumber : System.IO.Log.SequenceNumber -&gt; unit&#xA;override this.AdvanceBaseSequenceNumber : System.IO.Log.SequenceNumber -&gt; unit" Usage="logRecordSequence.AdvanceBaseSequenceNumber newBaseSequenceNumber" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.AdvanceBaseSequenceNumber(System.IO.Log.SequenceNumber)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="newBaseSequenceNumber" Type="System.IO.Log.SequenceNumber" />
+      </Parameters>
+      <Docs>
+        <param name="newBaseSequenceNumber">为日志指定新的基 <see cref="T:System.IO.Log.SequenceNumber" />。 这必须介于日志的当前基序列号和最后一个序列号之间（包括这两个序列号）。</param>
+        <summary>前移日志的基序列号。 不能继承此方法。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法通常与 <xref:System.IO.Log.LogRecordSequence.TailPinned> 事件一起使用来释放记录中的空间。 <xref:System.IO.Log.LogRecordSequence.TailPinned> 事件指示，需要将序列的尾数据（即基序列号）前移以释放空间。 可以使用以下两种方式来释放空间：使用 <xref:System.IO.Log.LogRecordSequence.WriteRestartArea%2A> 方法写入重新开始区域，或者截断日志并使用 <xref:System.IO.Log.LogRecordSequence.AdvanceBaseSequenceNumber%2A> 方法将日志的基序列号前移到 `newBaseSequenceNumber` 参数指定的序列号。 “示例”部分的代码示例演示了第二种方式。  
+  
+ 请注意，调用此方法与使用 <xref:System.IO.Log.LogRecordSequence.WriteRestartArea%2A> 方法设置新的基序列号相同，只是没有将重新开始记录写入日志中。  
+  
+   
+  
+## Examples  
+ 此示例演示如何将 <xref:System.IO.Log.LogRecordSequence.AdvanceBaseSequenceNumber%2A> 方法与 <xref:System.IO.Log.LogRecordSequence.TailPinned> 事件一起使用来释放日志序列中的空间。  
+  
+```  
+recordSequence.RetryAppend = true;  
+recordSequence.TailPinned += new EventHandler<TailPinnedEventArgs>(HandleTailPinned);  
+  
+void HandleTailPinned(object sender, TailPinnedEventArgs tailPinnedEventArgs)  
+{  
+   // tailPinnedEventArgs.TargetSequenceNumber is the target   
+   // sequence number to free up space to.    
+   // However, this sequence number is not necessarily valid.  We have  
+   // to use this sequence number as a starting point for finding a  
+   // valid point within the log to advance toward. You need to  
+   // identify a record with a sequence number equal to, or greater  
+   // than TargetSequenceNumber; let's call this   
+   // realTargetSequenceNumber. Once found, move the base  
+  
+   recordSequence.AdvanceBaseSequenceNumber(realTargetSequenceNumber);  
+  
+}  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="newBaseSequenceNumber" /> 对此序列无效。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">活动日志新存档或现有存档的尾数据或基数据无效。  
+  
+- 或 - 
+ <paramref name="newBaseSequenceNumber" /> 不在此序列的基序列号和最后一个序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ - 或 -  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.InvalidOperationException">指定的日志没有任何范围。 必须创建一个或多个范围，然后才能使用记录序列。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Append">
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将日志记录写入 <see cref="T:System.IO.Log.IRecordSequence" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 此示例演示如何使用 <xref:System.IO.Log.LogRecordSequence.Append%2A> 成员。  
+  
+ [!code-csharp[S_UELogRecordSequence#5](~/samples/snippets/csharp/VS_Snippets_CFX/s_uelogrecordsequence/cs/mylogrecordsequence.cs#5)]
+ [!code-vb[S_UELogRecordSequence#5](~/samples/snippets/visualbasic/VS_Snippets_CFX/s_uelogrecordsequence/vb/mylogrecordsequence.vb#5)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Append">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber Append (ArraySegment&lt;byte&gt; data, System.IO.Log.SequenceNumber nextUndoRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber Append(valuetype System.ArraySegment`1&lt;unsigned int8&gt; data, valuetype System.IO.Log.SequenceNumber nextUndoRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.Append(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber Append(ArraySegment&lt;System::Byte&gt; data, System::IO::Log::SequenceNumber nextUndoRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions);" />
+      <MemberSignature Language="F#" Value="abstract member Append : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions -&gt; System.IO.Log.SequenceNumber&#xA;override this.Append : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.Append (data, nextUndoRecord, previousRecord, recordAppendOptions)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.Append(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.ArraySegment&lt;System.Byte&gt;" />
+        <Parameter Name="nextUndoRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="nextUndoRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <summary>将日志记录写入 <see cref="T:System.IO.Log.LogRecordSequence" />。 不能继承此方法。</summary>
+        <returns>追加的日志记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 通常，此方法在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.LogRecordSequence.Flush%2A> 方法。  
+  
+   
+  
+## Examples  
+ 下面的示例演示如何使用此方法向序列中追加日志记录。  
+  
+ [!code-csharp[S_UELogRecordSequence#13](~/samples/snippets/csharp/VS_Snippets_CFX/s_uelogrecordsequence/cs/mymultiplexlog.cs#13)]
+ [!code-vb[S_UELogRecordSequence#13](~/samples/snippets/visualbasic/VS_Snippets_CFX/s_uelogrecordsequence/vb/mymultiplexlog.vb#13)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 对此序列无效。  
+  
+或 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+或 
+ <paramref name="reservations" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 不在此序列的基序列号和最新序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber Append (System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; data, System.IO.Log.SequenceNumber userRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber Append(class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; data, valuetype System.IO.Log.SequenceNumber userRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.Append(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber Append(System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ data, System::IO::Log::SequenceNumber userRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions);" />
+      <MemberSignature Language="F#" Value="abstract member Append : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions -&gt; System.IO.Log.SequenceNumber&#xA;override this.Append : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.Append (data, userRecord, previousRecord, recordAppendOptions)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.Append(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
+        <Parameter Name="userRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="userRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <summary>向 <see cref="T:System.IO.Log.IRecordSequence" /> 中追加日志记录。 不能继承此方法。</summary>
+        <returns>追加的日志记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 通常，此方法在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.LogRecordSequence.Flush%2A> 方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 对此序列无效。  
+  
+或 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+或 
+ <paramref name="reservations" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 不在此序列的基序列号和最新序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber Append (ArraySegment&lt;byte&gt; data, System.IO.Log.SequenceNumber nextUndoRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions, System.IO.Log.ReservationCollection reservations);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber Append(valuetype System.ArraySegment`1&lt;unsigned int8&gt; data, valuetype System.IO.Log.SequenceNumber nextUndoRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions, class System.IO.Log.ReservationCollection reservations) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.Append(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber Append(ArraySegment&lt;System::Byte&gt; data, System::IO::Log::SequenceNumber nextUndoRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions, System::IO::Log::ReservationCollection ^ reservations);" />
+      <MemberSignature Language="F#" Value="abstract member Append : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection -&gt; System.IO.Log.SequenceNumber&#xA;override this.Append : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.Append (data, nextUndoRecord, previousRecord, recordAppendOptions, reservations)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.Append(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.ArraySegment&lt;System.Byte&gt;" />
+        <Parameter Name="nextUndoRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+        <Parameter Name="reservations" Type="System.IO.Log.ReservationCollection" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="nextUndoRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <param name="reservations">一个 <see cref="T:System.IO.Log.ReservationCollection" />，它包含应当用于此记录的预留。</param>
+        <summary>使用序列中先前保留的空间向 <see cref="T:System.IO.Log.IRecordSequence" /> 中追加日志记录。 不能继承此方法。</summary>
+        <returns>追加的日志记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 追加的记录将使用 `reservations` 参数指定的预留来占用先前已预留的空间。 如果追加成功，它将占用能容纳数据的最小预留区域，而该预留区域将从集合中移除。  
+  
+ 通常，此方法在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.LogRecordSequence.Flush%2A> 方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 对此序列无效。  
+  
+或 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+或 
+ <paramref name="reservations" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 不在此序列的基序列号和最新序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.ReservationNotFoundException">在 <paramref name="data" /> 中找不到足以容纳 <paramref name="reservations" /> 的预留。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Append">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber Append (System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; data, System.IO.Log.SequenceNumber userRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions, System.IO.Log.ReservationCollection reservations);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber Append(class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; data, valuetype System.IO.Log.SequenceNumber userRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions, class System.IO.Log.ReservationCollection reservations) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.Append(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber Append(System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ data, System::IO::Log::SequenceNumber userRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions, System::IO::Log::ReservationCollection ^ reservations);" />
+      <MemberSignature Language="F#" Value="abstract member Append : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection -&gt; System.IO.Log.SequenceNumber&#xA;override this.Append : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.Append (data, userRecord, previousRecord, recordAppendOptions, reservations)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.Append(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
+        <Parameter Name="userRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+        <Parameter Name="reservations" Type="System.IO.Log.ReservationCollection" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="userRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <param name="reservations">一个 <see cref="T:System.IO.Log.ReservationCollection" />，它包含应当用于此记录的预留。</param>
+        <summary>使用序列中先前保留的空间向 <see cref="T:System.IO.Log.IRecordSequence" /> 中追加日志记录。 不能继承此方法。</summary>
+        <returns>追加的日志记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 追加的记录将使用 `reservations` 参数指定的预留来占用先前已预留的空间。 如果追加成功，它将占用能容纳数据的最小预留区域，而该预留区域将从集合中移除。  
+  
+ 通常，此方法在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.IRecordSequence.Flush%2A> 方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 对此序列无效。  
+  
+或 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+或 
+ <paramref name="reservations" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 不在此序列的基序列号和最新序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.ReservationNotFoundException">在 <paramref name="data" /> 中找不到足以容纳 <paramref name="reservations" /> 的预留。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="BaseSequenceNumber">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber BaseSequenceNumber { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.IO.Log.SequenceNumber BaseSequenceNumber" />
+      <MemberSignature Language="DocId" Value="P:System.IO.Log.LogRecordSequence.BaseSequenceNumber" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property BaseSequenceNumber As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::IO::Log::SequenceNumber BaseSequenceNumber { System::IO::Log::SequenceNumber get(); };" />
+      <MemberSignature Language="F#" Value="member this.BaseSequenceNumber : System.IO.Log.SequenceNumber" Usage="System.IO.Log.LogRecordSequence.BaseSequenceNumber" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.IO.Log.IRecordSequence.BaseSequenceNumber</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取当前 <see cref="T:System.IO.Log.LogRecordSequence" /> 中第一条有效记录的序列号。</summary>
+        <value>与 <see cref="T:System.IO.Log.LogRecordSequence" /> 中的有效记录对应的最低序列号。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 有效序列号大于或等于 <xref:System.IO.Log.LogRecordSequence.BaseSequenceNumber%2A> 且小于 <xref:System.IO.Log.LogRecordSequence.LastSequenceNumber%2A>。  
+  
+ 可通过调用 <xref:System.IO.Log.LogRecordSequence.WriteRestartArea%2A> 方法或 <xref:System.IO.Log.LogRecordSequence.AdvanceBaseSequenceNumber%2A> 方法来更改此属性的值。  
+  
+   
+  
+## Examples  
+ 此示例演示如何在循环中使用 <xref:System.IO.Log.LogRecordSequence.BaseSequenceNumber%2A> 成员。  
+  
+ [!code-csharp[S_UELogRecordSequence#10](~/samples/snippets/csharp/VS_Snippets_CFX/s_uelogrecordsequence/cs/mymultiplexlog.cs#10)]
+ [!code-vb[S_UELogRecordSequence#10](~/samples/snippets/visualbasic/VS_Snippets_CFX/s_uelogrecordsequence/vb/mymultiplexlog.vb#10)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">该属性是在序列已释放之后访问的。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="BeginAppend">
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>开始异步追加操作。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="BeginAppend">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginAppend (ArraySegment&lt;byte&gt; data, System.IO.Log.SequenceNumber nextUndoRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginAppend(valuetype System.ArraySegment`1&lt;unsigned int8&gt; data, valuetype System.IO.Log.SequenceNumber nextUndoRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.BeginAppend(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual IAsyncResult ^ BeginAppend(ArraySegment&lt;System::Byte&gt; data, System::IO::Log::SequenceNumber nextUndoRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member BeginAppend : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * AsyncCallback * obj -&gt; IAsyncResult&#xA;override this.BeginAppend : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * AsyncCallback * obj -&gt; IAsyncResult" Usage="logRecordSequence.BeginAppend (data, nextUndoRecord, previousRecord, recordAppendOptions, callback, state)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.BeginAppend(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.AsyncCallback,System.Object)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.ArraySegment&lt;System.Byte&gt;" />
+        <Parameter Name="nextUndoRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="nextUndoRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <param name="callback">可选的异步回调，在追加完成时调用。</param>
+        <param name="state">用户提供的对象，用于将此特定异步追加请求与其他请求区别开来。</param>
+        <summary>开始异步追加操作。 不能继承此方法。</summary>
+        <returns>一个 <see cref="T:System.IAsyncResult" />，它表示可能仍处于挂起状态的异步追加。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 应将此方法返回的 <xref:System.IAsyncResult> 传递给 <xref:System.IO.Log.LogRecordSequence.EndAppend%2A> 方法，以确保追加操作完成并能够适当释放资源。 如果在异步追加过程中发生错误，则在使用此方法返回的 <xref:System.IO.Log.LogRecordSequence.EndAppend%2A> 调用 <xref:System.IAsyncResult> 方法之前，不会引发异常。  
+  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 通常，此方法在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.LogRecordSequence.Flush%2A> 方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="nextUndoRecord" /> 或 <paramref name="previousRecord" /> 对此序列无效。  
+  
+- 或 - 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+- 或 - 
+ <paramref name="reservations" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="nextUndoRecord" /> 或 <paramref name="previousRecord" /> 不在此序列的基序列号和最新序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginAppend">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginAppend (System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; data, System.IO.Log.SequenceNumber userRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginAppend(class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; data, valuetype System.IO.Log.SequenceNumber userRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.BeginAppend(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual IAsyncResult ^ BeginAppend(System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ data, System::IO::Log::SequenceNumber userRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member BeginAppend : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * AsyncCallback * obj -&gt; IAsyncResult&#xA;override this.BeginAppend : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * AsyncCallback * obj -&gt; IAsyncResult" Usage="logRecordSequence.BeginAppend (data, userRecord, previousRecord, recordAppendOptions, callback, state)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.BeginAppend(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.AsyncCallback,System.Object)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
+        <Parameter Name="userRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="userRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <param name="callback">可选的异步回调，在追加完成时调用。</param>
+        <param name="state">用户提供的对象，用于将此特定异步追加请求与其他请求区别开来。</param>
+        <summary>开始异步追加操作。 不能继承此方法。</summary>
+        <returns>一个 <see cref="T:System.IAsyncResult" />，它表示可能仍处于挂起状态的异步追加。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 应将此方法返回的 <xref:System.IAsyncResult> 传递给 <xref:System.IO.Log.LogRecordSequence.EndAppend%2A> 方法，以确保追加操作完成并能够适当释放资源。 如果在异步追加过程中发生错误，则在使用此方法返回的 <xref:System.IO.Log.LogRecordSequence.EndAppend%2A> 调用 <xref:System.IAsyncResult> 方法之前，不会引发异常。  
+  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 通常，此方法在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.LogRecordSequence.Flush%2A> 方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 对此序列无效。  
+  
+- 或 - 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+或 
+ <paramref name="reservations" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 不在此序列的基序列号和最新序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginAppend">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginAppend (ArraySegment&lt;byte&gt; data, System.IO.Log.SequenceNumber nextUndoRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions, System.IO.Log.ReservationCollection reservations, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginAppend(valuetype System.ArraySegment`1&lt;unsigned int8&gt; data, valuetype System.IO.Log.SequenceNumber nextUndoRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions, class System.IO.Log.ReservationCollection reservations, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.BeginAppend(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual IAsyncResult ^ BeginAppend(ArraySegment&lt;System::Byte&gt; data, System::IO::Log::SequenceNumber nextUndoRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions, System::IO::Log::ReservationCollection ^ reservations, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member BeginAppend : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * AsyncCallback * obj -&gt; IAsyncResult&#xA;override this.BeginAppend : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * AsyncCallback * obj -&gt; IAsyncResult" Usage="logRecordSequence.BeginAppend (data, nextUndoRecord, previousRecord, recordAppendOptions, reservations, callback, state)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.BeginAppend(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.AsyncCallback,System.Object)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.ArraySegment&lt;System.Byte&gt;" />
+        <Parameter Name="nextUndoRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+        <Parameter Name="reservations" Type="System.IO.Log.ReservationCollection" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="nextUndoRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <param name="reservations">一个 <see cref="T:System.IO.Log.ReservationCollection" />，它包含应当用于此记录的预留。</param>
+        <param name="callback">可选的异步回调，在追加完成时调用。</param>
+        <param name="state">用户提供的对象，用于将此特定异步追加请求与其他请求区别开来。</param>
+        <summary>开始异步追加操作。 不能继承此方法。</summary>
+        <returns>一个 <see cref="T:System.IAsyncResult" />，它表示可能仍处于挂起状态的异步追加。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 应将此方法返回的 <xref:System.IAsyncResult> 传递给 <xref:System.IO.Log.LogRecordSequence.EndAppend%2A> 方法，以确保追加操作完成并能够适当释放资源。 如果在异步追加过程中发生错误，则在使用此方法返回的 <xref:System.IO.Log.LogRecordSequence.EndAppend%2A> 调用 <xref:System.IAsyncResult> 方法之前，不会引发异常。  
+  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 追加的记录将使用 `reservations` 参数指定的预留来占用先前已预留的空间。 如果追加成功，它将占用能容纳数据的最小预留区域，而该预留区域将从集合中移除。  
+  
+ 通常，此方法在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.LogRecordSequence.Flush%2A> 方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 对此序列无效。  
+  
+或 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+或 
+ <paramref name="reservations" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 不在此序列的基序列号和最新序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.ReservationNotFoundException">在 <paramref name="data" /> 中找不到足以容纳 <paramref name="reservations" /> 的预留。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginAppend">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginAppend (System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; data, System.IO.Log.SequenceNumber userRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions, System.IO.Log.ReservationCollection reservations, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginAppend(class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; data, valuetype System.IO.Log.SequenceNumber userRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions, class System.IO.Log.ReservationCollection reservations, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.BeginAppend(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual IAsyncResult ^ BeginAppend(System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ data, System::IO::Log::SequenceNumber userRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions, System::IO::Log::ReservationCollection ^ reservations, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member BeginAppend : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * AsyncCallback * obj -&gt; IAsyncResult&#xA;override this.BeginAppend : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * AsyncCallback * obj -&gt; IAsyncResult" Usage="logRecordSequence.BeginAppend (data, userRecord, previousRecord, recordAppendOptions, reservations, callback, state)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.BeginAppend(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.AsyncCallback,System.Object)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
+        <Parameter Name="userRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+        <Parameter Name="reservations" Type="System.IO.Log.ReservationCollection" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="userRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <param name="reservations">一个 <see cref="T:System.IO.Log.ReservationCollection" />，它包含应当用于此记录的预留。</param>
+        <param name="callback">可选的异步回调，在追加完成时调用。</param>
+        <param name="state">用户提供的对象，用于将此特定异步追加请求与其他请求区别开来。</param>
+        <summary>开始异步追加操作。 不能继承此方法。</summary>
+        <returns>一个 <see cref="T:System.IAsyncResult" />，它表示可能仍处于挂起状态的异步追加。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 应将此方法返回的 <xref:System.IAsyncResult> 传递给 <xref:System.IO.Log.LogRecordSequence.EndAppend%2A> 方法，以确保追加操作完成并能够适当释放资源。 如果在异步追加过程中发生错误，则在使用此方法返回的 <xref:System.IO.Log.LogRecordSequence.EndAppend%2A> 调用 <xref:System.IAsyncResult> 方法之前，不会引发异常。  
+  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 追加的记录将使用 `reservations` 参数指定的预留来占用先前已预留的空间。 如果追加成功，它将占用能容纳数据的最小预留区域，而该预留区域将从集合中移除。  
+  
+ 通常，此方法在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.LogRecordSequence.Flush%2A> 方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 对此序列无效。  
+  
+或 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+或 
+ <paramref name="reservations" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 不在此序列的基序列号和最新序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.ReservationNotFoundException">在 <paramref name="data" /> 中找不到足以容纳 <paramref name="reservations" /> 的预留。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginFlush">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginFlush (System.IO.Log.SequenceNumber sequenceNumber, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginFlush(valuetype System.IO.Log.SequenceNumber sequenceNumber, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.BeginFlush(System.IO.Log.SequenceNumber,System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual IAsyncResult ^ BeginFlush(System::IO::Log::SequenceNumber sequenceNumber, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member BeginFlush : System.IO.Log.SequenceNumber * AsyncCallback * obj -&gt; IAsyncResult&#xA;override this.BeginFlush : System.IO.Log.SequenceNumber * AsyncCallback * obj -&gt; IAsyncResult" Usage="logRecordSequence.BeginFlush (sequenceNumber, callback, state)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.BeginFlush(System.IO.Log.SequenceNumber,System.AsyncCallback,System.Object)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sequenceNumber" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="sequenceNumber">必须写入的最新记录的序列号。 如果此 <see cref="T:System.IO.Log.SequenceNumber" /> 无效，则必须写入所有记录。</param>
+        <param name="callback">可选的异步回调，在刷新完成时调用。</param>
+        <param name="state">用户提供的对象，用于将此特定异步刷新请求与其他请求区别开来。</param>
+        <summary>使用序列中先前保留的空间开始异步刷新操作。 不能继承此方法。</summary>
+        <returns>一个 <see cref="T:System.IAsyncResult" />，表示可能仍处于挂起状态的异步刷新操作。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 应将当前方法返回的 <xref:System.IAsyncResult> 传递给 <xref:System.IO.Log.LogRecordSequence.EndFlush%2A> 方法，以确保刷新完成并适当释放资源。 如果在异步刷新过程中发生错误，则在使用此方法返回的 <xref:System.IO.Log.LogRecordSequence.EndFlush%2A> 调用 <xref:System.IAsyncResult> 方法之前，不会引发异常。  
+  
+ 调用此方法可以确保已追加到 <xref:System.IO.Log.LogRecordSequence> 的所有记录都是持久写入的。  
+  
+ 如果记录序列已经释放，或者如果传递了无效参数，此操作内将立即引发异常。 异步刷新请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将导致在调用 <xref:System.IO.Log.LogRecordSequence.EndFlush%2A> 方法时引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="sequenceNumber" /> 对此序列无效。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="sequenceNumber" /> 不在此序列的基序列号和最后一个序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。</exception>
+        <exception cref="T:System.InvalidOperationException">指定的日志没有任何范围。 必须创建一个或多个范围，然后才能使用记录序列。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="BeginReserveAndAppend">
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>开始异步保留和追加操作。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="BeginReserveAndAppend">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginReserveAndAppend (ArraySegment&lt;byte&gt; data, System.IO.Log.SequenceNumber nextUndoRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions, System.IO.Log.ReservationCollection reservationCollection, long[] reservations, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginReserveAndAppend(valuetype System.ArraySegment`1&lt;unsigned int8&gt; data, valuetype System.IO.Log.SequenceNumber nextUndoRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions, class System.IO.Log.ReservationCollection reservationCollection, int64[] reservations, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.BeginReserveAndAppend(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.Int64[],System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual IAsyncResult ^ BeginReserveAndAppend(ArraySegment&lt;System::Byte&gt; data, System::IO::Log::SequenceNumber nextUndoRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions, System::IO::Log::ReservationCollection ^ reservationCollection, cli::array &lt;long&gt; ^ reservations, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member BeginReserveAndAppend : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * int64[] * AsyncCallback * obj -&gt; IAsyncResult&#xA;override this.BeginReserveAndAppend : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * int64[] * AsyncCallback * obj -&gt; IAsyncResult" Usage="logRecordSequence.BeginReserveAndAppend (data, nextUndoRecord, previousRecord, recordAppendOptions, reservationCollection, reservations, callback, state)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.BeginReserveAndAppend(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.Int64[],System.AsyncCallback,System.Object)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.ArraySegment&lt;System.Byte&gt;" />
+        <Parameter Name="nextUndoRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+        <Parameter Name="reservationCollection" Type="System.IO.Log.ReservationCollection" />
+        <Parameter Name="reservations" Type="System.Int64[]" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="nextUndoRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <param name="reservationCollection">要在其中生成预留的预留集合。</param>
+        <param name="reservations">要生成的预留（以字节为单位）。</param>
+        <param name="callback">可选的异步回调，在追加完成时调用。</param>
+        <param name="state">用户提供的对象，用于将此特定异步追加请求与其他请求区别开来。</param>
+        <summary>开始异步保留和追加操作。 不能继承此方法。</summary>
+        <returns>一个 <see cref="T:System.IAsyncResult" />，它表示可能仍处于挂起状态的当前异步操作。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 应将此方法返回的 <xref:System.IAsyncResult> 传递给 <xref:System.IO.Log.LogRecordSequence.EndReserveAndAppend%2A> 方法，以确保追加操作完成并能够适当释放资源。 如果在异步追加过程中发生错误，则在使用此方法返回的 <xref:System.IO.Log.LogRecordSequence.EndReserveAndAppend%2A> 调用 <xref:System.IAsyncResult> 方法之前，不会引发异常。  
+  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 在原子操作中，使用记录追加操作将指定的预留添加到所提供的预留集合。 如果追加失败，将不保留任何空间。  
+  
+ 通常，此方法可以在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.LogRecordSequence.Flush%2A> 方法。  
+  
+ 如果记录序列已经释放，或者如果传递了无效参数，此操作内将立即引发异常。 异步追加请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将导致在调用 <xref:System.IO.Log.LogRecordSequence.EndReserveAndAppend%2A> 方法时引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 对此序列无效。  
+  
+- 或 - 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+- 或 - 
+ <paramref name="reservations" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 不在此序列的基序列号和最新序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.ReservationNotFoundException">在 <paramref name="data" /> 中找不到足以容纳 <paramref name="reservations" /> 的预留。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginReserveAndAppend">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginReserveAndAppend (System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; data, System.IO.Log.SequenceNumber userRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions, System.IO.Log.ReservationCollection reservationCollection, long[] reservations, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginReserveAndAppend(class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; data, valuetype System.IO.Log.SequenceNumber userRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions, class System.IO.Log.ReservationCollection reservationCollection, int64[] reservations, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.BeginReserveAndAppend(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.Int64[],System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual IAsyncResult ^ BeginReserveAndAppend(System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ data, System::IO::Log::SequenceNumber userRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions, System::IO::Log::ReservationCollection ^ reservationCollection, cli::array &lt;long&gt; ^ reservations, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member BeginReserveAndAppend : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * int64[] * AsyncCallback * obj -&gt; IAsyncResult&#xA;override this.BeginReserveAndAppend : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * int64[] * AsyncCallback * obj -&gt; IAsyncResult" Usage="logRecordSequence.BeginReserveAndAppend (data, userRecord, previousRecord, recordAppendOptions, reservationCollection, reservations, callback, state)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.BeginReserveAndAppend(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.Int64[],System.AsyncCallback,System.Object)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
+        <Parameter Name="userRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+        <Parameter Name="reservationCollection" Type="System.IO.Log.ReservationCollection" />
+        <Parameter Name="reservations" Type="System.Int64[]" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="userRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <param name="reservationCollection">要在其中生成预留的预留集合。</param>
+        <param name="reservations">要生成的预留（以字节为单位）。</param>
+        <param name="callback">可选的异步回调，在追加完成时调用。</param>
+        <param name="state">用户提供的对象，用于将此特定异步追加请求与其他请求区别开来。</param>
+        <summary>开始异步保留和追加操作。 不能继承此方法。</summary>
+        <returns>一个 <see cref="T:System.IAsyncResult" />，它表示可能仍处于挂起状态的当前异步操作。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 应将此方法返回的 <xref:System.IAsyncResult> 传递给 <xref:System.IO.Log.LogRecordSequence.EndReserveAndAppend%2A> 方法，以确保追加操作完成并能够适当释放资源。 如果在异步追加过程中发生错误，则在使用此方法返回的 <xref:System.IO.Log.LogRecordSequence.EndReserveAndAppend%2A> 调用 <xref:System.IAsyncResult> 方法之前，不会引发异常。  
+  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 在原子操作中，使用记录追加操作将指定的预留添加到所提供的预留集合。 如果追加失败，将不保留任何空间。  
+  
+ 通常，此方法可以在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.LogRecordSequence.Flush%2A> 方法。  
+  
+ 如果记录序列已经释放，或者如果传递了无效参数，此操作内将立即引发异常。 异步追加请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将导致在调用 <xref:System.IO.Log.LogRecordSequence.EndReserveAndAppend%2A> 方法时引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">一个或多个自变量无效。</exception>
+        <exception cref="T:System.IO.IOException">追加记录时，发生了 I/O 错误。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列无法获得足够的可用空间来容纳新记录或生成预留。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="BeginWriteRestartArea">
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>开始异步重新开始区域写入操作。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="BeginWriteRestartArea">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginWriteRestartArea (ArraySegment&lt;byte&gt; data, System.IO.Log.SequenceNumber newBaseSeqNum, System.IO.Log.ReservationCollection reservation, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginWriteRestartArea(valuetype System.ArraySegment`1&lt;unsigned int8&gt; data, valuetype System.IO.Log.SequenceNumber newBaseSeqNum, class System.IO.Log.ReservationCollection reservation, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.BeginWriteRestartArea(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.ReservationCollection,System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Function BeginWriteRestartArea (data As ArraySegment(Of Byte), newBaseSeqNum As SequenceNumber, reservation As ReservationCollection, callback As AsyncCallback, state As Object) As IAsyncResult" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual IAsyncResult ^ BeginWriteRestartArea(ArraySegment&lt;System::Byte&gt; data, System::IO::Log::SequenceNumber newBaseSeqNum, System::IO::Log::ReservationCollection ^ reservation, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member BeginWriteRestartArea : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.ReservationCollection * AsyncCallback * obj -&gt; IAsyncResult&#xA;override this.BeginWriteRestartArea : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.ReservationCollection * AsyncCallback * obj -&gt; IAsyncResult" Usage="logRecordSequence.BeginWriteRestartArea (data, newBaseSeqNum, reservation, callback, state)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.BeginWriteRestartArea(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.ReservationCollection,System.AsyncCallback,System.Object)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.ArraySegment&lt;System.Byte&gt;" />
+        <Parameter Name="newBaseSeqNum" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="reservation" Type="System.IO.Log.ReservationCollection" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段。</param>
+        <param name="newBaseSeqNum">新的基序列号。 指定的序列号必须大于或等于当前基序列号。</param>
+        <param name="reservation">一个 <see cref="T:System.IO.Log.ReservationCollection" />，它包含应当用于此重新开始区域的预留。</param>
+        <param name="callback">可选的异步回调，在重新开始区域写入完成时调用。</param>
+        <param name="state">用户提供的对象，用于将此特定异步重新开始区域写入请求与其他请求区别开来。</param>
+        <summary>使用序列中先前保留的空间开始异步重新开始区域写入操作。 不能继承此方法。</summary>
+        <returns>一个 <see cref="T:System.IAsyncResult" />，它表示可能仍处于挂起状态的异步重新开始区域写入操作。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 应将此方法返回的 <xref:System.IAsyncResult> 传递给 <xref:System.IO.Log.LogRecordSequence.EndWriteRestartArea%2A> 方法，以确保重新开始区域写入操作完成并能够适当释放资源。 如果在异步重新开始区域写入操作过程中发生错误，则在使用此方法返回的 <xref:System.IO.Log.LogRecordSequence.EndWriteRestartArea%2A> 调用 <xref:System.IAsyncResult> 方法之前，不会引发异常。  
+  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 操作成功完成时，基序列号已更新。 其序列号小于新的基序列号的所有日志记录都不可访问。  
+  
+ 如果指定了 <xref:System.IO.Log.ReservationCollection>，写入的重新开始区域将使用集合中包含的预留来占用先前已预留的空间。 如果该方法成功，它将占用能容纳数据的最小预留，而该预留将从集合中移除。  
+  
+ 如果记录序列已经释放，或者如果传递了无效参数，此操作内将立即引发异常。 异步追加请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将导致在调用 <xref:System.IO.Log.LogRecordSequence.EndWriteRestartArea%2A> 方法时引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="newBaseSeqNum" /> 对此序列无效。  
+  
+或 
+指定的日志枚举开始序列号无效。  
+  
+或 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+- 或 - 
+ <paramref name="reservation" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">活动日志新存档或现有存档的尾数据或基数据无效。  
+  
+- 或 - 
+ <paramref name="newBaseSeqNum" /> 不在此序列的基序列号和最后一个序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ - 或 -  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginWriteRestartArea">
+      <MemberSignature Language="C#" Value="public IAsyncResult BeginWriteRestartArea (System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; data, System.IO.Log.SequenceNumber newBaseSeqNum, System.IO.Log.ReservationCollection reservationCollection, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IAsyncResult BeginWriteRestartArea(class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; data, valuetype System.IO.Log.SequenceNumber newBaseSeqNum, class System.IO.Log.ReservationCollection reservationCollection, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.BeginWriteRestartArea(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.ReservationCollection,System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual IAsyncResult ^ BeginWriteRestartArea(System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ data, System::IO::Log::SequenceNumber newBaseSeqNum, System::IO::Log::ReservationCollection ^ reservationCollection, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member BeginWriteRestartArea : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.ReservationCollection * AsyncCallback * obj -&gt; IAsyncResult&#xA;override this.BeginWriteRestartArea : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.ReservationCollection * AsyncCallback * obj -&gt; IAsyncResult" Usage="logRecordSequence.BeginWriteRestartArea (data, newBaseSeqNum, reservationCollection, callback, state)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.BeginWriteRestartArea(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.ReservationCollection,System.AsyncCallback,System.Object)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
+        <Parameter Name="newBaseSeqNum" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="reservationCollection" Type="System.IO.Log.ReservationCollection" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="newBaseSeqNum">新的基序列号。 指定的序列号必须大于或等于当前基序列号。</param>
+        <param name="reservationCollection">一个 <see cref="T:System.IO.Log.ReservationCollection" />，它包含应当用于此重新开始区域的预留。</param>
+        <param name="callback">可选的异步回调，在重新开始区域写入完成时调用。</param>
+        <param name="state">用户提供的对象，用于将此特定异步重新开始区域写入请求与其他请求区别开来。</param>
+        <summary>使用序列中先前保留的空间开始异步重新开始区域写入操作。 不能继承此方法。</summary>
+        <returns>一个 <see cref="T:System.IAsyncResult" />，它表示可能仍处于挂起状态的异步重新开始区域写入操作。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 应将此方法返回的 <xref:System.IAsyncResult> 传递给 <xref:System.IO.Log.LogRecordSequence.EndWriteRestartArea%2A> 方法，以确保重新开始区域写入操作完成并能够适当释放资源。 如果在异步重新开始区域写入操作过程中发生错误，则在使用此方法返回的 <xref:System.IO.Log.LogRecordSequence.EndWriteRestartArea%2A> 调用 <xref:System.IAsyncResult> 方法之前，不会引发异常。  
+  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 操作成功完成时，基序列号已更新。 其序列号小于新的基序列号的所有日志记录都不可访问。  
+  
+ 如果指定了 <xref:System.IO.Log.ReservationCollection>，写入的重新开始区域将使用集合中包含的预留来占用先前已预留的空间。 如果该方法成功，它将占用能容纳数据的最小预留，而该预留将从集合中移除。  
+  
+ 如果记录序列已经释放，或者如果传递了无效参数，此操作内将立即引发异常。 异步追加请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将导致在调用 <xref:System.IO.Log.LogRecordSequence.EndWriteRestartArea%2A> 方法时引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="newBaseSeqNum" /> 对此序列无效。  
+  
+或 
+指定的日志枚举开始序列号无效。  
+  
+或 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+或 
+ <paramref name="reservationCollection" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">活动日志新存档或现有存档的尾数据或基数据无效。  
+  
+或 
+ <paramref name="newBaseSeqNum" /> 不在此序列的基序列号和最后一个序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateReservationCollection">
+      <MemberSignature Language="C#" Value="public System.IO.Log.ReservationCollection CreateReservationCollection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Log.ReservationCollection CreateReservationCollection() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.CreateReservationCollection" />
+      <MemberSignature Language="VB.NET" Value="Public Function CreateReservationCollection () As ReservationCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::ReservationCollection ^ CreateReservationCollection();" />
+      <MemberSignature Language="F#" Value="abstract member CreateReservationCollection : unit -&gt; System.IO.Log.ReservationCollection&#xA;override this.CreateReservationCollection : unit -&gt; System.IO.Log.ReservationCollection" Usage="logRecordSequence.CreateReservationCollection " />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.CreateReservationCollection</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.ReservationCollection</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>创建一个新的 <see cref="T:System.IO.Log.ReservationCollection" />。 不能继承此方法。</summary>
+        <returns>新创建的 <see cref="T:System.IO.Log.ReservationCollection" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 如下面的示例所示，可以通过两种方式执行预留。 您可以采用示例中的做法可靠地进行处理。 请注意，只有在使用基于 CLFS 的 <xref:System.IO.Log.LogRecordSequence> 类时才能执行此任务。  
+  
+```  
+//Using the ReserveAndAppend Method  
+ReservationCollection reservations = recordSequence.CreateReservationCollection();  
+long[] lengthOfUndoRecords = new long[] { 1000 };  
+recordSequence.ReserveAndAppend(recordData,  
+                                                     userSqn,  
+                                                     previousSqn,  
+                                                     RecordSequenceAppendOptions.None,  
+                                                     reservations,  
+                                                     lengthOfUndoRecords);  
+recordSequence.Append(undoRecordData,    // If necessary …  
+                                    userSqn,  
+                                    previousSqn,  
+                                    RecordSequenceAppendOptions.ForceFlush,  
+                                    reservations);  
+  
+// Using the Manual Approach  
+ReservationCollection reservations = recordSequence.CreateReservationCollection();  
+reservations.Add(lengthOfUndoRecord);  
+try  
+{  
+   recordSequence.Append(recordData, userSqn, previousSqn, RecordAppendOptions.None);  
+}  
+catch (Exception)  
+{  
+   reservations.Remove(lengthOfUndoRecord);  
+   throw;  
+}  
+  
+recordSequence.Append(undoRecordData, userSqn, previousSqn, RecordAppendOptions.ForceFlush, reservations);  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.Dispose" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Dispose ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void Dispose();" />
+      <MemberSignature Language="F#" Value="abstract member Dispose : unit -&gt; unit&#xA;override this.Dispose : unit -&gt; unit" Usage="logRecordSequence.Dispose " />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IDisposable.Dispose</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>释放组件使用的资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 此示例演示如何使用<xref:System.IO.Log.LogRecordSequence.Dispose%2A>释放资源：  
+  
+ [!code-csharp[S_UELogRecordSequence#11](~/samples/snippets/csharp/VS_Snippets_CFX/s_uelogrecordsequence/cs/mymultiplexlog.cs#11)]
+ [!code-vb[S_UELogRecordSequence#11](~/samples/snippets/visualbasic/VS_Snippets_CFX/s_uelogrecordsequence/vb/mymultiplexlog.vb#11)]  
+  
+ [!code-csharp[S_UELogRecordSequence#12](~/samples/snippets/csharp/VS_Snippets_CFX/s_uelogrecordsequence/cs/mymultiplexlog.cs#12)] 
+ [!code-vb[S_UELogRecordSequence#12](~/samples/snippets/visualbasic/VS_Snippets_CFX/s_uelogrecordsequence/vb/mymultiplexlog.vb#12)]   
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="EndAppend">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber EndAppend (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber EndAppend(class System.IAsyncResult result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.EndAppend(System.IAsyncResult)" />
+      <MemberSignature Language="VB.NET" Value="Public Function EndAppend (result As IAsyncResult) As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber EndAppend(IAsyncResult ^ result);" />
+      <MemberSignature Language="F#" Value="abstract member EndAppend : IAsyncResult -&gt; System.IO.Log.SequenceNumber&#xA;override this.EndAppend : IAsyncResult -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.EndAppend result" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.EndAppend(System.IAsyncResult)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result">对未完成的异步 I/O 请求的引用。</param>
+        <summary>结束异步追加操作。 不能继承此方法。</summary>
+        <returns>追加的日志记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法将一直阻塞，直到 I/O 操作已完成。 调用 <xref:System.IO.Log.LogRecordSequence.EndAppend%2A> 时，异步写入请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将变得可见。  
+  
+ 必须对 <xref:System.IAsyncResult> 方法返回的每个 <xref:System.IO.Log.LogRecordSequence.BeginAppend%2A> 调用此方法且只能调用一次。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="result" /> 无效。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.InvalidOperationException">已对此异步操作调用了 <see langword="End" />。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="EndFlush">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber EndFlush (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber EndFlush(class System.IAsyncResult result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.EndFlush(System.IAsyncResult)" />
+      <MemberSignature Language="VB.NET" Value="Public Function EndFlush (result As IAsyncResult) As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber EndFlush(IAsyncResult ^ result);" />
+      <MemberSignature Language="F#" Value="abstract member EndFlush : IAsyncResult -&gt; System.IO.Log.SequenceNumber&#xA;override this.EndFlush : IAsyncResult -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.EndFlush result" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.EndFlush(System.IAsyncResult)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result">对未完成的异步 I/O 请求的引用。</param>
+        <summary>结束异步刷新操作。 不能继承此方法。</summary>
+        <returns>写入的最新记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法将一直阻塞，直到 I/O 操作已完成。 调用 <xref:System.IO.Log.LogRecordSequence.EndFlush%2A> 时，异步刷新请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将变得可见。  
+  
+ 必须对 <xref:System.IAsyncResult> 方法返回的每个 <xref:System.IO.Log.LogRecordSequence.BeginFlush%2A> 调用此方法且只能调用一次。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="result" /> 无效。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。</exception>
+        <exception cref="T:System.InvalidOperationException">已对此异步操作调用了 <see langword="End" />。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="EndReserveAndAppend">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber EndReserveAndAppend (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber EndReserveAndAppend(class System.IAsyncResult result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.EndReserveAndAppend(System.IAsyncResult)" />
+      <MemberSignature Language="VB.NET" Value="Public Function EndReserveAndAppend (result As IAsyncResult) As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber EndReserveAndAppend(IAsyncResult ^ result);" />
+      <MemberSignature Language="F#" Value="abstract member EndReserveAndAppend : IAsyncResult -&gt; System.IO.Log.SequenceNumber&#xA;override this.EndReserveAndAppend : IAsyncResult -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.EndReserveAndAppend result" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.EndReserveAndAppend(System.IAsyncResult)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result">对未完成的异步 I/O 请求的引用。</param>
+        <summary>结束异步保留和追加操作。 不能继承此方法。</summary>
+        <returns>追加的日志记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法将一直阻塞，直到 I/O 操作已完成。 调用 <xref:System.IO.Log.LogRecordSequence.EndReserveAndAppend%2A> 时，异步写入请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将变得可见。  
+  
+ 必须对 <xref:System.IAsyncResult> 方法返回的每个 <xref:System.IO.Log.LogRecordSequence.BeginReserveAndAppend%2A> 调用此方法且只能调用一次。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="result" /> 无效。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.InvalidOperationException">已对此异步操作调用了 <see langword="End" />。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="EndWriteRestartArea">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber EndWriteRestartArea (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber EndWriteRestartArea(class System.IAsyncResult result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.EndWriteRestartArea(System.IAsyncResult)" />
+      <MemberSignature Language="VB.NET" Value="Public Function EndWriteRestartArea (result As IAsyncResult) As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber EndWriteRestartArea(IAsyncResult ^ result);" />
+      <MemberSignature Language="F#" Value="abstract member EndWriteRestartArea : IAsyncResult -&gt; System.IO.Log.SequenceNumber&#xA;override this.EndWriteRestartArea : IAsyncResult -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.EndWriteRestartArea result" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.EndWriteRestartArea(System.IAsyncResult)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result">对未完成的异步 I/O 请求的引用。</param>
+        <summary>结束异步重新开始区域写入操作。 不能继承此方法。</summary>
+        <returns>写入的日志记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法将一直阻塞，直到 I/O 操作已完成。 调用 <xref:System.IO.Log.LogRecordSequence.EndWriteRestartArea%2A> 时，异步写入请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将变得可见。  
+  
+ 必须对 <xref:System.IAsyncResult> 方法返回的每个 <xref:System.IO.Log.LogRecordSequence.BeginWriteRestartArea%2A> 调用此方法且只能调用一次。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="result" /> 无效。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">活动日志新存档或现有存档的尾数据或基数据无效。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。</exception>
+        <exception cref="T:System.InvalidOperationException">已对此异步操作调用了 <see langword="End" />。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Flush">
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>持久写入追加的记录</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Flush">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber Flush() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.Flush" />
+      <MemberSignature Language="VB.NET" Value="Public Function Flush () As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber Flush();" />
+      <MemberSignature Language="F#" Value="abstract member Flush : unit -&gt; System.IO.Log.SequenceNumber&#xA;override this.Flush : unit -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.Flush " />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.Flush</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>确保所有追加的记录都已写入。 不能继承此方法。</summary>
+        <returns>写入的最新记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 调用此方法可以确保已追加到 <xref:System.IO.Log.LogRecordSequence> 的所有记录都已持久写入。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.IO.IOException">刷新数据时，发生了 I/O 错误。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.NotSupportedException">不支持此操作。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列无法获得足够的可用空间来容纳新的重新开始区域。</exception>
+        <exception cref="T:System.InvalidOperationException">指定的日志没有任何范围。 必须创建一个或多个范围，然后才能使用记录序列。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber Flush (System.IO.Log.SequenceNumber sequenceNumber);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber Flush(valuetype System.IO.Log.SequenceNumber sequenceNumber) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.Flush(System.IO.Log.SequenceNumber)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber Flush(System::IO::Log::SequenceNumber sequenceNumber);" />
+      <MemberSignature Language="F#" Value="abstract member Flush : System.IO.Log.SequenceNumber -&gt; System.IO.Log.SequenceNumber&#xA;override this.Flush : System.IO.Log.SequenceNumber -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.Flush sequenceNumber" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.Flush(System.IO.Log.SequenceNumber)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sequenceNumber" Type="System.IO.Log.SequenceNumber" />
+      </Parameters>
+      <Docs>
+        <param name="sequenceNumber">必须写入的最新记录的序列号。 如果此 <see cref="T:System.IO.Log.SequenceNumber" /> 无效，则必须写入所有记录。</param>
+        <summary>确保序列号不高于指定序列号的所有追加记录都已持久写入。 不能继承此方法。</summary>
+        <returns>写入的最新记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 调用此方法可以确保序列号不高于指定序列号的所有记录都已持久写入。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="sequenceNumber" /> 对此序列无效。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="sequenceNumber" /> 不在此序列的基序列号和最后一个序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。</exception>
+        <exception cref="T:System.InvalidOperationException">指定的日志没有任何范围。 必须创建一个或多个范围，然后才能使用记录序列。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="LastSequenceNumber">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber LastSequenceNumber { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.IO.Log.SequenceNumber LastSequenceNumber" />
+      <MemberSignature Language="DocId" Value="P:System.IO.Log.LogRecordSequence.LastSequenceNumber" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property LastSequenceNumber As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::IO::Log::SequenceNumber LastSequenceNumber { System::IO::Log::SequenceNumber get(); };" />
+      <MemberSignature Language="F#" Value="member this.LastSequenceNumber : System.IO.Log.SequenceNumber" Usage="System.IO.Log.LogRecordSequence.LastSequenceNumber" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.IO.Log.IRecordSequence.LastSequenceNumber</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取比追加的最后一条记录大的序列号</summary>
+        <value>比追加的最新记录大的序列号。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性包含一个序列号，并且保证它大于最后追加的记录的序列号。 有效序列号大于或等于 <xref:System.IO.Log.LogRecordSequence.BaseSequenceNumber%2A> 且小于 <xref:System.IO.Log.LogRecordSequence.LastSequenceNumber%2A>。 所有其他序列号均无效。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">该属性是在序列已释放之后访问的。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="LogStore">
+      <MemberSignature Language="C#" Value="public System.IO.Log.LogStore LogStore { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IO.Log.LogStore LogStore" />
+      <MemberSignature Language="DocId" Value="P:System.IO.Log.LogRecordSequence.LogStore" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property LogStore As LogStore" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::IO::Log::LogStore ^ LogStore { System::IO::Log::LogStore ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.LogStore : System.IO.Log.LogStore" Usage="System.IO.Log.LogRecordSequence.LogStore" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.LogStore</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取包含此记录序列数据的 <see cref="T:System.IO.Log.LogStore" />。 不能继承此方法。</summary>
+        <value>包含此记录序列数据的 <see cref="T:System.IO.Log.LogStore" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 此示例演示如何使用 <xref:System.IO.Log.LogRecordSequence.LogStore%2A> 成员来添加范围。  
+  
+ [!code-csharp[S_UELogRecordSequence#11](~/samples/snippets/csharp/VS_Snippets_CFX/s_uelogrecordsequence/cs/mymultiplexlog.cs#11)]
+ [!code-vb[S_UELogRecordSequence#11](~/samples/snippets/visualbasic/VS_Snippets_CFX/s_uelogrecordsequence/vb/mymultiplexlog.vb#11)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MaximumRecordLength">
+      <MemberSignature Language="C#" Value="public long MaximumRecordLength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 MaximumRecordLength" />
+      <MemberSignature Language="DocId" Value="P:System.IO.Log.LogRecordSequence.MaximumRecordLength" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property MaximumRecordLength As Long" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property long MaximumRecordLength { long get(); };" />
+      <MemberSignature Language="F#" Value="member this.MaximumRecordLength : int64" Usage="System.IO.Log.LogRecordSequence.MaximumRecordLength" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.IO.Log.IRecordSequence.MaximumRecordLength</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取可添加到此记录序列中的记录的最大大小。</summary>
+        <value>可添加到此记录序列中的记录的最大大小。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadLogRecords">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.IO.Log.LogRecord&gt; ReadLogRecords (System.IO.Log.SequenceNumber start, System.IO.Log.LogRecordEnumeratorType logRecordEnum);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class System.IO.Log.LogRecord&gt; ReadLogRecords(valuetype System.IO.Log.SequenceNumber start, valuetype System.IO.Log.LogRecordEnumeratorType logRecordEnum) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.ReadLogRecords(System.IO.Log.SequenceNumber,System.IO.Log.LogRecordEnumeratorType)" />
+      <MemberSignature Language="VB.NET" Value="Public Function ReadLogRecords (start As SequenceNumber, logRecordEnum As LogRecordEnumeratorType) As IEnumerable(Of LogRecord)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Collections::Generic::IEnumerable&lt;System::IO::Log::LogRecord ^&gt; ^ ReadLogRecords(System::IO::Log::SequenceNumber start, System::IO::Log::LogRecordEnumeratorType logRecordEnum);" />
+      <MemberSignature Language="F#" Value="abstract member ReadLogRecords : System.IO.Log.SequenceNumber * System.IO.Log.LogRecordEnumeratorType -&gt; seq&lt;System.IO.Log.LogRecord&gt;&#xA;override this.ReadLogRecords : System.IO.Log.SequenceNumber * System.IO.Log.LogRecordEnumeratorType -&gt; seq&lt;System.IO.Log.LogRecord&gt;" Usage="logRecordSequence.ReadLogRecords (start, logRecordEnum)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.ReadLogRecords(System.IO.Log.SequenceNumber,System.IO.Log.LogRecordEnumeratorType)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.IO.Log.LogRecord&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="start" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="logRecordEnum" Type="System.IO.Log.LogRecordEnumeratorType" />
+      </Parameters>
+      <Docs>
+        <param name="start">读取操作开始处的第一条记录的序列号。</param>
+        <param name="logRecordEnum">一个有效的 <see cref="T:System.IO.Log.LogRecordEnumeratorType" /> 值，该值指定从 <see cref="T:System.IO.Log.LogRecordSequence" /> 中读取记录的方式（即，向前或向后）。</param>
+        <summary>返回序列中记录的可枚举集合。 不能继承此方法。</summary>
+        <returns>序列中记录的可枚举集合。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法返回序列中记录的可枚举集合。 所枚举记录的顺序取决于 `logRecordEnum` 参数的值。  
+  
+   
+  
+## Examples  
+ 此示例演示如何在循环中使用 <xref:System.IO.Log.LogRecordSequence.ReadLogRecords%2A>。  
+  
+ [!code-csharp[S_UELogRecordSequence#10](~/samples/snippets/csharp/VS_Snippets_CFX/s_uelogrecordsequence/cs/mymultiplexlog.cs#10)]
+ [!code-vb[S_UELogRecordSequence#10](~/samples/snippets/visualbasic/VS_Snippets_CFX/s_uelogrecordsequence/vb/mymultiplexlog.vb#10)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="start" /> 对此序列无效。  
+  
+或 
+ <paramref name="logRecordEnum" /> 无效。  
+  
+- 或 - 
+在集合中找不到指定的元素。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="start" /> 不在此序列的基序列号和最后一个序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。  
+  
+ - 或 -  
+  
+ 用于写入日志记录的缓冲区大小大于用于读取日志记录的缓冲区大小。  
+  
+ 或  
+  
+ 记录序列已损坏。  
+  
+ 或  
+  
+ 指定的日志文件格式或版本无效。  
+  
+ 或  
+  
+ 记录是使用不兼容的记录序列版本写入的。</exception>
+        <exception cref="T:System.InvalidOperationException">操作无效，原因是枚举尚未开始。 必须调用 <see cref="M:System.Collections.IEnumerator.MoveNext" />。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadRestartAreas">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.IO.Log.LogRecord&gt; ReadRestartAreas ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class System.IO.Log.LogRecord&gt; ReadRestartAreas() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.ReadRestartAreas" />
+      <MemberSignature Language="VB.NET" Value="Public Function ReadRestartAreas () As IEnumerable(Of LogRecord)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Collections::Generic::IEnumerable&lt;System::IO::Log::LogRecord ^&gt; ^ ReadRestartAreas();" />
+      <MemberSignature Language="F#" Value="abstract member ReadRestartAreas : unit -&gt; seq&lt;System.IO.Log.LogRecord&gt;&#xA;override this.ReadRestartAreas : unit -&gt; seq&lt;System.IO.Log.LogRecord&gt;" Usage="logRecordSequence.ReadRestartAreas " />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.ReadRestartAreas</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.IO.Log.LogRecord&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>返回序列中重新开始区域的可枚举集合。 不能继承此方法。</summary>
+        <returns>序列中重新开始区域的可枚举集合。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 重新开始区域按序列号的倒序枚举，即从最高序列号到最低序列号枚举。 仅枚举序列号介于最后一个序列号和基序列号之间的重新开始区域。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="start" /> 不在此序列的基序列号和最后一个序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ - 或 -  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。  
+  
+ - 或 -  
+  
+ 用于写入日志记录的缓冲区大小大于用于读取日志记录的缓冲区大小。  
+  
+ 或  
+  
+ 记录序列已损坏。  
+  
+ - 或 -  
+  
+ 指定的日志文件格式或版本无效。  
+  
+ 或  
+  
+ 记录是使用不兼容的记录序列版本写入的。</exception>
+        <exception cref="T:System.InvalidOperationException">操作无效，原因是枚举尚未开始。 必须调用 <see cref="M:System.Collections.IEnumerator.MoveNext" />。  
+  
+- 或 - 
+枚举已经终止。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="ReserveAndAppend">
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>自动生成一个预留，并向序列中追加一条记录。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="ReserveAndAppend">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber ReserveAndAppend (ArraySegment&lt;byte&gt; data, System.IO.Log.SequenceNumber nextUndoRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions, System.IO.Log.ReservationCollection reservationCollection, params long[] reservations);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber ReserveAndAppend(valuetype System.ArraySegment`1&lt;unsigned int8&gt; data, valuetype System.IO.Log.SequenceNumber nextUndoRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions, class System.IO.Log.ReservationCollection reservationCollection, int64[] reservations) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.ReserveAndAppend(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.Int64[])" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber ReserveAndAppend(ArraySegment&lt;System::Byte&gt; data, System::IO::Log::SequenceNumber nextUndoRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions, System::IO::Log::ReservationCollection ^ reservationCollection, ... cli::array &lt;long&gt; ^ reservations);" />
+      <MemberSignature Language="F#" Value="abstract member ReserveAndAppend : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * int64[] -&gt; System.IO.Log.SequenceNumber&#xA;override this.ReserveAndAppend : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * int64[] -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.ReserveAndAppend (data, nextUndoRecord, previousRecord, recordAppendOptions, reservationCollection, reservations)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.ReserveAndAppend(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.Int64[])</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.ArraySegment&lt;System.Byte&gt;" />
+        <Parameter Name="nextUndoRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+        <Parameter Name="reservationCollection" Type="System.IO.Log.ReservationCollection" />
+        <Parameter Name="reservations" Type="System.Int64[]">
+          <Attributes>
+            <Attribute FrameworkAlternate="netframework-3.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="nextUndoRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <param name="reservationCollection">一个 <see cref="T:System.IO.Log.ReservationCollection" />，它包含要在其中生成预留的集合。</param>
+        <param name="reservations">要生成的预留（以字节为单位）。</param>
+        <summary>自动生成一个预留，并向序列中追加一条记录。 不能继承此方法。</summary>
+        <returns>追加的日志记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 在原子操作中，使用记录追加操作将指定的预留添加到所提供的预留集合。 如果追加失败，将不保留任何空间。  
+  
+ 通常，此方法可以在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.LogRecordSequence.Flush%2A> 方法。  
+  
+   
+  
+## Examples  
+ 下面的示例演示如何使用此方法来生成预留。 请注意，只有在使用基于 CLFS 的 <xref:System.IO.Log.LogRecordSequence> 类时才能执行此任务。  
+  
+```  
+ReservationCollection reservations = recordSequence.CreateReservationCollection();  
+long[] lengthOfUndoRecords = new long[] { 1000 };  
+recordSequence.ReserveAndAppend(recordData,  
+                                                     userSqn,  
+                                                     previousSqn,  
+                                                     RecordSequenceAppendOptions.None,  
+                                                     reservations,  
+                                                     lengthOfUndoRecords);  
+recordSequence.Append(undoRecordData,    // If necessary …  
+                                    userSqn,  
+                                    previousSqn,  
+                                    RecordSequenceAppendOptions.ForceFlush,  
+                                    reservations);  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="nextUndoRecord" /> 或 <paramref name="previousRecord" /> 对此序列无效。  
+  
+- 或 - 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+或 
+ <paramref name="reservations" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="nextUndoRecord" /> 或 <paramref name="previousRecord" /> 不在此序列的基序列号和最新序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ - 或 -  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.ReservationNotFoundException">在 <paramref name="data" /> 中找不到足以容纳 <paramref name="reservations" /> 的预留。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ReserveAndAppend">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber ReserveAndAppend (System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; data, System.IO.Log.SequenceNumber userRecord, System.IO.Log.SequenceNumber previousRecord, System.IO.Log.RecordAppendOptions recordAppendOptions, System.IO.Log.ReservationCollection reservationCollection, params long[] reservations);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber ReserveAndAppend(class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; data, valuetype System.IO.Log.SequenceNumber userRecord, valuetype System.IO.Log.SequenceNumber previousRecord, valuetype System.IO.Log.RecordAppendOptions recordAppendOptions, class System.IO.Log.ReservationCollection reservationCollection, int64[] reservations) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.ReserveAndAppend(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.Int64[])" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber ReserveAndAppend(System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ data, System::IO::Log::SequenceNumber userRecord, System::IO::Log::SequenceNumber previousRecord, System::IO::Log::RecordAppendOptions recordAppendOptions, System::IO::Log::ReservationCollection ^ reservationCollection, ... cli::array &lt;long&gt; ^ reservations);" />
+      <MemberSignature Language="F#" Value="abstract member ReserveAndAppend : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * int64[] -&gt; System.IO.Log.SequenceNumber&#xA;override this.ReserveAndAppend : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.SequenceNumber * System.IO.Log.RecordAppendOptions * System.IO.Log.ReservationCollection * int64[] -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.ReserveAndAppend (data, userRecord, previousRecord, recordAppendOptions, reservationCollection, reservations)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.ReserveAndAppend(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.SequenceNumber,System.IO.Log.RecordAppendOptions,System.IO.Log.ReservationCollection,System.Int64[])</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
+        <Parameter Name="userRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="previousRecord" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="recordAppendOptions" Type="System.IO.Log.RecordAppendOptions" />
+        <Parameter Name="reservationCollection" Type="System.IO.Log.ReservationCollection" />
+        <Parameter Name="reservations" Type="System.Int64[]">
+          <Attributes>
+            <Attribute FrameworkAlternate="netframework-3.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="userRecord">用户指定顺序中下一条记录的序列号。</param>
+        <param name="previousRecord">“上一个”顺序中下一条记录的序列号。</param>
+        <param name="recordAppendOptions"><see cref="T:System.IO.Log.RecordAppendOptions" /> 的一个有效值，用于指定应如何写入数据。</param>
+        <param name="reservationCollection">要在其中生成预留的预留集合。</param>
+        <param name="reservations">要生成的预留（以字节为单位）。</param>
+        <summary>自动生成一个预留，并向序列中追加一条记录。 不能继承此方法。</summary>
+        <returns>追加的日志记录的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 包含在 `data` 参数中的数据将连接成单个字节数组，以便以记录形式追加。 但在读取记录时，无法将数据重新拆分为数组段。  
+  
+ 在原子操作中，使用记录追加操作将指定的预留添加到所提供的预留集合。 如果追加失败，将不保留任何空间。  
+  
+ 通常，此方法可以在写入记录之前完成。 若要确保记录已写入，请使用 <xref:System.IO.Log.RecordAppendOptions.ForceFlush> 参数指定 `recordAppendOptions` 标志，或者调用 <xref:System.IO.Log.LogRecordSequence.Flush%2A> 方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">一个或多个自变量无效。</exception>
+        <exception cref="T:System.IO.IOException">追加记录时，发生了 I/O 错误。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列无法获得足够的可用空间来容纳新记录或生成预留。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="userRecord" /> 或 <paramref name="previousRecord" /> 不在此序列的基序列号和最新序列号之间。</exception>
+        <exception cref="T:System.NotSupportedException">由于记录序列是通过只读访问权限打开的，因此无法执行该操作。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.ReservationNotFoundException">在 <paramref name="data" /> 中找不到足以容纳 <paramref name="reservations" /> 的预留。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ReservedBytes">
+      <MemberSignature Language="C#" Value="public long ReservedBytes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 ReservedBytes" />
+      <MemberSignature Language="DocId" Value="P:System.IO.Log.LogRecordSequence.ReservedBytes" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property ReservedBytes As Long" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property long ReservedBytes { long get(); };" />
+      <MemberSignature Language="F#" Value="member this.ReservedBytes : int64" Usage="System.IO.Log.LogRecordSequence.ReservedBytes" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.IO.Log.IRecordSequence.ReservedBytes</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取已保留的字节总数。</summary>
+        <value>此记录序列中做出的所有预留的总大小。</value>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">该属性是在序列已释放之后访问的。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RestartSequenceNumber">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber RestartSequenceNumber { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.IO.Log.SequenceNumber RestartSequenceNumber" />
+      <MemberSignature Language="DocId" Value="P:System.IO.Log.LogRecordSequence.RestartSequenceNumber" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property RestartSequenceNumber As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::IO::Log::SequenceNumber RestartSequenceNumber { System::IO::Log::SequenceNumber get(); };" />
+      <MemberSignature Language="F#" Value="member this.RestartSequenceNumber : System.IO.Log.SequenceNumber" Usage="System.IO.Log.LogRecordSequence.RestartSequenceNumber" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.IO.Log.IRecordSequence.RestartSequenceNumber</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取最接近日志末尾的重新开始区域的序列号。</summary>
+        <value>最接近日志末尾的重新开始区域的序列号。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 重新开始区域用于临时存储包含客户端最后一次检查点操作的信息。 公用日志文件系统 (CLFS) 维护两个重新开始区域，以确保至少有一个有效区域总是可用。 需要恢复时，CLFS 读取自己的重新开始区域和最后一个检查点操作中的所有数据。 这些数据将初始化事务表、脏页表和打开文件表，以便它们能够用于恢复过程。  
+  
+ 通过使用 <xref:System.IO.Log.LogRecordSequence.SetLastRecord%2A> 方法，您可以移除最近写入的重新开始区域。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">该属性是在序列已释放之后访问的。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RetryAppend">
+      <MemberSignature Language="C#" Value="public bool RetryAppend { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RetryAppend" />
+      <MemberSignature Language="DocId" Value="P:System.IO.Log.LogRecordSequence.RetryAppend" />
+      <MemberSignature Language="VB.NET" Value="Public Property RetryAppend As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool RetryAppend { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.RetryAppend : bool with get, set" Usage="System.IO.Log.LogRecordSequence.RetryAppend" />
+      <MemberType>Property</MemberType>
+      <Implements>
+        <InterfaceMember>P:System.IO.Log.IRecordSequence.RetryAppend</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，指示在日志已满时是否自动重试追加操作。</summary>
+        <value>如果在日志已满时自动重试追加操作，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="true" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果此属性的值为 `true`，且 <xref:System.IO.Log.LogRecordSequence.Append%2A> 调用因为序列中没有足够的空间而失败，则记录序列将尝试释放空间，然后重试追加操作。  
+  
+   
+  
+## Examples  
+ 此示例演示如何使用 <xref:System.IO.Log.LogRecordSequence.RetryAppend%2A> 属性。  
+  
+ [!code-csharp[S_UELogRecordSequence#3](~/samples/snippets/csharp/VS_Snippets_CFX/s_uelogrecordsequence/cs/mylogrecordsequence.cs#3)]
+ [!code-vb[S_UELogRecordSequence#3](~/samples/snippets/visualbasic/VS_Snippets_CFX/s_uelogrecordsequence/vb/mylogrecordsequence.vb#3)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">该属性是在序列已释放之后访问的。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetLastRecord">
+      <MemberSignature Language="C#" Value="public void SetLastRecord (System.IO.Log.SequenceNumber sequenceNumber);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetLastRecord(valuetype System.IO.Log.SequenceNumber sequenceNumber) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.SetLastRecord(System.IO.Log.SequenceNumber)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void SetLastRecord(System::IO::Log::SequenceNumber sequenceNumber);" />
+      <MemberSignature Language="F#" Value="member this.SetLastRecord : System.IO.Log.SequenceNumber -&gt; unit" Usage="logRecordSequence.SetLastRecord sequenceNumber" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sequenceNumber" Type="System.IO.Log.SequenceNumber" />
+      </Parameters>
+      <Docs>
+        <param name="sequenceNumber"><see cref="T:System.IO.Log.LogRecordSequence" /> 中的最后一个新序列号。  
+  
+它指的应该是日志中的当前有效记录。</param>
+        <summary>设置 <see cref="T:System.IO.Log.LogRecordSequence" /> 中的最后一条记录。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 指定的序列号必须大于基序列号。  
+  
+ 此方法完成后，将无法访问序列号大于指定序列号的所有先前追加的记录。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="sequenceNumber" /> 对此序列无效。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">活动日志新存档或现有存档的尾数据或基数据无效。  
+  
+或 
+ <paramref name="sequenceNumber" /> 不在此序列的基序列号和最后一个序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 已到达日志的末尾。  
+  
+ 或  
+  
+ 指定的日志文件格式或版本无效。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="TailPinned">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;System.IO.Log.TailPinnedEventArgs&gt; TailPinned;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.IO.Log.TailPinnedEventArgs&gt; TailPinned" />
+      <MemberSignature Language="DocId" Value="E:System.IO.Log.LogRecordSequence.TailPinned" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event TailPinned As EventHandler(Of TailPinnedEventArgs) " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual event EventHandler&lt;System::IO::Log::TailPinnedEventArgs ^&gt; ^ TailPinned;" />
+      <MemberSignature Language="F#" Value="member this.TailPinned : EventHandler&lt;System.IO.Log.TailPinnedEventArgs&gt; " Usage="member this.TailPinned : System.EventHandler&lt;System.IO.Log.TailPinnedEventArgs&gt; " />
+      <MemberType>Event</MemberType>
+      <Implements>
+        <InterfaceMember>E:System.IO.Log.IRecordSequence.TailPinned</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.IO.Log.TailPinnedEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>发信号通知需要移动序列的尾数据。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 可以在记录序列空间不足时激发此事件。 此事件激发时，序列的尾数据（即基序列号）将前移以释放空间。  
+  
+ 当记录序列决定必须释放空间时，可以借任何理由随时激发该事件。 例如，当 CLFS 策略引擎确定共享同一日志文件的两个日志客户端的结尾相距过远时，它可能会决定激发该事件。 可以通过写入重新开始区域、截断日志及使用 <xref:System.IO.Log.LogRecordSequence.AdvanceBaseSequenceNumber%2A> 方法清除空间来释放空间。 “示例”部分的代码示例演示了第二种方式。  
+  
+ 还可以在 <xref:System.IO.Log.FileRecordSequence.WriteRestartArea%2A> 事件之外调用 <xref:System.IO.Log.LogRecordSequence.TailPinned> 方法以释放空间。 重新开始区域类似于其他日志处理系统内的检查点。 调用此方法则表示，在重新开始区域彻底完成以及可用于在以后追加记录之前，应用程序将考虑以前的所有记录。 与其他任何记录类似，此方法写入的记录需要使用日志中实际的可用空间才有效。  
+  
+   
+  
+## Examples  
+ 此示例演示如何使用 <xref:System.IO.Log.LogRecordSequence.TailPinned> 事件。  
+  
+```  
+recordSequence.RetryAppend = true;  
+recordSequence.TailPinned += new EventHandler<TailPinnedEventArgs>(HandleTailPinned);  
+  
+void HandleTailPinned(object sender, TailPinnedEventArgs tailPinnedEventArgs)  
+{  
+   // tailPinnedEventArgs.TargetSequenceNumber is the target   
+   // sequence number to free up space to.    
+   // However, this sequence number is not necessarily valid.  We have  
+   // to use this sequence number as a starting point for finding a  
+   // valid point within the log to advance toward. You need to  
+   // identify a record with a sequence number equal to, or greater  
+   // than TargetSequenceNumber; let's call this   
+   // realTargetSequenceNumber. Once found, move the base  
+  
+   recordSequence.AdvanceBaseSequenceNumber(realTargetSequenceNumber);  
+  
+}  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="WriteRestartArea">
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将重新开始区域写入 <see cref="T:System.IO.Log.LogRecordSequence" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 重新开始区域用于临时存储包含客户端最后一次检查点操作的信息。 公用日志文件系统 (CLFS) 维护两个重新开始区域，以确保至少有一个有效区域总是可用。 需要恢复时，CLFS 读取自己的重新开始区域和最后一个检查点操作中的所有数据。 这些数据将初始化事务表、脏页表和打开文件表，以便它们能够用于恢复过程。  
+  
+ 可以使用 <xref:System.IO.Log.LogRecordSequence.ReadRestartAreas%2A> 方法来读取重新开始区域。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="WriteRestartArea">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber WriteRestartArea (ArraySegment&lt;byte&gt; data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber WriteRestartArea(valuetype System.ArraySegment`1&lt;unsigned int8&gt; data) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.WriteRestartArea(System.ArraySegment{System.Byte})" />
+      <MemberSignature Language="VB.NET" Value="Public Function WriteRestartArea (data As ArraySegment(Of Byte)) As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber WriteRestartArea(ArraySegment&lt;System::Byte&gt; data);" />
+      <MemberSignature Language="F#" Value="abstract member WriteRestartArea : ArraySegment&lt;byte&gt; -&gt; System.IO.Log.SequenceNumber&#xA;override this.WriteRestartArea : ArraySegment&lt;byte&gt; -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.WriteRestartArea data" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.WriteRestartArea(System.ArraySegment{System.Byte})</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.ArraySegment&lt;System.Byte&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的数组段。</param>
+        <summary>将重新开始区域写入 <see cref="T:System.IO.Log.LogRecordSequence" />。 不能继承此方法。</summary>
+        <returns>写入的重新开始区域的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 重新开始区域用于临时存储包含客户端最后一次检查点操作的信息。 公用日志文件系统 (CLFS) 维护两个重新开始区域，以确保至少有一个有效区域总是可用。 需要恢复时，CLFS 读取自己的重新开始区域和最后一个检查点操作中的所有数据。 这些数据将初始化事务表、脏页表和打开文件表，以便它们能够用于恢复过程。  
+  
+ 可以使用 <xref:System.IO.Log.LogRecordSequence.ReadRestartAreas%2A> 方法来读取重新开始区域。  
+  
+ 字节数组段中的数据将连接成单个字节数组，以便以记录形式追加。 在读取重新开始区域时，无法将数据重新拆分为数组段。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">一个或多个自变量无效。</exception>
+        <exception cref="T:System.IO.IOException">写入重新开始区域时，发生了 I/O 错误。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列无法获得足够的可用空间来容纳新的重新开始区域。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteRestartArea">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber WriteRestartArea (System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber WriteRestartArea(class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; data) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.WriteRestartArea(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" />
+      <MemberSignature Language="VB.NET" Value="Public Function WriteRestartArea (data As IList(Of ArraySegment(Of Byte))) As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber WriteRestartArea(System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ data);" />
+      <MemberSignature Language="F#" Value="abstract member WriteRestartArea : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; -&gt; System.IO.Log.SequenceNumber&#xA;override this.WriteRestartArea : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.WriteRestartArea data" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.WriteRestartArea(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <summary>将重新开始区域写入 <see cref="T:System.IO.Log.LogRecordSequence" />。 不能继承此方法。</summary>
+        <returns>写入的重新开始区域的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 重新开始区域用于临时存储包含客户端最后一次检查点操作的信息。 公用日志文件系统 (CLFS) 维护两个重新开始区域，以确保至少有一个有效区域总是可用。 需要恢复时，CLFS 读取自己的重新开始区域和最后一个检查点操作中的所有数据。 这些数据将初始化事务表、脏页表和打开文件表，以便它们能够用于恢复过程。  
+  
+ 可以使用 <xref:System.IO.Log.LogRecordSequence.ReadRestartAreas%2A> 方法来读取重新开始区域。  
+  
+ 字节数组段中的数据将连接成单个字节数组，以便以记录形式追加。 在读取重新开始区域时，无法将数据重新拆分为数组段。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">一个或多个自变量无效。</exception>
+        <exception cref="T:System.IO.IOException">写入重新开始区域时，发生了 I/O 错误。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列无法获得足够的可用空间来容纳新的重新开始区域。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteRestartArea">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber WriteRestartArea (ArraySegment&lt;byte&gt; data, System.IO.Log.SequenceNumber newBaseSeqNum);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber WriteRestartArea(valuetype System.ArraySegment`1&lt;unsigned int8&gt; data, valuetype System.IO.Log.SequenceNumber newBaseSeqNum) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.WriteRestartArea(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber)" />
+      <MemberSignature Language="VB.NET" Value="Public Function WriteRestartArea (data As ArraySegment(Of Byte), newBaseSeqNum As SequenceNumber) As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber WriteRestartArea(ArraySegment&lt;System::Byte&gt; data, System::IO::Log::SequenceNumber newBaseSeqNum);" />
+      <MemberSignature Language="F#" Value="abstract member WriteRestartArea : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber -&gt; System.IO.Log.SequenceNumber&#xA;override this.WriteRestartArea : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.WriteRestartArea (data, newBaseSeqNum)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.WriteRestartArea(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.ArraySegment&lt;System.Byte&gt;" />
+        <Parameter Name="newBaseSeqNum" Type="System.IO.Log.SequenceNumber" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="newBaseSeqNum">新的基序列号。 指定的序列号必须大于或等于当前基序列号。</param>
+        <summary>将重新开始区域写入 <see cref="T:System.IO.Log.LogRecordSequence" /> 并更新基序列号。 不能继承此方法。</summary>
+        <returns>写入的重新开始区域的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 重新开始区域用于临时存储包含客户端最后一次检查点操作的信息。 公用日志文件系统 (CLFS) 维护两个重新开始区域，以确保至少有一个有效区域总是可用。 需要恢复时，CLFS 读取自己的重新开始区域和最后一个检查点操作中的所有数据。 这些数据将初始化事务表、脏页表和打开文件表，以便它们能够用于恢复过程。  
+  
+ 可以使用 <xref:System.IO.Log.LogRecordSequence.ReadRestartAreas%2A> 方法来读取重新开始区域。  
+  
+ 写入重新开始区域时，字节数组段中的数据将连接成单个字节数组，以便以记录形式追加。 在读取重新开始区域时，无法将数据重新拆分为数组段。  
+  
+ 此方法成功完成时，基序列号已更新。 其序列号小于新的基序列号的所有日志记录都不可访问。  
+  
+ 如果记录序列已经释放，或者如果传递了无效参数，此操作内将立即引发异常。 异步追加请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将导致在调用 <xref:System.IO.Log.LogRecordSequence.EndReserveAndAppend%2A> 方法时引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">一个或多个自变量无效。</exception>
+        <exception cref="T:System.IO.IOException">写入重新开始区域时，发生了 I/O 错误。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列无法获得足够的可用空间来容纳新的重新开始区域。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteRestartArea">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber WriteRestartArea (System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; data, System.IO.Log.SequenceNumber newBaseSeqNum);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber WriteRestartArea(class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; data, valuetype System.IO.Log.SequenceNumber newBaseSeqNum) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.WriteRestartArea(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber)" />
+      <MemberSignature Language="VB.NET" Value="Public Function WriteRestartArea (data As IList(Of ArraySegment(Of Byte)), newBaseSeqNum As SequenceNumber) As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber WriteRestartArea(System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ data, System::IO::Log::SequenceNumber newBaseSeqNum);" />
+      <MemberSignature Language="F#" Value="abstract member WriteRestartArea : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber -&gt; System.IO.Log.SequenceNumber&#xA;override this.WriteRestartArea : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.WriteRestartArea (data, newBaseSeqNum)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.WriteRestartArea(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
+        <Parameter Name="newBaseSeqNum" Type="System.IO.Log.SequenceNumber" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="newBaseSeqNum">新的基序列号。 指定的序列号必须大于或等于当前基序列号。</param>
+        <summary>将重新开始区域写入 <see cref="T:System.IO.Log.LogRecordSequence" /> 并更新基序列号。 不能继承此方法。</summary>
+        <returns>写入的重新开始区域的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 重新开始区域用于临时存储包含客户端最后一次检查点操作的信息。 公用日志文件系统 (CLFS) 维护两个重新开始区域，以确保至少有一个有效区域总是可用。 需要恢复时，CLFS 读取自己的重新开始区域和最后一个检查点操作中的所有数据。 这些数据将初始化事务表、脏页表和打开文件表，以便它们能够用于恢复过程。  
+  
+ 可以使用 <xref:System.IO.Log.LogRecordSequence.ReadRestartAreas%2A> 方法来读取重新开始区域。  
+  
+ 写入重新开始区域时，字节数组段中的数据将连接成单个字节数组，以便以记录形式追加。 在读取重新开始区域时，无法将数据重新拆分为数组段。  
+  
+ 此方法成功完成时，基序列号已更新。 其序列号小于新的基序列号的所有日志记录都不可访问。  
+  
+ 如果记录序列已经释放，或者如果传递了无效参数，此操作内将立即引发异常。 异步追加请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将导致在调用 <xref:System.IO.Log.LogRecordSequence.EndReserveAndAppend%2A> 方法时引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">一个或多个自变量无效。</exception>
+        <exception cref="T:System.IO.IOException">写入重新开始区域时，发生了 I/O 错误。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列无法获得足够的可用空间来容纳新的重新开始区域。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteRestartArea">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber WriteRestartArea (ArraySegment&lt;byte&gt; data, System.IO.Log.SequenceNumber newBaseSeqNum, System.IO.Log.ReservationCollection reservations);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber WriteRestartArea(valuetype System.ArraySegment`1&lt;unsigned int8&gt; data, valuetype System.IO.Log.SequenceNumber newBaseSeqNum, class System.IO.Log.ReservationCollection reservations) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.WriteRestartArea(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.ReservationCollection)" />
+      <MemberSignature Language="VB.NET" Value="Public Function WriteRestartArea (data As ArraySegment(Of Byte), newBaseSeqNum As SequenceNumber, reservations As ReservationCollection) As SequenceNumber" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber WriteRestartArea(ArraySegment&lt;System::Byte&gt; data, System::IO::Log::SequenceNumber newBaseSeqNum, System::IO::Log::ReservationCollection ^ reservations);" />
+      <MemberSignature Language="F#" Value="abstract member WriteRestartArea : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.ReservationCollection -&gt; System.IO.Log.SequenceNumber&#xA;override this.WriteRestartArea : ArraySegment&lt;byte&gt; * System.IO.Log.SequenceNumber * System.IO.Log.ReservationCollection -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.WriteRestartArea (data, newBaseSeqNum, reservations)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.WriteRestartArea(System.ArraySegment{System.Byte},System.IO.Log.SequenceNumber,System.IO.Log.ReservationCollection)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.ArraySegment&lt;System.Byte&gt;" />
+        <Parameter Name="newBaseSeqNum" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="reservations" Type="System.IO.Log.ReservationCollection" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="newBaseSeqNum">新的基序列号。 指定的序列号必须大于或等于当前基序列号。</param>
+        <param name="reservations">一个 <see cref="T:System.IO.Log.ReservationCollection" />，它包含应当用于此重新开始区域的预留。</param>
+        <summary>使用预留将重新开始区域写入 <see cref="T:System.IO.Log.LogRecordSequence" /> 并更新基序列号。 不能继承此方法。</summary>
+        <returns>写入的重新开始区域的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 重新开始区域用于临时存储包含客户端最后一次检查点操作的信息。 公用日志文件系统 (CLFS) 维护两个重新开始区域，以确保至少有一个有效区域总是可用。 需要恢复时，CLFS 读取自己的重新开始区域和最后一个检查点操作中的所有数据。 这些数据将初始化事务表、脏页表和打开文件表，以便它们能够用于恢复过程。  
+  
+ 可以使用 <xref:System.IO.Log.LogRecordSequence.ReadRestartAreas%2A> 方法来读取重新开始区域。  
+  
+ 写入重新开始区域时，字节数组段中的数据将连接成单个字节数组，以便以记录形式追加。 在读取重新开始区域时，无法将数据重新拆分为数组段。  
+  
+ 如果指定了预留，写入的重新开始区域将使用集合中包含的预留来占用先前已预留的空间。 如果该方法成功，它将占用能容纳数据的最小预留，而该预留将从集合中移除。  
+  
+ 此方法成功完成时，基序列号已更新。 其序列号小于新的基序列号的所有日志记录都不可访问。  
+  
+ 如果记录序列已经释放，或者如果传递了无效参数，此操作内将立即引发异常。 异步追加请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将导致在调用 <xref:System.IO.Log.LogRecordSequence.EndReserveAndAppend%2A> 方法时引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">一个或多个自变量无效。</exception>
+        <exception cref="T:System.IO.IOException">写入重新开始区域时，发生了 I/O 错误。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列无法获得足够的可用空间来容纳新的重新开始区域。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteRestartArea">
+      <MemberSignature Language="C#" Value="public System.IO.Log.SequenceNumber WriteRestartArea (System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; data, System.IO.Log.SequenceNumber newBaseSeqNum, System.IO.Log.ReservationCollection reservationCollection);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.IO.Log.SequenceNumber WriteRestartArea(class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; data, valuetype System.IO.Log.SequenceNumber newBaseSeqNum, class System.IO.Log.ReservationCollection reservationCollection) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IO.Log.LogRecordSequence.WriteRestartArea(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.ReservationCollection)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::IO::Log::SequenceNumber WriteRestartArea(System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ data, System::IO::Log::SequenceNumber newBaseSeqNum, System::IO::Log::ReservationCollection ^ reservationCollection);" />
+      <MemberSignature Language="F#" Value="abstract member WriteRestartArea : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.ReservationCollection -&gt; System.IO.Log.SequenceNumber&#xA;override this.WriteRestartArea : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; * System.IO.Log.SequenceNumber * System.IO.Log.ReservationCollection -&gt; System.IO.Log.SequenceNumber" Usage="logRecordSequence.WriteRestartArea (data, newBaseSeqNum, reservationCollection)" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IO.Log.IRecordSequence.WriteRestartArea(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.IO.Log.SequenceNumber,System.IO.Log.ReservationCollection)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Log</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Log.SequenceNumber</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="data" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
+        <Parameter Name="newBaseSeqNum" Type="System.IO.Log.SequenceNumber" />
+        <Parameter Name="reservationCollection" Type="System.IO.Log.ReservationCollection" />
+      </Parameters>
+      <Docs>
+        <param name="data">将连接在一起并以记录形式追加的字节数组段的列表。</param>
+        <param name="newBaseSeqNum">新的基序列号。 指定的序列号必须大于或等于当前基序列号。</param>
+        <param name="reservationCollection">一个 <see cref="T:System.IO.Log.ReservationCollection" />，它包含应当用于此重新开始区域的预留。</param>
+        <summary>使用预留将重新开始区域写入 <see cref="T:System.IO.Log.LogRecordSequence" /> 并更新基序列号。 不能继承此方法。</summary>
+        <returns>写入的重新开始区域的序列号。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 重新开始区域用于临时存储包含客户端最后一次检查点操作的信息。 公用日志文件系统 (CLFS) 维护两个重新开始区域，以确保至少有一个有效区域总是可用。 需要恢复时，CLFS 读取自己的重新开始区域和最后一个检查点操作中的所有数据。 这些数据将初始化事务表、脏页表和打开文件表，以便它们能够用于恢复过程。  
+  
+ 可以使用 <xref:System.IO.Log.LogRecordSequence.ReadRestartAreas%2A> 方法来读取重新开始区域。  
+  
+ 写入重新开始区域时，字节数组段中的数据将连接成单个字节数组，以便以记录形式追加。 在读取重新开始区域时，无法将数据重新拆分为数组段。  
+  
+ 如果指定了预留，写入的重新开始区域将使用集合中包含的预留来占用先前已预留的空间。 如果该方法成功，它将占用能容纳数据的最小预留，而该预留将从集合中移除。  
+  
+ 此方法成功完成时，基序列号已更新。 其序列号小于新的基序列号的所有日志记录都不可访问。  
+  
+ 如果记录序列已经释放，或者如果传递了无效参数，此操作内将立即引发异常。 异步追加请求过程中发生的错误（例如，I/O 请求过程中的磁盘故障）将导致在调用 <xref:System.IO.Log.LogRecordSequence.EndReserveAndAppend%2A> 方法时引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="newBaseSeqNum" /> 对此序列无效。  
+  
+或 
+指定的日志枚举开始序列号无效。  
+  
+- 或 - 
+ 无法追加 <paramref name="data" />，原因是它比最大记录大小要大。  
+  
+- 或 - 
+ <paramref name="reservationCollection" /> 不是由此记录序列创建的。</exception>
+        <exception cref="T:System.ArgumentNullException">一个或多个参数为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">活动日志新存档或现有存档的尾数据或基数据无效。  
+  
+- 或 - 
+ <paramref name="newBaseSeqNum" /> 不在此序列的基序列号和最后一个序列号之间。</exception>
+        <exception cref="T:System.IO.IOException">由于出现意外的 I/O 异常，因此无法执行该请求。  
+  
+ 或  
+  
+ 由于出现 I/O 设备错误，因此无法执行该请求。</exception>
+        <exception cref="T:System.ObjectDisposedException">该方法是在序列已释放之后调用的。</exception>
+        <exception cref="T:System.OutOfMemoryException">没有足够的内存来继续执行该程序。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">操作系统拒绝了对指定的日志序列的访问。</exception>
+        <exception cref="T:System.IO.Log.SequenceFullException">记录序列已满。</exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
