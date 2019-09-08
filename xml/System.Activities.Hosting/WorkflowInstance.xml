@@ -1,0 +1,944 @@
+<Type Name="WorkflowInstance" FullName="System.Activities.Hosting.WorkflowInstance">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="fc28f05dc1d614b37de8e2d163b658a13b622888" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70411393" /></Metadata><TypeSignature Language="C#" Value="public abstract class WorkflowInstance" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract WorkflowInstance extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Activities.Hosting.WorkflowInstance" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class WorkflowInstance" />
+  <TypeSignature Language="C++ CLI" Value="public ref class WorkflowInstance abstract" />
+  <TypeSignature Language="F#" Value="type WorkflowInstance = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Activities</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary><span data-ttu-id="2dba2-101"><see cref="T:System.Activities.Hosting.WorkflowInstance" /> 是一种基于实例的轻量运行时，用于执行工作流程序。</span><span class="sxs-lookup"><span data-stu-id="2dba2-101"><see cref="T:System.Activities.Hosting.WorkflowInstance" /> is a lightweight, per-instance runtime for executing a workflow program.</span></span> <span data-ttu-id="2dba2-102">可以构造它来创建新工作流实例，或依据现有实例状态来创建它。</span><span class="sxs-lookup"><span data-stu-id="2dba2-102">It can be constructed to create a new workflow instance or from existing instance state.</span></span> <span data-ttu-id="2dba2-103"><see cref="T:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl" />公开的 API 是最小运行时控件集，可依据这些控件来实现更高级别的操作。</span><span class="sxs-lookup"><span data-stu-id="2dba2-103">The APIs that <see cref="T:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl" /> exposes are the minimal set of runtime controls from which higher level operations can be implemented.</span></span> <span data-ttu-id="2dba2-104">此 API 集表示运行时的整个范围的功能。</span><span class="sxs-lookup"><span data-stu-id="2dba2-104">This API set represents the entire breadth of functionality of the runtime.</span></span> <span data-ttu-id="2dba2-105"><see cref="T:System.Activities.Hosting.WorkflowInstance" /> 是一个抽象类，依赖于主机对其抽象方法的实现，以便提供同步、保留、跟踪和扩展等主机功能。</span><span class="sxs-lookup"><span data-stu-id="2dba2-105"><see cref="T:System.Activities.Hosting.WorkflowInstance" /> is an abstract class and relies on a host's implementation of its abstract methods in order to provide host functionality such as synchronization, persistence, tracking, and extensions.</span></span></summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="2dba2-106"><xref:System.Activities.Hosting.WorkflowInstance>是单线程的，并假定主机同步所有对它的访问。</span><span class="sxs-lookup"><span data-stu-id="2dba2-106"><xref:System.Activities.Hosting.WorkflowInstance> is single threaded and assumes that the host synchronizes all access to it.</span></span> <span data-ttu-id="2dba2-107">如果尝试同时调用多个 API，将导致引发 <xref:System.InvalidOperationException>。</span><span class="sxs-lookup"><span data-stu-id="2dba2-107">An attempt to call multiple APIs simultaneously will result in an <xref:System.InvalidOperationException> being thrown.</span></span>  
+  
+ <span data-ttu-id="2dba2-108"><xref:System.Activities.Hosting.WorkflowInstance> 在内部有两种状态：“正在运行”和“已暂停”。</span><span class="sxs-lookup"><span data-stu-id="2dba2-108">Internally, a <xref:System.Activities.Hosting.WorkflowInstance> has two states: Running and Paused.</span></span> <span data-ttu-id="2dba2-109">使运行时从已暂停状态转换为正在运行状态的唯一方法是调用 <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.Run%2A>。</span><span class="sxs-lookup"><span data-stu-id="2dba2-109">The only way to cause the runtime to transition from paused to running is to call <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.Run%2A>.</span></span> <span data-ttu-id="2dba2-110">所有操作（除“暂停”外）都只能在运行时处于“已暂停”状态时执行。</span><span class="sxs-lookup"><span data-stu-id="2dba2-110">All actions (except Pause) can only be taken while the runtime is Paused.</span></span> <span data-ttu-id="2dba2-111">在以下情况中，运行时会自然而然地变为“已暂停”状态：</span><span class="sxs-lookup"><span data-stu-id="2dba2-111">The runtime will become spontaneously Paused in the following situations:</span></span>  
+  
+-   <span data-ttu-id="2dba2-112">运行时发生致命错误。</span><span class="sxs-lookup"><span data-stu-id="2dba2-112">An error fatal to the runtime has occurred.</span></span> <span data-ttu-id="2dba2-113">将通过 <xref:System.Activities.Hosting.WorkflowInstance.OnRequestAbort%2A> 向宿主发出信号（不会发出转换为“已暂停”的信号），然后通过 <xref:System.Activities.Hosting.WorkflowInstance.OnNotifyPaused%2A> 通知宿主。</span><span class="sxs-lookup"><span data-stu-id="2dba2-113">The host will be signaled through <xref:System.Activities.Hosting.WorkflowInstance.OnRequestAbort%2A> (which does not signal a transition to Paused) and then notified through <xref:System.Activities.Hosting.WorkflowInstance.OnNotifyPaused%2A>.</span></span>  
+  
+-   <span data-ttu-id="2dba2-114">工作流中的异常处于未捕获状态，并已将根转义。</span><span class="sxs-lookup"><span data-stu-id="2dba2-114">An exception in the workflow was uncaught and escaped the root.</span></span> <span data-ttu-id="2dba2-115">将通过 <xref:System.Activities.Hosting.WorkflowInstance.OnNotifyUnhandledException%2A> 方法通知宿主。</span><span class="sxs-lookup"><span data-stu-id="2dba2-115">The host will be notified through the <xref:System.Activities.Hosting.WorkflowInstance.OnNotifyUnhandledException%2A> method.</span></span>  
+  
+-   <span data-ttu-id="2dba2-116">计划程序已用完工作项，现在为 <xref:System.Activities.Hosting.WorkflowInstanceState.Idle>。</span><span class="sxs-lookup"><span data-stu-id="2dba2-116">The scheduler has run out of work items and is now <xref:System.Activities.Hosting.WorkflowInstanceState.Idle>.</span></span> <span data-ttu-id="2dba2-117">将通过 <xref:System.Activities.Hosting.WorkflowInstance.OnNotifyPaused%2A> 方法通知宿主。</span><span class="sxs-lookup"><span data-stu-id="2dba2-117">The host will be notified through the <xref:System.Activities.Hosting.WorkflowInstance.OnNotifyPaused%2A> method.</span></span> <span data-ttu-id="2dba2-118">请注意，由于实例处于空闲状态或实例已完成，因此计划程序可能已用完工作项。</span><span class="sxs-lookup"><span data-stu-id="2dba2-118">Note that the scheduler could have run out of work items because the instance is idle or because the instance is complete.</span></span> <span data-ttu-id="2dba2-119">可以使用 <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.State%2A> 属性的 <xref:System.Activities.Hosting.WorkflowInstance.Controller%2A> 值来区分这两种状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-119">The <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.State%2A> value of the <xref:System.Activities.Hosting.WorkflowInstance.Controller%2A> property can be used to differentiate between the two.</span></span>  
+  
+ <span data-ttu-id="2dba2-120">宿主可通过调用由 <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.RequestPause%2A> 属性返回的 <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.PauseWhenPersistable%2A> 实例的 <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl> 或 <xref:System.Activities.Hosting.WorkflowInstance.Controller%2A> 方法，请求从“正在运行”更改为“已暂停”。</span><span class="sxs-lookup"><span data-stu-id="2dba2-120">The host can request a change from Running to Paused by calling the <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.RequestPause%2A> or <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.PauseWhenPersistable%2A> methods of the <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl> instance returned by the <xref:System.Activities.Hosting.WorkflowInstance.Controller%2A> property.</span></span> <span data-ttu-id="2dba2-121">不应将此请求视为具有特定的响应含义，即主机不应尝试将 OnNotify\* 或 <xref:System.Activities.Hosting.WorkflowInstance.OnRequestAbort%2A> 与特定的暂停调用相关联。</span><span class="sxs-lookup"><span data-stu-id="2dba2-121">This request should not be considered to have a specific response meaning that the host should not attempt to correlate an OnNotify\* or <xref:System.Activities.Hosting.WorkflowInstance.OnRequestAbort%2A> with a specific call to pause.</span></span> <span data-ttu-id="2dba2-122">为响应暂停请求，运行时可转换为“已暂停”，并在计划程序仍然具有挂起的工作项时调用 <xref:System.Activities.Hosting.WorkflowInstance.OnNotifyPaused%2A>。</span><span class="sxs-lookup"><span data-stu-id="2dba2-122">In response to a pause request, the runtime may transition to Paused and call <xref:System.Activities.Hosting.WorkflowInstance.OnNotifyPaused%2A> while the scheduler still has pending work items.</span></span> <span data-ttu-id="2dba2-123">可以使用 <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.State%2A> 属性的 <xref:System.Activities.Hosting.WorkflowInstance.Controller%2A> 值来确定计划程序是没有其他工作还是被暂停请求所中断。</span><span class="sxs-lookup"><span data-stu-id="2dba2-123">The <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.State%2A> value of the <xref:System.Activities.Hosting.WorkflowInstance.Controller%2A> property can be used to determine whether the scheduler has no more work or was interrupted by a request to pause.</span></span>  
+  
+ <span data-ttu-id="2dba2-124">当<xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.RequestPause%2A> 处于“正在运行状态”时，只能调用 <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl> 属性返回的 <xref:System.Activities.Hosting.WorkflowInstance.Controller%2A> 实例的 <xref:System.Activities.Hosting.WorkflowInstance> 方法。</span><span class="sxs-lookup"><span data-stu-id="2dba2-124">The <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.RequestPause%2A> method of the <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl> instance returned by the <xref:System.Activities.Hosting.WorkflowInstance.Controller%2A> property is the only method which can be called while the <xref:System.Activities.Hosting.WorkflowInstance> is in the Running state.</span></span> <span data-ttu-id="2dba2-125">调用所有其他方法都会引发 <xref:System.InvalidOperationException>。如果存在有关 <xref:System.Activities.Hosting.WorkflowInstance> 如何从一种状态转换为另一种状态的规则，则可按以下方式定义“正在运行”和“已暂停”的公共概念：</span><span class="sxs-lookup"><span data-stu-id="2dba2-125">All other methods will throw an <xref:System.InvalidOperationException> if called.Given the rules for how <xref:System.Activities.Hosting.WorkflowInstance> transitions from one state to another, the public notion of Running and Paused can be defined as follows:</span></span>  
+  
+-   <span data-ttu-id="2dba2-126">正在运行-调用<xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.Run%2A>和下一 OnNotify \* 之间的状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-126">Running - The state between a call to <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.Run%2A> and the next WorkflowInstance.OnNotify\*.</span></span>  
+  
+-   <span data-ttu-id="2dba2-127">已暂停-最后一个 OnNotify \* 和下一次调用<xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.Run%2A>之间的状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-127">Paused - The state between the last WorkflowInstance.OnNotify\* and the next call to <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.Run%2A>.</span></span>  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary><span data-ttu-id="2dba2-128">初始化 <see cref="T:System.Activities.Hosting.WorkflowInstance" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="2dba2-128">Initializes a new instance of the <see cref="T:System.Activities.Hosting.WorkflowInstance" /> class.</span></span></summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected WorkflowInstance (System.Activities.Activity workflowDefinition);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Activities.Activity workflowDefinition) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.#ctor(System.Activities.Activity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New (workflowDefinition As Activity)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; WorkflowInstance(System::Activities::Activity ^ workflowDefinition);" />
+      <MemberSignature Language="F#" Value="new System.Activities.Hosting.WorkflowInstance : System.Activities.Activity -&gt; System.Activities.Hosting.WorkflowInstance" Usage="new System.Activities.Hosting.WorkflowInstance workflowDefinition" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="workflowDefinition" Type="System.Activities.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="workflowDefinition"><span data-ttu-id="2dba2-129">对工作流加以定义的活动。</span><span class="sxs-lookup"><span data-stu-id="2dba2-129">The activity that defines the workflow.</span></span></param>
+        <summary><span data-ttu-id="2dba2-130">使用指定的工作流定义初始化 <see cref="T:System.Activities.Hosting.WorkflowInstance" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="2dba2-130">Initializes a new instance of the <see cref="T:System.Activities.Hosting.WorkflowInstance" /> class with the specified workflow definition.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected WorkflowInstance (System.Activities.Activity workflowDefinition, System.Activities.WorkflowIdentity definitionIdentity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Activities.Activity workflowDefinition, class System.Activities.WorkflowIdentity definitionIdentity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.#ctor(System.Activities.Activity,System.Activities.WorkflowIdentity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New (workflowDefinition As Activity, definitionIdentity As WorkflowIdentity)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; WorkflowInstance(System::Activities::Activity ^ workflowDefinition, System::Activities::WorkflowIdentity ^ definitionIdentity);" />
+      <MemberSignature Language="F#" Value="new System.Activities.Hosting.WorkflowInstance : System.Activities.Activity * System.Activities.WorkflowIdentity -&gt; System.Activities.Hosting.WorkflowInstance" Usage="new System.Activities.Hosting.WorkflowInstance (workflowDefinition, definitionIdentity)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="workflowDefinition" Type="System.Activities.Activity" Index="0" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="definitionIdentity" Type="System.Activities.WorkflowIdentity" Index="1" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      </Parameters>
+      <Docs>
+        <param name="workflowDefinition"><span data-ttu-id="2dba2-131">对工作流加以定义的活动。</span><span class="sxs-lookup"><span data-stu-id="2dba2-131">The activity that defines the workflow.</span></span></param>
+        <param name="definitionIdentity"><span data-ttu-id="2dba2-132">定义标识。</span><span class="sxs-lookup"><span data-stu-id="2dba2-132">The definition identity.</span></span></param>
+        <summary><span data-ttu-id="2dba2-133">使用指定的工作流定义和定义标识来初始化 <see cref="T:System.Activities.Hosting.WorkflowInstance" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="2dba2-133">Initializes a new instance of the <see cref="T:System.Activities.Hosting.WorkflowInstance" /> class with the specified workflow definition and definition identity.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginFlushTrackingRecords">
+      <MemberSignature Language="C#" Value="protected IAsyncResult BeginFlushTrackingRecords (TimeSpan timeout, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance class System.IAsyncResult BeginFlushTrackingRecords(valuetype System.TimeSpan timeout, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.BeginFlushTrackingRecords(System.TimeSpan,System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Protected Function BeginFlushTrackingRecords (timeout As TimeSpan, callback As AsyncCallback, state As Object) As IAsyncResult" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; IAsyncResult ^ BeginFlushTrackingRecords(TimeSpan timeout, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="member this.BeginFlushTrackingRecords : TimeSpan * AsyncCallback * obj -&gt; IAsyncResult" Usage="workflowInstance.BeginFlushTrackingRecords (timeout, callback, state)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" Index="0" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="callback" Type="System.AsyncCallback" Index="1" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="state" Type="System.Object" Index="2" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      </Parameters>
+      <Docs>
+        <param name="timeout"><span data-ttu-id="2dba2-134">时间段，在该时间段后将中止尝试。</span><span class="sxs-lookup"><span data-stu-id="2dba2-134">The time period after which to abort the attempt.</span></span></param>
+        <param name="callback"><span data-ttu-id="2dba2-135">要在跟踪操作完成时调用的方法。</span><span class="sxs-lookup"><span data-stu-id="2dba2-135">The method to be called when the track operation has completed.</span></span></param>
+        <param name="state"><span data-ttu-id="2dba2-136">有关异步操作的信息。</span><span class="sxs-lookup"><span data-stu-id="2dba2-136">The information about the asynchronous operation.</span></span></param>
+        <summary><span data-ttu-id="2dba2-137">由工作流运行时调用，用于开始将挂起的跟踪记录以异步方式发送给跟踪参与者。</span><span class="sxs-lookup"><span data-stu-id="2dba2-137">Called by the workflow runtime to begin sending pending tracking records to tracking participants asynchronously.</span></span></summary>
+        <returns><span data-ttu-id="2dba2-138">当前跟踪操作的状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-138">The status of the current track operation.</span></span></returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Controller">
+      <MemberSignature Language="C#" Value="protected System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl Controller { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Activities.Hosting.WorkflowInstance/WorkflowInstanceControl Controller" />
+      <MemberSignature Language="DocId" Value="P:System.Activities.Hosting.WorkflowInstance.Controller" />
+      <MemberSignature Language="VB.NET" Value="Protected ReadOnly Property Controller As WorkflowInstance.WorkflowInstanceControl" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; property System::Activities::Hosting::WorkflowInstance::WorkflowInstanceControl Controller { System::Activities::Hosting::WorkflowInstance::WorkflowInstanceControl get(); };" />
+      <MemberSignature Language="F#" Value="member this.Controller : System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl" Usage="System.Activities.Hosting.WorkflowInstance.Controller" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Activities.Hosting.WorkflowInstance+WorkflowInstanceControl</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="2dba2-139">获取此 <see cref="T:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl" /> 的 <see cref="T:System.Activities.Hosting.WorkflowInstance" /> 实例。</span><span class="sxs-lookup"><span data-stu-id="2dba2-139">Gets the <see cref="T:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl" /> instance for this <see cref="T:System.Activities.Hosting.WorkflowInstance" />.</span></span></summary>
+        <value><span data-ttu-id="2dba2-140">此工作流实例的控制器实例。</span><span class="sxs-lookup"><span data-stu-id="2dba2-140">The controller instance for this workflow instance.</span></span></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DefinitionIdentity">
+      <MemberSignature Language="C#" Value="public System.Activities.WorkflowIdentity DefinitionIdentity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Activities.WorkflowIdentity DefinitionIdentity" />
+      <MemberSignature Language="DocId" Value="P:System.Activities.Hosting.WorkflowInstance.DefinitionIdentity" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property DefinitionIdentity As WorkflowIdentity" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Activities::WorkflowIdentity ^ DefinitionIdentity { System::Activities::WorkflowIdentity ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.DefinitionIdentity : System.Activities.WorkflowIdentity" Usage="System.Activities.Hosting.WorkflowInstance.DefinitionIdentity" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Activities.WorkflowIdentity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="2dba2-141">获取或设置 <see cref="T:System.Activities.Hosting.WorkflowInstance" /> 的定义标识。</span><span class="sxs-lookup"><span data-stu-id="2dba2-141">Gets or sets the definition identity of <see cref="T:System.Activities.Hosting.WorkflowInstance" />.</span></span></summary>
+        <value><span data-ttu-id="2dba2-142"><see cref="T:System.Activities.Hosting.WorkflowInstance" /> 的定义标识。</span><span class="sxs-lookup"><span data-stu-id="2dba2-142">The definition identity of <see cref="T:System.Activities.Hosting.WorkflowInstance" />.</span></span></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DisposeExtensions">
+      <MemberSignature Language="C#" Value="protected void DisposeExtensions ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void DisposeExtensions() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.DisposeExtensions" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub DisposeExtensions ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void DisposeExtensions();" />
+      <MemberSignature Language="F#" Value="member this.DisposeExtensions : unit -&gt; unit" Usage="workflowInstance.DisposeExtensions " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="2dba2-143">对实现 <see cref="M:System.IDisposable.Dispose" /> 的所有扩展调用 <see cref="T:System.IDisposable" />。</span><span class="sxs-lookup"><span data-stu-id="2dba2-143">Calls <see cref="M:System.IDisposable.Dispose" /> on all extensions that implement <see cref="T:System.IDisposable" />.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndFlushTrackingRecords">
+      <MemberSignature Language="C#" Value="protected void EndFlushTrackingRecords (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void EndFlushTrackingRecords(class System.IAsyncResult result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.EndFlushTrackingRecords(System.IAsyncResult)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub EndFlushTrackingRecords (result As IAsyncResult)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void EndFlushTrackingRecords(IAsyncResult ^ result);" />
+      <MemberSignature Language="F#" Value="member this.EndFlushTrackingRecords : IAsyncResult -&gt; unit" Usage="workflowInstance.EndFlushTrackingRecords result" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" Index="0" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      </Parameters>
+      <Docs>
+        <param name="result"><span data-ttu-id="2dba2-144">异步跟踪操作的状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-144">The status of the asynchronous track operation.</span></span></param>
+        <summary><span data-ttu-id="2dba2-145">由工作流运行时调用，用于结束跟踪操作。</span><span class="sxs-lookup"><span data-stu-id="2dba2-145">Called by the workflow runtime to end the track operation.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FlushTrackingRecords">
+      <MemberSignature Language="C#" Value="protected void FlushTrackingRecords (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void FlushTrackingRecords(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.FlushTrackingRecords(System.TimeSpan)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub FlushTrackingRecords (timeout As TimeSpan)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void FlushTrackingRecords(TimeSpan timeout);" />
+      <MemberSignature Language="F#" Value="member this.FlushTrackingRecords : TimeSpan -&gt; unit" Usage="workflowInstance.FlushTrackingRecords timeout" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeout" Type="System.TimeSpan" Index="0" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      </Parameters>
+      <Docs>
+        <param name="timeout"><span data-ttu-id="2dba2-146">时间段，在该时间段后将中止尝试。</span><span class="sxs-lookup"><span data-stu-id="2dba2-146">The time period after which to abort the attempt.</span></span></param>
+        <summary><span data-ttu-id="2dba2-147">由工作流运行时调用，用于将挂起的跟踪记录发送给跟踪参与者。</span><span class="sxs-lookup"><span data-stu-id="2dba2-147">Called by the workflow runtime to send pending tracking records to tracking participants.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetActivitiesBlockingUpdate">
+      <MemberSignature Language="C#" Value="protected static System.Collections.Generic.IList&lt;System.Activities.DynamicUpdate.ActivityBlockingUpdate&gt; GetActivitiesBlockingUpdate (object deserializedRuntimeState, System.Activities.DynamicUpdate.DynamicUpdateMap updateMap);" />
+      <MemberSignature Language="ILAsm" Value=".method familystatic hidebysig class System.Collections.Generic.IList`1&lt;class System.Activities.DynamicUpdate.ActivityBlockingUpdate&gt; GetActivitiesBlockingUpdate(object deserializedRuntimeState, class System.Activities.DynamicUpdate.DynamicUpdateMap updateMap) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.GetActivitiesBlockingUpdate(System.Object,System.Activities.DynamicUpdate.DynamicUpdateMap)" />
+      <MemberSignature Language="VB.NET" Value="Protected Shared Function GetActivitiesBlockingUpdate (deserializedRuntimeState As Object, updateMap As DynamicUpdateMap) As IList(Of ActivityBlockingUpdate)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; static System::Collections::Generic::IList&lt;System::Activities::DynamicUpdate::ActivityBlockingUpdate ^&gt; ^ GetActivitiesBlockingUpdate(System::Object ^ deserializedRuntimeState, System::Activities::DynamicUpdate::DynamicUpdateMap ^ updateMap);" />
+      <MemberSignature Language="F#" Value="static member GetActivitiesBlockingUpdate : obj * System.Activities.DynamicUpdate.DynamicUpdateMap -&gt; System.Collections.Generic.IList&lt;System.Activities.DynamicUpdate.ActivityBlockingUpdate&gt;" Usage="System.Activities.Hosting.WorkflowInstance.GetActivitiesBlockingUpdate (deserializedRuntimeState, updateMap)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Activities.DynamicUpdate.ActivityBlockingUpdate&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="deserializedRuntimeState" Type="System.Object" Index="0" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="updateMap" Type="System.Activities.DynamicUpdate.DynamicUpdateMap" Index="1" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      </Parameters>
+      <Docs>
+        <param name="deserializedRuntimeState"><span data-ttu-id="2dba2-148">反序列化的运行时状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-148">The deserialized runtime state.</span></span></param>
+        <param name="updateMap"><span data-ttu-id="2dba2-149">更新映射。</span><span class="sxs-lookup"><span data-stu-id="2dba2-149">The update map.</span></span></param>
+        <summary><span data-ttu-id="2dba2-150">检索阻塞工作流更新的活动列表。</span><span class="sxs-lookup"><span data-stu-id="2dba2-150">Retrieves the list of activity that is blocking the update of the workflow.</span></span></summary>
+        <returns><span data-ttu-id="2dba2-151">正在禁止更新的活动列表。</span><span class="sxs-lookup"><span data-stu-id="2dba2-151">The list of activity that is blocking the update.</span></span></returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExtension&lt;T&gt;">
+      <MemberSignature Language="C#" Value="protected internal T GetExtension&lt;T&gt; () where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig instance !!T GetExtension&lt;class T&gt;() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.GetExtension``1" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Function GetExtension(Of T As Class) () As T" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA;generic &lt;typename T&gt;&#xA; where T : class T GetExtension();" />
+      <MemberSignature Language="F#" Value="member this.GetExtension : unit -&gt; 'T (requires 'T : null)" Usage="workflowInstance.GetExtension " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <typeparam name="T"><span data-ttu-id="2dba2-152">要查找的扩展的类型。</span><span class="sxs-lookup"><span data-stu-id="2dba2-152">The type of the extension to find.</span></span></typeparam>
+        <summary><span data-ttu-id="2dba2-153">返回指定类型的扩展。</span><span class="sxs-lookup"><span data-stu-id="2dba2-153">Returns an extension of the specified type.</span></span></summary>
+        <returns><span data-ttu-id="2dba2-154">指定类型的扩展。</span><span class="sxs-lookup"><span data-stu-id="2dba2-154">An extension of the specified type.</span></span></returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetExtensions&lt;T&gt;">
+      <MemberSignature Language="C#" Value="protected internal System.Collections.Generic.IEnumerable&lt;T&gt; GetExtensions&lt;T&gt; () where T : class;" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig instance class System.Collections.Generic.IEnumerable`1&lt;!!T&gt; GetExtensions&lt;class T&gt;() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.GetExtensions``1" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Function GetExtensions(Of T As Class) () As IEnumerable(Of T)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA;generic &lt;typename T&gt;&#xA; where T : class System::Collections::Generic::IEnumerable&lt;T&gt; ^ GetExtensions();" />
+      <MemberSignature Language="F#" Value="member this.GetExtensions : unit -&gt; seq&lt;'T (requires 'T : null)&gt; (requires 'T : null)" Usage="workflowInstance.GetExtensions " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T">
+          <Constraints>
+            <ParameterAttribute>ReferenceTypeConstraint</ParameterAttribute>
+          </Constraints>
+        </TypeParameter>
+      </TypeParameters>
+      <Parameters />
+      <Docs>
+        <typeparam name="T"><span data-ttu-id="2dba2-155">要查找的扩展的类型。</span><span class="sxs-lookup"><span data-stu-id="2dba2-155">The type of the extension to find.</span></span></typeparam>
+        <summary><span data-ttu-id="2dba2-156">返回针对指定类型找到的所有扩展。</span><span class="sxs-lookup"><span data-stu-id="2dba2-156">Returns all extensions found for the specified type.</span></span></summary>
+        <returns><span data-ttu-id="2dba2-157">针对指定类型找到的所有扩展。</span><span class="sxs-lookup"><span data-stu-id="2dba2-157">All extensions found for the specified type.</span></span></returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="HostEnvironment">
+      <MemberSignature Language="C#" Value="public System.Activities.LocationReferenceEnvironment HostEnvironment { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Activities.LocationReferenceEnvironment HostEnvironment" />
+      <MemberSignature Language="DocId" Value="P:System.Activities.Hosting.WorkflowInstance.HostEnvironment" />
+      <MemberSignature Language="VB.NET" Value="Public Property HostEnvironment As LocationReferenceEnvironment" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Activities::LocationReferenceEnvironment ^ HostEnvironment { System::Activities::LocationReferenceEnvironment ^ get(); void set(System::Activities::LocationReferenceEnvironment ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.HostEnvironment : System.Activities.LocationReferenceEnvironment with get, set" Usage="System.Activities.Hosting.WorkflowInstance.HostEnvironment" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Activities.LocationReferenceEnvironment</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="2dba2-158">获取或设置工作流实例的自变量和变量的根环境。</span><span class="sxs-lookup"><span data-stu-id="2dba2-158">Gets or sets the root environment for the workflow instance's arguments and variables.</span></span></summary>
+        <value><span data-ttu-id="2dba2-159">工作流实例的参数和变量的根环境。</span><span class="sxs-lookup"><span data-stu-id="2dba2-159">The root environment for the workflow instance's arguments and variables.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="2dba2-160">如果在初始化并<xref:System.Activities.Hosting.WorkflowInstance.IsReadOnly%2A>返回`true`工作流实例后设置此属性， <xref:System.InvalidOperationException>则会引发。</span><span class="sxs-lookup"><span data-stu-id="2dba2-160">If this property is set after the workflow instance is initialized and <xref:System.Activities.Hosting.WorkflowInstance.IsReadOnly%2A> returns `true`, an <xref:System.InvalidOperationException> is thrown.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Id">
+      <MemberSignature Language="C#" Value="public abstract Guid Id { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Guid Id" />
+      <MemberSignature Language="DocId" Value="P:System.Activities.Hosting.WorkflowInstance.Id" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride ReadOnly Property Id As Guid" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract property Guid Id { Guid get(); };" />
+      <MemberSignature Language="F#" Value="member this.Id : Guid" Usage="System.Activities.Hosting.WorkflowInstance.Id" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="2dba2-161">获取工作流实例的唯一标识符。</span><span class="sxs-lookup"><span data-stu-id="2dba2-161">Gets the unique identifier for the workflow instance.</span></span></summary>
+        <value><span data-ttu-id="2dba2-162">工作流实例的唯一标识符。</span><span class="sxs-lookup"><span data-stu-id="2dba2-162">The unique identifier for the workflow instance.</span></span></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Initialize">
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary><span data-ttu-id="2dba2-163">由宿主调用，用于初始化工作流实例。</span><span class="sxs-lookup"><span data-stu-id="2dba2-163">Called by the host to initialize the workflow instance.</span></span></summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="protected void Initialize (object deserializedRuntimeState);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void Initialize(object deserializedRuntimeState) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.Initialize(System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub Initialize (deserializedRuntimeState As Object)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void Initialize(System::Object ^ deserializedRuntimeState);" />
+      <MemberSignature Language="F#" Value="member this.Initialize : obj -&gt; unit" Usage="workflowInstance.Initialize deserializedRuntimeState" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="deserializedRuntimeState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="deserializedRuntimeState"><span data-ttu-id="2dba2-164">用于执行工作流的运行时状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-164">The run-time state used to execute the workflow.</span></span></param>
+        <summary><span data-ttu-id="2dba2-165">由宿主调用，用于使用工作流运行时状态初始化工作流实例。</span><span class="sxs-lookup"><span data-stu-id="2dba2-165">Called by the host to initialize the workflow instance with the workflow run-time state.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="protected void Initialize (System.Collections.Generic.IDictionary&lt;string,object&gt; workflowArgumentValues, System.Collections.Generic.IList&lt;System.Activities.Handle&gt; workflowExecutionProperties);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void Initialize(class System.Collections.Generic.IDictionary`2&lt;string, object&gt; workflowArgumentValues, class System.Collections.Generic.IList`1&lt;class System.Activities.Handle&gt; workflowExecutionProperties) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.Initialize(System.Collections.Generic.IDictionary{System.String,System.Object},System.Collections.Generic.IList{System.Activities.Handle})" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub Initialize (workflowArgumentValues As IDictionary(Of String, Object), workflowExecutionProperties As IList(Of Handle))" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void Initialize(System::Collections::Generic::IDictionary&lt;System::String ^, System::Object ^&gt; ^ workflowArgumentValues, System::Collections::Generic::IList&lt;System::Activities::Handle ^&gt; ^ workflowExecutionProperties);" />
+      <MemberSignature Language="F#" Value="member this.Initialize : System.Collections.Generic.IDictionary&lt;string, obj&gt; * System.Collections.Generic.IList&lt;System.Activities.Handle&gt; -&gt; unit" Usage="workflowInstance.Initialize (workflowArgumentValues, workflowExecutionProperties)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="workflowArgumentValues" Type="System.Collections.Generic.IDictionary&lt;System.String,System.Object&gt;" />
+        <Parameter Name="workflowExecutionProperties" Type="System.Collections.Generic.IList&lt;System.Activities.Handle&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="workflowArgumentValues"><span data-ttu-id="2dba2-166">工作流的输入参数，由参数名进行键控。</span><span class="sxs-lookup"><span data-stu-id="2dba2-166">The input parameters to the workflow, keyed by argument name.</span></span></param>
+        <param name="workflowExecutionProperties"><span data-ttu-id="2dba2-167">工作流执行属性的列表。</span><span class="sxs-lookup"><span data-stu-id="2dba2-167">The list of workflow execution properties.</span></span></param>
+        <summary><span data-ttu-id="2dba2-168">由宿主调用，用于使用参数值和执行属性初始化工作流实例。</span><span class="sxs-lookup"><span data-stu-id="2dba2-168">Called by the host to initialize the workflow instance with the argument values and execution properties.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="protected void Initialize (object deserializedRuntimeState, System.Activities.DynamicUpdate.DynamicUpdateMap updateMap);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void Initialize(object deserializedRuntimeState, class System.Activities.DynamicUpdate.DynamicUpdateMap updateMap) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.Initialize(System.Object,System.Activities.DynamicUpdate.DynamicUpdateMap)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub Initialize (deserializedRuntimeState As Object, updateMap As DynamicUpdateMap)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void Initialize(System::Object ^ deserializedRuntimeState, System::Activities::DynamicUpdate::DynamicUpdateMap ^ updateMap);" />
+      <MemberSignature Language="F#" Value="member this.Initialize : obj * System.Activities.DynamicUpdate.DynamicUpdateMap -&gt; unit" Usage="workflowInstance.Initialize (deserializedRuntimeState, updateMap)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="deserializedRuntimeState" Type="System.Object" Index="0" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="updateMap" Type="System.Activities.DynamicUpdate.DynamicUpdateMap" Index="1" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      </Parameters>
+      <Docs>
+        <param name="deserializedRuntimeState"><span data-ttu-id="2dba2-169">用于执行工作流的运行时状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-169">The run-time state used to execute the workflow.</span></span></param>
+        <param name="updateMap"><span data-ttu-id="2dba2-170">更新映射。</span><span class="sxs-lookup"><span data-stu-id="2dba2-170">The update map.</span></span></param>
+        <summary><span data-ttu-id="2dba2-171">由宿主调用，用于使用工作流运行时状态和更新映射初始化工作流实例。</span><span class="sxs-lookup"><span data-stu-id="2dba2-171">Called by the host to initialize the workflow instance with the workflow run-time state and update map.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="protected bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberSignature Language="DocId" Value="P:System.Activities.Hosting.WorkflowInstance.IsReadOnly" />
+      <MemberSignature Language="VB.NET" Value="Protected ReadOnly Property IsReadOnly As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; property bool IsReadOnly { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsReadOnly : bool" Usage="System.Activities.Hosting.WorkflowInstance.IsReadOnly" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="2dba2-172">获取一个值，该值指示工作流实例是否已初始化。</span><span class="sxs-lookup"><span data-stu-id="2dba2-172">Gets a value that indicates whether the workflow instance has been initialized.</span></span></summary>
+        <value><span data-ttu-id="2dba2-173">如果该工作流实例已初始化，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="2dba2-173"><see langword="true" /> if the workflow instance has been initialized; otherwise, <see langword="false" />.</span></span></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnBeginAssociateKeys">
+      <MemberSignature Language="C#" Value="protected internal abstract IAsyncResult OnBeginAssociateKeys (System.Collections.Generic.ICollection&lt;System.Runtime.DurableInstancing.InstanceKey&gt; keys, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.IAsyncResult OnBeginAssociateKeys(class System.Collections.Generic.ICollection`1&lt;class System.Runtime.DurableInstancing.InstanceKey&gt; keys, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnBeginAssociateKeys(System.Collections.Generic.ICollection{System.Runtime.DurableInstancing.InstanceKey},System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Function OnBeginAssociateKeys (keys As ICollection(Of InstanceKey), callback As AsyncCallback, state As Object) As IAsyncResult" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract IAsyncResult ^ OnBeginAssociateKeys(System::Collections::Generic::ICollection&lt;System::Runtime::DurableInstancing::InstanceKey ^&gt; ^ keys, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member OnBeginAssociateKeys : System.Collections.Generic.ICollection&lt;System.Runtime.DurableInstancing.InstanceKey&gt; * AsyncCallback * obj -&gt; IAsyncResult" Usage="workflowInstance.OnBeginAssociateKeys (keys, callback, state)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="keys" Type="System.Collections.Generic.ICollection&lt;System.Runtime.DurableInstancing.InstanceKey&gt;" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="keys"><span data-ttu-id="2dba2-174">要与此工作流实例关联的实例键。</span><span class="sxs-lookup"><span data-stu-id="2dba2-174">The instance keys to associate with this workflow instance.</span></span></param>
+        <param name="callback"><span data-ttu-id="2dba2-175">要在操作完成时调用的方法。</span><span class="sxs-lookup"><span data-stu-id="2dba2-175">The method to be called when the operation completes.</span></span></param>
+        <param name="state"><span data-ttu-id="2dba2-176">一个特定于应用程序的可选对象，其中包含有关异步操作的信息。</span><span class="sxs-lookup"><span data-stu-id="2dba2-176">An optional application-specific object that contains information about the asynchronous operation.</span></span></param>
+        <summary><span data-ttu-id="2dba2-177">由工作流运行时调用，用于通知宿主新的实例键应与此实例关联。</span><span class="sxs-lookup"><span data-stu-id="2dba2-177">Called by the workflow runtime to notify the host that new instance keys should be associated with this instance.</span></span></summary>
+        <returns><span data-ttu-id="2dba2-178">对异步关联键操作的引用。</span><span class="sxs-lookup"><span data-stu-id="2dba2-178">A reference to the asynchronous associate keys operation.</span></span></returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnBeginFlushTrackingRecords">
+      <MemberSignature Language="C#" Value="protected virtual IAsyncResult OnBeginFlushTrackingRecords (AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.IAsyncResult OnBeginFlushTrackingRecords(class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnBeginFlushTrackingRecords(System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Function OnBeginFlushTrackingRecords (callback As AsyncCallback, state As Object) As IAsyncResult" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual IAsyncResult ^ OnBeginFlushTrackingRecords(AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member OnBeginFlushTrackingRecords : AsyncCallback * obj -&gt; IAsyncResult&#xA;override this.OnBeginFlushTrackingRecords : AsyncCallback * obj -&gt; IAsyncResult" Usage="workflowInstance.OnBeginFlushTrackingRecords (callback, state)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="callback"><span data-ttu-id="2dba2-179">要在跟踪操作完成时调用的方法。</span><span class="sxs-lookup"><span data-stu-id="2dba2-179">The method to be called when the track operation has completed.</span></span></param>
+        <param name="state"><span data-ttu-id="2dba2-180">有关异步操作的信息。</span><span class="sxs-lookup"><span data-stu-id="2dba2-180">The information about the asynchronous operation.</span></span></param>
+        <summary><span data-ttu-id="2dba2-181">异步调用，用于要求主机针对跟踪参与者刷新挂起的跟踪记录。</span><span class="sxs-lookup"><span data-stu-id="2dba2-181">Asynchronous call to ask host to flush pending tracking records to tracking participants.</span></span></summary>
+        <returns><span data-ttu-id="2dba2-182">当前跟踪操作的状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-182">The status of the current track operation.</span></span></returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnBeginPersist">
+      <MemberSignature Language="C#" Value="protected internal abstract IAsyncResult OnBeginPersist (AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.IAsyncResult OnBeginPersist(class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnBeginPersist(System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Function OnBeginPersist (callback As AsyncCallback, state As Object) As IAsyncResult" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract IAsyncResult ^ OnBeginPersist(AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member OnBeginPersist : AsyncCallback * obj -&gt; IAsyncResult" Usage="workflowInstance.OnBeginPersist (callback, state)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="callback"><span data-ttu-id="2dba2-183">要在保留操作完成时调用的方法。</span><span class="sxs-lookup"><span data-stu-id="2dba2-183">The method to be called when the persist operation has completed.</span></span></param>
+        <param name="state"><span data-ttu-id="2dba2-184">一个特定于应用程序的可选对象，其中包含有关异步操作的信息。</span><span class="sxs-lookup"><span data-stu-id="2dba2-184">An optional application-specific object that contains information about the asynchronous operation.</span></span></param>
+        <summary><span data-ttu-id="2dba2-185">要求宿主保留工作流的异步调用。</span><span class="sxs-lookup"><span data-stu-id="2dba2-185">Asynchronous call to ask the host to persist the workflow.</span></span></summary>
+        <returns><span data-ttu-id="2dba2-186">对当前保留操作的引用。</span><span class="sxs-lookup"><span data-stu-id="2dba2-186">A reference to the current persist operation.</span></span></returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnBeginResumeBookmark">
+      <MemberSignature Language="C#" Value="protected internal abstract IAsyncResult OnBeginResumeBookmark (System.Activities.Bookmark bookmark, object value, TimeSpan timeout, AsyncCallback callback, object state);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.IAsyncResult OnBeginResumeBookmark(class System.Activities.Bookmark bookmark, object value, valuetype System.TimeSpan timeout, class System.AsyncCallback callback, object state) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnBeginResumeBookmark(System.Activities.Bookmark,System.Object,System.TimeSpan,System.AsyncCallback,System.Object)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract IAsyncResult ^ OnBeginResumeBookmark(System::Activities::Bookmark ^ bookmark, System::Object ^ value, TimeSpan timeout, AsyncCallback ^ callback, System::Object ^ state);" />
+      <MemberSignature Language="F#" Value="abstract member OnBeginResumeBookmark : System.Activities.Bookmark * obj * TimeSpan * AsyncCallback * obj -&gt; IAsyncResult" Usage="workflowInstance.OnBeginResumeBookmark (bookmark, value, timeout, callback, state)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="bookmark" Type="System.Activities.Bookmark" />
+        <Parameter Name="value" Type="System.Object" />
+        <Parameter Name="timeout" Type="System.TimeSpan" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="state" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="bookmark"><span data-ttu-id="2dba2-187">要恢复的书签。</span><span class="sxs-lookup"><span data-stu-id="2dba2-187">The bookmark to resume.</span></span></param>
+        <param name="value"><span data-ttu-id="2dba2-188">要传递给创建 <see cref="T:System.Activities.Bookmark" /> 的活动的数据。</span><span class="sxs-lookup"><span data-stu-id="2dba2-188">The data to be passed to the activity that created the <see cref="T:System.Activities.Bookmark" />.</span></span></param>
+        <param name="timeout"><span data-ttu-id="2dba2-189">必须在此时间内完成恢复操作的时间间隔，否则，将取消该操作并引发 <see cref="T:System.TimeoutException" />。</span><span class="sxs-lookup"><span data-stu-id="2dba2-189">The interval in which the resume operation must complete before the operation is canceled and a <see cref="T:System.TimeoutException" /> is thrown.</span></span></param>
+        <param name="callback"><span data-ttu-id="2dba2-190">要在恢复操作完成后调用的方法。</span><span class="sxs-lookup"><span data-stu-id="2dba2-190">The method to be called when the resume operation has completed.</span></span></param>
+        <param name="state"><span data-ttu-id="2dba2-191">一个特定于应用程序的可选对象，其中包含有关异步操作的信息。</span><span class="sxs-lookup"><span data-stu-id="2dba2-191">An optional application-specific object that contains information about the asynchronous operation.</span></span></param>
+        <summary><span data-ttu-id="2dba2-192">由工作流运行时调用，用于通知宿主恢复书签操作已开始。</span><span class="sxs-lookup"><span data-stu-id="2dba2-192">Called by the workflow runtime to notify the host that a resume bookmark operation is beginning.</span></span></summary>
+        <returns><span data-ttu-id="2dba2-193">对异步恢复操作的引用。</span><span class="sxs-lookup"><span data-stu-id="2dba2-193">A reference to the asynchronous resume operation.</span></span></returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnDisassociateKeys">
+      <MemberSignature Language="C#" Value="protected internal abstract void OnDisassociateKeys (System.Collections.Generic.ICollection&lt;System.Runtime.DurableInstancing.InstanceKey&gt; keys);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void OnDisassociateKeys(class System.Collections.Generic.ICollection`1&lt;class System.Runtime.DurableInstancing.InstanceKey&gt; keys) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnDisassociateKeys(System.Collections.Generic.ICollection{System.Runtime.DurableInstancing.InstanceKey})" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Sub OnDisassociateKeys (keys As ICollection(Of InstanceKey))" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract void OnDisassociateKeys(System::Collections::Generic::ICollection&lt;System::Runtime::DurableInstancing::InstanceKey ^&gt; ^ keys);" />
+      <MemberSignature Language="F#" Value="abstract member OnDisassociateKeys : System.Collections.Generic.ICollection&lt;System.Runtime.DurableInstancing.InstanceKey&gt; -&gt; unit" Usage="workflowInstance.OnDisassociateKeys keys" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="keys" Type="System.Collections.Generic.ICollection&lt;System.Runtime.DurableInstancing.InstanceKey&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="keys"><span data-ttu-id="2dba2-194">要取消关联的键的列表。</span><span class="sxs-lookup"><span data-stu-id="2dba2-194">The list of keys to disassociate.</span></span></param>
+        <summary><span data-ttu-id="2dba2-195">由工作流运行时调用，用于通知宿主某些实例键集不应再与此实例关联。</span><span class="sxs-lookup"><span data-stu-id="2dba2-195">Called by the workflow runtime to notify the host that a certain set of instance keys should no longer be associated with this instance.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnEndAssociateKeys">
+      <MemberSignature Language="C#" Value="protected internal abstract void OnEndAssociateKeys (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void OnEndAssociateKeys(class System.IAsyncResult result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnEndAssociateKeys(System.IAsyncResult)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Sub OnEndAssociateKeys (result As IAsyncResult)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract void OnEndAssociateKeys(IAsyncResult ^ result);" />
+      <MemberSignature Language="F#" Value="abstract member OnEndAssociateKeys : IAsyncResult -&gt; unit" Usage="workflowInstance.OnEndAssociateKeys result" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result"><span data-ttu-id="2dba2-196">对异步关联键操作的引用。</span><span class="sxs-lookup"><span data-stu-id="2dba2-196">The reference to the asynchronous associate keys operation.</span></span></param>
+        <summary><span data-ttu-id="2dba2-197">由工作流运行时调用，用于通知宿主关联键操作已完成。</span><span class="sxs-lookup"><span data-stu-id="2dba2-197">Called by the workflow runtime to notify the host that an associate keys operation is complete.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnEndFlushTrackingRecords">
+      <MemberSignature Language="C#" Value="protected virtual void OnEndFlushTrackingRecords (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnEndFlushTrackingRecords(class System.IAsyncResult result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnEndFlushTrackingRecords(System.IAsyncResult)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnEndFlushTrackingRecords (result As IAsyncResult)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnEndFlushTrackingRecords(IAsyncResult ^ result);" />
+      <MemberSignature Language="F#" Value="abstract member OnEndFlushTrackingRecords : IAsyncResult -&gt; unit&#xA;override this.OnEndFlushTrackingRecords : IAsyncResult -&gt; unit" Usage="workflowInstance.OnEndFlushTrackingRecords result" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result"><span data-ttu-id="2dba2-198">异步刷新跟踪记录操作的状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-198">The status of the asynchronous flush tracking records operation.</span></span></param>
+        <summary><span data-ttu-id="2dba2-199">由工作流运行时调用，用于在刷新跟踪记录操作完成时通知宿主。</span><span class="sxs-lookup"><span data-stu-id="2dba2-199">Called by the workflow runtime to notify the host when the flush tracking records operation is complete.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnEndPersist">
+      <MemberSignature Language="C#" Value="protected internal abstract void OnEndPersist (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void OnEndPersist(class System.IAsyncResult result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnEndPersist(System.IAsyncResult)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Sub OnEndPersist (result As IAsyncResult)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract void OnEndPersist(IAsyncResult ^ result);" />
+      <MemberSignature Language="F#" Value="abstract member OnEndPersist : IAsyncResult -&gt; unit" Usage="workflowInstance.OnEndPersist result" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result"><span data-ttu-id="2dba2-200">对异步保留操作的引用。</span><span class="sxs-lookup"><span data-stu-id="2dba2-200">The reference to the asynchronous persist operation.</span></span></param>
+        <summary><span data-ttu-id="2dba2-201">由工作流运行时调用，用于通知宿主保留操作已完成。</span><span class="sxs-lookup"><span data-stu-id="2dba2-201">Called by the workflow runtime to notify the host that a persist operation is complete.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnEndResumeBookmark">
+      <MemberSignature Language="C#" Value="protected internal abstract System.Activities.BookmarkResumptionResult OnEndResumeBookmark (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance valuetype System.Activities.BookmarkResumptionResult OnEndResumeBookmark(class System.IAsyncResult result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnEndResumeBookmark(System.IAsyncResult)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Function OnEndResumeBookmark (result As IAsyncResult) As BookmarkResumptionResult" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract System::Activities::BookmarkResumptionResult OnEndResumeBookmark(IAsyncResult ^ result);" />
+      <MemberSignature Language="F#" Value="abstract member OnEndResumeBookmark : IAsyncResult -&gt; System.Activities.BookmarkResumptionResult" Usage="workflowInstance.OnEndResumeBookmark result" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Activities.BookmarkResumptionResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result"><span data-ttu-id="2dba2-202">对异步恢复书签操作的引用。</span><span class="sxs-lookup"><span data-stu-id="2dba2-202">The reference to the asynchronous resume bookmark operation.</span></span></param>
+        <summary><span data-ttu-id="2dba2-203">由工作流运行时调用，用于通知宿主恢复书签操作已完成。</span><span class="sxs-lookup"><span data-stu-id="2dba2-203">Called by the workflow runtime to notify the host that a resume bookmark operation is complete.</span></span></summary>
+        <returns><span data-ttu-id="2dba2-204">指示 <see cref="T:System.Activities.Bookmark" /> 恢复操作结果的枚举值之一。</span><span class="sxs-lookup"><span data-stu-id="2dba2-204">One of the enumeration values that indicates the result of a <see cref="T:System.Activities.Bookmark" /> resume operation.</span></span></returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnNotifyPaused">
+      <MemberSignature Language="C#" Value="protected abstract void OnNotifyPaused ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnNotifyPaused() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnNotifyPaused" />
+      <MemberSignature Language="VB.NET" Value="Protected MustOverride Sub OnNotifyPaused ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; abstract void OnNotifyPaused();" />
+      <MemberSignature Language="F#" Value="abstract member OnNotifyPaused : unit -&gt; unit" Usage="workflowInstance.OnNotifyPaused " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="2dba2-205">由工作流运行时调用，用于通知宿主工作流已从“正在运行”状态转换为“已暂停”状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-205">Called by the workflow runtime to notify the host that the workflow instance has transitioned from the running state to the paused state.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnNotifyUnhandledException">
+      <MemberSignature Language="C#" Value="protected abstract void OnNotifyUnhandledException (Exception exception, System.Activities.Activity source, string sourceInstanceId);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnNotifyUnhandledException(class System.Exception exception, class System.Activities.Activity source, string sourceInstanceId) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnNotifyUnhandledException(System.Exception,System.Activities.Activity,System.String)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; abstract void OnNotifyUnhandledException(Exception ^ exception, System::Activities::Activity ^ source, System::String ^ sourceInstanceId);" />
+      <MemberSignature Language="F#" Value="abstract member OnNotifyUnhandledException : Exception * System.Activities.Activity * string -&gt; unit" Usage="workflowInstance.OnNotifyUnhandledException (exception, source, sourceInstanceId)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exception" Type="System.Exception" />
+        <Parameter Name="source" Type="System.Activities.Activity" />
+        <Parameter Name="sourceInstanceId" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="exception"><span data-ttu-id="2dba2-206">未处理的异常。</span><span class="sxs-lookup"><span data-stu-id="2dba2-206">The unhandled exception.</span></span></param>
+        <param name="source"><span data-ttu-id="2dba2-207">引发异常的活动。</span><span class="sxs-lookup"><span data-stu-id="2dba2-207">The activity that threw the exception.</span></span></param>
+        <param name="sourceInstanceId"><span data-ttu-id="2dba2-208"><see cref="T:System.Activities.ActivityInstance" /> 的唯一标识符，表示引发异常的活动。</span><span class="sxs-lookup"><span data-stu-id="2dba2-208">The unique identifier of the <see cref="T:System.Activities.ActivityInstance" /> representing the activity that threw the exception.</span></span></param>
+        <summary><span data-ttu-id="2dba2-209">由工作流运行时调用，用于通知宿主工作流实例中发生了未经处理的异常。</span><span class="sxs-lookup"><span data-stu-id="2dba2-209">Called by the workflow runtime to notify the host an unhandled exception has occurred in the workflow instance.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnRequestAbort">
+      <MemberSignature Language="C#" Value="protected internal abstract void OnRequestAbort (Exception reason);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void OnRequestAbort(class System.Exception reason) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.OnRequestAbort(System.Exception)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Sub OnRequestAbort (reason As Exception)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract void OnRequestAbort(Exception ^ reason);" />
+      <MemberSignature Language="F#" Value="abstract member OnRequestAbort : Exception -&gt; unit" Usage="workflowInstance.OnRequestAbort reason" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reason" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="reason"><span data-ttu-id="2dba2-210">中止工作流实例的原因。</span><span class="sxs-lookup"><span data-stu-id="2dba2-210">The reason for aborting the workflow instance.</span></span></param>
+        <summary><span data-ttu-id="2dba2-211">由工作流运行时调用，用于通知宿主已请求对工作流实例进行中止操作。</span><span class="sxs-lookup"><span data-stu-id="2dba2-211">Called by the workflow runtime to notify the host that an abort operation has been requested for the workflow instance.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="2dba2-212">调用 <xref:System.Activities.Hosting.WorkflowInstance.OnRequestAbort%2A> 之后，大多数 <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl> API（<xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.Abort%2A> 除外）都将引发 <xref:System.InvalidOperationException>。</span><span class="sxs-lookup"><span data-stu-id="2dba2-212">Once <xref:System.Activities.Hosting.WorkflowInstance.OnRequestAbort%2A> is called, most <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl> APIs except <xref:System.Activities.Hosting.WorkflowInstance.WorkflowInstanceControl.Abort%2A> will throw an <xref:System.InvalidOperationException>.</span></span> <span data-ttu-id="2dba2-213">调用 <xref:System.Activities.Hosting.WorkflowInstance.OnRequestAbort%2A> 之后，宿主预期将转换为其可满足中止条件的状态。</span><span class="sxs-lookup"><span data-stu-id="2dba2-213">It is expected that after <xref:System.Activities.Hosting.WorkflowInstance.OnRequestAbort%2A> is called a host will trend toward a state in which it can satisfy the abort.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RegisterExtensionManager">
+      <MemberSignature Language="C#" Value="protected void RegisterExtensionManager (System.Activities.Hosting.WorkflowInstanceExtensionManager extensionManager);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void RegisterExtensionManager(class System.Activities.Hosting.WorkflowInstanceExtensionManager extensionManager) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.RegisterExtensionManager(System.Activities.Hosting.WorkflowInstanceExtensionManager)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub RegisterExtensionManager (extensionManager As WorkflowInstanceExtensionManager)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void RegisterExtensionManager(System::Activities::Hosting::WorkflowInstanceExtensionManager ^ extensionManager);" />
+      <MemberSignature Language="F#" Value="member this.RegisterExtensionManager : System.Activities.Hosting.WorkflowInstanceExtensionManager -&gt; unit" Usage="workflowInstance.RegisterExtensionManager extensionManager" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="extensionManager" Type="System.Activities.Hosting.WorkflowInstanceExtensionManager" />
+      </Parameters>
+      <Docs>
+        <param name="extensionManager"><span data-ttu-id="2dba2-214">要注册的扩展管理器。</span><span class="sxs-lookup"><span data-stu-id="2dba2-214">The extension manager to register.</span></span></param>
+        <summary><span data-ttu-id="2dba2-215">由宿主调用，用于注册指定的扩展管理器、验证所有必需的扩展是否存在，以及初始化要使用的扩展的集合。</span><span class="sxs-lookup"><span data-stu-id="2dba2-215">Called by the host to register the specified extension manager, validate that all required extensions are present, and to initialize the collection of extensions to be used.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="2dba2-216">扩展由类型进行键控，并将始终使用宿主提供的扩展（如果已提供）。</span><span class="sxs-lookup"><span data-stu-id="2dba2-216">Extensions are keyed by type, and a host provided extension will always be used if provided.</span></span> <span data-ttu-id="2dba2-217">通过 <xref:System.Activities.Hosting.WorkflowInstanceExtensionManager.Add%2A> 添加的扩展使用对象的运行时类型作为类型键。</span><span class="sxs-lookup"><span data-stu-id="2dba2-217">Extensions added through <xref:System.Activities.Hosting.WorkflowInstanceExtensionManager.Add%2A> use the runtime type of the object as the type key.</span></span> <span data-ttu-id="2dba2-218">通过<xref:System.Activities.Hosting.WorkflowInstanceExtensionManager.Add%2A>使用 Func\<t > 的 decared 类型 t 作为类型键，添加的扩展提供程序。</span><span class="sxs-lookup"><span data-stu-id="2dba2-218">Extensions providers added through <xref:System.Activities.Hosting.WorkflowInstanceExtensionManager.Add%2A> use the decared type T of the Func\<T> as the type key.</span></span> <span data-ttu-id="2dba2-219">如果宿主扩展对于声明的类型已存在，或者存在通过 AddDefaultExtensionProvider 提供的更为广泛的类型，则会删除通过各种 \*ActivityMetadata.AddDefaultExtensionProvider 方法由活动提供的扩展提供程序（例如，</span><span class="sxs-lookup"><span data-stu-id="2dba2-219">Extension providers contributed by activities through the various \*ActivityMetadata.AddDefaultExtensionProvider methods are dropped if a host extension exists for the declared type or if there is a broader type provided through AddDefaultExtensionProvider (ex.</span></span> <span data-ttu-id="2dba2-220">如果提供\<了 func StreamWriter >，并且\<提供了 func 无效 >，则\<仅保留 func StreamWriter >）。</span><span class="sxs-lookup"><span data-stu-id="2dba2-220">if Func\<StreamWriter> is provided and Func\<TextWriter> is provided, only Func\<StreamWriter> will be kept).</span></span> <span data-ttu-id="2dba2-221">如果集合中不存在活动所需的扩展（通过调用 \*ActivityMetadata.RequireExtension 表示），则会引发 <xref:System.Activities.ValidationException>。</span><span class="sxs-lookup"><span data-stu-id="2dba2-221">If an extension does not exist in the collection that is required by an activity (expressed by calling \*ActivityMetadata.RequireExtension) a <xref:System.Activities.ValidationException> is thrown.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportsInstanceKeys">
+      <MemberSignature Language="C#" Value="protected internal abstract bool SupportsInstanceKeys { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsInstanceKeys" />
+      <MemberSignature Language="DocId" Value="P:System.Activities.Hosting.WorkflowInstance.SupportsInstanceKeys" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride ReadOnly Property SupportsInstanceKeys As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract property bool SupportsInstanceKeys { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.SupportsInstanceKeys : bool" Usage="System.Activities.Hosting.WorkflowInstance.SupportsInstanceKeys" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="2dba2-222">获取一个值，该值指示宿主是否支持 <see cref="P:System.Runtime.DurableInstancing.InstanceView.InstanceKeys" /> 与运行时实例的关联。</span><span class="sxs-lookup"><span data-stu-id="2dba2-222">Gets a value that indicates whether the host supports the association of <see cref="P:System.Runtime.DurableInstancing.InstanceView.InstanceKeys" /> with a run-time instance.</span></span></summary>
+        <value><span data-ttu-id="2dba2-223">如果宿主支持 <see cref="P:System.Runtime.DurableInstancing.InstanceView.InstanceKeys" /> 与工作流实例的关联，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="2dba2-223"><see langword="true" /> if the host supports the association of <see cref="P:System.Runtime.DurableInstancing.InstanceView.InstanceKeys" /> with a workflow instance; otherwise, <see langword="false" />.</span></span></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SynchronizationContext">
+      <MemberSignature Language="C#" Value="public System.Threading.SynchronizationContext SynchronizationContext { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Threading.SynchronizationContext SynchronizationContext" />
+      <MemberSignature Language="DocId" Value="P:System.Activities.Hosting.WorkflowInstance.SynchronizationContext" />
+      <MemberSignature Language="VB.NET" Value="Public Property SynchronizationContext As SynchronizationContext" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Threading::SynchronizationContext ^ SynchronizationContext { System::Threading::SynchronizationContext ^ get(); void set(System::Threading::SynchronizationContext ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.SynchronizationContext : System.Threading.SynchronizationContext with get, set" Usage="System.Activities.Hosting.WorkflowInstance.SynchronizationContext" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Threading.SynchronizationContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="2dba2-224">获取或设置用于调度工作流实例的 <see cref="T:System.Threading.SynchronizationContext" />。</span><span class="sxs-lookup"><span data-stu-id="2dba2-224">Gets or sets the <see cref="T:System.Threading.SynchronizationContext" /> used for scheduling the workflow instance.</span></span></summary>
+        <value><span data-ttu-id="2dba2-225">用于调度工作流实例的同步上下文。</span><span class="sxs-lookup"><span data-stu-id="2dba2-225">The synchronization context used for scheduling the workflow instance.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="2dba2-226">如果在初始化并<xref:System.Activities.Hosting.WorkflowInstance.IsReadOnly%2A>返回`true`工作流实例后设置此属性， <xref:System.InvalidOperationException>则会引发。</span><span class="sxs-lookup"><span data-stu-id="2dba2-226">If this property is set after the workflow instance is initialized and <xref:System.Activities.Hosting.WorkflowInstance.IsReadOnly%2A> returns `true`, an <xref:System.InvalidOperationException> is thrown.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ThrowIfReadOnly">
+      <MemberSignature Language="C#" Value="protected void ThrowIfReadOnly ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void ThrowIfReadOnly() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Hosting.WorkflowInstance.ThrowIfReadOnly" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub ThrowIfReadOnly ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void ThrowIfReadOnly();" />
+      <MemberSignature Language="F#" Value="member this.ThrowIfReadOnly : unit -&gt; unit" Usage="workflowInstance.ThrowIfReadOnly " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="2dba2-227">如果工作流实例已初始化，则引发 <see cref="T:System.InvalidOperationException" />（由 <see cref="P:System.Activities.Hosting.WorkflowInstance.IsReadOnly" /> 确定）。</span><span class="sxs-lookup"><span data-stu-id="2dba2-227">Throws an <see cref="T:System.InvalidOperationException" /> if the workflow instance has been initialized, as determined by <see cref="P:System.Activities.Hosting.WorkflowInstance.IsReadOnly" />.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="2dba2-228">如果<xref:System.Activities.Hosting.WorkflowInstance.IsReadOnly%2A>返回`true` ， <xref:System.InvalidOperationException> 则引发。</span><span class="sxs-lookup"><span data-stu-id="2dba2-228">If <xref:System.Activities.Hosting.WorkflowInstance.IsReadOnly%2A> returns `true`, then an <xref:System.InvalidOperationException> is thrown.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="WorkflowDefinition">
+      <MemberSignature Language="C#" Value="public System.Activities.Activity WorkflowDefinition { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Activities.Activity WorkflowDefinition" />
+      <MemberSignature Language="DocId" Value="P:System.Activities.Hosting.WorkflowInstance.WorkflowDefinition" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property WorkflowDefinition As Activity" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Activities::Activity ^ WorkflowDefinition { System::Activities::Activity ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.WorkflowDefinition : System.Activities.Activity" Usage="System.Activities.Hosting.WorkflowInstance.WorkflowDefinition" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Activities.Activity</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="2dba2-229">获取工作流实例的工作流定义。</span><span class="sxs-lookup"><span data-stu-id="2dba2-229">Gets the workflow definition of the workflow instance.</span></span></summary>
+        <value><span data-ttu-id="2dba2-230">工作流实例的工作流定义。</span><span class="sxs-lookup"><span data-stu-id="2dba2-230">The workflow definition of the workflow instance.</span></span></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

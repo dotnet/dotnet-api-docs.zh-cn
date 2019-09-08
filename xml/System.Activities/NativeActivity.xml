@@ -1,0 +1,457 @@
+<Type Name="NativeActivity" FullName="System.Activities.NativeActivity">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="50cf0274d09f1f6dcd38d9fd0d99c80891b61f65" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70629509" /></Metadata><TypeSignature Language="C#" Value="public abstract class NativeActivity : System.Activities.Activity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit NativeActivity extends System.Activities.Activity" />
+  <TypeSignature Language="DocId" Value="T:System.Activities.NativeActivity" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class NativeActivity&#xA;Inherits Activity" />
+  <TypeSignature Language="C++ CLI" Value="public ref class NativeActivity abstract : System::Activities::Activity" />
+  <TypeSignature Language="F#" Value="type NativeActivity = class&#xA;    inherit Activity" />
+  <AssemblyInfo>
+    <AssemblyName>System.Activities</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Activities.Activity</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary><span data-ttu-id="96719-101">适用于特定自定义活动（这些活动使用 <see cref="M:System.Activities.NativeActivity.Execute(System.Activities.NativeActivityContext)" /> 方法实现执行逻辑，该方法具有对运行时功能的完全访问权限）的抽象基类。</span><span class="sxs-lookup"><span data-stu-id="96719-101">Abstract base class for custom activities that implement execution logic using the <see cref="M:System.Activities.NativeActivity.Execute(System.Activities.NativeActivityContext)" /> method, which has full access to the runtime's features.</span></span></summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ <span data-ttu-id="96719-102">下面的代码示例演示如何创建一个从 <xref:System.Activities.NativeActivity%601> 继承的类。</span><span class="sxs-lookup"><span data-stu-id="96719-102">The following code sample demonstrates creating a class that inherits from <xref:System.Activities.NativeActivity%601>.</span></span> <span data-ttu-id="96719-103">此示例来自[使用本机活动示例的自定义复合](~/docs/framework/windows-workflow-foundation/samples/custom-composite-using-native-activity.md)。</span><span class="sxs-lookup"><span data-stu-id="96719-103">This example is from the [Custom Composite using Native Activity](~/docs/framework/windows-workflow-foundation/samples/custom-composite-using-native-activity.md) sample.</span></span>  
+  
+```csharp
+public sealed class MySequence : NativeActivity  
+{  
+    Collection<Activity> children;  
+    Collection<Variable> variables;  
+    Variable<int> currentIndex;  
+    CompletionCallback onChildComplete;  
+  
+    public MySequence()  
+        : base()  
+    {  
+        this.children = new Collection<Activity>();  
+        this.variables = new Collection<Variable>();  
+        this.currentIndex = new Variable<int>();  
+    }  
+  
+    public Collection<Activity> Activities  
+    {  
+        get  
+        {  
+            return this.children;  
+        }  
+    }  
+    public Collection<Variable> Variables  
+    {  
+        get  
+        {  
+            return this.variables;  
+        }  
+    }  
+    protected override void CacheMetadata(NativeActivityMetadata metadata)  
+    {  
+        //call base.CacheMetadata to add the Activities and Variables to this activity's metadata  
+        base.CacheMetadata(metadata);  
+        //add the private implementation variable: currentIndex   
+        metadata.AddImplementationVariable(this.currentIndex);  
+    }                     
+  
+    protected override void Execute(NativeActivityContext context)  
+    {  
+        InternalExecute(context, null);  
+    }  
+    void InternalExecute(NativeActivityContext context, ActivityInstance instance)  
+    {  
+        //grab the index of the current Activity  
+        int currentActivityIndex = this.currentIndex.Get(context);  
+        if (currentActivityIndex == Activities.Count)  
+        {  
+            //if the currentActivityIndex is equal to the count of MySequence's Activities  
+            //MySequence is complete  
+            return;  
+        }  
+  
+        if (this.onChildComplete == null)  
+        {  
+            //on completion of the current child, have the runtime call back on this method  
+            this.onChildComplete = new CompletionCallback(InternalExecute);  
+        }  
+        //grab the next Activity in MySequence.Activities and schedule it  
+        Activity nextChild = Activities[currentActivityIndex];  
+        context.ScheduleActivity(nextChild, this.onChildComplete);  
+  
+        //increment the currentIndex  
+        this.currentIndex.Set(context, ++currentActivityIndex);  
+    }  
+}  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected NativeActivity ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.NativeActivity.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; NativeActivity();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="96719-104">在派生类中实现时，创建派生类的新实例。</span><span class="sxs-lookup"><span data-stu-id="96719-104">When implemented in a derived class, creates a new instance of the derived class.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ <span data-ttu-id="96719-105">下面的代码示例演示如何创建一个从 <xref:System.Activities.NativeActivity%601> 继承的类。</span><span class="sxs-lookup"><span data-stu-id="96719-105">The following code sample demonstrates creating a class that inherits from <xref:System.Activities.NativeActivity%601>.</span></span> <span data-ttu-id="96719-106">此示例来自[使用本机活动示例的自定义复合](~/docs/framework/windows-workflow-foundation/samples/custom-composite-using-native-activity.md)。</span><span class="sxs-lookup"><span data-stu-id="96719-106">This example is from the [Custom Composite using Native Activity](~/docs/framework/windows-workflow-foundation/samples/custom-composite-using-native-activity.md) sample.</span></span>  
+  
+ [!code-csharp[wfs_CustomCompositeNativeActivity#1](~/samples/snippets/csharp/VS_Snippets_CFX/wfs_customcompositenativeactivity/cs/mysequence.cs#1)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Abort">
+      <MemberSignature Language="C#" Value="protected virtual void Abort (System.Activities.NativeActivityAbortContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Abort(class System.Activities.NativeActivityAbortContext context) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.NativeActivity.Abort(System.Activities.NativeActivityAbortContext)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub Abort (context As NativeActivityAbortContext)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void Abort(System::Activities::NativeActivityAbortContext ^ context);" />
+      <MemberSignature Language="F#" Value="abstract member Abort : System.Activities.NativeActivityAbortContext -&gt; unit&#xA;override this.Abort : System.Activities.NativeActivityAbortContext -&gt; unit" Usage="nativeActivity.Abort context" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Activities.NativeActivityAbortContext" />
+      </Parameters>
+      <Docs>
+        <param name="context"><span data-ttu-id="96719-107">执行活动时所处的执行上下文。</span><span class="sxs-lookup"><span data-stu-id="96719-107">The execution context in which the activity executes.</span></span></param>
+        <summary><span data-ttu-id="96719-108">在派生类中实现时，采取措施响应要放弃的活动。</span><span class="sxs-lookup"><span data-stu-id="96719-108">When implemented in a derived class, takes actions in response to the activity being aborted.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="CacheMetadata">
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary><span data-ttu-id="96719-109">创建并验证活动的自变量、变量、子活动和活动委托的说明。</span><span class="sxs-lookup"><span data-stu-id="96719-109">Creates and validates a description of the activity's arguments, variables, child activities, and activity delegates.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="96719-110">自定义活动作者可以在活动的 <xref:System.Activities.NativeActivity.CacheMetadata%2A> 重写中提供验证逻辑。</span><span class="sxs-lookup"><span data-stu-id="96719-110">Custom activity authors can provide validation logic in an activity's <xref:System.Activities.NativeActivity.CacheMetadata%2A> override.</span></span> <span data-ttu-id="96719-111">由 <xref:System.Activities.NativeActivity.CacheMetadata%2A> 引发的任何异常不会视为验证错误。</span><span class="sxs-lookup"><span data-stu-id="96719-111">Any exceptions that are thrown from <xref:System.Activities.NativeActivity.CacheMetadata%2A> are not treated as validation errors.</span></span> <span data-ttu-id="96719-112">这些异常将从对 <xref:System.Activities.Validation.ActivityValidationServices.Validate%2A> 的调用中转义，并且必须由调用方进行处理。</span><span class="sxs-lookup"><span data-stu-id="96719-112">These exceptions will escape from the call to <xref:System.Activities.Validation.ActivityValidationServices.Validate%2A> and must be handled by the caller.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="CacheMetadata">
+      <MemberSignature Language="C#" Value="protected override sealed void CacheMetadata (System.Activities.ActivityMetadata metadata);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void CacheMetadata(valuetype System.Activities.ActivityMetadata metadata) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.NativeActivity.CacheMetadata(System.Activities.ActivityMetadata)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overrides NotOverridable Sub CacheMetadata (metadata As ActivityMetadata)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; override void CacheMetadata(System::Activities::ActivityMetadata metadata);" />
+      <MemberSignature Language="F#" Value="override this.CacheMetadata : System.Activities.ActivityMetadata -&gt; unit" Usage="nativeActivity.CacheMetadata metadata" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="metadata" Type="System.Activities.ActivityMetadata" />
+      </Parameters>
+      <Docs>
+        <param name="metadata"><span data-ttu-id="96719-113">未实现。</span><span class="sxs-lookup"><span data-stu-id="96719-113">Not implemented.</span></span></param>
+        <summary><span data-ttu-id="96719-114">未实现。</span><span class="sxs-lookup"><span data-stu-id="96719-114">Not implemented.</span></span> <span data-ttu-id="96719-115">请改用 <see cref="M:System.Activities.NativeActivity.CacheMetadata(System.Activities.NativeActivityMetadata)" /> 方法。</span><span class="sxs-lookup"><span data-stu-id="96719-115">Use the <see cref="M:System.Activities.NativeActivity.CacheMetadata(System.Activities.NativeActivityMetadata)" /> method instead.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="96719-116">自定义活动作者可以在活动的 <xref:System.Activities.NativeActivity.CacheMetadata%2A> 重写中提供验证逻辑。</span><span class="sxs-lookup"><span data-stu-id="96719-116">Custom activity authors can provide validation logic in an activity's <xref:System.Activities.NativeActivity.CacheMetadata%2A> override.</span></span> <span data-ttu-id="96719-117">由 <xref:System.Activities.NativeActivity.CacheMetadata%2A> 引发的任何异常不会视为验证错误。</span><span class="sxs-lookup"><span data-stu-id="96719-117">Any exceptions that are thrown from <xref:System.Activities.NativeActivity.CacheMetadata%2A> are not treated as validation errors.</span></span> <span data-ttu-id="96719-118">这些异常将从对 <xref:System.Activities.Validation.ActivityValidationServices.Validate%2A> 的调用中转义，并且必须由调用方进行处理。</span><span class="sxs-lookup"><span data-stu-id="96719-118">These exceptions will escape from the call to <xref:System.Activities.Validation.ActivityValidationServices.Validate%2A> and must be handled by the caller.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CacheMetadata">
+      <MemberSignature Language="C#" Value="protected virtual void CacheMetadata (System.Activities.NativeActivityMetadata metadata);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void CacheMetadata(valuetype System.Activities.NativeActivityMetadata metadata) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.NativeActivity.CacheMetadata(System.Activities.NativeActivityMetadata)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub CacheMetadata (metadata As NativeActivityMetadata)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void CacheMetadata(System::Activities::NativeActivityMetadata metadata);" />
+      <MemberSignature Language="F#" Value="override this.CacheMetadata : System.Activities.NativeActivityMetadata -&gt; unit" Usage="nativeActivity.CacheMetadata metadata" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="metadata" Type="System.Activities.NativeActivityMetadata" />
+      </Parameters>
+      <Docs>
+        <param name="metadata"><span data-ttu-id="96719-119">活动的元数据，用于封装活动的自变量、变量、子活动和活动委托。</span><span class="sxs-lookup"><span data-stu-id="96719-119">The activity's metadata that encapsulates the activity's arguments, variables, child activities, and activity delegates.</span></span></param>
+        <summary><span data-ttu-id="96719-120">创建并验证活动的自变量、变量、子活动和活动委托的说明。</span><span class="sxs-lookup"><span data-stu-id="96719-120">Creates and validates a description of the activity's arguments, variables, child activities, and activity delegates.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="96719-121">工作流运行时使用 <xref:System.Activities.NativeActivity.CacheMetadata%2A> 的默认实现来确保工作流构造正确，以及管理运行时关系和生存期规则。</span><span class="sxs-lookup"><span data-stu-id="96719-121">The workflow runtime uses the default implementation of <xref:System.Activities.NativeActivity.CacheMetadata%2A> to ensure correct construction of a workflow as well as to manage run-time relationships and lifetime rules.</span></span> <span data-ttu-id="96719-122">的<xref:System.Activities.NativeActivity.CacheMetadata%2A>默认实现使用类型的<xref:System.ComponentModel.TypeDescriptor>来检查活动类型的公共成员。</span><span class="sxs-lookup"><span data-stu-id="96719-122">The default implementation of <xref:System.Activities.NativeActivity.CacheMetadata%2A> examines the public members of the activity type using the type's <xref:System.ComponentModel.TypeDescriptor>.</span></span> <span data-ttu-id="96719-123">这些公共成员的类型<xref:System.Activities.Argument>为、 <xref:System.Activities.Variable>、 [ienumerable\<变量 >](xref:System.Collections.Generic.IEnumerable%601)、 <xref:System.Activities.Activity>、 [ienumerable\<活动 >](xref:System.Collections.Generic.IEnumerable%601)或。 <xref:System.Activities.ActivityDelegate></span><span class="sxs-lookup"><span data-stu-id="96719-123">These public members are of type <xref:System.Activities.Argument>, <xref:System.Activities.Variable>, [IEnumerable\<Variable>](xref:System.Collections.Generic.IEnumerable%601), <xref:System.Activities.Activity>, [IEnumerable\<Activity>](xref:System.Collections.Generic.IEnumerable%601), or <xref:System.Activities.ActivityDelegate>.</span></span> <span data-ttu-id="96719-124">您可以重写此方法以自定义活动的运行时说明的生成，并提供自定义验证逻辑。</span><span class="sxs-lookup"><span data-stu-id="96719-124">You can override this method to customize the building of the activity's run-time description and to provide custom validation logic.</span></span> <span data-ttu-id="96719-125">由 <xref:System.Activities.NativeActivity.CacheMetadata%2A> 引发的任何异常不会视为验证错误。</span><span class="sxs-lookup"><span data-stu-id="96719-125">Any exceptions that are thrown from <xref:System.Activities.NativeActivity.CacheMetadata%2A> are not treated as validation errors.</span></span> <span data-ttu-id="96719-126">这些异常将从对 <xref:System.Activities.Validation.ActivityValidationServices.Validate%2A> 的调用中转义，并且必须由调用方进行处理。</span><span class="sxs-lookup"><span data-stu-id="96719-126">These exceptions will escape from the call to <xref:System.Activities.Validation.ActivityValidationServices.Validate%2A> and must be handled by the caller.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="96719-127">下面的代码示例演示如何在一个从 <xref:System.Activities.NativeActivity%601> 继承的类中使用 CacheMetadata。</span><span class="sxs-lookup"><span data-stu-id="96719-127">The following code sample demonstrates using CacheMetadata in a class that inherits from <xref:System.Activities.NativeActivity%601>.</span></span> <span data-ttu-id="96719-128">此示例来自[使用本机活动示例的自定义复合](~/docs/framework/windows-workflow-foundation/samples/custom-composite-using-native-activity.md)。</span><span class="sxs-lookup"><span data-stu-id="96719-128">This example is from the [Custom Composite using Native Activity](~/docs/framework/windows-workflow-foundation/samples/custom-composite-using-native-activity.md) sample.</span></span>  
+  
+ [!code-csharp[wfs_CustomCompositeNativeActivity#2](~/samples/snippets/csharp/VS_Snippets_CFX/wfs_customcompositenativeactivity/cs/mysequence.cs#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Cancel">
+      <MemberSignature Language="C#" Value="protected virtual void Cancel (System.Activities.NativeActivityContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Cancel(class System.Activities.NativeActivityContext context) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.NativeActivity.Cancel(System.Activities.NativeActivityContext)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub Cancel (context As NativeActivityContext)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void Cancel(System::Activities::NativeActivityContext ^ context);" />
+      <MemberSignature Language="F#" Value="abstract member Cancel : System.Activities.NativeActivityContext -&gt; unit&#xA;override this.Cancel : System.Activities.NativeActivityContext -&gt; unit" Usage="nativeActivity.Cancel context" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Activities.NativeActivityContext" />
+      </Parameters>
+      <Docs>
+        <param name="context"><span data-ttu-id="96719-129">执行活动时所处的执行上下文。</span><span class="sxs-lookup"><span data-stu-id="96719-129">The execution context in which the activity executes.</span></span></param>
+        <summary><span data-ttu-id="96719-130">在派生类中实现时，运行逻辑以正常方式提前实现活动。</span><span class="sxs-lookup"><span data-stu-id="96719-130">When implemented in a derived class, runs logic to cause graceful early completion of the activity.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ <span data-ttu-id="96719-131">下面的代码示例演示如何在一个从 <xref:System.Activities.NativeActivity%601> 继承的类中使用 Cancel。</span><span class="sxs-lookup"><span data-stu-id="96719-131">The following code sample demonstrates using Cancel in a class that inherits from <xref:System.Activities.NativeActivity%601>.</span></span> <span data-ttu-id="96719-132">此示例来自[非泛型 ParallelForEach](~/docs/framework/windows-workflow-foundation/samples/non-generic-parallelforeach.md)示例。</span><span class="sxs-lookup"><span data-stu-id="96719-132">This example is from the [Non-Generic ParallelForEach](~/docs/framework/windows-workflow-foundation/samples/non-generic-parallelforeach.md) sample.</span></span>  
+  
+ [!code-csharp[wfs_NonGenericParallelForEach#2](~/samples/snippets/csharp/VS_Snippets_CFX/wfs_nongenericparallelforeach/cs/parallelforeach.cs#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CanInduceIdle">
+      <MemberSignature Language="C#" Value="protected virtual bool CanInduceIdle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanInduceIdle" />
+      <MemberSignature Language="DocId" Value="P:System.Activities.NativeActivity.CanInduceIdle" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable ReadOnly Property CanInduceIdle As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual property bool CanInduceIdle { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.CanInduceIdle : bool" Usage="System.Activities.NativeActivity.CanInduceIdle" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="96719-133">获取或设置一个值，该值指示活动是否会使工作流进入空闲状态。</span><span class="sxs-lookup"><span data-stu-id="96719-133">Gets or sets a value that indicates whether the activity can cause the workflow to become idle.</span></span></summary>
+        <value><span data-ttu-id="96719-134">当活动使工作流进入空闲状态时，则为 <see langword="true" />。</span><span class="sxs-lookup"><span data-stu-id="96719-134"><see langword="true" /> if the activity can cause the workflow to become idle.</span></span> <span data-ttu-id="96719-135">默认情况下，此值为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="96719-135">This value is <see langword="false" /> by default.</span></span></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Execute">
+      <MemberSignature Language="C#" Value="protected abstract void Execute (System.Activities.NativeActivityContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Execute(class System.Activities.NativeActivityContext context) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.NativeActivity.Execute(System.Activities.NativeActivityContext)" />
+      <MemberSignature Language="VB.NET" Value="Protected MustOverride Sub Execute (context As NativeActivityContext)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; abstract void Execute(System::Activities::NativeActivityContext ^ context);" />
+      <MemberSignature Language="F#" Value="abstract member Execute : System.Activities.NativeActivityContext -&gt; unit" Usage="nativeActivity.Execute context" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Activities.NativeActivityContext" />
+      </Parameters>
+      <Docs>
+        <param name="context"><span data-ttu-id="96719-136">执行活动时所处的执行上下文。</span><span class="sxs-lookup"><span data-stu-id="96719-136">The execution context in which the activity executes.</span></span></param>
+        <summary><span data-ttu-id="96719-137">在派生类中实现时，运行活动的执行逻辑。</span><span class="sxs-lookup"><span data-stu-id="96719-137">When implemented in a derived class, runs the activity's execution logic.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ <span data-ttu-id="96719-138">下面的代码示例演示如何在一个从 <xref:System.Activities.NativeActivity%601> 继承的类中使用 Cancel。</span><span class="sxs-lookup"><span data-stu-id="96719-138">The following code sample demonstrates using Cancel in a class that inherits from <xref:System.Activities.NativeActivity%601>.</span></span> <span data-ttu-id="96719-139">此示例来自[非泛型 ParallelForEach](~/docs/framework/windows-workflow-foundation/samples/non-generic-parallelforeach.md)示例。</span><span class="sxs-lookup"><span data-stu-id="96719-139">This example is from the [Non-Generic ParallelForEach](~/docs/framework/windows-workflow-foundation/samples/non-generic-parallelforeach.md) sample.</span></span>  
+  
+ [!code-csharp[wfs_NonGenericParallelForEach#2](~/samples/snippets/csharp/VS_Snippets_CFX/wfs_nongenericparallelforeach/cs/parallelforeach.cs#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Implementation">
+      <MemberSignature Language="C#" Value="protected override sealed Func&lt;System.Activities.Activity&gt; Implementation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Func`1&lt;class System.Activities.Activity&gt; Implementation" />
+      <MemberSignature Language="DocId" Value="P:System.Activities.NativeActivity.Implementation" />
+      <MemberSignature Language="VB.NET" Value="Protected Overrides NotOverridable Property Implementation As Func(Of Activity)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; property Func&lt;System::Activities::Activity ^&gt; ^ Implementation { Func&lt;System::Activities::Activity ^&gt; ^ get(); void set(Func&lt;System::Activities::Activity ^&gt; ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.Implementation : Func&lt;System.Activities.Activity&gt; with get, set" Usage="System.Activities.NativeActivity.Implementation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.Serialization.IgnoreDataMember</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Func&lt;System.Activities.Activity&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="96719-140">活动的执行逻辑。</span><span class="sxs-lookup"><span data-stu-id="96719-140">The execution logic of the activity.</span></span></summary>
+        <value><span data-ttu-id="96719-141">执行逻辑。</span><span class="sxs-lookup"><span data-stu-id="96719-141">The execution logic.</span></span></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ImplementationVersion">
+      <MemberSignature Language="C#" Value="protected internal override sealed Version ImplementationVersion { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Version ImplementationVersion" />
+      <MemberSignature Language="DocId" Value="P:System.Activities.NativeActivity.ImplementationVersion" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overrides NotOverridable Property ImplementationVersion As Version" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; property Version ^ ImplementationVersion { Version ^ get(); void set(Version ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.ImplementationVersion : Version with get, set" Usage="System.Activities.NativeActivity.ImplementationVersion" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Version</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="96719-142">获取或设置活动的实现版本。</span><span class="sxs-lookup"><span data-stu-id="96719-142">Gets or sets the implementation version of the activity.</span></span></summary>
+        <value><span data-ttu-id="96719-143">活动的实现版本。</span><span class="sxs-lookup"><span data-stu-id="96719-143">The implementation version of the activity.</span></span></value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="OnCreateDynamicUpdateMap">
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary><span data-ttu-id="96719-144">为动态更新创建映射时，将引发事件。</span><span class="sxs-lookup"><span data-stu-id="96719-144">Raises an event when creating a map for the dynamic update.</span></span></summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="OnCreateDynamicUpdateMap">
+      <MemberSignature Language="C#" Value="protected virtual void OnCreateDynamicUpdateMap (System.Activities.DynamicUpdate.NativeActivityUpdateMapMetadata metadata, System.Activities.Activity originalActivity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnCreateDynamicUpdateMap(class System.Activities.DynamicUpdate.NativeActivityUpdateMapMetadata metadata, class System.Activities.Activity originalActivity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.NativeActivity.OnCreateDynamicUpdateMap(System.Activities.DynamicUpdate.NativeActivityUpdateMapMetadata,System.Activities.Activity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnCreateDynamicUpdateMap (metadata As NativeActivityUpdateMapMetadata, originalActivity As Activity)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnCreateDynamicUpdateMap(System::Activities::DynamicUpdate::NativeActivityUpdateMapMetadata ^ metadata, System::Activities::Activity ^ originalActivity);" />
+      <MemberSignature Language="F#" Value="override this.OnCreateDynamicUpdateMap : System.Activities.DynamicUpdate.NativeActivityUpdateMapMetadata * System.Activities.Activity -&gt; unit" Usage="nativeActivity.OnCreateDynamicUpdateMap (metadata, originalActivity)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="metadata" Type="System.Activities.DynamicUpdate.NativeActivityUpdateMapMetadata" Index="0" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="originalActivity" Type="System.Activities.Activity" Index="1" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      </Parameters>
+      <Docs>
+        <param name="metadata"><span data-ttu-id="96719-145">元数据。</span><span class="sxs-lookup"><span data-stu-id="96719-145">The metadata.</span></span></param>
+        <param name="originalActivity"><span data-ttu-id="96719-146">原始活动。</span><span class="sxs-lookup"><span data-stu-id="96719-146">The original activity.</span></span></param>
+        <summary><span data-ttu-id="96719-147">为动态更新创建映射时，将引发事件。</span><span class="sxs-lookup"><span data-stu-id="96719-147">Raises an event when creating a map for the dynamic update.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnCreateDynamicUpdateMap">
+      <MemberSignature Language="C#" Value="protected override sealed void OnCreateDynamicUpdateMap (System.Activities.DynamicUpdate.UpdateMapMetadata metadata, System.Activities.Activity originalActivity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void OnCreateDynamicUpdateMap(class System.Activities.DynamicUpdate.UpdateMapMetadata metadata, class System.Activities.Activity originalActivity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.NativeActivity.OnCreateDynamicUpdateMap(System.Activities.DynamicUpdate.UpdateMapMetadata,System.Activities.Activity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overrides NotOverridable Sub OnCreateDynamicUpdateMap (metadata As UpdateMapMetadata, originalActivity As Activity)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; override void OnCreateDynamicUpdateMap(System::Activities::DynamicUpdate::UpdateMapMetadata ^ metadata, System::Activities::Activity ^ originalActivity);" />
+      <MemberSignature Language="F#" Value="override this.OnCreateDynamicUpdateMap : System.Activities.DynamicUpdate.UpdateMapMetadata * System.Activities.Activity -&gt; unit" Usage="nativeActivity.OnCreateDynamicUpdateMap (metadata, originalActivity)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="metadata" Type="System.Activities.DynamicUpdate.UpdateMapMetadata" Index="0" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="originalActivity" Type="System.Activities.Activity" Index="1" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      </Parameters>
+      <Docs>
+        <param name="metadata"><span data-ttu-id="96719-148">元数据。</span><span class="sxs-lookup"><span data-stu-id="96719-148">The metadata.</span></span></param>
+        <param name="originalActivity"><span data-ttu-id="96719-149">原始活动。</span><span class="sxs-lookup"><span data-stu-id="96719-149">The original activity.</span></span></param>
+        <summary><span data-ttu-id="96719-150">为动态更新创建映射时，将引发事件。</span><span class="sxs-lookup"><span data-stu-id="96719-150">Raises an event when creating a map for the dynamic update.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateInstance">
+      <MemberSignature Language="C#" Value="protected virtual void UpdateInstance (System.Activities.DynamicUpdate.NativeActivityUpdateContext updateContext);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void UpdateInstance(class System.Activities.DynamicUpdate.NativeActivityUpdateContext updateContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.NativeActivity.UpdateInstance(System.Activities.DynamicUpdate.NativeActivityUpdateContext)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub UpdateInstance (updateContext As NativeActivityUpdateContext)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void UpdateInstance(System::Activities::DynamicUpdate::NativeActivityUpdateContext ^ updateContext);" />
+      <MemberSignature Language="F#" Value="abstract member UpdateInstance : System.Activities.DynamicUpdate.NativeActivityUpdateContext -&gt; unit&#xA;override this.UpdateInstance : System.Activities.DynamicUpdate.NativeActivityUpdateContext -&gt; unit" Usage="nativeActivity.UpdateInstance updateContext" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="updateContext" Type="System.Activities.DynamicUpdate.NativeActivityUpdateContext" Index="0" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      </Parameters>
+      <Docs>
+        <param name="updateContext"><span data-ttu-id="96719-151">更新上下文。</span><span class="sxs-lookup"><span data-stu-id="96719-151">The update context.</span></span></param>
+        <summary><span data-ttu-id="96719-152">更新 <see cref="T:System.Activities.NativeActivity" /> 的该实例。</span><span class="sxs-lookup"><span data-stu-id="96719-152">Updates the instance of <see cref="T:System.Activities.NativeActivity" />.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

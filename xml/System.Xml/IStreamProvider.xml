@@ -1,0 +1,132 @@
+<Type Name="IStreamProvider" FullName="System.Xml.IStreamProvider">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="3c75d46ddc1e28c366359499e3f355b22ecb170a" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70692119" /></Metadata><TypeSignature Language="C#" Value="public interface IStreamProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IStreamProvider" />
+  <TypeSignature Language="DocId" Value="T:System.Xml.IStreamProvider" />
+  <TypeSignature Language="VB.NET" Value="Public Interface IStreamProvider" />
+  <TypeSignature Language="C++ CLI" Value="public interface class IStreamProvider" />
+  <TypeSignature Language="F#" Value="type IStreamProvider = interface" />
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization</AssemblyName>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime.Serialization.Xml</AssemblyName>
+    <AssemblyVersion>4.1.3.0</AssemblyVersion>
+    <AssemblyVersion>4.1.4.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary><span data-ttu-id="0d9aa-101">表示一个可以由提供流的类来实现的接口。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-101">Represents an interface that can be implemented by classes providing streams.</span></span></summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="0d9aa-102">将包含经过流处理的正文的传出消息写入 XML 编写器时，<xref:System.ServiceModel.Channels.Message> 将在其 <xref:System.ServiceModel.Channels.Message.OnWriteBodyContents%28System.Xml.XmlDictionaryWriter%29> 实现中使用类似于下面的一系列调用：</span><span class="sxs-lookup"><span data-stu-id="0d9aa-102">When writing an outgoing message containing a streamed body to an XML writer, the <xref:System.ServiceModel.Channels.Message> will use a sequence of calls similar to the following in its <xref:System.ServiceModel.Channels.Message.OnWriteBodyContents%28System.Xml.XmlDictionaryWriter%29> implementation:</span></span>  
+  
+-   <span data-ttu-id="0d9aa-103">写入流前面的任何必要信息（例如 XML 开始标记）。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-103">Write any necessary information preceding the stream (For example, the opening XML tag).</span></span>  
+  
+-   <span data-ttu-id="0d9aa-104">写入流。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-104">Write the stream.</span></span>  
+  
+-   <span data-ttu-id="0d9aa-105">写入流后面的任何信息（例如 XML 结束标记）。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-105">Write any information following the stream (For example, the closing XML tag).</span></span>  
+  
+ <span data-ttu-id="0d9aa-106">这对于类似于文本 XML 编码的编码可以正常工作。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-106">This works well with encodings that are similar to the textual XML encoding.</span></span> <span data-ttu-id="0d9aa-107">但是，有一些编码不将 XML 信息集信息（例如，开始和结束 XML 元素的标记）和元素中包含的数据放在一起。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-107">However, there are some encodings that do not place XML infoset information (For example, tags for starting and ending XML elements) together with the data contained within elements.</span></span> <span data-ttu-id="0d9aa-108">例如，在 MTOM 编码中，消息拆分为多个部分。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-108">For example, in the MTOM encoding, the message is split into multiple parts.</span></span> <span data-ttu-id="0d9aa-109">一部分包含 XML 信息集，其中可能包含对实际元素内容的其他部分的引用。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-109">One part contains the XML infoset, which may contain references to other parts for actual element contents.</span></span> <span data-ttu-id="0d9aa-110">由于 XML 信息集通常比流处理的内容小，因此有必要缓冲信息集，将其写出，然后以流处理方式写入内容。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-110">Since the XML infoset will normally be small compared to the streamed contents, it makes sense to buffer the infoset, write it out, and then write the contents in a streamed way.</span></span> <span data-ttu-id="0d9aa-111">这意味着在写入结束元素标记时，应当尚未写出流。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-111">This means that by the time the closing element tag is written, we should not have written out the stream yet.</span></span>  
+  
+ <span data-ttu-id="0d9aa-112">为此，应使用 <xref:System.Xml.IStreamProvider> 接口。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-112">For this purpose, the <xref:System.Xml.IStreamProvider> interface is used.</span></span> <span data-ttu-id="0d9aa-113">该接口具有一个可返回要写入的流的 <xref:System.Xml.IStreamProvider.GetStream> 方法。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-113">The interface has a <xref:System.Xml.IStreamProvider.GetStream> method that returns the stream to be written.</span></span> <span data-ttu-id="0d9aa-114">写出 <xref:System.ServiceModel.Channels.Message.OnWriteBodyContents%28System.Xml.XmlDictionaryWriter%29> 中经过流处理的消息正文的正确方式如下：</span><span class="sxs-lookup"><span data-stu-id="0d9aa-114">The correct way to write out a streamed message body in <xref:System.ServiceModel.Channels.Message.OnWriteBodyContents%28System.Xml.XmlDictionaryWriter%29> is as follows:</span></span>  
+  
+-   <span data-ttu-id="0d9aa-115">写入流前面的任何必要信息（例如 XML 开始标记）</span><span class="sxs-lookup"><span data-stu-id="0d9aa-115">Write any necessary information preceding the stream (For example, the opening XML tag)</span></span>  
+  
+-   <span data-ttu-id="0d9aa-116">对采用 `WriteValue` 、具有 <xref:System.Xml.XmlDictionaryWriter> 实现（该实现可返回要写入的流）的 <xref:System.Xml.IStreamProvider>调用 `IStreamProvider` 重载。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-116">Call the `WriteValue` overload on the <xref:System.Xml.XmlDictionaryWriter> that takes an <xref:System.Xml.IStreamProvider>, with an `IStreamProvider` implementation that returns the stream to be written.</span></span>  
+  
+-   <span data-ttu-id="0d9aa-117">写入流后面的任何信息（例如 XML 结束标记）</span><span class="sxs-lookup"><span data-stu-id="0d9aa-117">Write any information following the stream (For example, the closing XML tag)</span></span>  
+  
+ <span data-ttu-id="0d9aa-118">使用此方法时，XML 编写器可以选择何时调用 <xref:System.Xml.IStreamProvider.GetStream> 和写出经过流处理的数据。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-118">With this approach, the XML writer has a choice of when to call <xref:System.Xml.IStreamProvider.GetStream> and write out the streamed data.</span></span> <span data-ttu-id="0d9aa-119">例如，文本和二进制 XML 编写器将立即调用此方法并写出开始标记和结束标记之间的经过流处理的内容。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-119">For example, the textual and binary XML writers will call it immediately and write out the streamed contents in between the start and end tags.</span></span> <span data-ttu-id="0d9aa-120">MTOM 编写器准备写入消息的相应部分时，它可以决定以后调用 <xref:System.Xml.IStreamProvider.GetStream> 。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-120">The MTOM writer may decide to call <xref:System.Xml.IStreamProvider.GetStream> later, when it is ready to write the appropriate part of the message.</span></span>  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.IStreamProvider.GetStream" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetStream () As Stream" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::IO::Stream ^ GetStream();" />
+      <MemberSignature Language="F#" Value="abstract member GetStream : unit -&gt; System.IO.Stream" Usage="iStreamProvider.GetStream " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime.Serialization</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime.Serialization.Xml</AssemblyName>
+        <AssemblyVersion>4.1.3.0</AssemblyVersion>
+        <AssemblyVersion>4.1.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="0d9aa-121">获取流。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-121">Gets a stream.</span></span></summary>
+        <returns><span data-ttu-id="0d9aa-122">一个 <see cref="T:System.IO.Stream" /> 对象。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-122">A <see cref="T:System.IO.Stream" /> object.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="0d9aa-123">此方法可用于返回要写入的流。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-123">This method can be used to return the stream to be written.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReleaseStream">
+      <MemberSignature Language="C#" Value="public void ReleaseStream (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ReleaseStream(class System.IO.Stream stream) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Xml.IStreamProvider.ReleaseStream(System.IO.Stream)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void ReleaseStream(System::IO::Stream ^ stream);" />
+      <MemberSignature Language="F#" Value="abstract member ReleaseStream : System.IO.Stream -&gt; unit" Usage="iStreamProvider.ReleaseStream stream" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime.Serialization</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime.Serialization.Xml</AssemblyName>
+        <AssemblyVersion>4.1.3.0</AssemblyVersion>
+        <AssemblyVersion>4.1.4.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream"><span data-ttu-id="0d9aa-124">正在释放的流。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-124">The stream being released.</span></span></param>
+        <summary><span data-ttu-id="0d9aa-125">将流释放到输出。</span><span class="sxs-lookup"><span data-stu-id="0d9aa-125">Releases a stream to output.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
