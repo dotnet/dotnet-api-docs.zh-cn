@@ -1,0 +1,242 @@
+<Type Name="IBindingDeliveryCapabilities" FullName="System.ServiceModel.Channels.IBindingDeliveryCapabilities">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="3a55b95746075602bdce12021830e3331cf6b869" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70587728" /></Metadata><TypeSignature Language="C#" Value="public interface IBindingDeliveryCapabilities" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IBindingDeliveryCapabilities" />
+  <TypeSignature Language="DocId" Value="T:System.ServiceModel.Channels.IBindingDeliveryCapabilities" />
+  <TypeSignature Language="VB.NET" Value="Public Interface IBindingDeliveryCapabilities" />
+  <TypeSignature Language="C++ CLI" Value="public interface class IBindingDeliveryCapabilities" />
+  <TypeSignature Language="F#" Value="type IBindingDeliveryCapabilities = interface" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary><span data-ttu-id="ec483-101">定义绑定为了描述和公布客户端与服务可能需要的功能而必须实现的接口。</span><span class="sxs-lookup"><span data-stu-id="ec483-101">Defines the interface that bindings must implement to describe and advertise the capabilities that clients and services may require.</span></span></summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="ec483-102">如果客户端和服务能够在它们的协定中规定它们所要求的功能要由某个绑定提供，则该绑定必须实现 <xref:System.ServiceModel.Channels.IBindingDeliveryCapabilities> 接口。</span><span class="sxs-lookup"><span data-stu-id="ec483-102">The <xref:System.ServiceModel.Channels.IBindingDeliveryCapabilities> interface must be implemented by a binding if clients and services are to be able to stipulate, as part of their contract, that the features they require are provided by the binding.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="ec483-103">下面的示例要求 `CalculatorService` 必须对有序消息传递使用 <xref:System.ServiceModel.WSHttpBinding>。</span><span class="sxs-lookup"><span data-stu-id="ec483-103">The following sample requires that `CalculatorService` must use a <xref:System.ServiceModel.WSHttpBinding> with ordered message delivery.</span></span> <span data-ttu-id="ec483-104">可靠会话和排队传递默认不用于此绑定，但可以启用它们。</span><span class="sxs-lookup"><span data-stu-id="ec483-104">Reliable sessions and queued delivery are not used by default with this binding, but can be enabled.</span></span>  
+  
+```csharp  
+<!-- Here is the configuration for a CalculatorService using a WSHttpBinding with ordered message delivery required. -->  
+<?xml version="1.0" encoding="utf-8" ?>  
+<configuration>  
+   <system.serviceModel>  
+      <services>  
+         <service   
+             type="Microsoft.ServiceModel.Samples.CalculatorService">  
+            <!-- Use base address provided by host and a WSHttpBinding named "Binding1" -->  
+            <endpoint address=""  
+                      binding="wsHttpBinding"  
+                      bindingConfiguration="Binding1"   
+                      contract="Microsoft.ServiceModel.Samples.ICalculator" />  
+         </service>  
+      </services>  
+  
+      <bindings>  
+         <wsHttpBinding>   
+            <binding name="Binding1">           
+               <!-- The next element enables a ReliableSession and required ordered delivery-->  
+      <reliableSession enabled="true" ordered="true"/>  
+      </binding>  
+         </wsHttpBinding>  
+      </bindings>  
+  
+   </system.serviceModel>  
+</configuration>  
+  
+// The CalculatorService configuration has enabled a reliable session  
+// with ordered delivery set to true. This means that the binding  
+// requirement for ordered delivery specified by the  
+// BindingRequirementsAttribute on the CalculatorService class  
+// implemented below will be satisfied by this WSHttpBinding.  
+  
+using System;  
+using System.ServiceModel;  
+  
+[ServiceContract]  
+interface ICalculatorService  
+{  
+  [OperationBehavior()]  
+  int Add(int a, int b);    
+  
+  [OperationContract]  
+  int Subtract(int a, int b);  
+}  
+  
+[BindingRequirements(  
+  QueuedDeliveryRequirements=RequirementsMode.Disallow,  
+  RequireOrderedDelivery=true  
+)]  
+class CalculatorService: ICalculatorService  
+{  
+  public int Add(int a, int b)  
+  {  
+    Console.WriteLine("Add called.");  
+    return a + b;   
+  }  
+  
+  public int Subtract(int a, int b)  
+  {  
+    Console.WriteLine("Subtract called.");  
+    return a - b;  
+  }  
+  
+  public int Multiply(int a, int b)  
+  {  
+    return a * b;  
+  }  
+}  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AssuresOrderedDelivery">
+      <MemberSignature Language="C#" Value="public bool AssuresOrderedDelivery { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AssuresOrderedDelivery" />
+      <MemberSignature Language="DocId" Value="P:System.ServiceModel.Channels.IBindingDeliveryCapabilities.AssuresOrderedDelivery" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property AssuresOrderedDelivery As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool AssuresOrderedDelivery { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.AssuresOrderedDelivery : bool" Usage="System.ServiceModel.Channels.IBindingDeliveryCapabilities.AssuresOrderedDelivery" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="ec483-105">获取一个值，该值指示绑定是否可以支持按消息发送顺序传递消息的保证。</span><span class="sxs-lookup"><span data-stu-id="ec483-105">Gets a value that indicates whether the binding can support assurances for the delivery of messages in the order they were sent.</span></span></summary>
+        <value><span data-ttu-id="ec483-106">如果消息必须按发送顺序传递，则为 <see langword="true" />；如果消息可以不按此顺序传递，则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="ec483-106"><see langword="true" /> if messages must be delivered in the order in which they were sent; <see langword="false" />, if the messages might not be delivered in this order.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="ec483-107">在运行时加载服务的描述时，此 <xref:System.ServiceModel.Channels.IBindingDeliveryCapabilities.AssuresOrderedDelivery%2A> 属性的值由 <xref:System.ServiceModel.DeliveryRequirementsAttribute.RequireOrderedDelivery%2A> 使用。</span><span class="sxs-lookup"><span data-stu-id="ec483-107">The value of this <xref:System.ServiceModel.Channels.IBindingDeliveryCapabilities.AssuresOrderedDelivery%2A> property is consumed by the <xref:System.ServiceModel.DeliveryRequirementsAttribute.RequireOrderedDelivery%2A> when the description of the service is loaded at runtime.</span></span> <span data-ttu-id="ec483-108">此检查用于确定为服务选择或创建的绑定是否满足服务的有序传递要求。</span><span class="sxs-lookup"><span data-stu-id="ec483-108">This check is done to determine whether the ordered delivery requirements of the service are satisfied by the binding selected or created for the service.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="ec483-109">下面的示例要求 `CalculatorService` 必须对有序消息传递使用 <xref:System.ServiceModel.WSHttpBinding>。</span><span class="sxs-lookup"><span data-stu-id="ec483-109">The following sample requires that `CalculatorService` must use a <xref:System.ServiceModel.WSHttpBinding> with ordered message delivery.</span></span> <span data-ttu-id="ec483-110">可靠会话和排队传递默认不用于此绑定，但可以启用它们。</span><span class="sxs-lookup"><span data-stu-id="ec483-110">Reliable sessions and queued delivery are not used by default with this binding, but can be enabled.</span></span>  
+  
+```csharp  
+<!-- Here is the configuration for a CalculatorService using a WSHttpBinding with ordered message delivery required. -->  
+<?xml version="1.0" encoding="utf-8" ?>  
+<configuration>  
+   <system.serviceModel>  
+      <services>  
+         <service   
+             type="Microsoft.ServiceModel.Samples.CalculatorService">  
+            <!-- Use base address provided by host and a WSHttpBinding named "Binding1" -->  
+            <endpoint address=""  
+                      binding="wsHttpBinding"  
+                      bindingConfiguration="Binding1"   
+                      contract="Microsoft.ServiceModel.Samples.ICalculator" />  
+         </service>  
+      </services>  
+  
+      <bindings>  
+         <wsHttpBinding>   
+            <binding name="Binding1">           
+               <!-- The next element enables a ReliableSession and required ordered delivery-->  
+      <reliableSession enabled="true" ordered="true"/>  
+      </binding>  
+         </wsHttpBinding>  
+      </bindings>  
+  
+   </system.serviceModel>  
+</configuration>  
+  
+// The CalculatorService configuration has enabled a reliable session  
+// with ordered delivery set to true. This means that the binding  
+// requirement for ordered delivery specified by the  
+// BindingRequirementsAttribute on the CalculatorService class  
+// implemented below will be satisfied by this WSHttpBinding.  
+  
+using System;  
+using System.ServiceModel;  
+  
+[ServiceContract]  
+interface ICalculatorService  
+{  
+  [OperationBehavior()]  
+  int Add(int a, int b);    
+  
+  [OperationContract]  
+  int Subtract(int a, int b);  
+}  
+  
+[BindingRequirements(  
+  QueuedDeliveryRequirements=RequirementsMode.Disallow,  
+  RequireOrderedDelivery=true  
+)]  
+class CalculatorService: ICalculatorService  
+{  
+  public int Add(int a, int b)  
+  {  
+    Console.WriteLine("Add called.");  
+    return a + b;   
+  }  
+  
+  public int Subtract(int a, int b)  
+  {  
+    Console.WriteLine("Subtract called.");  
+    return a - b;  
+  }  
+  
+  public int Multiply(int a, int b)  
+  {  
+    return a * b;  
+  }  
+}  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="QueuedDelivery">
+      <MemberSignature Language="C#" Value="public bool QueuedDelivery { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool QueuedDelivery" />
+      <MemberSignature Language="DocId" Value="P:System.ServiceModel.Channels.IBindingDeliveryCapabilities.QueuedDelivery" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property QueuedDelivery As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool QueuedDelivery { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.QueuedDelivery : bool" Usage="System.ServiceModel.Channels.IBindingDeliveryCapabilities.QueuedDelivery" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="ec483-111">获取一个值，该值指示绑定是否可以支持消息的排队传递。</span><span class="sxs-lookup"><span data-stu-id="ec483-111">Gets a value that indicates whether the binding can support the queued delivery of messages.</span></span></summary>
+        <value><span data-ttu-id="ec483-112">如果支持排队消息传递，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="ec483-112"><see langword="true" /> if queued messages delivery is supported; otherwise, <see langword="false" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="ec483-113">在运行时加载服务的描述时将使用此 <xref:System.ServiceModel.Channels.IBindingDeliveryCapabilities.QueuedDelivery%2A> 属性的值。</span><span class="sxs-lookup"><span data-stu-id="ec483-113">The value of this <xref:System.ServiceModel.Channels.IBindingDeliveryCapabilities.QueuedDelivery%2A> property is consumed when the description of the service is loaded at runtime.</span></span> <span data-ttu-id="ec483-114">此检查用于确定为服务选择或创建的绑定是否满足服务的排队传递要求。</span><span class="sxs-lookup"><span data-stu-id="ec483-114">This check is done to determine whether the queued delivery requirements of the service are satisfied by the binding selected or created for the service.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
