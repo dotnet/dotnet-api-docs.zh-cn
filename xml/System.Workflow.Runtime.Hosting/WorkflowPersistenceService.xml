@@ -1,0 +1,478 @@
+<Type Name="WorkflowPersistenceService" FullName="System.Workflow.Runtime.Hosting.WorkflowPersistenceService">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="26a36d6ca3c407e95c528c3b81560263c0067a80" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70604239" /></Metadata><TypeSignature Language="C#" Value="public abstract class WorkflowPersistenceService : System.Workflow.Runtime.Hosting.WorkflowRuntimeService" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit WorkflowPersistenceService extends System.Workflow.Runtime.Hosting.WorkflowRuntimeService" />
+  <TypeSignature Language="DocId" Value="T:System.Workflow.Runtime.Hosting.WorkflowPersistenceService" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class WorkflowPersistenceService&#xA;Inherits WorkflowRuntimeService" />
+  <TypeSignature Language="C++ CLI" Value="public ref class WorkflowPersistenceService abstract : System::Workflow::Runtime::Hosting::WorkflowRuntimeService" />
+  <TypeSignature Language="F#" Value="type WorkflowPersistenceService = class&#xA;    inherit WorkflowRuntimeService" />
+  <AssemblyInfo>
+    <AssemblyName>System.Workflow.Runtime</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Workflow.Runtime.Hosting.WorkflowRuntimeService</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8">
+      <AttributeName>System.Obsolete("The System.Workflow.* types are deprecated.  Instead, please use the new types from System.Activities.*")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>从中派生所有持久性服务的抽象基类。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  [!INCLUDE[DeprecatedContent](~/includes/deprecatedcontent-md.md)]  
+  
+ 在工作流运行过程中发生特定情况时，工作流运行时引擎将保留有关工作流实例的状态信息。 例如，在原子事务完成时、工作流实例进入空闲状态时、主机对工作流实例调用 <xref:System.Workflow.Runtime.WorkflowInstance.Unload%2A?displayProperty=nameWithType> 时或工作流实例终止或完成时，会执行保留操作。 当工作流运行时引擎语义指示应执行保留操作时，工作流运行时引擎将调用由持久性服务提供的方法，保存有关工作流实例的状态信息。 同样，当工作流运行时引擎需要还原以前保留的工作流实例时，会调用由持久性服务提供的方法来加载此状态信息。 工作流运行时引擎处理所有关于何时执行保留操作的语义。 持久性服务处理将工作流状态信息实际保存到数据存储区中以及从数据存储区中实际加载该信息的操作。  
+  
+ 可以通过从 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService> 类派生一个类来创建持久性服务。  通过调用 <xref:System.Workflow.Runtime.WorkflowRuntime.AddService%2A> 或在应用程序配置文件中添加合适的项，可以将持久性服务添加到工作流运行时引擎。 <xref:System.Workflow.Runtime.WorkflowRuntime> 应只包含一个持久性服务。 Windows Workflow Foundation 提供了 <xref:System.Workflow.Runtime.Hosting.SqlWorkflowPersistenceService> 类，这是一种全新的持久性服务，可以按原样使用或对其进行扩展。  
+  
+ 工作流运行时引擎具有锁定工作流状态信息的语义，当其他进程上运行的持久性服务有权访问单个数据存储区时，可以使用该语义。 通过为 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService> 提供指定是否应在数据存储区中解锁工作流实例状态信息的参数，并提供将先前锁定的工作流状态信息解锁的方法 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.SaveWorkflowInstanceState%2A>，<xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.UnlockWorkflowInstanceState%2A> 类提供了支持此工作流运行时引擎功能的能力。 在实现锁定的持久性服务中，对 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.LoadWorkflowInstanceState%2A> 的调用将锁定工作流实例的状态信息。  
+  
+ 如果持久性服务无法将状态信息保存到其数据存储区，或者无法从其数据存储区加载状态信息，则应引发 <xref:System.Workflow.Runtime.Hosting.PersistenceException>。 工作流运行时引擎需要此行为。  
+  
+ 为使用持久性存储区来保存工作流状态信息的服务提供了批处理机制。 在这种情况下，在持久性服务使用的持久性存储区与工作流运行时引擎内部状态之间保持一致十分重要。 可以将 <xref:System.Workflow.Runtime.IPendingWork> 接口定义的功能添加到服务中，然后通过将对数据存储区的更改作为工作项添加到 <xref:System.Workflow.Runtime.Hosting.WorkflowCommitWorkBatchService> 中，来参与 <xref:System.Workflow.Runtime.WorkflowEnvironment.WorkBatch%2A> 提供的工作流事务批处理。 持久存储区自身应实现 <xref:System.Transactions.IEnlistmentNotification> 接口，以便在事务回滚时正确保留工作流信息。 有关详细信息，请参阅<xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.SaveCompletedContextActivity%2A>或<xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.SaveWorkflowInstanceState%2A>。  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected WorkflowPersistenceService ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; WorkflowPersistenceService();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>在派生类中实现时，初始化 <see cref="T:System.Workflow.Runtime.Hosting.WorkflowPersistenceService" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的代码演示如何创建 `SqlWorkflowPersistenceService` 类（派生自 `WorkflowPersistenceService`）的实例。 此示例摘自 Program.cs 类文件中的“嵌套异常处理程序 SDK”示例。  有关详细信息，请参阅[嵌套异常处理程序示例](https://msdn.microsoft.com/library/d1da0209-842b-41c8-9b7c-0cbaa1034265)。  
+  
+ [!code-csharp[WF_Samples#161](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets11.cs#161)]
+ [!code-vb[WF_Samples#161](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets11.vb#161)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDefaultSerializedForm">
+      <MemberSignature Language="C#" Value="protected static byte[] GetDefaultSerializedForm (System.Workflow.ComponentModel.Activity activity);" />
+      <MemberSignature Language="ILAsm" Value=".method familystatic hidebysig unsigned int8[] GetDefaultSerializedForm(class System.Workflow.ComponentModel.Activity activity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.GetDefaultSerializedForm(System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; static cli::array &lt;System::Byte&gt; ^ GetDefaultSerializedForm(System::Workflow::ComponentModel::Activity ^ activity);" />
+      <MemberSignature Language="F#" Value="static member GetDefaultSerializedForm : System.Workflow.ComponentModel.Activity -&gt; byte[]" Usage="System.Workflow.Runtime.Hosting.WorkflowPersistenceService.GetDefaultSerializedForm activity" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="activity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="activity">请求其序列化的窗体的 <see cref="T:System.Workflow.ComponentModel.Activity" />。</param>
+        <summary>检索 <see cref="T:System.Workflow.ComponentModel.Activity" /> 的序列化的默认窗体。</summary>
+        <returns><see cref="T:System.Workflow.ComponentModel.Activity" /> 的序列化的默认窗体。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetIsBlocked">
+      <MemberSignature Language="C#" Value="protected internal static bool GetIsBlocked (System.Workflow.ComponentModel.Activity rootActivity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig bool GetIsBlocked(class System.Workflow.ComponentModel.Activity rootActivity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.GetIsBlocked(System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Shared Function GetIsBlocked (rootActivity As Activity) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; static bool GetIsBlocked(System::Workflow::ComponentModel::Activity ^ rootActivity);" />
+      <MemberSignature Language="F#" Value="static member GetIsBlocked : System.Workflow.ComponentModel.Activity -&gt; bool" Usage="System.Workflow.Runtime.Hosting.WorkflowPersistenceService.GetIsBlocked rootActivity" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rootActivity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="rootActivity">工作流实例的根活动。</param>
+        <summary>指示是否阻止给定的活动。</summary>
+        <returns>如果阻止给定的活动，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSuspendOrTerminateInfo">
+      <MemberSignature Language="C#" Value="protected internal static string GetSuspendOrTerminateInfo (System.Workflow.ComponentModel.Activity rootActivity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig string GetSuspendOrTerminateInfo(class System.Workflow.ComponentModel.Activity rootActivity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.GetSuspendOrTerminateInfo(System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Shared Function GetSuspendOrTerminateInfo (rootActivity As Activity) As String" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; static System::String ^ GetSuspendOrTerminateInfo(System::Workflow::ComponentModel::Activity ^ rootActivity);" />
+      <MemberSignature Language="F#" Value="static member GetSuspendOrTerminateInfo : System.Workflow.ComponentModel.Activity -&gt; string" Usage="System.Workflow.Runtime.Hosting.WorkflowPersistenceService.GetSuspendOrTerminateInfo rootActivity" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rootActivity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="rootActivity">工作流实例的根活动。</param>
+        <summary>检索给定活动的终止或挂起信息。</summary>
+        <returns>包含终止或挂起信息的 <see cref="T:System.String" />。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetWorkflowStatus">
+      <MemberSignature Language="C#" Value="protected internal static System.Workflow.Runtime.WorkflowStatus GetWorkflowStatus (System.Workflow.ComponentModel.Activity rootActivity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblystatic hidebysig valuetype System.Workflow.Runtime.WorkflowStatus GetWorkflowStatus(class System.Workflow.ComponentModel.Activity rootActivity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.GetWorkflowStatus(System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Shared Function GetWorkflowStatus (rootActivity As Activity) As WorkflowStatus" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; static System::Workflow::Runtime::WorkflowStatus GetWorkflowStatus(System::Workflow::ComponentModel::Activity ^ rootActivity);" />
+      <MemberSignature Language="F#" Value="static member GetWorkflowStatus : System.Workflow.ComponentModel.Activity -&gt; System.Workflow.Runtime.WorkflowStatus" Usage="System.Workflow.Runtime.Hosting.WorkflowPersistenceService.GetWorkflowStatus rootActivity" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Workflow.Runtime.WorkflowStatus</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rootActivity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="rootActivity">工作流实例的根活动。</param>
+        <summary>检索工作流的状态。</summary>
+        <returns>一个 <see cref="T:System.Workflow.Runtime.WorkflowStatus" /> 枚举值，表示工作流的状态。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadCompletedContextActivity">
+      <MemberSignature Language="C#" Value="protected internal abstract System.Workflow.ComponentModel.Activity LoadCompletedContextActivity (Guid scopeId, System.Workflow.ComponentModel.Activity outerActivity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.Workflow.ComponentModel.Activity LoadCompletedContextActivity(valuetype System.Guid scopeId, class System.Workflow.ComponentModel.Activity outerActivity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.LoadCompletedContextActivity(System.Guid,System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Function LoadCompletedContextActivity (scopeId As Guid, outerActivity As Activity) As Activity" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract System::Workflow::ComponentModel::Activity ^ LoadCompletedContextActivity(Guid scopeId, System::Workflow::ComponentModel::Activity ^ outerActivity);" />
+      <MemberSignature Language="F#" Value="abstract member LoadCompletedContextActivity : Guid * System.Workflow.ComponentModel.Activity -&gt; System.Workflow.ComponentModel.Activity" Usage="workflowPersistenceService.LoadCompletedContextActivity (scopeId, outerActivity)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Workflow.ComponentModel.Activity</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="scopeId" Type="System.Guid" />
+        <Parameter Name="outerActivity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="scopeId">已完成作用域的 <see cref="T:System.Guid" />。</param>
+        <param name="outerActivity">一个 <see cref="T:System.Workflow.ComponentModel.Activity" />，表示涵盖已完成作用域的活动。</param>
+        <summary>在派生类中实现时，将指定的已完成作用域加载回内存。</summary>
+        <returns>表示已完成范围的 <see cref="T:System.Workflow.ComponentModel.Activity" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 工作流运行时引擎使用 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.LoadCompletedContextActivity%2A> 实现补偿。 必须还原已完成作用域的相同副本。 为此，必须从数据存储区中已完成作用域的表示形式中还原有效的 <xref:System.IO.Stream>。 然后，必须将此 <xref:System.IO.Stream> 传递到重载的 <xref:System.Workflow.ComponentModel.Activity.Load%2A> 方法之一，用于执行作用域的反序列化。  
+  
+ 如果持久性服务无法从其数据存储区加载已完成作用域，则它应引发 <xref:System.Workflow.Runtime.Hosting.PersistenceException> 并显示相应的消息。  
+  
+   
+  
+## Examples  
+ 下面的示例演示 `LoadCompletedContextActivity` 方法的实现。 此示例摘自 FilePersistenceService.cs 文件中的“自定义持久性服务”示例。 有关详细信息，请参阅[自定义持久性服务示例](https://msdn.microsoft.com/library/869dfadf-5298-4551-bc80-f4cf7918729d)。  
+  
+ [!code-csharp[WF_Samples#269](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets24.cs#269)]
+ [!code-vb[WF_Samples#269](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets24.vb#269)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadWorkflowInstanceState">
+      <MemberSignature Language="C#" Value="protected internal abstract System.Workflow.ComponentModel.Activity LoadWorkflowInstanceState (Guid instanceId);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.Workflow.ComponentModel.Activity LoadWorkflowInstanceState(valuetype System.Guid instanceId) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.LoadWorkflowInstanceState(System.Guid)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Function LoadWorkflowInstanceState (instanceId As Guid) As Activity" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract System::Workflow::ComponentModel::Activity ^ LoadWorkflowInstanceState(Guid instanceId);" />
+      <MemberSignature Language="F#" Value="abstract member LoadWorkflowInstanceState : Guid -&gt; System.Workflow.ComponentModel.Activity" Usage="workflowPersistenceService.LoadWorkflowInstanceState instanceId" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Workflow.ComponentModel.Activity</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instanceId" Type="System.Guid" />
+      </Parameters>
+      <Docs>
+        <param name="instanceId">工作流实例的根活动的 <see cref="T:System.Guid" />。</param>
+        <summary>在派生类中实现时，将工作流实例的指定状态加载回内存。</summary>
+        <returns>一个 <see cref="T:System.Workflow.ComponentModel.Activity" />，表示工作流实例的根活动。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 必须还原活动的相同副本。 为此，必须从数据存储区中工作流实例的表示形式中还原有效的 <xref:System.IO.Stream>；然后，必须将此 <xref:System.IO.Stream> 传递到重载的 <xref:System.Workflow.ComponentModel.Activity.Load%2A> 方法之一，用于反序列化工作流实例。 如果持久性服务无法从其数据存储区加载工作流实例状态，则它应引发带有适当消息的 <xref:System.Workflow.Runtime.Hosting.PersistenceException>。  
+  
+ 工作流运行时引擎实现锁定语义，限制对保存在数据存储区中的工作流实例状态的访问。 这可以通过在多个进程中运行的持久性服务进行访问。 锁定语义旨在防止运行在两个不同的进程中的持久性服务同时将相同的工作流实例加载到内存中。 根据持久性服务所支持的环境类型，可以选择是否支持此功能。 如果选择支持运行时锁定语义，并且如果此工作流实例状态先前已经由其他进程锁定，则应引发 <xref:System.Workflow.Runtime.WorkflowOwnershipException>。 否则，应锁定对数据存储区中工作流实例状态的访问。 通过调用 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.UnlockWorkflowInstanceState%2A>，或调用 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.SaveWorkflowInstanceState%2A> 并将解锁参数设置为 `true`，可以对工作流实例状态进行解锁。  
+  
+   
+  
+## Examples  
+ 下面的示例演示 `LoadWorkflowInstanceState` 方法的实现。 此示例摘自 FilePersistenceService.cs 文件中的“自定义持久性服务”示例。 有关详细信息，请参阅[自定义持久性服务示例](https://msdn.microsoft.com/library/869dfadf-5298-4551-bc80-f4cf7918729d)。  
+  
+ [!code-csharp[WF_Samples#266](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets24.cs#266)]
+ [!code-vb[WF_Samples#266](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets24.vb#266)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RestoreFromDefaultSerializedForm">
+      <MemberSignature Language="C#" Value="protected static System.Workflow.ComponentModel.Activity RestoreFromDefaultSerializedForm (byte[] activityBytes, System.Workflow.ComponentModel.Activity outerActivity);" />
+      <MemberSignature Language="ILAsm" Value=".method familystatic hidebysig class System.Workflow.ComponentModel.Activity RestoreFromDefaultSerializedForm(unsigned int8[] activityBytes, class System.Workflow.ComponentModel.Activity outerActivity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.RestoreFromDefaultSerializedForm(System.Byte[],System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Shared Function RestoreFromDefaultSerializedForm (activityBytes As Byte(), outerActivity As Activity) As Activity" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; static System::Workflow::ComponentModel::Activity ^ RestoreFromDefaultSerializedForm(cli::array &lt;System::Byte&gt; ^ activityBytes, System::Workflow::ComponentModel::Activity ^ outerActivity);" />
+      <MemberSignature Language="F#" Value="static member RestoreFromDefaultSerializedForm : byte[] * System.Workflow.ComponentModel.Activity -&gt; System.Workflow.ComponentModel.Activity" Usage="System.Workflow.Runtime.Hosting.WorkflowPersistenceService.RestoreFromDefaultSerializedForm (activityBytes, outerActivity)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Workflow.ComponentModel.Activity</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="activityBytes" Type="System.Byte[]" />
+        <Parameter Name="outerActivity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="activityBytes"><see cref="T:System.Workflow.ComponentModel.Activity" /> 的序列化的窗体。</param>
+        <param name="outerActivity">外部 <see cref="T:System.Workflow.ComponentModel.Activity" />，其中包含要还原的 <see cref="T:System.Workflow.ComponentModel.Activity" />。</param>
+        <summary>从其序列化的窗体中还原 <see cref="T:System.Workflow.ComponentModel.Activity" />。</summary>
+        <returns>已还原的 <see cref="T:System.Workflow.ComponentModel.Activity" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的示例演示 `RestoreFromDefaultSerializedForm` 方法的实现。 此示例摘自 FilePersistenceService.cs 文件中的“自定义持久性服务”示例。 有关详细信息，请参阅[自定义持久性服务示例](https://msdn.microsoft.com/library/869dfadf-5298-4551-bc80-f4cf7918729d)。  
+  
+ [!code-csharp[WF_Samples#269](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets24.cs#269)]
+ [!code-vb[WF_Samples#269](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets24.vb#269)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveCompletedContextActivity">
+      <MemberSignature Language="C#" Value="protected internal abstract void SaveCompletedContextActivity (System.Workflow.ComponentModel.Activity activity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void SaveCompletedContextActivity(class System.Workflow.ComponentModel.Activity activity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.SaveCompletedContextActivity(System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract void SaveCompletedContextActivity(System::Workflow::ComponentModel::Activity ^ activity);" />
+      <MemberSignature Language="F#" Value="abstract member SaveCompletedContextActivity : System.Workflow.ComponentModel.Activity -&gt; unit" Usage="workflowPersistenceService.SaveCompletedContextActivity activity" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="activity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="activity">表示已完成范围的 <see cref="T:System.Workflow.ComponentModel.Activity" />。</param>
+        <summary>在派生类中实现时，将指定的已完成作用域保存到数据存储区。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 工作流运行时引擎保存已完成作用域活动的状态，以便实现补偿。 必须调用重载的 <xref:System.Workflow.ComponentModel.Activity.Save%2A> 方法之一，将 `activity` 序列化到 <xref:System.IO.Stream> 中；然后可以选择在将 <xref:System.IO.Stream> 写入到数据存储区之前，对其执行其他处理。 但是，在工作流运行时引擎调用 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.LoadCompletedContextActivity%2A> 时，必须还原活动的相同副本。  
+  
+ 必须能够将已完成作用域与其涵盖的工作流实例关联，以便在工作流实例完成或终止时，在数据存储区中将作用域标记为不需要的作用域。 因此，还应该保存与已完成作用域关联的工作流实例的 <xref:System.Guid>；这可以从与 <xref:System.Workflow.Runtime.WorkflowInstance.InstanceId%2A> 关联的 <xref:System.Workflow.Runtime.WorkflowInstance> 的 `activity` 属性中获取。  
+  
+ <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.LoadCompletedContextActivity%2A> 将已完成作用域的 <xref:System.Guid> 用作参数。 因此，还必须保存与 <xref:System.Workflow.ComponentModel.ActivityExecutionContext.ContextGuid%2A> 关联的 `activity` 属性。 此属性可以通过 <xref:System.Workflow.ComponentModel.Activity.ActivityContextGuidProperty> 的 `activity` 字段引用。  
+  
+ 如果实现使用持久存储区的持久性服务，则为了保持与工作流运行时引擎的内部状态的一致性，你应该参与工作流事务批处理，以便将实际写入持久存储区的操作延迟到提交工作流时。 若要参与批处理，可将工作项添加到表示对数据库的挂起更改的 <xref:System.Workflow.Runtime.WorkflowEnvironment.WorkBatch%2A> 属性，并在持久性服务中实现 <xref:System.Workflow.Runtime.IPendingWork> 接口。  
+  
+ 如果无法将已完成作用域保存到数据存储区，则应引发带有适当错误消息的 <xref:System.Workflow.Runtime.Hosting.PersistenceException>。  
+  
+   
+  
+## Examples  
+ 下面的示例演示 `SaveCompletedContextActivity` 方法的实现。 此示例摘自 FilePersistenceService.cs 文件中的“自定义持久性服务”示例。 有关详细信息，请参阅[自定义持久性服务示例](https://msdn.microsoft.com/library/869dfadf-5298-4551-bc80-f4cf7918729d)。  
+  
+ [!code-csharp[WF_Samples#268](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets24.cs#268)]
+ [!code-vb[WF_Samples#268](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets24.vb#268)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveWorkflowInstanceState">
+      <MemberSignature Language="C#" Value="protected internal abstract void SaveWorkflowInstanceState (System.Workflow.ComponentModel.Activity rootActivity, bool unlock);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void SaveWorkflowInstanceState(class System.Workflow.ComponentModel.Activity rootActivity, bool unlock) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.SaveWorkflowInstanceState(System.Workflow.ComponentModel.Activity,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Sub SaveWorkflowInstanceState (rootActivity As Activity, unlock As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract void SaveWorkflowInstanceState(System::Workflow::ComponentModel::Activity ^ rootActivity, bool unlock);" />
+      <MemberSignature Language="F#" Value="abstract member SaveWorkflowInstanceState : System.Workflow.ComponentModel.Activity * bool -&gt; unit" Usage="workflowPersistenceService.SaveWorkflowInstanceState (rootActivity, unlock)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rootActivity" Type="System.Workflow.ComponentModel.Activity" />
+        <Parameter Name="unlock" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="rootActivity">工作流实例的根活动。</param>
+        <param name="unlock">如果工作流实例不应锁定，则为 <see langword="true" />；如果工作流实例应该锁定，则为 <see langword="false" />。</param>
+        <summary>在派生类中实现时，将工作流实例状态保存到数据存储区。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 必须调用重载的 <xref:System.Workflow.ComponentModel.Activity.Save%2A> 方法之一，将 `rootActivity` 序列化到 <xref:System.IO.Stream> 中。 然后，可以选择在将 <xref:System.IO.Stream> 写入到数据存储区之前，对其执行其他处理。 但是，在工作流运行时引擎调用 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.LoadWorkflowInstanceState%2A> 时，必须还原根活动的相同副本。 如果无法将工作流实例状态保存到数据存储区，则应引发带有适当错误消息的 <xref:System.Workflow.Runtime.Hosting.PersistenceException>。  
+  
+ 工作流运行时引擎提供锁定语义，限制对保存在数据存储区中的工作流实例状态的访问。 这可以通过在多个宿主中运行并指向相同数据存储区的持久性服务进行访问。 锁定语义旨在防止运行在两个不同的工作流运行时中的持久性服务同时将相同的工作流实例加载到内存中。 根据持久性服务所支持的环境类型，可以选择是否支持此功能。 如果选择支持运行时锁定语义，则在持久性服务试图保存先前已由其他持久性服务锁定的工作流实例状态的情况下，应引发 <xref:System.Workflow.Runtime.WorkflowOwnershipException>。 如果 `unlock` 为 `true`，则应在保存工作流实例状态后解除对其访问的锁定。  
+  
+ <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.LoadWorkflowInstanceState%2A> 将工作流实例的 <xref:System.Guid> 用作参数。 因此，应该保存此 <xref:System.Guid>。 还可以使用此 <xref:System.Guid>，将工作流实例与其已完成作用域的保存的状态关联。 必须执行此操作，因为在工作流实例完成后，必须能够将这些已完成作用域标记为不需要的作用域。  
+  
+ 当工作流实例完成或终止时，工作流运行时引擎最后一次调用 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.SaveWorkflowInstanceState%2A>。 因此，如果 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.GetWorkflowStatus%2A> 等于 <xref:System.Workflow.Runtime.WorkflowStatus.Completed> 或 <xref:System.Workflow.Runtime.WorkflowStatus.Terminated>，则可以从数据存储区中安全地删除工作流实例及其所有关联的已完成作用域。 此外，可以订阅 <xref:System.Workflow.Runtime.WorkflowRuntime.WorkflowCompleted> 或 <xref:System.Workflow.Runtime.WorkflowRuntime.WorkflowTerminated> 事件，确定何时可以安全地删除与工作流实例关联的记录。 是否确实从数据存储区中删除记录取决于您的实现。  
+  
+ 如果实现使用持久存储区的持久性服务，则为了保持与工作流运行时引擎的内部状态的一致性，你应该参与工作流事务批处理，以便将实际写入持久存储区的操作延迟到提交工作流时。 若要参与批处理，可将表示对持久存储区的挂起更改的工作项添加到 <xref:System.Workflow.Runtime.WorkflowEnvironment.WorkBatch%2A> 属性，并在持久性服务中实现 <xref:System.Workflow.Runtime.IPendingWork> 接口。  
+  
+   
+  
+## Examples  
+ 下面的示例演示 `SaveWorkflowInstanceState` 方法的实现。 此示例摘自 FilePersistenceService.cs 文件中的“自定义持久性服务”示例。 有关详细信息，请参阅[自定义持久性服务示例](https://msdn.microsoft.com/library/869dfadf-5298-4551-bc80-f4cf7918729d)。  
+  
+ [!code-csharp[WF_Samples#264](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets24.cs#264)]
+ [!code-vb[WF_Samples#264](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets24.vb#264)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UnloadOnIdle">
+      <MemberSignature Language="C#" Value="protected internal abstract bool UnloadOnIdle (System.Workflow.ComponentModel.Activity activity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance bool UnloadOnIdle(class System.Workflow.ComponentModel.Activity activity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.UnloadOnIdle(System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract bool UnloadOnIdle(System::Workflow::ComponentModel::Activity ^ activity);" />
+      <MemberSignature Language="F#" Value="abstract member UnloadOnIdle : System.Workflow.ComponentModel.Activity -&gt; bool" Usage="workflowPersistenceService.UnloadOnIdle activity" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="activity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="activity">表示已完成范围的 <see cref="T:System.Workflow.ComponentModel.Activity" />。</param>
+        <summary>确定在工作流空闲时是否将其卸载。</summary>
+        <returns>如果为 <see langword="true" />，则工作流运行时引擎将在指定的工作流空闲时将其卸载。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的示例演示 `UnloadOnIdle` 方法的实现。 此示例摘自 FilePersistenceService.cs 文件中的“自定义持久性服务”示例。 有关详细信息，请参阅[自定义持久性服务示例](https://msdn.microsoft.com/library/869dfadf-5298-4551-bc80-f4cf7918729d)。  
+  
+ [!code-csharp[WF_Samples#270](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets24.cs#270)]
+ [!code-vb[WF_Samples#270](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets24.vb#270)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UnlockWorkflowInstanceState">
+      <MemberSignature Language="C#" Value="protected internal abstract void UnlockWorkflowInstanceState (System.Workflow.ComponentModel.Activity rootActivity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void UnlockWorkflowInstanceState(class System.Workflow.ComponentModel.Activity rootActivity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.UnlockWorkflowInstanceState(System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Sub UnlockWorkflowInstanceState (rootActivity As Activity)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract void UnlockWorkflowInstanceState(System::Workflow::ComponentModel::Activity ^ rootActivity);" />
+      <MemberSignature Language="F#" Value="abstract member UnlockWorkflowInstanceState : System.Workflow.ComponentModel.Activity -&gt; unit" Usage="workflowPersistenceService.UnlockWorkflowInstanceState rootActivity" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Runtime</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rootActivity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="rootActivity">工作流实例的根活动。</param>
+        <summary>在派生类中重写时，解除对工作流实例状态的锁定。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法是抽象的，因此它不包含对锁定和解锁的默认实现。  
+  
+ 实现自定义持久性服务时，如果要实现锁定方案，则需要重写此方法，并在 <xref:System.Workflow.Runtime.Hosting.WorkflowPersistenceService.SaveWorkflowInstanceState%2A> 方法中提供根据解锁参数的值进行锁定-解锁的机制。  
+  
+   
+  
+## Examples  
+ 下面的示例演示 `UnlockWorkflowInstanceState` 方法的实现。 此示例摘自 FilePersistenceService.cs 文件中的“自定义持久性服务”示例。 有关详细信息，请参阅[自定义持久性服务示例](https://msdn.microsoft.com/library/869dfadf-5298-4551-bc80-f4cf7918729d)。  
+  
+ [!code-csharp[WF_Samples#267](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets24.cs#267)]
+ [!code-vb[WF_Samples#267](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets24.vb#267)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,533 @@
+<Type Name="XamlReader" FullName="System.Windows.Markup.XamlReader">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="35c41088e2d1020cd99f7570565c144f44b3e76c" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70500263" /></Metadata><TypeSignature Language="C#" Value="public class XamlReader" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XamlReader extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Windows.Markup.XamlReader" />
+  <TypeSignature Language="VB.NET" Value="Public Class XamlReader" />
+  <TypeSignature Language="C++ CLI" Value="public ref class XamlReader" />
+  <TypeSignature Language="F#" Value="type XamlReader = class" />
+  <AssemblyInfo>
+    <AssemblyName>PresentationFramework</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>使用 WPF 默认 XAML 读取器和关联的 XAML 对象编写器读取 XAML 输入并创建对象图。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 同步<xref:System.Windows.Markup.XamlReader.Load%2A>方法是静态的，但异步<xref:System.Windows.Markup.XamlReader.LoadAsync%2A>方法不是静态的， <xref:System.Windows.Markup.XamlReader>需要类的实例才能使用。  
+  
+ `Load`方法的输出是一个对象，它表示已创建的对象树或对象关系图的根对象。 创建的<xref:System.Windows.Markup.XamlReader>对象图通常会在运行时添加到 WPF 应用程序的现有对象树中。 否则，在 WPF 应用程序模型中，新的对象图被视为已断开连接。 这意味着，它不会呈现，并且不能使用应用于 WPF 应用程序主对象树的任何对象树技术（例如，Api <xref:System.Windows.FrameworkElement.FindName%2A>、 <xref:System.Windows.LogicalTreeHelper>、 <xref:System.Windows.Media.VisualTreeHelper>）来访问它。 有关对象树概念的详细信息，请参阅[WPF 中的树](~/docs/framework/wpf/advanced/trees-in-wpf.md)。  
+  
+ <xref:System.Windows.Markup.XamlReader>支持以下主要方案：  
+  
+-   **克隆/对象工厂**：没有其他机制，引用类型通常不能包含在 WPF 对象树中的多个位置中。 （提供对在 WPF 中共享或重复使用的附加机制的示例包括基于<xref:System.Windows.Freezable>的对象，或支持通常可共享<xref:System.Windows.Media.Brush>的对象（例如），这些对象将<xref:System.Windows.ResourceDictionary>作为中的项进行引用。）克隆对象树中已存在的对象的一种方法是使用<xref:System.Windows.Markup.XamlWriter.Save%2A?displayProperty=nameWithType>序列化对象。 然后使用序列化的字符串作为对的调用<xref:System.Windows.Markup.XamlReader.Load%2A>的输入，使用流或<xref:System.Xml.XmlReader>作为中介。  
+  
+-   **基于实时信息构造对象**：通常还有其他方法可以让后期绑定或用户提供的输入更改现有对象的状态。 例如，可以使用相同的值设置多个属性，或使用数据绑定。 但如果你有这样一种方案，即使要创建的对象类型只在运行时是可在运行时或与用户交互的情况下才可进行，那么<xref:System.Windows.Markup.XamlReader.Load%2A>通过构建输入字符串来创建此类对象通常是一项有用的技术。  
+  
+-   **使用现有**的<xref:System.IO.Stream>资源技术：类型经常用在其他框架或技术中，用于跨应用程序边界传输数据或对象，也可用于类似情况。 然后，你可以使用<xref:System.IO.Stream>这些技术来存储或获取 XAML 格式的数据，最终将这些数据用于创建作为应用程序一部分的对象。  
+  
+-   **固定文档：** 您的应用程序可能会加载本地或下载的 XPS 文档，以将其包含在 WPF 应用程序对象树和 UI 中。  
+  
+> [!NOTE]
+>  此文档有时描述对象图，而不是对象树。 在运行时 WPF 应用程序的运行时对象关系中并不总是存在严格的父子关系，因此，对象图是更广泛适用的术语。 但是，因为 wpf 还包括两个不同的 tree 概念化<xref:System.Windows.LogicalTreeHelper>api <xref:System.Windows.Media.VisualTreeHelper>（，），因此，树比喻仍适用于 WPF 中的大多数真实情况。 但从 XAML 语言角度来看，对象图通常是考虑如何创建对象的 XAML 的最佳方法，因为 XAML 语言本身并不一定要指定帮助器类方法，这会使关系更多地出现在树结构。  
+  
+## <a name="code-access-security-loose-xaml-and-xamlreader"></a>代码访问安全性、松散 XAML 和 XamlReader  
+ XAML 是一种直接表示对象实例化和执行的标记语言。 因此，在 XAML 中创建的元素能够像等效的生成代码那样与系统资源（如网络访问、文件系统 IO）进行交互。  
+  
+ [!INCLUDE[TLA2#tla_winclient](~/includes/tla2sharptla-winclient-md.md)]支持安全框架 [!INCLUDE[TLA#tla_cas](~/includes/tlasharptla-cas-md.md)] 。  [!INCLUDE[TLA2#tla_net](~/includes/tla2sharptla-net-md.md)] 这意味着在 Internet 区域中运行的 [!INCLUDE[TLA2#tla_winclient](~/includes/tla2sharptla-winclient-md.md)] 内容具有缩减的执行权限。 “宽松型 XAML”（由 XAML 查看器在加载时解释的非编译 XAML 的页面）和 [!INCLUDE[TLA#tla_xbap](~/includes/tlasharptla-xbap-md.md)] 通常在此 Internet 区域中运行，并且使用相同的权限集。  但是，加载到完全受信任的应用程序中的 XAML 与承载应用程序具有相同的系统资源访问权限。 有关详细信息，请参阅 [WPF 部分信任安全性](~/docs/framework/wpf/wpf-partial-trust-security.md)。  
+  
+ 这些语句<xref:System.Windows.Markup.XamlReader>的含义在于，你的应用程序设计必须对你决定加载的 XAML 做出信任决策。 如果要加载不受信任的 XAML，请考虑为如何加载生成的对象图实现自己的沙盒技术。  
+  
+ <xref:System.Windows.Markup.XamlReader>还可以由部分信任代码调用。 在这种情况下，会对代码访问安全性应用 Internet 安全区域。 如果加载的 XAML 中的任何内容在 Internet 安全区域下无效，则会引发 XAML 分析异常。 在 XBAP 和平台级别的部分信任的其他情况下（其中<xref:System.Windows.Markup.XamlReader>是执行过程的一部分），你将获得与显式部分信任调用相同的异常行为。  
+  
+## <a name="wpf-xaml-xaml-readerswriters-and-xaml-language-versioning"></a>WPF XAML、XAML 读取器/编写器和 XAML 语言版本控制  
+ XAML2009 包含语言功能，如[x:Reference](~/docs/framework/xaml-services/x-reference-markup-extension.md)和[x:FactoryMethod](~/docs/framework/xaml-services/x-factorymethod-directive.md)。 您可以使用或`Load` `Parse`的签名来加载使用这些功能的 XAML。 但是，对于需要进行标记编译的 XAML （如 WPF 应用程序中的 "**页**生成" 操作的 xaml 或包含生成操作中的标记编译任务的任何 xaml），不支持这些语言功能。  
+  
+ WPF 类型和 WPF 技术一般支持依赖于访问 WPF 内部的概念。 例如，WPF 实现依赖属性的方式依赖于有效的类型成员查找的内部技术。 对这些内部机制的访问通过从<xref:System.Windows.Markup.XamlWriter> <xref:System.Windows.Markup>命名空间和 PresentationFramework 程序集的和<xref:System.Windows.Markup.XamlReader>中提供的 XAML 读取和写入 api 启用。 但是，来自 system.exception 程序集的较低级别的 xaml 读取器和 xaml 编写器（基于<xref:System.Xaml.XamlReader?displayProperty=nameWithType>的<xref:System.Xaml.XamlWriter?displayProperty=nameWithType>类）没有访问 WPF 内部的权限。 与任何 WPF 特定的程序集之间没有任何依赖关系。 如果没有访问 WPF 内部的权限，则 system.exception 读取器和编写器无法正确加载或保存所有 WPF 类型或基于 WPF 类型的类型。 具体而言，系统 .Xaml 读取器和编写器不理解 WPF 依赖属性的支持属性存储等概念，也不了解 WPF 如何使用样式、资源字典和模板的所有细节。 因此，您可以选择执行以下操作：  
+  
+-   如果正在加载 WPF 类型，并且/或者以任何方式在 BAML 窗体中使用 XAML，请使用 PresentationFramework XAML 读取器和 XAML 编写器。  
+  
+-   如果不依赖于任何 WPF 类型或 XAML 的 BAML 形式，并且出于特定于该框架的原因而未使用其他特定技术的 XAML 读取器或 XAML 编写器实现，请使用 system.exception XAML 读取器和 XAML 编写器。  
+  
+## <a name="systemxaml-backing-implementation-in-net-4"></a>.NET 4 中的 system.exception 后备实现  
+ <xref:System.Windows.Markup.XamlReader>是 WPF 框架级别 XAML 分析器的可调用 API 图面。 对于面向[!INCLUDE[net_v30_short](~/includes/net-v30-short-md.md)]和[!INCLUDE[net_v35_short](~/includes/net-v35-short-md.md)]的 WPF 应用程序，相同的基础 XAML 分析器还会执行运行时 XAML 加载和分析。  
+  
+ 如果目标[!INCLUDE[net_v40_short](~/includes/net-v40-short-md.md)]为，则外部 API 是相同的，但实现的各个部分都是在 system.exception 程序[!INCLUDE[net_v40_short](~/includes/net-v40-short-md.md)]集中的一般 XAML 实现的基础上生成的，这可提高分析 XAML 的技术和报告方面的诸多方面。 目标[!INCLUDE[net_v40_short](~/includes/net-v40-short-md.md)]要求将 system.exception 包括为引用，如所报告的异常等实现的详细信息可能来自 system.exception 定义的类型。  
+  
+## Examples  
+ 下面的示例<xref:System.Windows.Markup.XamlWriter>使用类<xref:System.Windows.Controls.Button>将转换为字符串。  然后， <xref:System.Windows.Controls.Button>使用<xref:System.Windows.Markup.XamlReader>类上的静态<xref:System.Windows.Markup.XamlReader.Load%2A>方法将该字符串重新加载到中。  
+  
+ [!code-csharp[xamlreaderwritersnippets#XamlReaderLoadXmlReader](~/samples/snippets/csharp/VS_Snippets_Wpf/XamlReaderWriterSnippets/CSharp/Window1.xaml.cs#xamlreaderloadxmlreader)]
+ [!code-vb[xamlreaderwritersnippets#XamlReaderLoadXmlReader](~/samples/snippets/visualbasic/VS_Snippets_Wpf/XamlReaderWriterSnippets/visualbasic/window1.xaml.vb#xamlreaderloadxmlreader)]  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.Windows.Markup.XamlWriter" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public XamlReader ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; XamlReader();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.Windows.Markup.XamlReader" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CancelAsync">
+      <MemberSignature Language="C#" Value="public void CancelAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CancelAsync() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.CancelAsync" />
+      <MemberSignature Language="VB.NET" Value="Public Sub CancelAsync ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void CancelAsync();" />
+      <MemberSignature Language="F#" Value="member this.CancelAsync : unit -&gt; unit" Usage="xamlReader.CancelAsync " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>如果有挂起的异步加载操作，则中止当前的异步加载操作。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Windows.Markup.XamlReader.CancelAsync%2A>是一个异步操作;因此，在中止操作之前可能会发生某些加载。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetWpfSchemaContext">
+      <MemberSignature Language="C#" Value="public static System.Xaml.XamlSchemaContext GetWpfSchemaContext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Xaml.XamlSchemaContext GetWpfSchemaContext() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.GetWpfSchemaContext" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function GetWpfSchemaContext () As XamlSchemaContext" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Xaml::XamlSchemaContext ^ GetWpfSchemaContext();" />
+      <MemberSignature Language="F#" Value="static member GetWpfSchemaContext : unit -&gt; System.Xaml.XamlSchemaContext" Usage="System.Windows.Markup.XamlReader.GetWpfSchemaContext " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Xaml.XamlSchemaContext</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>返回一个 <see cref="T:System.Xaml.XamlSchemaContext" /> 对象，该对象表示 <see cref="T:System.Windows.Markup.XamlReader" /> 的 WPF 架构上下文设置。</summary>
+        <returns>一个 <see cref="T:System.Xaml.XamlSchemaContext" /> 对象，该对象表示 <see cref="T:System.Windows.Markup.XamlReader" /> 的 WPF 架构上下文设置。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Load">
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>读取 XAML 输入，并返回相应对象树的根。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static object Load (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Load(class System.IO.Stream stream) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.Load(System.IO.Stream)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Object ^ Load(System::IO::Stream ^ stream);" />
+      <MemberSignature Language="F#" Value="static member Load : System.IO.Stream -&gt; obj" Usage="System.Windows.Markup.XamlReader.Load stream" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">要加载的 XAML，以流形式表示。</param>
+        <summary>读取指定 <see cref="T:System.IO.Stream" /> 中的 XAML 输入，并返回作为相应对象树根的 <see cref="T:System.Object" />。</summary>
+        <returns>所创建的对象树根处的对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的示例<xref:System.Windows.Controls.Button> <xref:System.IO.MemoryStream>使用<xref:System.Windows.Markup.XamlWriter>类将保存到。 然后， <xref:System.Windows.Controls.Button>使用<xref:System.Windows.Markup.XamlReader>类上的静态<xref:System.Windows.Markup.XamlReader.Load%2A>方法将流重新加载到中。  
+  
+ [!code-csharp[XamlReaderWriterSnippets#XamlReaderLoadXmlReader](~/samples/snippets/csharp/VS_Snippets_Wpf/XamlReaderWriterSnippets/CSharp/Window1.xaml.cs#xamlreaderloadxmlreader)]
+ [!code-vb[XamlReaderWriterSnippets#XamlReaderLoadXmlReader](~/samples/snippets/visualbasic/VS_Snippets_Wpf/XamlReaderWriterSnippets/visualbasic/window1.xaml.vb#xamlreaderloadxmlreader)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="stream" /> 为 <see langword="null" />。</exception>
+        <altmember cref="T:System.Windows.Markup.XamlWriter" />
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static object Load (System.Xaml.XamlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Load(class System.Xaml.XamlReader reader) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.Load(System.Xaml.XamlReader)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function Load (reader As XamlReader) As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Object ^ Load(System::Xaml::XamlReader ^ reader);" />
+      <MemberSignature Language="F#" Value="static member Load : System.Xaml.XamlReader -&gt; obj" Usage="System.Windows.Markup.XamlReader.Load reader" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xaml.XamlReader" Index="0" FrameworkAlternate="netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      </Parameters>
+      <Docs>
+        <param name="reader">一个 <see cref="T:System.Xaml.XamlReader" /> 对象。 应使用输入 XAML 初始化此对象。</param>
+        <summary>通过所提供的 <see cref="T:System.Xaml.XamlReader" /> 读取 XAML 输入，并返回作为相应对象树根的对象。</summary>
+        <returns>已创建的对象树的根对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 输入<xref:System.Xaml.XamlReader>可以为<xref:System.Windows.Baml2006.Baml2006Reader>。 这是你可以在运行时加载 BAML 或用于本地化工具的方式。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="reader" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static object Load (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Load(class System.Xml.XmlReader reader) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.Load(System.Xml.XmlReader)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function Load (reader As XmlReader) As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Object ^ Load(System::Xml::XmlReader ^ reader);" />
+      <MemberSignature Language="F#" Value="static member Load : System.Xml.XmlReader -&gt; obj" Usage="System.Windows.Markup.XamlReader.Load reader" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">已经以 XML 形式加载了要加载的 XAML 输入的 <see cref="T:System.Xml.XmlReader" />。</param>
+        <summary>读取指定 <see cref="T:System.Xml.XmlReader" /> 中的 XAML 输入，并返回作为相应对象树根的对象。</summary>
+        <returns>已创建的对象树的根对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的示例<xref:System.Windows.Markup.XamlWriter>使用类<xref:System.Windows.Controls.Button>将转换为字符串。  然后， <xref:System.Windows.Controls.Button>使用<xref:System.Windows.Markup.XamlReader>类上的静态<xref:System.Windows.Markup.XamlReader.Load%2A>方法将该字符串重新加载到中。  
+  
+ [!code-csharp[XamlReaderWriterSnippets#XamlReaderLoadXmlReader](~/samples/snippets/csharp/VS_Snippets_Wpf/XamlReaderWriterSnippets/CSharp/Window1.xaml.cs#xamlreaderloadxmlreader)]
+ [!code-vb[XamlReaderWriterSnippets#XamlReaderLoadXmlReader](~/samples/snippets/visualbasic/VS_Snippets_Wpf/XamlReaderWriterSnippets/visualbasic/window1.xaml.vb#xamlreaderloadxmlreader)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="reader" /> 为 <see langword="null" />。</exception>
+        <altmember cref="T:System.Windows.Markup.XamlWriter" />
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public static object Load (System.IO.Stream stream, System.Windows.Markup.ParserContext parserContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Load(class System.IO.Stream stream, class System.Windows.Markup.ParserContext parserContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.Load(System.IO.Stream,System.Windows.Markup.ParserContext)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Object ^ Load(System::IO::Stream ^ stream, System::Windows::Markup::ParserContext ^ parserContext);" />
+      <MemberSignature Language="F#" Value="static member Load : System.IO.Stream * System.Windows.Markup.ParserContext -&gt; obj" Usage="System.Windows.Markup.XamlReader.Load (stream, parserContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="parserContext" Type="System.Windows.Markup.ParserContext" />
+      </Parameters>
+      <Docs>
+        <param name="stream">包含要加载的 XAML 输入的流。</param>
+        <param name="parserContext">由分析器使用的上下文信息。</param>
+        <summary>读取指定 <see cref="T:System.IO.Stream" /> 中的 XAML 输入，并返回作为相应对象树根的对象。</summary>
+        <returns>已创建的对象树的根对象。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="stream" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="parserContext" /> 为 <see langword="null" />。</exception>
+        <altmember cref="T:System.Windows.Markup.XamlWriter" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="LoadAsync">
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>读取 XAML 标记，并返回与指定标记的根对应的对象。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="LoadAsync">
+      <MemberSignature Language="C#" Value="public object LoadAsync (System.IO.Stream stream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object LoadAsync(class System.IO.Stream stream) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.LoadAsync(System.IO.Stream)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Object ^ LoadAsync(System::IO::Stream ^ stream);" />
+      <MemberSignature Language="F#" Value="member this.LoadAsync : System.IO.Stream -&gt; obj" Usage="xamlReader.LoadAsync stream" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">包含要加载的 XAML 输入的流。</param>
+        <summary>读取指定 <see cref="T:System.IO.Stream" /> 中的 XAML 输入，并返回相应对象树的根。</summary>
+        <returns>已创建的对象树的根对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 异步 XAML 加载操作最初将返回纯根对象的对象。 XAML 分析会以异步方式继续，并在根下填充任何子对象。 这与典型的 WPF XAML 处理行为及其与对象生存期的 WPF 概念的交互相反。 在典型的（非异步）交互中，对象的所有属性（包括所有子集合）在返回某个元素并将其报告为已加载之前填充。 该行为等同于创建树的自下而上方法，其中根对象是要变为可用的最后一个对象。  
+  
+ 通常会将返回的对象分配给 WPF 应用程序的对象树中的某个位置，知道内容仍可能仍在进行填充，并且在整个内容作为 UI 的一部分公开时可能会导致增量布局更新。 出于此原因，通常是从 XAML 隔离或虚拟化任何异步加载的对象，并使用应用程序特定的逻辑或应用程序状态在<xref:System.Windows.Markup.XamlReader.LoadCompleted>处理时发出通知。  
+  
+ 为了使`x:SynchronousMode="Async"`能够以异步方式加载 xaml 输入，xaml 输入中的根元素必须包含属性和值。 <xref:System.Windows.Markup.XamlReader.LoadAsync%2A> 该值被视为区分大小写。 如果 XAML 输入根不包含`x:SynchronousMode="Async"`，则不会引发异常，并且会将调用作为同步负载进行处理（请参阅<xref:System.Windows.Markup.XamlReader.Load%28System.IO.Stream%29>）。  
+  
+ 一次只能执行一个<xref:System.Windows.Markup.XamlReader>类的每个实例的异步加载操作。  如果尝试对<xref:System.Windows.Markup.XamlReader>类的同一个实例执行<xref:System.InvalidOperationException>多个异步操作，则会引发。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="stream" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException">对同一个 <see cref="T:System.Windows.Markup.XamlReader" /> 的多个加载操作用时挂起。</exception>
+        <altmember cref="T:System.Windows.Markup.XamlWriter" />
+      </Docs>
+    </Member>
+    <Member MemberName="LoadAsync">
+      <MemberSignature Language="C#" Value="public object LoadAsync (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object LoadAsync(class System.Xml.XmlReader reader) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.LoadAsync(System.Xml.XmlReader)" />
+      <MemberSignature Language="VB.NET" Value="Public Function LoadAsync (reader As XmlReader) As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Object ^ LoadAsync(System::Xml::XmlReader ^ reader);" />
+      <MemberSignature Language="F#" Value="member this.LoadAsync : System.Xml.XmlReader -&gt; obj" Usage="xamlReader.LoadAsync reader" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">已加载/读取了 XAML 输入的现有 <see cref="T:System.Xml.XmlReader" />。</param>
+        <summary>读取指定 <see cref="T:System.Xml.XmlReader" /> 中的 XAML 输入，并返回相应对象树的根。</summary>
+        <returns>已创建的对象树的根。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 异步 XAML 加载操作最初将返回纯根对象的对象。 XAML 分析会以异步方式继续，并在根下填充任何子对象。 这与典型的 WPF XAML 处理行为及其与对象生存期的 WPF 概念的交互相反。 在典型的（非异步）交互中，对象的所有属性（包括所有子集合）在返回某个元素并将其报告为已加载之前填充。 该行为等同于创建树的自下而上方法，其中根对象是要变为可用的最后一个对象。  
+  
+ 通常会将返回的对象从<xref:System.Windows.Markup.XamlReader.LoadAsync%2A>分配给应用程序的对象树中的某个位置，知道内容可能仍在进行填充，并可能导致增量布局更新（如果整个内容作为无. 出于此原因，通常是从 XAML 隔离或虚拟化任何异步加载的对象，并使用应用程序特定的逻辑或应用程序状态在<xref:System.Windows.Markup.XamlReader.LoadCompleted>处理时发出通知。  
+  
+ 为了使`x:SynchronousMode="Async"`能够以异步方式加载 xaml 输入，xaml 标记中的根元素必须包含属性和值。 <xref:System.Windows.Markup.XamlReader.LoadAsync%2A> 该值被视为区分大小写。 如果 XAML 标记根不包含`x:SynchronousMode="Async"`，则不会引发异常，而是将调用作为同步加载进行处理（请参阅<xref:System.Windows.Markup.XamlReader.Load%28System.Xml.XmlReader%29>）。  
+  
+ 一次只能执行一个<xref:System.Windows.Markup.XamlReader>类的每个实例的异步加载操作。  如果尝试对<xref:System.Windows.Markup.XamlReader>类的同一个实例执行<xref:System.InvalidOperationException>多个异步操作，则会引发。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="reader" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException">对同一个 <see cref="T:System.Windows.Markup.XamlReader" /> 同时执行多个加载操作。</exception>
+        <altmember cref="T:System.Windows.Markup.XamlWriter" />
+      </Docs>
+    </Member>
+    <Member MemberName="LoadAsync">
+      <MemberSignature Language="C#" Value="public object LoadAsync (System.IO.Stream stream, System.Windows.Markup.ParserContext parserContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object LoadAsync(class System.IO.Stream stream, class System.Windows.Markup.ParserContext parserContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.LoadAsync(System.IO.Stream,System.Windows.Markup.ParserContext)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Object ^ LoadAsync(System::IO::Stream ^ stream, System::Windows::Markup::ParserContext ^ parserContext);" />
+      <MemberSignature Language="F#" Value="member this.LoadAsync : System.IO.Stream * System.Windows.Markup.ParserContext -&gt; obj" Usage="xamlReader.LoadAsync (stream, parserContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="parserContext" Type="System.Windows.Markup.ParserContext" />
+      </Parameters>
+      <Docs>
+        <param name="stream">包含要加载的 XAML 输入的流。</param>
+        <param name="parserContext">由分析器使用的上下文信息。</param>
+        <summary>读取指定 <see cref="T:System.IO.Stream" /> 中的 XAML 输入，并返回相应对象树的根。</summary>
+        <returns>已创建的对象树的根。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 异步 XAML 加载操作最初将返回纯根对象的对象。 XAML 分析会以异步方式继续，并在根下填充任何子对象。 这与典型的 WPF XAML 处理行为及其与对象生存期的 WPF 概念的交互相反。 在典型的（非异步）交互中，对象的所有属性（包括所有子集合）在返回某个元素并将其报告为已加载之前填充。 该行为等同于创建树的自下而上方法，其中根对象是要变为可用的最后一个对象。  
+  
+ 通常会将返回的对象分配给应用程序的对象树中的某个位置，知道内容仍可能仍在进行填充，并且在整个内容作为 UI 的一部分公开时可能会导致增量布局更新。 出于此原因，通常是从 XAML 隔离或虚拟化任何异步加载的对象，并使用应用程序特定的逻辑或应用程序状态在<xref:System.Windows.Markup.XamlReader.LoadCompleted>处理时发出通知。  
+  
+ 为了使`x:SynchronousMode="Async"`能够以异步方式加载标记，XAML 标记中的根元素必须包含属性和值。 <xref:System.Windows.Markup.XamlReader.LoadAsync%2A> 该值被视为区分大小写。 如果 XAML 标记根不包含`x:SynchronousMode="Async"`，则不会引发异常，并且会将调用作为同步加载进行处理（请参阅<xref:System.Windows.Markup.XamlReader.Load%28System.IO.Stream%2CSystem.Windows.Markup.ParserContext%29>）。  
+  
+ 一次只能执行一个<xref:System.Windows.Markup.XamlReader>类的每个实例的异步加载操作。  如果尝试对<xref:System.Windows.Markup.XamlReader>类的同一个实例执行<xref:System.InvalidOperationException>多个异步操作，则会引发。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="stream" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException">对同一个 <see cref="T:System.Windows.Markup.XamlReader" /> 同时执行多个加载操作。</exception>
+        <altmember cref="T:System.Windows.Markup.XamlWriter" />
+      </Docs>
+    </Member>
+    <Member MemberName="LoadCompleted">
+      <MemberSignature Language="C#" Value="public event System.ComponentModel.AsyncCompletedEventHandler LoadCompleted;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.AsyncCompletedEventHandler LoadCompleted" />
+      <MemberSignature Language="DocId" Value="E:System.Windows.Markup.XamlReader.LoadCompleted" />
+      <MemberSignature Language="VB.NET" Value="Public Event LoadCompleted As AsyncCompletedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event System::ComponentModel::AsyncCompletedEventHandler ^ LoadCompleted;" />
+      <MemberSignature Language="F#" Value="member this.LoadCompleted : System.ComponentModel.AsyncCompletedEventHandler " Usage="member this.LoadCompleted : System.ComponentModel.AsyncCompletedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.AsyncCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>在异步加载操作完成时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Windows.Markup.XamlReader.LoadCompleted>当异步加载操作中止时，也会引发。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.ComponentModel.AsyncCompletedEventHandler" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Parse">
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>读取指定文本字符串中的标记，并返回与指定标记的根对应的对象。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public static object Parse (string xamlText);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Parse(string xamlText) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.Parse(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function Parse (xamlText As String) As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Object ^ Parse(System::String ^ xamlText);" />
+      <MemberSignature Language="F#" Value="static member Parse : string -&gt; obj" Usage="System.Windows.Markup.XamlReader.Parse xamlText" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xamlText" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="xamlText">输入 XAML，作为单个文本字符串。</param>
+        <summary>读取指定文本字符串中的 XAML 输入，并返回与指定标记的根对应的对象。</summary>
+        <returns>已创建的对象树的根。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在从字符串<xref:System.Windows.Markup.XamlReader.Load%2A>创建流后，实现在内部调用。 有关<xref:System.Windows.Markup.XamlReader.Load%2A>其他信息，例如可能的异常，请参阅。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Parse">
+      <MemberSignature Language="C#" Value="public static object Parse (string xamlText, System.Windows.Markup.ParserContext parserContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Parse(string xamlText, class System.Windows.Markup.ParserContext parserContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Markup.XamlReader.Parse(System.String,System.Windows.Markup.ParserContext)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Object ^ Parse(System::String ^ xamlText, System::Windows::Markup::ParserContext ^ parserContext);" />
+      <MemberSignature Language="F#" Value="static member Parse : string * System.Windows.Markup.ParserContext -&gt; obj" Usage="System.Windows.Markup.XamlReader.Parse (xamlText, parserContext)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationFramework</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="xamlText" Type="System.String" />
+        <Parameter Name="parserContext" Type="System.Windows.Markup.ParserContext" />
+      </Parameters>
+      <Docs>
+        <param name="xamlText">输入 XAML，作为单个文本字符串。</param>
+        <param name="parserContext">由分析器使用的上下文信息。</param>
+        <summary>（使用指定的 <see cref="T:System.Windows.Markup.ParserContext" />）读取指定文本字符串中的 XAML 标记，并返回与指定标记的根对应的对象。</summary>
+        <returns>已创建的对象树的根。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在从字符串<xref:System.Windows.Markup.XamlReader.Load%2A>创建流后，实现在内部调用。 有关<xref:System.Windows.Markup.XamlReader.Load%2A>其他信息，例如可能的异常，请参阅。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
