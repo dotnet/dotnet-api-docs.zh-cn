@@ -1,0 +1,974 @@
+<Type Name="Span&lt;T&gt;" FullName="System.Span&lt;T&gt;">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="741758358f887e578627f2fe47f66b2b623a6c37" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70687509" /></Metadata><TypeSignature Language="C#" Value="public struct Span&lt;T&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit Span`1&lt;T&gt; extends System.ValueType" />
+  <TypeSignature Language="DocId" Value="T:System.Span`1" />
+  <TypeSignature Language="VB.NET" Value="Public Structure Span(Of T)" />
+  <TypeSignature Language="C++ CLI" Value="generic &lt;typename T&gt;&#xA;public value class Span" />
+  <TypeSignature Language="F#" Value="type Span&lt;'T&gt; = struct" />
+  <AssemblyInfo>
+    <AssemblyName>System.Memory</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime</AssemblyName>
+    <AssemblyVersion>4.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="T" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netcore-2.2;netcore-2.1;netcore-3.0;netstandard-2.1">
+      <AttributeName>System.Runtime.CompilerServices.IsByRefLike</AttributeName>
+    </Attribute>
+    <Attribute FrameworkAlternate="netcore-2.2;netcore-2.1;netcore-3.0;netstandard-2.1">
+      <AttributeName>System.Runtime.CompilerServices.IsReadOnly</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <typeparam name="T">中项的类型<see cref="T:System.Span`1" />。</typeparam>
+    <summary>提供任意内存的连续区域的类型和内存安全表示。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+
+`Span<T>`是在堆栈上分配的[引用结构](~/docs/csharp/language-reference/keywords/ref.md#ref-struct-types)，而不是在托管堆上分配的。 Ref 结构类型具有多个限制，可确保无法将它们升级到托管堆，其中包括不能装箱、不能将其分配给类型<xref:System.Object> `dynamic`的变量或任何接口类型，它们不能是中的字段引用类型，不能跨`await`和`yield`边界使用。 此外，对两个方法<xref:System.Span%601.Equals(System.Object)>和<xref:System.Span%601.GetHashCode%2A>的调用将引发<xref:System.NotSupportedException>。 
+
+> [!IMPORTANT]
+> 由于它是仅堆栈类型， `Span<T>`因此对于需要在堆上存储缓冲区引用的多个方案是不合适的。 例如，这是执行异步方法调用的例程。 对于这种情况，可以使用互补<xref:System.Memory%601?displayProperty=nameWithType>和<xref:System.ReadOnlyMemory%601?displayProperty=nameWithType>类型。
+
+对于表示不可变或只读结构的范围，请使用<xref:System.ReadOnlySpan%601?displayProperty=nameWithType>。
+
+## <a name="spant-and-memory"></a>跨度\<T > 和内存
+
+`Span<T>`表示任意内存的连续区域。 `Span<T>`实例通常用于保存数组或某个数组的一部分的元素。 但与数组不同， `Span<T>`实例可以指向托管内存、本机内存或在堆栈上管理的内存。 下面的示例`Span<Byte>`从数组创建：
+
+[!code-csharp[Creating a Span\<Byte> from an array](~/samples/snippets/csharp/api/system/span/program.cs#1)]
+     
+下面的示例创建一个`Span<Byte>` 100 字节的本机内存：
+
+[!code-csharp[Creating a Span\<Byte> from native memory](~/samples/snippets/csharp/api/system/span/program.cs#2)]
+
+下面的示例使用C# [stackalloc](~/docs/csharp/language-reference/keywords/stackalloc.md)关键字在堆栈上分配100字节的内存：
+
+[!code-csharp[Creating a Span\<Byte> from stack-allocated memory](~/samples/snippets/csharp/api/system/span/program.cs#3)]
+
+由于`Span<T>`是任意内存块的抽象，因此具有`Span<T>`参数的`Span<T>`类和方法的方法将在任何`Span<T>`对象上操作，而不考虑它所封装的内存类型。 例如，初始化范围并计算其元素的总和的代码的每个单独部分均可更改为单一初始化和计算方法，如以下示例所示：
+
+[!code-csharp[Creating a Span\<Byte> from stack-allocated memory](~/samples/snippets/csharp/api/system/span/program.cs#4)]
+
+## <a name="spant-and-arrays"></a>跨度\<T > 和数组
+
+包装数组时， `Span<T>`可以包装整个数组，这与在[> 和 memory\<](#spant-and-memory)部分的示例中所做的一样。 由于它支持切片， `Span<T>`因此还可以指向数组内的任何连续范围。  
+
+下面的示例创建一个10元素整数数组中间5个元素的切片。 请注意，该代码会将切片中每个整数的值加倍。 正如输出所示，范围内的更改会反映在数组的值中。
+
+[!code-csharp[Creating a slice from a portion of a span](~/samples/snippets/csharp/api/system/span/slice/program.cs)]
+
+## <a name="spant-and-slices"></a>跨度\<T > 和切片
+
+`Span<T>`包含<xref:System.Span%601.Slice%2A>方法的两个重载，该方法构成从指定索引处开始的当前范围的切片。 这样一来，就可以将中`Span<T>`的数据作为一组逻辑块进行处理，数据处理管道的部分可以按需处理这些数据块，并对性能的影响最小。 例如，由于新式服务器协议通常基于文本，因此字符串和子字符串的操作非常重要。 在类中，提取子字符串的主要方法是 <xref:System.String.Substring%2A> 。  <xref:System.String> 对于依赖于广泛的字符串操作的数据管道，其使用会带来一些性能损失，因为它：
+
+1. 创建用于保存子字符串的新字符串。
+
+2. 将原始字符串中的字符子集复制到新字符串中。
+
+可以使用`Span<T>`或<xref:System.ReadOnlySpan%601>删除此分配和复制操作，如下面的示例所示：
+
+[!code-csharp[Creating a slice from a substring](~/samples/snippets/csharp/api/system/span/slice2/program.cs)]
+
+
+      ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Span (T[] array);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(!T[] array) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.#ctor(`0[])" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (array As T())" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Span(cli::array &lt;T&gt; ^ array);" />
+      <MemberSignature Language="F#" Value="new Span&lt;'T&gt; : 'T[] -&gt; Span&lt;'T&gt;" Usage="new System.Span&lt;'T&gt; array" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="array" Type="T[]" />
+      </Parameters>
+      <Docs>
+        <param name="array">用来从中创建 <see cref="T:System.Span`1" /> 对象的数组。</param>
+        <summary>在整个指定数组上创建新的 <see cref="T:System.Span`1" /> 对象。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+
+如果`array`为`null` ，则此 `null` 构造函数返回。 `Span<T>`
+
+      ]]></format>
+        </remarks>
+        <exception cref="T:System.ArrayTypeMismatchException"><paramref name="T" /> 为引用类型，并且 <paramref name="array" /> 不是 <paramref name="T" /> 类型的数组。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Span (void* pointer, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(void* pointer, int32 length) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.#ctor(System.Void*,System.Int32)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Span(void* pointer, int length);" />
+      <MemberSignature Language="F#" Value="new Span&lt;'T&gt; : nativeptr&lt;unit&gt; * int -&gt; Span&lt;'T&gt;" Usage="new System.Span&lt;'T&gt; (pointer, length)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.2;netcore-2.1;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="pointer" Type="System.Void*" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="pointer">指向内存中指定 <typeparamref name="T" /> 元素数的起始地址的指针。</param>
+        <param name="length">要包含在 <see cref="T:System.Span`1" /> 中的 <typeparamref name="T" /> 元素数。</param>
+        <summary>从指定的内存地址开始，从指定 <typeparamref name="T" /> 元素数创建新的 <see cref="T:System.Span`1" /> 对象。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+
+        This constructor should be used with care, since it creates arbitrarily typed `T`s from a `void*`-typed block of memory, and `length` is not checked. However, if the constructor succeeds in creating a new <xref:System.Span%601> object, all subsequent uses are correct.        
+
+      ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="T" /> 是引用类型或包含指针，因此不能存储在非管理的内存中。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="length" /> 为负数。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Span (T[] array, int start, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(!T[] array, int32 start, int32 length) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.#ctor(`0[],System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (array As T(), start As Integer, length As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Span(cli::array &lt;T&gt; ^ array, int start, int length);" />
+      <MemberSignature Language="F#" Value="new Span&lt;'T&gt; : 'T[] * int * int -&gt; Span&lt;'T&gt;" Usage="new System.Span&lt;'T&gt; (array, start, length)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="array" Type="T[]" />
+        <Parameter Name="start" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">源数组。</param>
+        <param name="start">要包括在新的 <see cref="T:System.Span`1" /> 内的第一个元素的索引。</param>
+        <param name="length">要包括在新的 <see cref="T:System.Span`1" /> 中的元素数。</param>
+        <summary>从指定索引开始，创建包含数组的指定元素数的新 <see cref="T:System.Span`1" /> 对象。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+### Remarks
+
+当为时`default` `array` ， `null` 此方法返回。
+
+            ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="array" /> 是 <see langword="null" />，但 <paramref name="start" /> 或 <paramref name="length" /> 不为零。
+
+或
+
+<paramref name="start" /> 在数组的界限外。
+
+或
+
+<paramref name="start" /> 和 <paramref name="length" /> 超过数组中的元素数。</exception>
+        <exception cref="T:System.ArrayTypeMismatchException"><paramref name="T" /> 为引用类型，并且 <paramref name="array" /> 不是 <paramref name="T" /> 类型的数组。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Clear() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.Clear" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Clear ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Clear();" />
+      <MemberSignature Language="F#" Value="member this.Clear : unit -&gt; unit" Usage="span.Clear " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>清除此 <see cref="T:System.Span`1" /> 对象的内容。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+
+方法将<xref:System.Span%601>对象中的项设置为其默认值。 `Clear` 它不会从中<xref:System.Span%601>删除项。  
+
+         ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (Span&lt;T&gt; destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyTo(valuetype System.Span`1&lt;!T&gt; destination) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.CopyTo(System.Span{`0})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub CopyTo (destination As Span(Of T))" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void CopyTo(Span&lt;T&gt; destination);" />
+      <MemberSignature Language="F#" Value="member this.CopyTo : Span&lt;'T&gt; -&gt; unit" Usage="span.CopyTo destination" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="destination" Type="System.Span&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="destination">目标 <see cref="T:System.Span`1" /> 对象。</param>
+        <summary>将此 <see cref="T:System.Span`1" /> 的内容复制到目标 <see cref="T:System.Span`1" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+
+即使`source` `source`和重叠`destination` ， `destination` 此方法也会将全部复制到。
+
+         ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="destination" /> 短于源 <see cref="T:System.Span`1" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Empty">
+      <MemberSignature Language="C#" Value="public static Span&lt;T&gt; Empty { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.Span`1&lt;!T&gt; Empty" />
+      <MemberSignature Language="DocId" Value="P:System.Span`1.Empty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly Property Empty As Span(Of T)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property Span&lt;T&gt; Empty { Span&lt;T&gt; get(); };" />
+      <MemberSignature Language="F#" Value="member this.Empty : Span&lt;'T&gt;" Usage="System.Span&lt;'T&gt;.Empty" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Span&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>返回空的 <see cref="T:System.Span`1" /> 对象。</summary>
+        <value>一个空 <see cref="T:System.Span`1" /> 对象。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.Equals(System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function Equals (obj As Object) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override bool Equals(System::Object ^ obj);" />
+      <MemberSignature Language="F#" Value="override this.Equals : obj -&gt; bool" Usage="span.Equals obj" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Obsolete("Equals() on Span will always throw an exception. Use == instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">不支持。</param>
+        <summary>不支持对此方法的调用。</summary>
+        <returns>不支持对此方法的调用。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+不支持对<xref:System.Span%601.Equals%2A>方法的调用。 <xref:System.Span%601.Equals%2A>对方法的调用会产生两个结果：
+
+- `obj` 如果 <xref:System.Span%601> 是，则方法调用会生成编译器错误 CS1503： "无法从 ' system.object ' 转换为 ' object '。"这是因为<xref:System.Span%601>是一个不能装箱的[ref 结构](~/docs/csharp/reference-semantics-with-value-types.md#ref-struct-type)，因此无法<xref:System.Object>将其转换为。
+
+- 如果的类型`obj` <xref:System.Span%601>不是，则方法调用将引发<xref:System.NotSupportedException>。 
+
+若要比较<xref:System.Span%601>两个对象是否相等， <xref:System.Span%601.op_Equality%2A>请使用比较运算符。
+
+        ]]></format>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">不支持对此方法的调用。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Fill">
+      <MemberSignature Language="C#" Value="public void Fill (T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Fill(!T value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.Fill(`0)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Fill (value As T)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Fill(T value);" />
+      <MemberSignature Language="F#" Value="member this.Fill : 'T -&gt; unit" Usage="span.Fill value" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="T" />
+      </Parameters>
+      <Docs>
+        <param name="value">要分配给范围的每个元素的值。</param>
+        <summary>用指定的值填充此范围的元素。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public Span&lt;T&gt;.Enumerator GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Span`1/Enumerator&lt;!T&gt; GetEnumerator() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.GetEnumerator" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetEnumerator () As Span(Of T).Enumerator" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Span&lt;T&gt;::Enumerator GetEnumerator();" />
+      <MemberSignature Language="F#" Value="member this.GetEnumerator : unit -&gt; Span&lt;'T&gt;.Enumerator" Usage="span.GetEnumerator " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Span&lt;T&gt;+Enumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>返回用于此 <see cref="T:System.Span`1" /> 的枚举器。</summary>
+        <returns>用于此范围的枚举器。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+您<xref:System.Span%601.GetEnumerator%2A> C# 可以 `foreach` 使用语句和 Visual Basic `For Each`...，而不是直接调用方法。用于枚举的 <xref:System.Span%601> 构造。  `Next`
+
+       ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.GetHashCode" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetHashCode () As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override int GetHashCode();" />
+      <MemberSignature Language="F#" Value="override this.GetHashCode : unit -&gt; int" Usage="span.GetHashCode " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Obsolete("GetHashCode() on Span will always throw an exception.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>引发 <see cref="T:System.NotSupportedException" />。</summary>
+        <returns>调用此方法始终引发 <see cref="T:System.NotSupportedException" />。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.NotSupportedException">不支持对此方法的调用。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetPinnableReference">
+      <MemberSignature Language="C#" Value="public T GetPinnableReference ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !T GetPinnableReference() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.GetPinnableReference" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetPinnableReference () As T" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; T % GetPinnableReference();" />
+      <MemberSignature Language="F#" Value="member this.GetPinnableReference : unit -&gt; " Usage="span.GetPinnableReference " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>T@</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>返回对索引为零处 <see cref="T:System.Span`1" /> 元素的引用。</summary>
+        <returns>返回对索引为零处 <see cref="T:System.Span`1" /> 元素的引用，或 <see langword="null" />，如果 <see cref="M:System.Span`1.IsEmpty" /> 为 <see langword="true" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+
+方法返回[ref 结构。](~/docs/csharp/reference-semantics-with-value-types.md#ref-struct-type) `GetPinnableReference` 它可用于<xref:System.Span%601>在内存中固定。 需要在<xref:System.Span%601> [fixed](~/docs/csharp/language-reference/keywords/fixed-statement.md)语句中支持的使用。
+
+       ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsEmpty">
+      <MemberSignature Language="C#" Value="public bool IsEmpty { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsEmpty" />
+      <MemberSignature Language="DocId" Value="P:System.Span`1.IsEmpty" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property IsEmpty As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IsEmpty { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsEmpty : bool" Usage="System.Span&lt;'T&gt;.IsEmpty" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>返回一个值，该值指示当前的 <see cref="T:System.Span`1" /> 是否为空。</summary>
+        <value><see langword="true" />如果当前范围为空，则为; 否则为。否则为<see langword="false" />。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public T this[int index] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T Item(int32)" />
+      <MemberSignature Language="DocId" Value="P:System.Span`1.Item(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Default Public ReadOnly Property Item(index As Integer) As T" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property T % default[int] { T % get(int index); };" />
+      <MemberSignature Language="F#" Value="member this.Item(int) : " Usage="System.Span&lt;'T&gt;.Item" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue RefType="Ref">
+        <ReturnType>T</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">元素的索引（索引从零开始）。</param>
+        <summary>获取指定基于零的索引处的元素。</summary>
+        <value>指定索引处的元素。</value>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.IndexOutOfRangeException"><paramref name="index" /> 小于零，或者大于或等于 <see cref="P:System.Span`1.Length" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Length">
+      <MemberSignature Language="C#" Value="public int Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Length" />
+      <MemberSignature Language="DocId" Value="P:System.Span`1.Length" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Length As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int Length { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.Length : int" Usage="System.Span&lt;'T&gt;.Length" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>返回当前范围的长度。</summary>
+        <value>当前跨度的长度。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Equality">
+      <MemberSignature Language="C#" Value="public static bool operator == (Span&lt;T&gt; left, Span&lt;T&gt; right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype System.Span`1&lt;!T&gt; left, valuetype System.Span`1&lt;!T&gt; right) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.op_Equality(System.Span{`0},System.Span{`0})" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Operator == (left As Span(Of T), right As Span(Of T)) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool operator ==(Span&lt;T&gt; left, Span&lt;T&gt; right);" />
+      <MemberSignature Language="F#" Value="static member ( = ) : Span&lt;'T&gt; * Span&lt;'T&gt; -&gt; bool" Usage="left = right" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Span&lt;T&gt;" />
+        <Parameter Name="right" Type="System.Span&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="left">要比较的第一个范围。</param>
+        <param name="right">要比较的第二个范围。</param>
+        <summary>返回一个值，该值指示两个 <see cref="T:System.Span`1" /> 对象是否相等。</summary>
+        <returns>如果两个 <see cref="T:System.Span`1" /> 对象相等，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+
+如果<xref:System.Span%601>两个对象具有相同的长度和对应的`left`元素，并且指向相同`right`的内存，则这两个对象相等。 请注意，相等性测试*不*会尝试确定内容是否相等。
+
+         ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static implicit operator Span&lt;T&gt; (ArraySegment&lt;T&gt; arraySegment);" FrameworkAlternate="netcore-2.0" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Span`1&lt;!T&gt; op_Implicit(valuetype System.ArraySegment`1&lt;!T&gt; arraySegment) cil managed" FrameworkAlternate="netcore-2.0" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Widening Operator CType (arraySegment As ArraySegment(Of T)) As Span(Of T)" FrameworkAlternate="netcore-2.0" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static operator Span&lt;T&gt;(ArraySegment&lt;T&gt; arraySegment);" FrameworkAlternate="netcore-2.0" />
+      <MemberSignature Language="C#" Value="public static implicit operator Span&lt;T&gt; (ArraySegment&lt;T&gt; segment);" FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Span`1&lt;!T&gt; op_Implicit(valuetype System.ArraySegment`1&lt;!T&gt; segment) cil managed" FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.op_Implicit(System.ArraySegment{`0})~System.Span{`0}" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Widening Operator CType (segment As ArraySegment(Of T)) As Span(Of T)" FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static operator Span&lt;T&gt;(ArraySegment&lt;T&gt; segment);" FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1" />
+      <MemberSignature Language="F#" Value="static member op_Implicit : ArraySegment&lt;'T&gt; -&gt; Span&lt;'T&gt;" Usage="System.Span&lt;'T&gt;.op_Implicit segment" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Span&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="segment" Type="System.ArraySegment&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="segment">要转换为 <see cref="T:System.Span`1" /> 的数组段。</param>
+        <summary>定义 <see cref="T:System.ArraySegment`1" /> 到 <see cref="T:System.Span`1" /> 的隐式转换。</summary>
+        <returns>与数组段相对应的范围。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static implicit operator ReadOnlySpan&lt;T&gt; (Span&lt;T&gt; span);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.ReadOnlySpan`1&lt;!T&gt; op_Implicit(valuetype System.Span`1&lt;!T&gt; span) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.op_Implicit(System.Span{`0})~System.ReadOnlySpan{`0}" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Widening Operator CType (span As Span(Of T)) As ReadOnlySpan(Of T)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static operator ReadOnlySpan&lt;T&gt;(Span&lt;T&gt; span);" />
+      <MemberSignature Language="F#" Value="static member op_Implicit : Span&lt;'T&gt; -&gt; ReadOnlySpan&lt;'T&gt;" Usage="System.Span&lt;'T&gt;.op_Implicit span" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ReadOnlySpan&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="span" Type="System.Span&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="span">要转换为 <see cref="T:System.ReadOnlySpan`1" /> 的对象。</param>
+        <summary>定义 <see cref="T:System.Span`1" /> 到 <see cref="T:System.ReadOnlySpan`1" /> 的隐式转换。</summary>
+        <returns>与当前实例对应的只读范围。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static implicit operator Span&lt;T&gt; (T[] array);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Span`1&lt;!T&gt; op_Implicit(!T[] array) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.op_Implicit(`0[])~System.Span{`0}" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Widening Operator CType (array As T()) As Span(Of T)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static operator Span&lt;T&gt;(cli::array &lt;T&gt; ^ array);" />
+      <MemberSignature Language="F#" Value="static member op_Implicit : 'T[] -&gt; Span&lt;'T&gt;" Usage="System.Span&lt;'T&gt;.op_Implicit array" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Span&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="T[]" />
+      </Parameters>
+      <Docs>
+        <param name="array">要转换为 <see cref="T:System.Span`1" /> 的数组。</param>
+        <summary>定义数组到 <see cref="T:System.Span`1" /> 的隐式转换。</summary>
+        <returns>与 <paramref name="array" /> 对应的范围。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Inequality">
+      <MemberSignature Language="C#" Value="public static bool operator != (Span&lt;T&gt; left, Span&lt;T&gt; right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype System.Span`1&lt;!T&gt; left, valuetype System.Span`1&lt;!T&gt; right) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.op_Inequality(System.Span{`0},System.Span{`0})" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Operator != (left As Span(Of T), right As Span(Of T)) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static bool operator !=(Span&lt;T&gt; left, Span&lt;T&gt; right);" />
+      <MemberSignature Language="F#" Value="static member op_Inequality : Span&lt;'T&gt; * Span&lt;'T&gt; -&gt; bool" Usage="System.Span&lt;'T&gt;.op_Inequality (left, right)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="System.Span&lt;T&gt;" />
+        <Parameter Name="right" Type="System.Span&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="left">要比较的第一个范围。</param>
+        <param name="right">要比较的第二个范围。</param>
+        <summary>返回一个值，该值指示两个 <see cref="T:System.Span`1" /> 对象是否不相等。</summary>
+        <returns>如果两个 <see cref="T:System.Span`1" /> 对象不相等，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+
+如果<xref:System.Span%601>两个对象具有不同的`left`长度，或者和的相应元素不指向`right`相同的内存，则这两个对象相等。 
+
+         ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Slice">
+      <MemberSignature Language="C#" Value="public Span&lt;T&gt; Slice (int start);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Span`1&lt;!T&gt; Slice(int32 start) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.Slice(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Slice (start As Integer) As Span(Of T)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Span&lt;T&gt; Slice(int start);" />
+      <MemberSignature Language="F#" Value="member this.Slice : int -&gt; Span&lt;'T&gt;" Usage="span.Slice start" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Span&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="start" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="start">开始切片处的索引。</param>
+        <summary>从指定索引处开始的当前范围外形成切片。</summary>
+        <returns>由当前范围（从 <paramref name="start" /> 到范围末尾）的所有元素组成的范围。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="start" /> 小于零或大于 <see cref="T:System.Span`1.Length" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Slice">
+      <MemberSignature Language="C#" Value="public Span&lt;T&gt; Slice (int start, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Span`1&lt;!T&gt; Slice(int32 start, int32 length) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.Slice(System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Slice (start As Integer, length As Integer) As Span(Of T)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; Span&lt;T&gt; Slice(int start, int length);" />
+      <MemberSignature Language="F#" Value="member this.Slice : int * int -&gt; Span&lt;'T&gt;" Usage="span.Slice (start, length)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Span&lt;T&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="start" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="start">开始切片处的索引。</param>
+        <param name="length">切片所需的长度。</param>
+        <summary>从指定长度的指定索引处开始，在当前范围外形成切片。</summary>
+        <returns>由当前范围（从 <paramref name="start" /> 开始）中 <paramref name="length" /> 元素组成的范围。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="start" /> 或 <paramref name="start" /> + <paramref name="length" /> 小于零或大于 <see cref="T:System.Span`1.Length" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ToArray">
+      <MemberSignature Language="C#" Value="public T[] ToArray ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !T[] ToArray() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.ToArray" />
+      <MemberSignature Language="VB.NET" Value="Public Function ToArray () As T()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; cli::array &lt;T&gt; ^ ToArray();" />
+      <MemberSignature Language="F#" Value="member this.ToArray : unit -&gt; 'T[]" Usage="span.ToArray " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>T[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>将此范围的内容复制到新数组中。</summary>
+        <returns>包含当前范围中数据的数组。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+
+此方法执行堆分配，因此应尽可能避免使用。 有时，当支持<xref:System.Span%601>对象的 api 不可用时，但使用数组的 api 是必需的。
+
+         ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.ToString" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function ToString () As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::String ^ ToString();" />
+      <MemberSignature Language="F#" Value="override this.ToString : unit -&gt; string" Usage="span.ToString " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>返回此 <see cref="T:System.Span`1" /> 对象的字符串表示形式。</summary>
+        <returns>此 <see cref="T:System.Span`1" /> 对象的字符串表示形式。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+对于`Span<Char>` <xref:System.String> ，方法返回一个 <xref:System.Span%601> ，该字符串包含由指向的字符。 `ToString` 否则，它将返回<xref:System.String> ，其中包含类型的名称和<xref:System.Span%601>包含的元素的数目。
+
+       ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryCopyTo">
+      <MemberSignature Language="C#" Value="public bool TryCopyTo (Span&lt;T&gt; destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryCopyTo(valuetype System.Span`1&lt;!T&gt; destination) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Span`1.TryCopyTo(System.Span{`0})" />
+      <MemberSignature Language="VB.NET" Value="Public Function TryCopyTo (destination As Span(Of T)) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool TryCopyTo(Span&lt;T&gt; destination);" />
+      <MemberSignature Language="F#" Value="member this.TryCopyTo : Span&lt;'T&gt; -&gt; bool" Usage="span.TryCopyTo destination" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Memory</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="destination" Type="System.Span&lt;T&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="destination">复制操作的目标。</param>
+        <summary>尝试将当前 <see cref="T:System.Span`1" /> 复制到目标 <see cref="T:System.Span`1" />，并返回一个指示复制操作是否成功的值。</summary>
+        <returns>如果复制操作已成功，则为 <see langword="true" />；否则，为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+
+即使`source` `source`和重叠`destination` ， `destination` 此方法也会将全部复制到。
+
+如果`destination`比源<xref:System.Span%601>短，则此方法将返回`false`，并且不写入`destination`任何数据。
+
+         ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

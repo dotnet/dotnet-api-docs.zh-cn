@@ -1,0 +1,1186 @@
+<Type Name="ApplicationSettingsBase" FullName="System.Configuration.ApplicationSettingsBase">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="06a7486562bd4ab003a126d0a109643912451621" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70731692" /></Metadata><TypeSignature Language="C#" Value="public abstract class ApplicationSettingsBase : System.Configuration.SettingsBase, System.ComponentModel.INotifyPropertyChanged" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ApplicationSettingsBase extends System.Configuration.SettingsBase implements class System.ComponentModel.INotifyPropertyChanged" />
+  <TypeSignature Language="DocId" Value="T:System.Configuration.ApplicationSettingsBase" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class ApplicationSettingsBase&#xA;Inherits SettingsBase&#xA;Implements INotifyPropertyChanged" />
+  <TypeSignature Language="C++ CLI" Value="public ref class ApplicationSettingsBase abstract : System::Configuration::SettingsBase, System::ComponentModel::INotifyPropertyChanged" />
+  <TypeSignature Language="F#" Value="type ApplicationSettingsBase = class&#xA;    inherit SettingsBase&#xA;    interface INotifyPropertyChanged" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.1.0</AssemblyVersion>
+    <AssemblyVersion>4.0.2.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Configuration.SettingsBase</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.ComponentModel.INotifyPropertyChanged</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>作为派生具体包装类以实现 Window 窗体应用程序中的应用程序设置功能的基类。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Configuration.ApplicationSettingsBase>将以下功能添加到<xref:System.Configuration.SettingsBase>了类，该类由基于 Web 的应用程序使用：  
+  
+-   检测派生的设置包装器类的属性的功能。 <xref:System.Configuration.ApplicationSettingsBase>支持用于包装类属性的声明性模型，如稍后所述。  
+  
+-   更高级别<xref:System.Configuration.ApplicationSettingsBase.Save%2A>和<xref:System.Configuration.ApplicationSettingsBase.Reload%2A>方法。  
+  
+-   其他验证事件，可对其进行处理以确保各个设置的正确性。  
+  
+ 在应用程序设置体系结构中，若要访问一组设置属性，需要从<xref:System.Configuration.ApplicationSettingsBase>派生具体的包装类。 包装类的自<xref:System.Configuration.ApplicationSettingsBase>定义方式如下：  
+  
+-   对于每个要访问的设置属性，会将相应的强类型公共属性添加到包装类中。 此属性具有`get`读`set` /写应用程序`get`设置的和访问器，但只有只读设置的访问器。  
+  
+-   相应特性必须应用于包装类的公共属性，以指示 settings 属性的特征，例如设置的范围（应用程序或用户），该设置是否应支持漫游，该设置的默认值为设置、要使用的设置提供程序，等等。 每个属性都是使用<xref:System.Configuration.ApplicationScopedSettingAttribute>或<xref:System.Configuration.UserScopedSettingAttribute>指定其作用域所必需的。 如果使用了默认值<xref:System.Configuration.LocalFileSettingsProvider> ，应用程序范围的设置为只读。  
+  
+ <xref:System.Configuration.ApplicationSettingsBase>类使用反射在运行时检测这些特性。 此信息的大部分传递到设置提供程序层，后者负责存储、持久性格式等。  
+  
+ 当应用程序具有多个设置包装类时，每个类都定义一个*设置组*。 每个组具有以下特征：  
+  
+-   一个组可以包含任意数量或类型的属性设置。  
+  
+-   如果通过使用<xref:System.Configuration.SettingsGroupNameAttribute>修饰包装类来显式设置组名称，则会自动生成一个名称。  
+  
+ 默认情况下，所有基于客户端的应用<xref:System.Configuration.LocalFileSettingsProvider>程序都使用来提供存储。 如果需要备用设置提供程序，则必须使用相应<xref:System.Configuration.SettingsProviderAttribute>的修饰包装类或属性。  
+  
+ 有关使用应用程序设置的详细信息，请参阅[Windows 窗体的应用程序设置](~/docs/framework/winforms/advanced/application-settings-for-windows-forms.md)。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用应用程序设置来持久保存主窗体的以下属性：位置、大小、背景色和标题栏文本。 所有这些属性都`FormSettings`作为类中的单个应用程序设置属性保留，分别名为`FormBackColor` `FormLocation`、 `FormText` `FormSize`和。 除`FormText` <xref:System.Configuration.DefaultSettingValueAttribute>和`Size`之外的所有数据都绑定到其关联的窗体属性，并使用应用默认设置值。  
+  
+ 该窗体包含四个具有以下名称和函数的子控件：  
+  
+-   一个名`btnBackColor`为的按钮，用于显示**颜色**通用对话框。  
+  
+-   一个名`btnReload`为的按钮<xref:System.Configuration.ApplicationSettingsBase.Reload%2A> ，用于应用程序设置。  
+  
+-   一个名`btnReset`为的按钮<xref:System.Configuration.ApplicationSettingsBase.Reset%2A> ，用于应用程序设置。  
+  
+-   一个名为`tbStatus`的文本框，用于显示有关程序的状态信息。  
+  
+ 请注意，每次执行应用程序后，会在窗体的标题文本后附加一个句点字符。  
+  
+ 此代码<xref:System.Windows.Forms.ColorDialog>示例需要一个具有名为`colorDialog1`的类的窗体<xref:System.Windows.Forms.StatusStrip> <xref:System.Windows.Forms.ToolStripStatusLabel>和一个具有名`tbStatus`为的控件。 此外，它还需要<xref:System.Windows.Forms.Button>三个`btnReload`名`btnReset`为、 `btnBackColor`和的对象。  
+  
+ [!code-cpp[AppSettingsSample#1](~/samples/snippets/cpp/VS_Snippets_Winforms/AppSettingsSample/cpp/AppSettingsSample.cpp#1)]
+ [!code-csharp[AppSettingsSample#1](~/samples/snippets/csharp/VS_Snippets_Winforms/AppSettingsSample/CS/AppSettingsSample.cs#1)]
+ [!code-vb[AppSettingsSample#1](~/samples/snippets/visualbasic/VS_Snippets_Winforms/AppSettingsSample/VB/Form1.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.Configuration.LocalFileSettingsProvider" />
+    <altmember cref="T:System.Configuration.ApplicationScopedSettingAttribute" />
+    <altmember cref="T:System.Configuration.UserScopedSettingAttribute" />
+    <altmember cref="T:System.Configuration.SettingsGroupNameAttribute" />
+    <altmember cref="T:System.Configuration.SettingsProviderAttribute" />
+    <related type="Article" href="https://msdn.microsoft.com/library/64090a34-8556-4904-8ea0-20efe9f8c886">Windows 窗体的应用程序设置</related>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Configuration.ApplicationSettingsBase" /> 类的实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ApplicationSettingsBase ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; ApplicationSettingsBase();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>将 <see cref="T:System.Configuration.ApplicationSettingsBase" /> 类的实例初始化为其默认状态。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 无参数构造函数的设计目的是，假设没有与从<xref:System.Configuration.ApplicationSettingsBase>派生的当前设置包装器类相关联的组件。  
+  
+ 创建包装类的实例时，继承的代码将自动执行以下操作：  
+  
+1.  在类上反射。  
+  
+2.  对于标记`[UserScopedSettingAttribute]`为或`[ApplicationScopedSettingAttribute]`的包装上的每个属性，将<xref:System.Configuration.SettingsProperty>创建相应的。  
+  
+3.  每<xref:System.Configuration.SettingsProperty>个属性都具有一些属性，这些属性基于其他属性设置，这些属性可在包装器的属性中显示，例如默认值或设置提供程序。  
+  
+4.  所有其他特性只会置于特性包（ <xref:System.Configuration.SettingsProperty.Attributes%2A> <xref:System.Configuration.SettingsProperty>类的属性）中。  
+  
+5.  所有<xref:System.Configuration.SettingsProperty>对象均添加到<xref:System.Configuration.SettingsPropertyCollection> <xref:System.Configuration.ApplicationSettingsBase.Properties%2A>由类的属性表示的。 <xref:System.Configuration.ApplicationSettingsBase> 然后将此集合传递给<xref:System.Configuration.SettingsBase.Initialize%2A>方法。  
+  
+ 如前面提到的步骤3中所<xref:System.Configuration.ApplicationSettingsBase>示，本机使用几个属性属性，具体如下<xref:System.Configuration.SettingsProviderAttribute>： <xref:System.Configuration.DefaultSettingValueAttribute>、和<xref:System.Configuration.SettingsSerializeAsAttribute>。 所有其他设置属性只会传递到适当的基础提供程序。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Configuration.SettingsProperty" />
+        <altmember cref="T:System.Configuration.SettingsPropertyCollection" />
+        <altmember cref="M:System.Configuration.SettingsBase.Initialize(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyCollection,System.Configuration.SettingsProviderCollection)" />
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ApplicationSettingsBase (System.ComponentModel.IComponent owner);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ComponentModel.IComponent owner) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.#ctor(System.ComponentModel.IComponent)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New (owner As IComponent)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; ApplicationSettingsBase(System::ComponentModel::IComponent ^ owner);" />
+      <MemberSignature Language="F#" Value="new System.Configuration.ApplicationSettingsBase : System.ComponentModel.IComponent -&gt; System.Configuration.ApplicationSettingsBase" Usage="new System.Configuration.ApplicationSettingsBase owner" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="owner" Type="System.ComponentModel.IComponent" />
+      </Parameters>
+      <Docs>
+        <param name="owner">将作为应用程序设置对象的所有者的组件。</param>
+        <summary>使用提供的所有者组件初始化 <see cref="T:System.Configuration.ApplicationSettingsBase" /> 类的实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数与使用调用的<xref:System.Configuration.ApplicationSettingsBase.%23ctor%28System.ComponentModel.IComponent%2CSystem.String%29>构造函数完全等效：  
+  
+ `ApplicationSettingsBase(owner, String.Empty)`  
+  
+ 有关如何在包装类的实例化过程中使用反射的信息，请参阅默认<xref:System.Configuration.ApplicationSettingsBase.%23ctor>构造函数。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="owner" /> 为 <see langword="null" />。</exception>
+        <altmember cref="T:System.Configuration.SettingsProviderAttribute" />
+        <altmember cref="P:System.ComponentModel.Component.Site" />
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ApplicationSettingsBase (string settingsKey);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(string settingsKey) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.#ctor(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New (settingsKey As String)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; ApplicationSettingsBase(System::String ^ settingsKey);" />
+      <MemberSignature Language="F#" Value="new System.Configuration.ApplicationSettingsBase : string -&gt; System.Configuration.ApplicationSettingsBase" Usage="new System.Configuration.ApplicationSettingsBase settingsKey" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="settingsKey" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="settingsKey">唯一标识包装类的单独实例的 <see cref="T:System.String" />。</param>
+        <summary>使用提供的设置键初始化 <see cref="T:System.Configuration.ApplicationSettingsBase" /> 类的实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此构造函数将<xref:System.Configuration.ApplicationSettingsBase.SettingsKey%2A>属性初始化为`settingsKey`参数的值。 此属性在歧义同一应用程序域中设置包装器类的不同实例时非常有用。  
+  
+ 有关如何在包装类的实例化过程中使用反射的信息，请参阅默认<xref:System.Configuration.ApplicationSettingsBase.%23ctor>构造函数。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.SettingsKey" />
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ApplicationSettingsBase (System.ComponentModel.IComponent owner, string settingsKey);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.ComponentModel.IComponent owner, string settingsKey) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.#ctor(System.ComponentModel.IComponent,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New (owner As IComponent, settingsKey As String)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; ApplicationSettingsBase(System::ComponentModel::IComponent ^ owner, System::String ^ settingsKey);" />
+      <MemberSignature Language="F#" Value="new System.Configuration.ApplicationSettingsBase : System.ComponentModel.IComponent * string -&gt; System.Configuration.ApplicationSettingsBase" Usage="new System.Configuration.ApplicationSettingsBase (owner, settingsKey)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="owner" Type="System.ComponentModel.IComponent" />
+        <Parameter Name="settingsKey" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="owner">将作为应用程序设置对象的所有者的组件。</param>
+        <param name="settingsKey">唯一标识包装类的单独实例的 <see cref="T:System.String" />。</param>
+        <summary>使用提供的所有者组件和设置键初始化 <see cref="T:System.Configuration.ApplicationSettingsBase" /> 类的实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 由参数指定的<xref:System.ComponentModel.IComponent>对象充当此应用程序设置类的当前实例`owner`的所有者。 在从<xref:System.Configuration.ApplicationSettingsBase>派生的设置包装类的初始化过程中，将查询<xref:System.Configuration.ISettingsProviderService>所有者的站点。 如果存在，则它将优先用于包装类的所有属性的本机设置提供程序（由<xref:System.Configuration.SettingsProviderAttribute>指定）。  
+  
+ 此构造函数将<xref:System.Configuration.ApplicationSettingsBase.SettingsKey%2A>属性初始化为`settingsKey`参数的值。 此属性在同一应用程序域中歧义包装类的不同实例时非常有用。  
+  
+ 有关如何在包装类的实例化过程中使用反射的信息，请参阅默认<xref:System.Configuration.ApplicationSettingsBase.%23ctor>构造函数。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="owner" /> 为 <see langword="null" />。</exception>
+        <altmember cref="T:System.Configuration.ISettingsProviderService" />
+        <altmember cref="T:System.Configuration.SettingsProviderAttribute" />
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.SettingsKey" />
+      </Docs>
+    </Member>
+    <Member MemberName="Context">
+      <MemberSignature Language="C#" Value="public override System.Configuration.SettingsContext Context { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.SettingsContext Context" />
+      <MemberSignature Language="DocId" Value="P:System.Configuration.ApplicationSettingsBase.Context" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property Context As SettingsContext" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Configuration::SettingsContext ^ Context { System::Configuration::SettingsContext ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Context : System.Configuration.SettingsContext" Usage="System.Configuration.ApplicationSettingsBase.Context" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netcore-2.1;netframework-4.8;dotnet-plat-ext-2.1;netcore-2.2;netcore-3.0;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0">
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Configuration.SettingsContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取与设置组关联的应用程序设置上下文。</summary>
+        <value>与设置组关联的 <see cref="T:System.Configuration.SettingsContext" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 每个从派生的<xref:System.Configuration.ApplicationSettingsBase>设置包装类都具有与之关联的上下文。 上下文会传递到每个属性的设置提供程序，以标识属性的使用方式。 因此，上下文将作为提示，以帮助设置提供程序确定如何最好地保留关联的应用程序设置值。  
+  
+ 与<xref:System.Configuration.ApplicationSettingsBase.SettingsKey%2A>此相反，属性使设置提供程序能够消除同一个包装类的多个实例的歧义。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.SettingsKey" />
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Providers" />
+        <altmember cref="T:System.Configuration.SettingsContext" />
+        <altmember cref="T:System.Configuration.SettingsProvider" />
+        <altmember cref="T:System.Configuration.ApplicationSettingsGroup" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetPreviousVersion">
+      <MemberSignature Language="C#" Value="public object GetPreviousVersion (string propertyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetPreviousVersion(string propertyName) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.GetPreviousVersion(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetPreviousVersion (propertyName As String) As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Object ^ GetPreviousVersion(System::String ^ propertyName);" />
+      <MemberSignature Language="F#" Value="member this.GetPreviousVersion : string -&gt; obj" Usage="applicationSettingsBase.GetPreviousVersion propertyName" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="propertyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="propertyName">一个 <see cref="T:System.String" />，包含要返回其值的设置属性的名称。</param>
+        <summary>返回同一应用程序的早期版本的命名设置属性的值。</summary>
+        <returns>一个 <see cref="T:System.Object" />，如果找到指定的 <see cref="T:System.Configuration.SettingsProperty" />，则为其值；否则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在<xref:System.Configuration.ApplicationSettingsBase.GetPreviousVersion%2A>应用程序的新版本安装过程中<xref:System.Configuration.ApplicationSettingsBase.Upgrade%2A>迁移应用程序设置时，方法通常与方法结合使用。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.SettingsPropertyNotFoundException">该属性不存在。 属性计数为零，或在数据存储区中找不到该属性。</exception>
+        <altmember cref="T:System.Configuration.SettingsProperty" />
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Properties" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Upgrade" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Reload" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Reset" />
+        <altmember cref="M:System.Configuration.IApplicationSettingsProvider.GetPreviousVersion(System.Configuration.SettingsContext,System.Configuration.SettingsProperty)" />
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public override object this[string propertyName] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Item(string)" />
+      <MemberSignature Language="DocId" Value="P:System.Configuration.ApplicationSettingsBase.Item(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Default Public Overrides Property Item(propertyName As String) As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Object ^ default[System::String ^] { System::Object ^ get(System::String ^ propertyName); void set(System::String ^ propertyName, System::Object ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.Item(string) : obj with get, set" Usage="System.Configuration.ApplicationSettingsBase.Item" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="propertyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="propertyName">包含要访问的属性名称的 <see cref="T:System.String" />。</param>
+        <summary>获取或设置指定的应用程序设置属性的值。</summary>
+        <value>如果找到的话，则为命名的设置属性的值；否则为 <see langword="null" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 属性（也称为索引器）通常用于派生自<xref:System.Configuration.ApplicationSettingsBase>的设置包装器类。 <xref:System.Configuration.ApplicationSettingsBase.Item%2A> <xref:System.Configuration.ApplicationSettingsBase.Item%2A>将包装类的公共属性绑定到相应的设置属性。  
+  
+ <xref:System.Configuration.ApplicationSettingsBase.Item%2A>根据正在执行的操作引发若干事件：  
+  
+-   第一次检索属性时， <xref:System.Configuration.ApplicationSettingsBase.SettingsLoaded>将引发事件。  
+  
+-   如果设置了属性， <xref:System.Configuration.ApplicationSettingsBase.OnSettingChanging%2A>则会引发事件。 如果处理程序不取消事件，则设置属性值并<xref:System.Configuration.ApplicationSettingsBase.PropertyChanged>引发事件。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.SettingsPropertyNotFoundException">没有与当前包装关联的属性，或者未能找到指定的属性。</exception>
+        <exception cref="T:System.Configuration.SettingsPropertyIsReadOnlyException">已尝试设置只读属性。</exception>
+        <exception cref="T:System.Configuration.SettingsPropertyWrongTypeException">在设置操作期间，所提供值的类型与设置属性不兼容。</exception>
+        <exception cref="T:System.Configuration.ConfigurationErrorsException">未能分析配置文件。</exception>
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Properties" />
+        <altmember cref="P:System.Configuration.SettingsProperty.IsReadOnly" />
+      </Docs>
+    </Member>
+    <Member MemberName="OnPropertyChanged">
+      <MemberSignature Language="C#" Value="protected virtual void OnPropertyChanged (object sender, System.ComponentModel.PropertyChangedEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnPropertyChanged(object sender, class System.ComponentModel.PropertyChangedEventArgs e) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.OnPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnPropertyChanged (sender As Object, e As PropertyChangedEventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnPropertyChanged(System::Object ^ sender, System::ComponentModel::PropertyChangedEventArgs ^ e);" />
+      <MemberSignature Language="F#" Value="abstract member OnPropertyChanged : obj * System.ComponentModel.PropertyChangedEventArgs -&gt; unit&#xA;override this.OnPropertyChanged : obj * System.ComponentModel.PropertyChangedEventArgs -&gt; unit" Usage="applicationSettingsBase.OnPropertyChanged (sender, e)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="e" Type="System.ComponentModel.PropertyChangedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">事件源。</param>
+        <param name="e">包含事件数据的 <see cref="T:System.ComponentModel.PropertyChangedEventArgs" />。</param>
+        <summary>引发 <see cref="E:System.Configuration.ApplicationSettingsBase.PropertyChanged" /> 事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 引发事件时，将通过委托调用事件处理程序。 有关详细信息，请参阅[处理和引发事件](~/docs/standard/events/index.md)。  
+  
+ <xref:System.Configuration.ApplicationSettingsBase.OnPropertyChanged%2A> 方法还允许派生类对事件进行处理而不必附加委托。 这是在派生类中处理事件的首选技术。  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>在派生类中重写 <see cref="M:System.Configuration.ApplicationSettingsBase.OnPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)" /> 时，一定要调用基类的 <see cref="M:System.Configuration.ApplicationSettingsBase.OnPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)" /> 方法，以便已注册的委托对事件进行接收。</para></block>
+        <altmember cref="E:System.Configuration.ApplicationSettingsBase.PropertyChanged" />
+      </Docs>
+    </Member>
+    <Member MemberName="OnSettingChanging">
+      <MemberSignature Language="C#" Value="protected virtual void OnSettingChanging (object sender, System.Configuration.SettingChangingEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnSettingChanging(object sender, class System.Configuration.SettingChangingEventArgs e) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.OnSettingChanging(System.Object,System.Configuration.SettingChangingEventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnSettingChanging (sender As Object, e As SettingChangingEventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnSettingChanging(System::Object ^ sender, System::Configuration::SettingChangingEventArgs ^ e);" />
+      <MemberSignature Language="F#" Value="abstract member OnSettingChanging : obj * System.Configuration.SettingChangingEventArgs -&gt; unit&#xA;override this.OnSettingChanging : obj * System.Configuration.SettingChangingEventArgs -&gt; unit" Usage="applicationSettingsBase.OnSettingChanging (sender, e)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="e" Type="System.Configuration.SettingChangingEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">事件源。</param>
+        <param name="e">包含事件数据的 <see cref="T:System.Configuration.SettingChangingEventArgs" />。</param>
+        <summary>引发 <see cref="E:System.Configuration.ApplicationSettingsBase.SettingChanging" /> 事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 引发事件时，将通过委托调用事件处理程序。 有关详细信息，请参阅[处理和引发事件](~/docs/standard/events/index.md)。  
+  
+ <xref:System.Configuration.ApplicationSettingsBase.OnSettingChanging%2A> 方法还允许派生类对事件进行处理而不必附加委托。 这是在派生类中处理事件的首选技术。  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>在派生类中重写 <see cref="M:System.Configuration.ApplicationSettingsBase.OnSettingChanging(System.Object,System.Configuration.SettingChangingEventArgs)" /> 时，一定要调用基类的 <see cref="M:System.Configuration.ApplicationSettingsBase.OnSettingChanging(System.Object,System.Configuration.SettingChangingEventArgs)" /> 方法，以便已注册的委托对事件进行接收。</para></block>
+        <altmember cref="E:System.Configuration.ApplicationSettingsBase.SettingChanging" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.OnSettingsLoaded(System.Object,System.Configuration.SettingsLoadedEventArgs)" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.OnSettingsSaving(System.Object,System.ComponentModel.CancelEventArgs)" />
+      </Docs>
+    </Member>
+    <Member MemberName="OnSettingsLoaded">
+      <MemberSignature Language="C#" Value="protected virtual void OnSettingsLoaded (object sender, System.Configuration.SettingsLoadedEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnSettingsLoaded(object sender, class System.Configuration.SettingsLoadedEventArgs e) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.OnSettingsLoaded(System.Object,System.Configuration.SettingsLoadedEventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnSettingsLoaded (sender As Object, e As SettingsLoadedEventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnSettingsLoaded(System::Object ^ sender, System::Configuration::SettingsLoadedEventArgs ^ e);" />
+      <MemberSignature Language="F#" Value="abstract member OnSettingsLoaded : obj * System.Configuration.SettingsLoadedEventArgs -&gt; unit&#xA;override this.OnSettingsLoaded : obj * System.Configuration.SettingsLoadedEventArgs -&gt; unit" Usage="applicationSettingsBase.OnSettingsLoaded (sender, e)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="e" Type="System.Configuration.SettingsLoadedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">事件源。</param>
+        <param name="e">包含事件数据的 <see cref="T:System.Configuration.SettingsLoadedEventArgs" />。</param>
+        <summary>引发 <see cref="E:System.Configuration.ApplicationSettingsBase.SettingsLoaded" /> 事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 引发事件时，将通过委托调用事件处理程序。 有关详细信息，请参阅[处理和引发事件](~/docs/standard/events/index.md)。  
+  
+ <xref:System.Configuration.ApplicationSettingsBase.OnSettingsLoaded%2A> 方法还允许派生类对事件进行处理而不必附加委托。 这是在派生类中处理事件的首选技术。  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>在派生类中重写 <see cref="M:System.Configuration.ApplicationSettingsBase.OnSettingsLoaded(System.Object,System.Configuration.SettingsLoadedEventArgs)" /> 时，一定要调用基类的 <see cref="M:System.Configuration.ApplicationSettingsBase.OnSettingsLoaded(System.Object,System.Configuration.SettingsLoadedEventArgs)" /> 方法，以便已注册的委托对事件进行接收。</para></block>
+        <altmember cref="E:System.Configuration.ApplicationSettingsBase.SettingsLoaded" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.OnSettingChanging(System.Object,System.Configuration.SettingChangingEventArgs)" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.OnSettingsSaving(System.Object,System.ComponentModel.CancelEventArgs)" />
+      </Docs>
+    </Member>
+    <Member MemberName="OnSettingsSaving">
+      <MemberSignature Language="C#" Value="protected virtual void OnSettingsSaving (object sender, System.ComponentModel.CancelEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnSettingsSaving(object sender, class System.ComponentModel.CancelEventArgs e) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.OnSettingsSaving(System.Object,System.ComponentModel.CancelEventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnSettingsSaving (sender As Object, e As CancelEventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnSettingsSaving(System::Object ^ sender, System::ComponentModel::CancelEventArgs ^ e);" />
+      <MemberSignature Language="F#" Value="abstract member OnSettingsSaving : obj * System.ComponentModel.CancelEventArgs -&gt; unit&#xA;override this.OnSettingsSaving : obj * System.ComponentModel.CancelEventArgs -&gt; unit" Usage="applicationSettingsBase.OnSettingsSaving (sender, e)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="e" Type="System.ComponentModel.CancelEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">事件源。</param>
+        <param name="e">包含事件数据的 <see cref="T:System.ComponentModel.CancelEventArgs" />。</param>
+        <summary>引发 <see cref="E:System.Configuration.ApplicationSettingsBase.SettingsSaving" /> 事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 引发事件时，将通过委托调用事件处理程序。 有关详细信息，请参阅[处理和引发事件](~/docs/standard/events/index.md)。  
+  
+ <xref:System.Configuration.ApplicationSettingsBase.OnSettingsSaving%2A> 方法还允许派生类对事件进行处理而不必附加委托。 这是在派生类中处理事件的首选技术。  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>在派生类中重写 <see cref="M:System.Configuration.ApplicationSettingsBase.OnSettingsSaving(System.Object,System.ComponentModel.CancelEventArgs)" /> 时，一定要调用基类的 <see cref="M:System.Configuration.ApplicationSettingsBase.OnSettingsSaving(System.Object,System.ComponentModel.CancelEventArgs)" /> 方法，以便已注册的委托对事件进行接收。</para></block>
+        <altmember cref="E:System.Configuration.ApplicationSettingsBase.SettingsSaving" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.OnSettingChanging(System.Object,System.Configuration.SettingChangingEventArgs)" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.OnSettingsLoaded(System.Object,System.Configuration.SettingsLoadedEventArgs)" />
+      </Docs>
+    </Member>
+    <Member MemberName="Properties">
+      <MemberSignature Language="C#" Value="public override System.Configuration.SettingsPropertyCollection Properties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.SettingsPropertyCollection Properties" />
+      <MemberSignature Language="DocId" Value="P:System.Configuration.ApplicationSettingsBase.Properties" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property Properties As SettingsPropertyCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Configuration::SettingsPropertyCollection ^ Properties { System::Configuration::SettingsPropertyCollection ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Properties : System.Configuration.SettingsPropertyCollection" Usage="System.Configuration.ApplicationSettingsBase.Properties" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netcore-2.1;netframework-4.8;dotnet-plat-ext-2.1;netcore-2.2;netcore-3.0;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0">
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Configuration.SettingsPropertyCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取包装中的设置属性的集合。</summary>
+        <value>一个 <see cref="T:System.Configuration.SettingsPropertyCollection" />，包含当前包装中使用的所有 <see cref="T:System.Configuration.SettingsProperty" /> 对象。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Configuration.ApplicationSettingsBase.Properties%2A>属性`get`的访问器反映了设置包装类（派生自<xref:System.Configuration.ApplicationSettingsBase>）的元数据以动态确定可用的应用程序设置属性集。  
+  
+ <xref:System.Configuration.ApplicationSettingsBase>类本身识别应用程序设置的某些特征，例如其名称、属性类型、设置提供程序、默认值、只读状态和序列化首选项。 这些特征作为类中的<xref:System.Configuration.SettingsProperty>属性进行镜像。 设置属性的所有其他特性只传递到其关联的设置提供程序。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.ConfigurationErrorsException">未能找到关联的设置提供程序，或者其实例化失败。</exception>
+        <altmember cref="P:System.Configuration.SettingsBase.PropertyValues" />
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Item(System.String)" />
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Providers" />
+        <altmember cref="E:System.Configuration.ApplicationSettingsBase.PropertyChanged" />
+        <altmember cref="T:System.Configuration.SettingsProperty" />
+      </Docs>
+    </Member>
+    <Member MemberName="PropertyChanged">
+      <MemberSignature Language="C#" Value="public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.PropertyChangedEventHandler PropertyChanged" />
+      <MemberSignature Language="DocId" Value="E:System.Configuration.ApplicationSettingsBase.PropertyChanged" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event PropertyChanged As PropertyChangedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual event System::ComponentModel::PropertyChangedEventHandler ^ PropertyChanged;" />
+      <MemberSignature Language="F#" Value="member this.PropertyChanged : System.ComponentModel.PropertyChangedEventHandler " Usage="member this.PropertyChanged : System.ComponentModel.PropertyChangedEventHandler " />
+      <MemberType>Event</MemberType>
+      <Implements>
+        <InterfaceMember>E:System.ComponentModel.INotifyPropertyChanged.PropertyChanged</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.PropertyChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>发生在更改应用程序设置属性的值之后。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Configuration.ApplicationSettingsBase.Item%2A> <xref:System.Configuration.ApplicationSettingsBase.Reload%2A> <xref:System.Configuration.ApplicationSettingsBase.Reset%2A>当通过方法的<xref:System.Configuration.ApplicationSettingsBase.PropertyChanged> 访问器更改设置属性，或在调用或方法时还原的每个属性， `set` 都会引发事件。  
+  
+ 此类没有对应`PropertyChanging`的事件; 改为<xref:System.Configuration.ApplicationSettingsBase.SettingChanging>查看事件。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.OnPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)" />
+        <altmember cref="T:System.ComponentModel.PropertyChangedEventArgs" />
+        <altmember cref="E:System.Configuration.ApplicationSettingsBase.SettingChanging" />
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Item(System.String)" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Reload" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Reset" />
+      </Docs>
+    </Member>
+    <Member MemberName="PropertyValues">
+      <MemberSignature Language="C#" Value="public override System.Configuration.SettingsPropertyValueCollection PropertyValues { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.SettingsPropertyValueCollection PropertyValues" />
+      <MemberSignature Language="DocId" Value="P:System.Configuration.ApplicationSettingsBase.PropertyValues" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property PropertyValues As SettingsPropertyValueCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Configuration::SettingsPropertyValueCollection ^ PropertyValues { System::Configuration::SettingsPropertyValueCollection ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.PropertyValues : System.Configuration.SettingsPropertyValueCollection" Usage="System.Configuration.ApplicationSettingsBase.PropertyValues" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netcore-2.1;netframework-4.8;dotnet-plat-ext-2.1;netcore-2.2;netcore-3.0;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0">
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Configuration.SettingsPropertyValueCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取属性值的集合。</summary>
+        <value>一个由属性值构成的 <see cref="T:System.Configuration.SettingsPropertyValueCollection" />。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Providers">
+      <MemberSignature Language="C#" Value="public override System.Configuration.SettingsProviderCollection Providers { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Configuration.SettingsProviderCollection Providers" />
+      <MemberSignature Language="DocId" Value="P:System.Configuration.ApplicationSettingsBase.Providers" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property Providers As SettingsProviderCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Configuration::SettingsProviderCollection ^ Providers { System::Configuration::SettingsProviderCollection ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Providers : System.Configuration.SettingsProviderCollection" Usage="System.Configuration.ApplicationSettingsBase.Providers" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netcore-2.1;netframework-4.8;dotnet-plat-ext-2.1;netcore-2.2;netcore-3.0;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0">
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Configuration.SettingsProviderCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取包装所使用的应用程序设置提供程序的集合。</summary>
+        <value>一个 <see cref="T:System.Configuration.SettingsProviderCollection" />，包含当前设置包装的设置属性使用的所有 <see cref="T:System.Configuration.SettingsProvider" /> 对象。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 确定<xref:System.Configuration.SettingsProviderAttribute>设置包装器类或单个设置属性所使用的设置提供程序。 如果未指定此属性，则客户端应用程序将使用<xref:System.Configuration.LocalFileSettingsProvider>。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Properties" />
+        <altmember cref="T:System.Configuration.SettingsProviderAttribute" />
+        <altmember cref="M:System.Configuration.SettingsBase.Initialize(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyCollection,System.Configuration.SettingsProviderCollection)" />
+      </Docs>
+    </Member>
+    <Member MemberName="Reload">
+      <MemberSignature Language="C#" Value="public void Reload ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Reload() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.Reload" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Reload ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Reload();" />
+      <MemberSignature Language="F#" Value="member this.Reload : unit -&gt; unit" Usage="applicationSettingsBase.Reload " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>从永久存储刷新应用程序设置属性值。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Configuration.ApplicationSettingsBase.Reload%2A>方法会清除当前缓存的属性值，导致这些值在以后被访问时从持久性存储重新加载。 此方法执行以下操作：  
+  
+-   它通过清除<xref:System.Configuration.SettingsBase.PropertyValues%2A>属性表示的集合来清除当前缓存的属性。  
+  
+-   它为<xref:System.Configuration.ApplicationSettingsBase.Properties%2A>集合<xref:System.Configuration.ApplicationSettingsBase.PropertyChanged>中的每个成员引发事件。  
+  
+ <xref:System.Configuration.ApplicationSettingsBase.Reload%2A>与<xref:System.Configuration.ApplicationSettingsBase.Reset%2A>中的比较，前者将加载最后一组保存的应用程序设置值，而后者将加载保存的默认值。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示了<xref:System.Configuration.ApplicationSettingsBase.Reload%2A>在<xref:System.Windows.Forms.Control.Click>事件处理程序的正文中调用的方法，该方法是`btnReload`名为的按钮。 此调用的结果是，将应用程序设置的当前存储值重新加载到相应的属性中。 <xref:System.Configuration.ApplicationSettingsBase>类概述中列出了完整的代码示例。  
+  
+ [!code-cpp[AppSettingsSample#6](~/samples/snippets/cpp/VS_Snippets_Winforms/AppSettingsSample/cpp/AppSettingsSample.cpp#6)]
+ [!code-csharp[AppSettingsSample#6](~/samples/snippets/csharp/VS_Snippets_Winforms/AppSettingsSample/CS/AppSettingsSample.cs#6)]
+ [!code-vb[AppSettingsSample#6](~/samples/snippets/visualbasic/VS_Snippets_Winforms/AppSettingsSample/VB/Form1.vb#6)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Reset" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Save" />
+        <altmember cref="P:System.Configuration.SettingsBase.PropertyValues" />
+        <altmember cref="M:System.Configuration.SettingsPropertyValueCollection.Clear" />
+        <altmember cref="E:System.Configuration.ApplicationSettingsBase.PropertyChanged" />
+        <altmember cref="E:System.Configuration.ApplicationSettingsBase.SettingsLoaded" />
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Properties" />
+      </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Reset() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.Reset" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Reset ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Reset();" />
+      <MemberSignature Language="F#" Value="member this.Reset : unit -&gt; unit" Usage="applicationSettingsBase.Reset " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>将保持的应用程序设置值还原为其对应的默认属性。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Configuration.ApplicationSettingsBase.Reset%2A>方法通过还原每个应用程序设置的当前保持值来覆盖用户范围的设置属性。 此方法执行以下操作：  
+  
+-   它在支持<xref:System.Configuration.IApplicationSettingsProvider.Reset%2A?displayProperty=nameWithType>此可选方法的每个设置提供程序上调用方法。  
+  
+-   它调用<xref:System.Configuration.ApplicationSettingsBase.Reload%2A>方法来强制刷新设置属性值。  
+  
+ <xref:System.Configuration.ApplicationSettingsBase.Reload%2A>与<xref:System.Configuration.ApplicationSettingsBase.Reset%2A>中的比较，前者将加载最后一组保存的应用程序设置值，而后者将加载保存的默认值。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示了<xref:System.Configuration.ApplicationSettingsBase.Reset%2A>在<xref:System.Windows.Forms.Control.Click>事件处理程序的正文中调用的方法，该方法是`btnReset`名为的按钮。 作为此调用的结果，存储的应用程序设置的默认值将重新加载到其相应的属性中。 <xref:System.Configuration.ApplicationSettingsBase>类概述中列出了完整的代码示例。  
+  
+ [!code-cpp[AppSettingsSample#5](~/samples/snippets/cpp/VS_Snippets_Winforms/AppSettingsSample/cpp/AppSettingsSample.cpp#5)]
+ [!code-csharp[AppSettingsSample#5](~/samples/snippets/csharp/VS_Snippets_Winforms/AppSettingsSample/CS/AppSettingsSample.cs#5)]
+ [!code-vb[AppSettingsSample#5](~/samples/snippets/visualbasic/VS_Snippets_Winforms/AppSettingsSample/VB/Form1.vb#5)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.ConfigurationErrorsException">未能分析配置文件。</exception>
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Reload" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Save" />
+        <altmember cref="M:System.Configuration.IApplicationSettingsProvider.Reset(System.Configuration.SettingsContext)" />
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public override void Save ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Save() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.Save" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub Save ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void Save();" />
+      <MemberSignature Language="F#" Value="override this.Save : unit -&gt; unit" Usage="applicationSettingsBase.Save " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>存储应用程序设置属性的当前值。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Configuration.ApplicationSettingsBase.Save%2A>方法将每个设置属性的当前值写入其关联的数据存储区。 对于每个属性，此方法在<xref:System.Configuration.SettingsProvider.SetPropertyValues%2A>关联的设置提供程序上调用方法。  
+  
+ 此方法与基类实现的不同之处在于，它在<xref:System.Configuration.ApplicationSettingsBase.SettingsSaving>写入值之前会引发事件。  
+  
+ 如果仅定义的设置是应用程序范围的设置<xref:System.Configuration.ApplicationSettingsBase.Save%2A> ，则不会产生任何影响，并且如果使用默认值<xref:System.Configuration.LocalFileSettingsProvider>调用，则不会返回错误。 <xref:System.Configuration.LocalFileSettingsProvider>仅保存用户范围的设置。  
+  
+> [!IMPORTANT]
+>  没有相应的 Load 方法，因为应用程序设置的值会在包装类初始化期间自动加载。 与此相反，当应用程序结束时，这些值不会自动保存。 因此，你必须显式调用<xref:System.Configuration.ApplicationSettingsBase.Save%2A>方法以保持应用程序设置的当前值。 这通常在主或包含<xref:System.Windows.Forms.Form.Closing> <xref:System.Windows.Forms.Form>的事件处理程序中执行。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示了<xref:System.Configuration.ApplicationSettingsBase.Save%2A>从主窗体的<xref:System.Windows.Forms.Form.Closing>事件处理程序中调用的方法。 此方法还会在与窗体的<xref:System.Windows.Forms.Control.Text%2A>属性关联的 settings 属性后面追加一个附加句点。  
+  
+ <xref:System.Configuration.ApplicationSettingsBase>类概述中列出了完整的代码示例。  
+  
+ [!code-cpp[AppSettingsSample#3](~/samples/snippets/cpp/VS_Snippets_Winforms/AppSettingsSample/cpp/AppSettingsSample.cpp#3)]
+ [!code-csharp[AppSettingsSample#3](~/samples/snippets/csharp/VS_Snippets_Winforms/AppSettingsSample/CS/AppSettingsSample.cs#3)]
+ [!code-vb[AppSettingsSample#3](~/samples/snippets/visualbasic/VS_Snippets_Winforms/AppSettingsSample/VB/Form1.vb#3)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Reset" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Reload" />
+        <altmember cref="E:System.Configuration.ApplicationSettingsBase.SettingsSaving" />
+        <altmember cref="M:System.Configuration.SettingsProvider.SetPropertyValues(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyValueCollection)" />
+        <altmember cref="T:System.Configuration.SettingsProviderAttribute" />
+      </Docs>
+    </Member>
+    <Member MemberName="SettingChanging">
+      <MemberSignature Language="C#" Value="public event System.Configuration.SettingChangingEventHandler SettingChanging;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Configuration.SettingChangingEventHandler SettingChanging" />
+      <MemberSignature Language="DocId" Value="E:System.Configuration.ApplicationSettingsBase.SettingChanging" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event SettingChanging As SettingChangingEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event System::Configuration::SettingChangingEventHandler ^ SettingChanging;" />
+      <MemberSignature Language="F#" Value="member this.SettingChanging : System.Configuration.SettingChangingEventHandler " Usage="member this.SettingChanging : System.Configuration.SettingChangingEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.SettingChangingEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>发生在更改应用程序设置属性的值之前。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 事件发生在应用程序设置值属性<xref:System.Configuration.ApplicationSettingsBase.Item%2A>通过方法更改之前。 <xref:System.Configuration.ApplicationSettingsBase.SettingChanging> 当调用<xref:System.Configuration.ApplicationSettingsBase.Reload%2A>或<xref:System.Configuration.ApplicationSettingsBase.Reset%2A>方法时，不会引发此事件。 <xref:System.Configuration.ApplicationSettingsBase.SettingChanging>可以通过<xref:System.Configuration.SettingChangingEventArgs>事件数据类取消。  
+  
+ 通常使用<xref:System.Configuration.ApplicationSettingsBase.SettingChanging>事件来处理单个设置属性的立即验证。 有关验证的详细信息，请参阅[如何：验证应用程序设置](~/docs/framework/winforms/advanced/how-to-validate-application-settings.md)。  
+  
+ 此类没有对应`SettingChanged`的事件; 改为<xref:System.Configuration.ApplicationSettingsBase.PropertyChanged>查看事件。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示<xref:System.Configuration.ApplicationSettingsBase.SettingChanging>类型`FormSettings`为的对象的事件处理程序，它是从<xref:System.Configuration.ApplicationSettingsBase>派生的包装类。 处理程序将事件信息显示在名为`tbStatus`的文本框中。 <xref:System.Configuration.ApplicationSettingsBase>类概述中列出了完整的代码示例。  
+  
+ [!code-cpp[AppSettingsSample#7](~/samples/snippets/cpp/VS_Snippets_Winforms/AppSettingsSample/cpp/AppSettingsSample.cpp#7)]
+ [!code-csharp[AppSettingsSample#7](~/samples/snippets/csharp/VS_Snippets_Winforms/AppSettingsSample/CS/AppSettingsSample.cs#7)]
+ [!code-vb[AppSettingsSample#7](~/samples/snippets/visualbasic/VS_Snippets_Winforms/AppSettingsSample/VB/Form1.vb#7)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.OnSettingChanging(System.Object,System.Configuration.SettingChangingEventArgs)" />
+        <altmember cref="T:System.Configuration.SettingChangingEventArgs" />
+        <altmember cref="E:System.Configuration.ApplicationSettingsBase.PropertyChanged" />
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Item(System.String)" />
+        <related type="Article" href="https://msdn.microsoft.com/library/9f145ada-4267-436a-aa4c-c4dcffd0afb7">如何：验证应用程序设置</related>
+      </Docs>
+    </Member>
+    <Member MemberName="SettingsKey">
+      <MemberSignature Language="C#" Value="public string SettingsKey { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SettingsKey" />
+      <MemberSignature Language="DocId" Value="P:System.Configuration.ApplicationSettingsBase.SettingsKey" />
+      <MemberSignature Language="VB.NET" Value="Public Property SettingsKey As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ SettingsKey { System::String ^ get(); void set(System::String ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.SettingsKey : string with get, set" Usage="System.Configuration.ApplicationSettingsBase.SettingsKey" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-2.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netcore-2.1;netframework-4.8;dotnet-plat-ext-2.1;netcore-2.2;netcore-3.0;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0">
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置应用程序设置组的设置键。</summary>
+        <value>一个 <see cref="T:System.String" />，包含当前设置组的设置键。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 提供<xref:System.Configuration.ApplicationSettingsBase.SettingsKey%2A>此属性是为了使客户端代码（尤其是设置提供程序）能够区分同一应用程序设置类的多个实例之间的歧义。  
+  
+ 除非使用单独模式设计设置包装器类，否则单个应用程序中可以有多个相同应用程序设置类的实例。 的<xref:System.Configuration.ApplicationSettingsBase.SettingsKey%2A>值应根据要共享的属性值的方式进行设置。  
+  
+-   如果要在同一应用程序中的包装的所有实例之间共享包装的设置属性，则<xref:System.Configuration.ApplicationSettingsBase.SettingsKey%2A>所有实例都应具有相同的值。 这是<xref:System.Configuration.ApplicationSettingsBase>类的默认行为。  
+  
+-   如果包装的设置属性应为每个实例，则<xref:System.Configuration.ApplicationSettingsBase.SettingsKey%2A>每个实例都应具有唯一的值。 使用构造函数的<xref:System.Configuration.ApplicationSettingsBase.SettingsKey%2A> 版本可以初始化为唯一字符串。 <xref:System.Configuration.ApplicationSettingsBase.%23ctor%28System.String%29>  
+  
+ 与此相反， <xref:System.Configuration.ApplicationSettingsBase.Context%2A>属性向设置提供程序提供提示，使其能够以有效且有序的方式持久保存值。  
+  
+ 类包含一个类似<xref:System.Configuration.SettingChangingEventArgs.SettingKey%2A>的属性，可帮助<xref:System.Configuration.ApplicationSettingsBase.SettingChanging>标识事件的源。 <xref:System.Configuration.SettingChangingEventArgs>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Context" />
+        <altmember cref="T:System.Configuration.SettingChangingEventArgs" />
+      </Docs>
+    </Member>
+    <Member MemberName="SettingsLoaded">
+      <MemberSignature Language="C#" Value="public event System.Configuration.SettingsLoadedEventHandler SettingsLoaded;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Configuration.SettingsLoadedEventHandler SettingsLoaded" />
+      <MemberSignature Language="DocId" Value="E:System.Configuration.ApplicationSettingsBase.SettingsLoaded" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event SettingsLoaded As SettingsLoadedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event System::Configuration::SettingsLoadedEventHandler ^ SettingsLoaded;" />
+      <MemberSignature Language="F#" Value="member this.SettingsLoaded : System.Configuration.SettingsLoadedEventHandler " Usage="member this.SettingsLoaded : System.Configuration.SettingsLoadedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.SettingsLoadedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>在从存储区中检索应用程序设置之后发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此事件仅在第一次`get`访问所<xref:System.Configuration.ApplicationSettingsBase.Item%2A>使用的第一个配置属性后发生，通常通过方法。 <xref:System.Configuration.ApplicationSettingsBase.SettingsLoaded> 后续访问使用本地缓存的设置属性的值。 <xref:System.Configuration.ApplicationSettingsBase.Reset%2A> 和 <xref:System.Configuration.ApplicationSettingsBase.Reload%2A> 方法将清除所有缓存的值，以便在后续属性访问时再次引发此事件。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.OnSettingsLoaded(System.Object,System.Configuration.SettingsLoadedEventArgs)" />
+        <altmember cref="T:System.Configuration.SettingsLoadedEventArgs" />
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Item(System.String)" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Reset" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Reload" />
+      </Docs>
+    </Member>
+    <Member MemberName="SettingsSaving">
+      <MemberSignature Language="C#" Value="public event System.Configuration.SettingsSavingEventHandler SettingsSaving;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Configuration.SettingsSavingEventHandler SettingsSaving" />
+      <MemberSignature Language="DocId" Value="E:System.Configuration.ApplicationSettingsBase.SettingsSaving" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event SettingsSaving As SettingsSavingEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event System::Configuration::SettingsSavingEventHandler ^ SettingsSaving;" />
+      <MemberSignature Language="F#" Value="member this.SettingsSaving : System.Configuration.SettingsSavingEventHandler " Usage="member this.SettingsSaving : System.Configuration.SettingsSavingEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.SettingsSavingEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>发生在将值保存到数据存储区中之前。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此<xref:System.Configuration.ApplicationSettingsBase.SettingsSaving>事件<xref:System.Configuration.ApplicationSettingsBase.Save%2A>由方法引发，然后将应用程序设置属性存储到其关联的数据存储区。 关联的事件处理程序可以取消此事件。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示<xref:System.Configuration.ApplicationSettingsBase.SettingsSaving>类型`FormSettings`为的对象的事件处理程序，它是从<xref:System.Configuration.ApplicationSettingsBase>派生的包装类。 处理程序将查询用户以保存当前的应用程序设置属性值。 <xref:System.Configuration.ApplicationSettingsBase>类概述中列出了完整的代码示例。  
+  
+ [!code-cpp[AppSettingsSample#8](~/samples/snippets/cpp/VS_Snippets_Winforms/AppSettingsSample/cpp/AppSettingsSample.cpp#8)]
+ [!code-csharp[AppSettingsSample#8](~/samples/snippets/csharp/VS_Snippets_Winforms/AppSettingsSample/CS/AppSettingsSample.cs#8)]
+ [!code-vb[AppSettingsSample#8](~/samples/snippets/visualbasic/VS_Snippets_Winforms/AppSettingsSample/VB/Form1.vb#8)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.OnSettingsSaving(System.Object,System.ComponentModel.CancelEventArgs)" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Save" />
+      </Docs>
+    </Member>
+    <Member MemberName="Upgrade">
+      <MemberSignature Language="C#" Value="public virtual void Upgrade ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Upgrade() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Configuration.ApplicationSettingsBase.Upgrade" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Sub Upgrade ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void Upgrade();" />
+      <MemberSignature Language="F#" Value="abstract member Upgrade : unit -&gt; unit&#xA;override this.Upgrade : unit -&gt; unit" Usage="applicationSettingsBase.Upgrade " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Configuration.ConfigurationManager</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+        <AssemblyVersion>4.0.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>更新应用程序设置，以反映最近安装的应用程序。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Configuration.ApplicationSettingsBase.Upgrade%2A>方法执行两个操作，以确保平滑过渡到新版本的应用程序：  
+  
+-   它通过调用<xref:System.Configuration.IApplicationSettingsProvider.Upgrade%2A?displayProperty=nameWithType>方法通知所有相应的设置提供程序是否存在已升级的应用程序，前提是它们已经实现了<xref:System.Configuration.IApplicationSettingsProvider>接口。 如果设置包装类标记有<xref:System.Configuration.NoSettingsVersionUpgradeAttribute>，则不执行此操作。  
+  
+-   它重新加载所有应用程序设置的值。  
+  
+ 您可以重写的默认行为<xref:System.Configuration.ApplicationSettingsBase.Upgrade%2A> ，以实现自定义升级或合并行为。 <xref:System.Configuration.ApplicationSettingsBase.GetPreviousVersion%2A>使用方法检索应用程序以前版本的设置的各个值。 自定义升级行为的示例包括：  
+  
+-   使用新的策略默认值覆盖以前的一个或多个用户指定的值或以前的默认值。  
+  
+-   要与较新范围、其他设置属性组等兼容的旧值的特殊翻译。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.ConfigurationErrorsException">未能分析配置文件。</exception>
+        <altmember cref="P:System.Configuration.ApplicationSettingsBase.Providers" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.Reload" />
+        <altmember cref="M:System.Configuration.ApplicationSettingsBase.GetPreviousVersion(System.String)" />
+        <altmember cref="T:System.Configuration.NoSettingsVersionUpgradeAttribute" />
+        <altmember cref="M:System.Configuration.IApplicationSettingsProvider.Upgrade(System.Configuration.SettingsContext,System.Configuration.SettingsPropertyCollection)" />
+      </Docs>
+    </Member>
+  </Members>
+</Type>
