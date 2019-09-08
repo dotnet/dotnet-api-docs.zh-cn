@@ -1,0 +1,331 @@
+<Type Name="PageStatePersister" FullName="System.Web.UI.PageStatePersister">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="f49b7ecb1ed06ac52d52e6f52f00af58a0317546" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70668499" /></Metadata><TypeSignature Language="C#" Value="public abstract class PageStatePersister" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit PageStatePersister extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Web.UI.PageStatePersister" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class PageStatePersister" />
+  <TypeSignature Language="C++ CLI" Value="public ref class PageStatePersister abstract" />
+  <TypeSignature Language="F#" Value="type PageStatePersister = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>为 ASP.NET 视图状态持久性机制提供基本功能。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ HTTP 请求和响应本质上是无状态的。 若要在 HTTP 请求之间维护状态信息，ASP.NET 服务器页<xref:System.Web.UI.Page>可以存储状态。 此状态称为 "视图状态"，它包含页面和控件设置以及使页面和控件看起来像与用户在服务器上一次往返行程中看到的相同的数据。 有多种机制可用于在对相同页面的连续请求之间存储视图状态。 抽象<xref:System.Web.UI.PageStatePersister>类表示这些状态信息存储机制的基类。  
+  
+ ASP.NET 中的默认视图状态持久性机制是，将状态信息以 Base64 编码的字符串的形式保留在页面上的隐藏的 HTML 元素（ `type`属性设置为`"hidden"`的元素）中。 ASP.NET 页使用<xref:System.Web.UI.HiddenFieldPageStatePersister>对象来执行此工作，并<xref:System.Web.UI.IStateFormatter>使用实例序列化和反序列化对象状态信息。 或者，您可以使用带宽和资源有限的移动客户端<xref:System.Web.HttpContext.Session%2A>的<xref:System.Web.UI.SessionPageStatePersister>类将页面的视图状态存储在服务器上的对象中。 在某些情况下，可能会完全禁用视图状态持久性。 如果这样做，则结果是有时依赖于状态持久性的页和控件的行为不正确。 有关页状态管理和视图状态的详细信息，请参阅[ASP.NET 状态管理概述](https://msdn.microsoft.com/library/0218d965-5d30-445b-b6a6-8870e70e63ce(v=vs.100))。  
+  
+ 如果你正在编写控件，则可以将控件的状态信息存储在<xref:System.Web.UI.Control.ViewState%2A>字典中，这是一个<xref:System.Web.UI.StateBag>对象。 开发人员可通过<xref:System.Web.UI.PageStatePersister.ControlState%2A>属性检索控件状态。 将键和值分配给<xref:System.Web.UI.Control.ViewState%2A>属性， <xref:System.Web.UI.Page>对象将序列化请求之间的状态信息。 若要在控件中执行自定义状态处理， <xref:System.Web.UI.Control.LoadViewState%2A>请<xref:System.Web.UI.Control.SaveViewState%2A>重写和方法。 当页开发人员禁用视图状态时，存储在此字典中的任何状态信息都将丢失。 为了缓解这种情况，在 ASP.NET 版本2.0 中，你可以将重要状态信息存储在一个名为控制状态的单独对象中。 当页开发人员禁用视图状态时，控件状态对象将不受影响。 若要在控件状态对象中存储状态信息，控件需要重<xref:System.Web.UI.Control.LoadControlState%2A>写<xref:System.Web.UI.Control.SaveControlState%2A>和方法，并且在每次初始化控件时，控件将注册为在控件状态中存储状态信息。 可以通过重写<xref:System.Web.UI.Control.OnInit%2A>方法并<xref:System.Web.UI.Page.RegisterRequiresControlState%2A>调用方法，将控件注册为使用控件状态。 有关在开发控件时使用<xref:System.Web.UI.Control.ViewState%2A>属性和控件状态的详细信息，请参阅[开发自定义 ASP.NET 服务器控件](https://msdn.microsoft.com/library/fbe26c16-cff4-4089-b3dd-877411f0c0ef)。  
+  
+ 若要在不支持现有视图状态持久性机制的客户端上维护视图状态，你可以<xref:System.Web.UI.PageStatePersister>扩展类以引入你自己的视图状态持久性方法，并可以使用页面适配器来配置你的 ASP.NET 应用程序基于页面所服务的客户端的类型，使用不同的视图状态持久性机制。 从<xref:System.Web.UI.PageStatePersister>类派生的类必须重写抽象<xref:System.Web.UI.PageStatePersister.Save%2A>方法，以便在持久性<xref:System.Web.UI.PageStatePersister.Load%2A>介质中存储视图状态和控件状态，并重写方法将其提取出来。 如果需要将视图状态和控件状态序列化为字符串，则可以使用通过<xref:System.Web.UI.IStateFormatter> <xref:System.Web.UI.PageStatePersister.StateFormatter%2A>属性访问的对象。 它可以有效地将对象状态信息序列化和反序列化为 Base64 编码的字符串。 您还可以重写<xref:System.Web.UI.PageStatePersister.StateFormatter%2A>属性以提供您自己的对象状态序列化机制。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何创建一个<xref:System.Web.UI.PageStatePersister>在 Web 服务器上保存视图和控件状态的对象。 演示如何重写<xref:System.Web.UI.PageStatePersister.Save%2A>和方法以提取和保存视图状态信息。 <xref:System.Web.UI.PageStatePersister.Load%2A> `StreamPageStatePersister` 由于状态持久性机制与自适应呈现和客户端功能相关， `MyPageAdapter`因此提供类以激活 ASP.NET 应用程序的。 `StreamPageStatePersister` 最后，提供了一个浏览器功能（.browser）文件，用于为`MyPageAdapter`特定的一类客户端（在本例中为默认的 Web 浏览器）启用适配器。  
+  
+ [!code-csharp[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#1](~/samples/snippets/csharp/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/CS/textfilepagestatepersister.cs#1)]
+ [!code-vb[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/VB/textfilepagestatepersister.vb#1)]  
+  
+ 下面的代码示例演示如何创建一个<xref:System.Web.UI.Adapters.PageAdapter>返回的实例的`StreamPageStatePersister`类，该实例用于保存 ASP.NET 网页的视图和控件状态。  
+  
+ [!code-csharp[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#5](~/samples/snippets/csharp/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/CS/mypageadapter.cs#5)]
+ [!code-vb[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#5](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/VB/mypageadapter.vb#5)]  
+  
+ 使用以下编译器命令行，将这两个类编译为可用于运行示例的程序集。 确保已编译的程序集位于 ASP.NET 应用程序根目录下的 \Bin 目录中。  
+  
+ [!code-csharp[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#6](~/samples/snippets/csharp/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/CS/mypageadapter.cs#6)]
+ [!code-vb[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#6](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/VB/mypageadapter.vb#6)]  
+  
+ 最后，若要启用`MyPageAdapter`适配器，必须在 ASP.NET 应用程序根目录下创建一个名为浏览器的目录，并包括包含配置信息的 .browser 文件。 配置`<refid>`文件中的元素指示配置将覆盖默认浏览器配置文件中为默认浏览器指定的值。 在此示例中`MyPageAdapter` ，用于 ASP.NET 网页（通常不使用任何适配器）。  
+  
+```  
+<browsers>  
+    <browser refid="Default" >  
+        <controlAdapters>  
+            <adapter   
+                controlType="System.Web.UI.Page"                              
+                adapterType="Samples.AspNet.CS.MyPageAdapter" />  
+        </controlAdapters>  
+    </browser>  
+</browsers>  
+```  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.Web.UI.ObjectStateFormatter" />
+    <altmember cref="T:System.Web.UI.LosFormatter" />
+    <altmember cref="T:System.Web.UI.Pair" />
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected PageStatePersister (System.Web.UI.Page page);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Web.UI.Page page) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.PageStatePersister.#ctor(System.Web.UI.Page)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; PageStatePersister(System::Web::UI::Page ^ page);" />
+      <MemberSignature Language="F#" Value="new System.Web.UI.PageStatePersister : System.Web.UI.Page -&gt; System.Web.UI.PageStatePersister" Usage="new System.Web.UI.PageStatePersister page" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="page" Type="System.Web.UI.Page" />
+      </Parameters>
+      <Docs>
+        <param name="page">为其创建视图状态持久性机制的 <see cref="T:System.Web.UI.Page" />。</param>
+        <summary>初始化 <see cref="T:System.Web.UI.PageStatePersister" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="page" /> 参数为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ControlState">
+      <MemberSignature Language="C#" Value="public object ControlState { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object ControlState" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.PageStatePersister.ControlState" />
+      <MemberSignature Language="VB.NET" Value="Public Property ControlState As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Object ^ ControlState { System::Object ^ get(); void set(System::Object ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.ControlState : obj with get, set" Usage="System.Web.UI.PageStatePersister.ControlState" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个对象，该对象表示当前 <see cref="T:System.Web.UI.Page" /> 对象包含的控件用于跨 Web 服务器的 HTTP 请求保留的数据。</summary>
+        <value>包含视图状态数据的对象。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 控件状态是由 Web 服务器控件需要运行的关键视图状态数据组成的对象，它包含在与普通视图状态信息不同的对象中。 在<xref:System.Web.UI.Page>级别禁用视图状态时，控件状态数据不会受到影响，但需要额外的实现步骤才能使用。 有关在开发控件时使用<xref:System.Web.UI.Control.ViewState%2A>属性和控件状态的详细信息，请参阅[开发自定义 ASP.NET 服务器控件](https://msdn.microsoft.com/library/fbe26c16-cff4-4089-b3dd-877411f0c0ef)。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何将派生自<xref:System.Web.UI.PageStatePersister>类的类<xref:System.Web.UI.PageStatePersister.ControlState%2A>初始化属性。 在此示例中， <xref:System.Web.UI.PageStatePersister.ControlState%2A>已将属性分配<xref:System.Web.UI.Pair.Second>给<xref:System.Web.UI.Pair>对象的字段，并使用<xref:System.Web.UI.ObjectStateFormatter>类对其进行序列化。 <xref:System.Web.UI.ObjectStateFormatter> <xref:System.Web.UI.PageStatePersister.ControlState%2A> <xref:System.Web.UI.Pair>调用方法时，类用于对视图状态和控件状态信息进行反序列化，并从生成的对象的<xref:System.Web.UI.Pair.Second>字段初始化属性。 <xref:System.Web.UI.PageStatePersister.Load%2A> 此代码示例是为<xref:System.Web.UI.PageStatePersister>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#2](~/samples/snippets/csharp/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/CS/textfilepagestatepersister.cs#2)]
+ [!code-vb[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/VB/textfilepagestatepersister.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public abstract void Load ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Load() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.PageStatePersister.Load" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Sub Load ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract void Load();" />
+      <MemberSignature Language="F#" Value="abstract member Load : unit -&gt; unit" Usage="pageStatePersister.Load " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>在 <see cref="T:System.Web.UI.Page" /> 对象初始化其控件层次结构时，由派生类重写以反序列化并加载保留的状态信息。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Web.UI.PageStatePersister>类派生的类<xref:System.Web.UI.PageStatePersister.Load%2A>实现方法，以便从某种持久<xref:System.Web.UI.PageStatePersister.ViewState%2A>格式<xref:System.Web.UI.PageStatePersister.ControlState%2A>初始化和属性。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示从<xref:System.Web.UI.PageStatePersister>类派生的类如何<xref:System.Web.UI.PageStatePersister.Load%2A>实现方法，以便从持久性介质加载视图状态。 `StreamPageStatePersister`尝试从流中读取数据。 它使用<xref:System.Web.UI.IStateFormatter>对象来反序列化视图状态数据，并<xref:System.Web.UI.PageStatePersister.ViewState%2A>初始化属性和<xref:System.Web.UI.PageStatePersister.ControlState%2A>属性，页面使用该属性来初始化控件。 此代码示例是为<xref:System.Web.UI.PageStatePersister>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#2](~/samples/snippets/csharp/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/CS/textfilepagestatepersister.cs#2)]
+ [!code-vb[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/VB/textfilepagestatepersister.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Page">
+      <MemberSignature Language="C#" Value="protected System.Web.UI.Page Page { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.UI.Page Page" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.PageStatePersister.Page" />
+      <MemberSignature Language="VB.NET" Value="Protected Property Page As Page" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; property System::Web::UI::Page ^ Page { System::Web::UI::Page ^ get(); void set(System::Web::UI::Page ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.Page : System.Web.UI.Page with get, set" Usage="System.Web.UI.PageStatePersister.Page" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Web.UI.Page</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置为其创建视图状态持久性机制的 <see cref="T:System.Web.UI.Page" /> 对象。</summary>
+        <value>与 <see cref="T:System.Web.UI.Page" /> 关联的 <see cref="T:System.Web.UI.PageStatePersister" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 您可以使用<xref:System.Web.UI.PageStatePersister.Page%2A>属性来访问当前<xref:System.Web.HttpContext>的对象。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public abstract void Save ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Save() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.PageStatePersister.Save" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Sub Save ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract void Save();" />
+      <MemberSignature Language="F#" Value="abstract member Save : unit -&gt; unit" Usage="pageStatePersister.Save " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>在从内存中卸载 <see cref="T:System.Web.UI.Page" /> 对象时，由派生类重写以对所保留的状态信息进行序列化。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 派生自<xref:System.Web.UI.PageStatePersister>类的类<xref:System.Web.UI.PageStatePersister.Save%2A>实现方法，以将<xref:System.Web.UI.PageStatePersister.ViewState%2A>和<xref:System.Web.UI.PageStatePersister.ControlState%2A>属性的内容保存到持久性介质中。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示从<xref:System.Web.UI.PageStatePersister>类派生的类如何<xref:System.Web.UI.PageStatePersister.Save%2A>实现方法，以便将视图状态保存到持久性介质中。 使用对象对<xref:System.Web.UI.PageStatePersister.ViewState%2A>属性和 <xref:System.Web.UI.PageStatePersister.ControlState%2A> 属性的内容进行序列化。 <xref:System.Web.UI.IStateFormatter> `StreamPageStatePersister` 此代码示例是为<xref:System.Web.UI.PageStatePersister>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#3](~/samples/snippets/csharp/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/CS/textfilepagestatepersister.cs#3)]
+ [!code-vb[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#3](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/VB/textfilepagestatepersister.vb#3)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="StateFormatter">
+      <MemberSignature Language="C#" Value="protected System.Web.UI.IStateFormatter StateFormatter { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.UI.IStateFormatter StateFormatter" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.PageStatePersister.StateFormatter" />
+      <MemberSignature Language="VB.NET" Value="Protected ReadOnly Property StateFormatter As IStateFormatter" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; property System::Web::UI::IStateFormatter ^ StateFormatter { System::Web::UI::IStateFormatter ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.StateFormatter : System.Web.UI.IStateFormatter" Usage="System.Web.UI.PageStatePersister.StateFormatter" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.UI.IStateFormatter</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个 <see cref="T:System.Web.UI.IStateFormatter" /> 对象，该对象在对 <see cref="P:System.Web.UI.PageStatePersister.ViewState" /> 和 <see cref="P:System.Web.UI.PageStatePersister.ControlState" /> 方法的调用期间用于对包含在 <see cref="M:System.Web.UI.PageStatePersister.Save" /> 和 <see cref="M:System.Web.UI.PageStatePersister.Load" /> 属性中的状态信息进行序列化和反序列化。</summary>
+        <value><see cref="T:System.Web.UI.IStateFormatter" /> 的一个实例，用于对对象状态进行序列化和反序列化。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 您可以重写<xref:System.Web.UI.PageStatePersister.StateFormatter%2A>属性以提供您自己的视图状态格式化程序。  
+  
+   
+  
+## Examples  
+ 下面的代码<xref:System.Web.UI.PageStatePersister>示例演示从类派生的类如何<xref:System.Web.UI.PageStatePersister.StateFormatter%2A>访问属性以检索<xref:System.Web.UI.ObjectStateFormatter>对象<xref:System.Web.UI.IStateFormatter> ，该对象是接口的默认实现，以序列化视图流的状态和控件状态。 此代码示例是为<xref:System.Web.UI.PageStatePersister>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#3](~/samples/snippets/csharp/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/CS/textfilepagestatepersister.cs#3)]
+ [!code-vb[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#3](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/VB/textfilepagestatepersister.vb#3)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ViewState">
+      <MemberSignature Language="C#" Value="public object ViewState { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object ViewState" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.PageStatePersister.ViewState" />
+      <MemberSignature Language="VB.NET" Value="Public Property ViewState As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Object ^ ViewState { System::Object ^ get(); void set(System::Object ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.ViewState : obj with get, set" Usage="System.Web.UI.PageStatePersister.ViewState" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个对象，该对象表示当前 <see cref="T:System.Web.UI.Page" /> 对象包含的控件用于跨 Web 服务器的 HTTP 请求保留的数据。</summary>
+        <value>包含视图状态数据的对象。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 视图状态是 Web 服务器控件需要运行并呈现自身的状态数据字典。 控件开发人员通常使用<xref:System.Web.UI.Control.ViewState%2A>属性访问视图状态对象。 当在<xref:System.Web.UI.Page>级别禁用视图状态时，视图状态将受到影响，因此在这些情况下，控件可能不会正常运行。 有关开发控件时使用<xref:System.Web.UI.Control.ViewState%2A>和控件状态的详细信息，请参阅[开发自定义 ASP.NET 服务器控件](https://msdn.microsoft.com/library/fbe26c16-cff4-4089-b3dd-877411f0c0ef)。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何将派生自<xref:System.Web.UI.PageStatePersister>类的类<xref:System.Web.UI.PageStatePersister.ViewState%2A>初始化属性。 在此示例中， <xref:System.Web.UI.PageStatePersister.ViewState%2A>已将属性分配<xref:System.Web.UI.Pair.First>给<xref:System.Web.UI.Pair>对象的字段，并使用<xref:System.Web.UI.ObjectStateFormatter>对象（该<xref:System.Web.UI.IStateFormatter>接口的实例）对其进行序列化。 <xref:System.Web.UI.ObjectStateFormatter> <xref:System.Web.UI.PageStatePersister.ViewState%2A> <xref:System.Web.UI.Pair>调用方法时，接口用于对视图状态信息进行反序列化，并从生成的对象的<xref:System.Web.UI.Pair.First>字段初始化属性。 <xref:System.Web.UI.PageStatePersister.Load%2A> 此代码示例是为<xref:System.Web.UI.PageStatePersister>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#2](~/samples/snippets/csharp/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/CS/textfilepagestatepersister.cs#2)]
+ [!code-vb[Samples.AspNet.Alexkr.TextFilePageStatePersister_1#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Samples.AspNet.Alexkr.TextFilePageStatePersister_1/VB/textfilepagestatepersister.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
