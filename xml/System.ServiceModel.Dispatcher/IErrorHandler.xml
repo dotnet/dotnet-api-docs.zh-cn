@@ -1,0 +1,198 @@
+<Type Name="IErrorHandler" FullName="System.ServiceModel.Dispatcher.IErrorHandler">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="a2285d06910f16471e7937c8b9a352ed5e89fdf3" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70600298" /></Metadata><TypeSignature Language="C#" Value="public interface IErrorHandler" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IErrorHandler" />
+  <TypeSignature Language="DocId" Value="T:System.ServiceModel.Dispatcher.IErrorHandler" />
+  <TypeSignature Language="VB.NET" Value="Public Interface IErrorHandler" />
+  <TypeSignature Language="C++ CLI" Value="public interface class IErrorHandler" />
+  <TypeSignature Language="F#" Value="type IErrorHandler = interface" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary><span data-ttu-id="fd35f-101">允许实施者对返回给调用方的错误消息进行控制，还可以选择执行自定义错误处理，例如日志记录。</span><span class="sxs-lookup"><span data-stu-id="fd35f-101">Allows an implementer to control the fault message returned to the caller and optionally perform custom error processing such as logging.</span></span></summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="fd35f-102">若要在引发异常时显式控制应用程序的行为，请实现<xref:System.ServiceModel.Dispatcher.IErrorHandler>接口并将其添加<xref:System.ServiceModel.Dispatcher.ChannelDispatcher>到的<xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A>属性中。</span><span class="sxs-lookup"><span data-stu-id="fd35f-102">To explicitly control the behavior of the application when an exception is thrown, implement the <xref:System.ServiceModel.Dispatcher.IErrorHandler> interface and add it to the <xref:System.ServiceModel.Dispatcher.ChannelDispatcher>'s <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A> property.</span></span> <span data-ttu-id="fd35f-103"><xref:System.ServiceModel.Dispatcher.IErrorHandler>使您能够显式控制生成的 SOAP 错误，决定是否将其发送回客户端，以及执行日志记录等相关任务。</span><span class="sxs-lookup"><span data-stu-id="fd35f-103"><xref:System.ServiceModel.Dispatcher.IErrorHandler> enables you to explicitly control the SOAP fault generated, decide whether to send it back to the client, and perform associated tasks, such as logging.</span></span> <span data-ttu-id="fd35f-104">错误处理程序将按照它们向 <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A> 属性中的添加顺序进行调用。</span><span class="sxs-lookup"><span data-stu-id="fd35f-104">Error handlers are called in the order in which they were added to the <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A> property.</span></span>  
+  
+ <span data-ttu-id="fd35f-105">实现 <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> 方法可控制返回到客户端的错误消息。</span><span class="sxs-lookup"><span data-stu-id="fd35f-105">Implement the <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> method to control the fault message that is returned to the client.</span></span>  
+  
+ <span data-ttu-id="fd35f-106">实现 <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> 方法可确保执行错误相关行为，包括错误日志记录、确保快速报告故障、关闭应用程序等。</span><span class="sxs-lookup"><span data-stu-id="fd35f-106">Implement the <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> method to ensure error-related behaviors, including error logging, assuring a fail fast, shutting down the application, and so on.</span></span>  
+  
+> [!NOTE]
+>  <span data-ttu-id="fd35f-107">由于 <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> 方法可以从许多不同的位置进行调用，所以不能确保该方法调用的线程。</span><span class="sxs-lookup"><span data-stu-id="fd35f-107">Because the <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> method can be called from many different places there are no guarantees made about which thread the method is called on.</span></span> <span data-ttu-id="fd35f-108">不要依赖操作线程上调用的 <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> 方法。</span><span class="sxs-lookup"><span data-stu-id="fd35f-108">Do not depend on <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> method being called on the operation thread.</span></span>  
+  
+ <span data-ttu-id="fd35f-109">发送响应消息前，首先调用所有 <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> 实现。</span><span class="sxs-lookup"><span data-stu-id="fd35f-109">All <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> implementations are called first, prior to sending a response message.</span></span> <span data-ttu-id="fd35f-110">如果 <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> 为非 `fault`，则在调用了所有 `null` 实现且返回后，将根据操作协定将响应消息发送回客户端。</span><span class="sxs-lookup"><span data-stu-id="fd35f-110">When all <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> implementations have been called and return, and if `fault` is non-`null`, it is sent back to the client according to the operation contract.</span></span> <span data-ttu-id="fd35f-111">如果调用所有实现后，`fault` 为 `null`，则响应消息将由 <xref:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults%2A?displayProperty=nameWithType> 属性值控制。</span><span class="sxs-lookup"><span data-stu-id="fd35f-111">If `fault` is `null` after all implementations have been called, the response message is controlled by the <xref:System.ServiceModel.ServiceBehaviorAttribute.IncludeExceptionDetailInFaults%2A?displayProperty=nameWithType> property value.</span></span>  
+  
+> [!NOTE]
+>  <span data-ttu-id="fd35f-112">调用所有 <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> 实现，并将响应消息传递到通道后，可能会发生异常。</span><span class="sxs-lookup"><span data-stu-id="fd35f-112">Exceptions can occur after all <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> implementations are called and a response message is handed to the channel.</span></span> <span data-ttu-id="fd35f-113">如果出现通道异常（例如，对消息进行序列化时出现<xref:System.ServiceModel.Dispatcher.IErrorHandler>困难），将通知对象。</span><span class="sxs-lookup"><span data-stu-id="fd35f-113">If a channel exception occurs (for example, difficulty serializing the message) <xref:System.ServiceModel.Dispatcher.IErrorHandler> objects are notified.</span></span> <span data-ttu-id="fd35f-114">在这种情况下，你仍应确保你的开发环境捕获并显示此类异常，或利用跟踪来发现问题。</span><span class="sxs-lookup"><span data-stu-id="fd35f-114">In this case, you should still make sure that your development environment catches and displays such exceptions to you or makes use of tracing to discover the problem.</span></span> <span data-ttu-id="fd35f-115">有关跟踪的详细信息，请参阅[使用跟踪对应用程序进行故障排除](~/docs/framework/wcf/diagnostics/tracing/using-tracing-to-troubleshoot-your-application.md)。</span><span class="sxs-lookup"><span data-stu-id="fd35f-115">For more information about tracing, see [Using Tracing to Troubleshoot Your Application](~/docs/framework/wcf/diagnostics/tracing/using-tracing-to-troubleshoot-your-application.md).</span></span>  
+  
+ <span data-ttu-id="fd35f-116">发送响应消息后，将以相同顺序调用所有 <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> 实现。</span><span class="sxs-lookup"><span data-stu-id="fd35f-116">After the response message has been sent, all <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> implementations are called in the same order.</span></span>  
+  
+ <span data-ttu-id="fd35f-117">通常，会将 <xref:System.ServiceModel.Dispatcher.IErrorHandler> 实现添加到服务的 <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A> 属性；如果为双工通信，则还要添加到客户端的上述属性中。</span><span class="sxs-lookup"><span data-stu-id="fd35f-117">Typically, an <xref:System.ServiceModel.Dispatcher.IErrorHandler> implementation is added to the <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A> property on the service (and the client in the case of duplex communication).</span></span>  
+  
+ <span data-ttu-id="fd35f-118">您可通过实现行为（<xref:System.ServiceModel.Dispatcher.IErrorHandler>、<xref:System.ServiceModel.Description.IServiceBehavior?displayProperty=nameWithType>、<xref:System.ServiceModel.Description.IEndpointBehavior?displayProperty=nameWithType> 或 <xref:System.ServiceModel.Description.IContractBehavior?displayProperty=nameWithType> 对象）将 <xref:System.ServiceModel.Description.IOperationBehavior?displayProperty=nameWithType> 添加到运行时，然后从配置文件、以编程方式使用所添加的行为，或利用自定义属性来附加您的 <xref:System.ServiceModel.Dispatcher.IErrorHandler>。</span><span class="sxs-lookup"><span data-stu-id="fd35f-118">You can add the <xref:System.ServiceModel.Dispatcher.IErrorHandler> to the runtime by implementing a behavior (either an <xref:System.ServiceModel.Description.IServiceBehavior?displayProperty=nameWithType>, <xref:System.ServiceModel.Description.IEndpointBehavior?displayProperty=nameWithType>, <xref:System.ServiceModel.Description.IContractBehavior?displayProperty=nameWithType>, or <xref:System.ServiceModel.Description.IOperationBehavior?displayProperty=nameWithType> object) and use the behavior programmatically, from a configuration file or with a custom attribute to attach your <xref:System.ServiceModel.Dispatcher.IErrorHandler>.</span></span>  
+  
+ <span data-ttu-id="fd35f-119">有关使用行为来修改运行时的详细信息，请参阅[使用行为配置和扩展运行时](~/docs/framework/wcf/extending/configuring-and-extending-the-runtime-with-behaviors.md)。</span><span class="sxs-lookup"><span data-stu-id="fd35f-119">For more information about using behaviors to modify the runtime, see [Configuring and Extending the Runtime with Behaviors](~/docs/framework/wcf/extending/configuring-and-extending-the-runtime-with-behaviors.md).</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="fd35f-120">下面的代码示例演示了服务方法引发托管异常时，实现 <xref:System.ServiceModel.Dispatcher.IErrorHandler>（仅返回类型为 <xref:System.ServiceModel.FaultException%601> 的 `GreetingFault`）的服务。</span><span class="sxs-lookup"><span data-stu-id="fd35f-120">The following code example demonstrates a service that implements <xref:System.ServiceModel.Dispatcher.IErrorHandler> that returns only <xref:System.ServiceModel.FaultException%601> of type `GreetingFault` when a service method throws a managed exception.</span></span>  
+  
+ [!code-csharp[IErrorHandler#6](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/ierrorhandler.cs#6)]
+ [!code-vb[IErrorHandler#6](~/samples/snippets/visualbasic/VS_Snippets_CFX/ierrorhandler/vb/ierrorhandler.vb#6)]  
+  
+ <span data-ttu-id="fd35f-121">下面的代码示例演示了如何使用服务行为将 <xref:System.ServiceModel.Dispatcher.IErrorHandler> 实现添加到 <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A> 属性。</span><span class="sxs-lookup"><span data-stu-id="fd35f-121">The following code example shows how to use a service behavior to add the <xref:System.ServiceModel.Dispatcher.IErrorHandler> implementation to the <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A> property.</span></span>  
+  
+ [!code-csharp[IErrorHandler#7](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/ierrorhandler.cs#7)]
+ [!code-vb[IErrorHandler#7](~/samples/snippets/visualbasic/VS_Snippets_CFX/ierrorhandler/vb/ierrorhandler.vb#7)]  
+  
+ <span data-ttu-id="fd35f-122">下面的代码示例演示了如何通过使用应用程序配置文件来配置服务，从而加载服务行为。</span><span class="sxs-lookup"><span data-stu-id="fd35f-122">The following code example shows how to configure the service to load the service behavior using an application configuration file.</span></span> <span data-ttu-id="fd35f-123">有关如何在配置文件中公开服务行为的详细信息，请参见 <xref:System.ServiceModel.Description.IServiceBehavior>。</span><span class="sxs-lookup"><span data-stu-id="fd35f-123">For more details about how to expose a service behavior in a configuration file, see <xref:System.ServiceModel.Description.IServiceBehavior>.</span></span>  
+
+ [!code-xml[IErrorHandler#4](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/hostapplication.exe.config#4)]   
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="HandleError">
+      <MemberSignature Language="C#" Value="public bool HandleError (Exception error);" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.8" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool HandleError(class System.Exception error) cil managed" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.8" />
+      <MemberSignature Language="VB.NET" Value="Public Function HandleError (error As Exception) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool HandleError(Exception ^ error);" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.8" />
+      <MemberSignature Language="C#" Value="public bool HandleError (Exception exception);" FrameworkAlternate="xamarinmac-3.0" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool HandleError(class System.Exception exception) cil managed" FrameworkAlternate="xamarinmac-3.0" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool HandleError(Exception ^ exception);" FrameworkAlternate="xamarinmac-3.0" />
+      <MemberSignature Language="DocId" Value="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" FrameworkAlternate="netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="F#" Value="abstract member HandleError : Exception -&gt; bool" Usage="iErrorHandler.HandleError exception" FrameworkAlternate="netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="DocId" Value="M:System.ServiceModel.Dispatcher.IErrorHandler.HandleError(System.Exception)" FrameworkAlternate="xamarinmac-3.0" />
+      <MemberSignature Language="F#" Value="abstract member HandleError : Exception -&gt; bool" Usage="iErrorHandler.HandleError exception" FrameworkAlternate="xamarinmac-3.0" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="error" Type="System.Exception" Index="0" FrameworkAlternate="netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="exception" Type="System.Exception" Index="0" FrameworkAlternate="xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="error"><span data-ttu-id="fd35f-124">处理过程中引发的异常。</span><span class="sxs-lookup"><span data-stu-id="fd35f-124">The exception thrown during processing.</span></span></param>
+        <param name="exception"><span data-ttu-id="fd35f-125">处理过程中引发的异常。</span><span class="sxs-lookup"><span data-stu-id="fd35f-125">The exception thrown during processing.</span></span></param>
+        <summary><span data-ttu-id="fd35f-126">启用错误相关处理并返回一个值，该值指示调度程序在某些情况下是否中止会话和实例上下文。</span><span class="sxs-lookup"><span data-stu-id="fd35f-126">Enables error-related processing and returns a value that indicates whether the dispatcher aborts the session and the instance context in certain cases.</span></span></summary>
+        <returns><span data-ttu-id="fd35f-127">如果 Windows Communication Foundation (WCF) 不应中止会话（如果有一个）和实例上下文（如果实例上下文不是 <see cref="F:System.ServiceModel.InstanceContextMode.Single" />），则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="fd35f-127"><see langword="true" /> if Windows Communication Foundation (WCF) should not abort the session (if there is one) and instance context if the instance context is not <see cref="F:System.ServiceModel.InstanceContextMode.Single" />; otherwise, <see langword="false" />.</span></span> <span data-ttu-id="fd35f-128">默认值为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="fd35f-128">The default is <see langword="false" />.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="fd35f-129">使用 <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> 方法可实现错误相关行为（例如错误日志记录、系统通知、关闭应用程序等）并返回一个值，该值指定异常是否已适当处理。</span><span class="sxs-lookup"><span data-stu-id="fd35f-129">Use the <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> method to implement error-related behaviors such as error logging, system notifications, shutting down the application, and so on, and return a value that specifies whether the exception has been handled appropriately.</span></span>  
+  
+> [!NOTE]
+>  <span data-ttu-id="fd35f-130">由于 <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> 方法可以从许多不同的位置进行调用，所以不能确保该方法调用的线程。</span><span class="sxs-lookup"><span data-stu-id="fd35f-130">Because the <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> method can be called from many different places there are no guarantees made about which thread the method is called on.</span></span> <span data-ttu-id="fd35f-131">不要依赖操作线程上调用的 <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> 方法。</span><span class="sxs-lookup"><span data-stu-id="fd35f-131">Do not depend on <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> method being called on the operation thread.</span></span>  
+  
+ <span data-ttu-id="fd35f-132">将调用所有 <xref:System.ServiceModel.Dispatcher.IErrorHandler> 实现。</span><span class="sxs-lookup"><span data-stu-id="fd35f-132">All <xref:System.ServiceModel.Dispatcher.IErrorHandler> implementations are called.</span></span> <span data-ttu-id="fd35f-133">默认情况下（当返回值为`false`时），如果发生异常，调度程序会中止任何会话， <xref:System.ServiceModel.InstanceContext>如果<xref:System.ServiceModel.InstanceContextMode>不是<xref:System.ServiceModel.InstanceContextMode.Single>，则中止。</span><span class="sxs-lookup"><span data-stu-id="fd35f-133">By default (when the return value is `false`), if there is an exception, the dispatcher aborts any session and aborts the <xref:System.ServiceModel.InstanceContext> if the <xref:System.ServiceModel.InstanceContextMode> is anything other than <xref:System.ServiceModel.InstanceContextMode.Single>.</span></span>  <span data-ttu-id="fd35f-134">这样，该异常被视为未处理，并且任何状态都被视为已损坏。</span><span class="sxs-lookup"><span data-stu-id="fd35f-134">The exception is then considered unhandled and any state is considered corrupt.</span></span>  
+  
+ <span data-ttu-id="fd35f-135">从 `true` 返回 <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> 可以防止此默认行为。</span><span class="sxs-lookup"><span data-stu-id="fd35f-135">Return `true` from <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> to prevent this default behavior.</span></span> <span data-ttu-id="fd35f-136">如果任何错误处理程序`true`返回它，则会指示 WCF 可以安全地继续使用与失败请求关联的状态。</span><span class="sxs-lookup"><span data-stu-id="fd35f-136">If any error handler returns `true` it instructs WCF that it is safe to continue using state associated with the failed request.</span></span>  
+  
+ <span data-ttu-id="fd35f-137">当通过会话通道进行通信，或 `true` 属性未设置为 <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> 时，如果没有错误处理程序从 <xref:System.ServiceModel.InstanceContext?displayProperty=nameWithType> 方法返回 <xref:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode%2A?displayProperty=nameWithType>，则将认为异常未处理且默认响应适用，并可能会导致中止 <xref:System.ServiceModel.InstanceContextMode.Single?displayProperty=nameWithType> 和通道。</span><span class="sxs-lookup"><span data-stu-id="fd35f-137">If no error handler returns `true` from the <xref:System.ServiceModel.Dispatcher.IErrorHandler.HandleError%2A> method the exception is considered unhandled and the default response applies, potentially resulting in an aborted <xref:System.ServiceModel.InstanceContext?displayProperty=nameWithType> and channel when communicating on a session channel or the <xref:System.ServiceModel.ServiceBehaviorAttribute.InstanceContextMode%2A?displayProperty=nameWithType> property is not set to <xref:System.ServiceModel.InstanceContextMode.Single?displayProperty=nameWithType>.</span></span>  
+  
+ <span data-ttu-id="fd35f-138">`error` 参数包含有所引发的异常对象，且永远不会为 `null`。</span><span class="sxs-lookup"><span data-stu-id="fd35f-138">The `error` parameter is never `null` and contains the exception object that was thrown.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="fd35f-139">下面的代码示例演示了服务方法引发托管异常时，实现 <xref:System.ServiceModel.Dispatcher.IErrorHandler>（仅返回类型为 <xref:System.ServiceModel.FaultException%601> 的 `GreetingFault`）的服务。</span><span class="sxs-lookup"><span data-stu-id="fd35f-139">The following code example demonstrates a service that implements <xref:System.ServiceModel.Dispatcher.IErrorHandler> that returns only <xref:System.ServiceModel.FaultException%601> of type `GreetingFault` when a service method throws a managed exception.</span></span>  
+  
+ [!code-csharp[IErrorHandler#6](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/ierrorhandler.cs#6)]
+ [!code-vb[IErrorHandler#6](~/samples/snippets/visualbasic/VS_Snippets_CFX/ierrorhandler/vb/ierrorhandler.vb#6)]  
+  
+ <span data-ttu-id="fd35f-140">下面的代码示例演示了如何使用服务行为将 <xref:System.ServiceModel.Dispatcher.IErrorHandler> 实现添加到 <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A> 属性。</span><span class="sxs-lookup"><span data-stu-id="fd35f-140">The following code example shows how to use a service behavior to add the <xref:System.ServiceModel.Dispatcher.IErrorHandler> implementation to the <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A> property.</span></span>  
+  
+ [!code-csharp[IErrorHandler#7](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/ierrorhandler.cs#7)]
+ [!code-vb[IErrorHandler#7](~/samples/snippets/visualbasic/VS_Snippets_CFX/ierrorhandler/vb/ierrorhandler.vb#7)]  
+  
+ <span data-ttu-id="fd35f-141">下面的代码示例演示了如何通过使用应用程序配置文件来配置服务，从而加载服务行为。</span><span class="sxs-lookup"><span data-stu-id="fd35f-141">The following code example shows how to configure the service to load the service behavior using an application configuration file.</span></span> <span data-ttu-id="fd35f-142">有关如何在配置文件中公开服务行为的详细信息，请参见 <xref:System.ServiceModel.Description.IServiceBehavior>。</span><span class="sxs-lookup"><span data-stu-id="fd35f-142">For more details about how to expose a service behavior in a configuration file, see <xref:System.ServiceModel.Description.IServiceBehavior>.</span></span>  
+  
+ [!code-xml[IErrorHandler#4](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/hostapplication.exe.config#4)]   
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ProvideFault">
+      <MemberSignature Language="C#" Value="public void ProvideFault (Exception error, System.ServiceModel.Channels.MessageVersion version, ref System.ServiceModel.Channels.Message fault);" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.8" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ProvideFault(class System.Exception error, class System.ServiceModel.Channels.MessageVersion version, class System.ServiceModel.Channels.Message&amp; fault) cil managed" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.8" />
+      <MemberSignature Language="VB.NET" Value="Public Sub ProvideFault (error As Exception, version As MessageVersion, ByRef fault As Message)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void ProvideFault(Exception ^ error, System::ServiceModel::Channels::MessageVersion ^ version, System::ServiceModel::Channels::Message ^ % fault);" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.8" />
+      <MemberSignature Language="C#" Value="public void ProvideFault (Exception exception, System.ServiceModel.Channels.MessageVersion version, ref System.ServiceModel.Channels.Message fault);" FrameworkAlternate="xamarinmac-3.0" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ProvideFault(class System.Exception exception, class System.ServiceModel.Channels.MessageVersion version, class System.ServiceModel.Channels.Message&amp; fault) cil managed" FrameworkAlternate="xamarinmac-3.0" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void ProvideFault(Exception ^ exception, System::ServiceModel::Channels::MessageVersion ^ version, System::ServiceModel::Channels::Message ^ % fault);" FrameworkAlternate="xamarinmac-3.0" />
+      <MemberSignature Language="DocId" Value="M:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault(System.Exception,System.ServiceModel.Channels.MessageVersion,System.ServiceModel.Channels.Message@)" FrameworkAlternate="netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="F#" Value="abstract member ProvideFault : Exception * System.ServiceModel.Channels.MessageVersion *  -&gt; unit" Usage="iErrorHandler.ProvideFault (exception, version, fault)" FrameworkAlternate="netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="DocId" Value="M:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault(System.Exception,System.ServiceModel.Channels.MessageVersion,System.ServiceModel.Channels.Message@)" FrameworkAlternate="xamarinmac-3.0" />
+      <MemberSignature Language="F#" Value="abstract member ProvideFault : Exception * System.ServiceModel.Channels.MessageVersion *  -&gt; unit" Usage="iErrorHandler.ProvideFault (exception, version, fault)" FrameworkAlternate="xamarinmac-3.0" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="error" Type="System.Exception" Index="0" FrameworkAlternate="netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="exception" Type="System.Exception" Index="0" FrameworkAlternate="xamarinmac-3.0" />
+        <Parameter Name="version" Type="System.ServiceModel.Channels.MessageVersion" Index="1" />
+        <Parameter Name="fault" Type="System.ServiceModel.Channels.Message" RefType="ref" Index="2" />
+      </Parameters>
+      <Docs>
+        <param name="error"><span data-ttu-id="fd35f-143">服务操作过程中引发的 <see cref="T:System.Exception" /> 对象。</span><span class="sxs-lookup"><span data-stu-id="fd35f-143">The <see cref="T:System.Exception" /> object thrown in the course of the service operation.</span></span></param>
+        <param name="exception"><span data-ttu-id="fd35f-144">服务操作过程中引发的 <see cref="T:System.Exception" /> 对象。</span><span class="sxs-lookup"><span data-stu-id="fd35f-144">The <see cref="T:System.Exception" /> object thrown in the course of the service operation.</span></span></param>
+        <param name="version"><span data-ttu-id="fd35f-145">消息的 SOAP 版本。</span><span class="sxs-lookup"><span data-stu-id="fd35f-145">The SOAP version of the message.</span></span></param>
+        <param name="fault"><span data-ttu-id="fd35f-146">双工情况下，返回到客户端或服务的 <see cref="T:System.ServiceModel.Channels.Message" /> 对象。</span><span class="sxs-lookup"><span data-stu-id="fd35f-146">The <see cref="T:System.ServiceModel.Channels.Message" /> object that is returned to the client, or service, in the duplex case.</span></span></param>
+        <summary><span data-ttu-id="fd35f-147">启用创建从服务方法过程中的异常返回的自定义 <see cref="T:System.ServiceModel.FaultException`1" />。</span><span class="sxs-lookup"><span data-stu-id="fd35f-147">Enables the creation of a custom <see cref="T:System.ServiceModel.FaultException`1" /> that is returned from an exception in the course of a service method.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="fd35f-148">实现 <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> 方法可创建返回到客户端的自定义错误消息。</span><span class="sxs-lookup"><span data-stu-id="fd35f-148">Implement the <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> method to create a custom fault message that is returned to the client.</span></span>  <span data-ttu-id="fd35f-149">对于退出操作的异常，将始终调用方法，除非 WCF 运行时将异常识别为特别严重，并再次引发异常。 <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A></span><span class="sxs-lookup"><span data-stu-id="fd35f-149">The <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> method will always be called for exceptions that leave operations, except when the WCF runtime recognizes the exception as especially fatal and rethrows the exception itself.</span></span> <span data-ttu-id="fd35f-150">调用所有 <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> 实现后，如果 `fault` 为非 `null`，错误消息将会被发送回客户端。</span><span class="sxs-lookup"><span data-stu-id="fd35f-150">When all <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> implementations have been called, the fault message is sent back to the client (if `fault` is non-`null`).</span></span> <span data-ttu-id="fd35f-151">如果参数为`null` ，则向客户端发送默认错误。 `fault`</span><span class="sxs-lookup"><span data-stu-id="fd35f-151">If the `fault` parameter is `null` the default fault is sent to the client.</span></span>  
+  
+> [!NOTE]
+>  <span data-ttu-id="fd35f-152">在此方法的操作过程中，可从 <xref:System.ServiceModel.OperationContext.RequestContext%2A?displayProperty=nameWithType> 属性访问引发处理错误的入站消息。</span><span class="sxs-lookup"><span data-stu-id="fd35f-152">The inbound message that caused the processing error is available during this method from the <xref:System.ServiceModel.OperationContext.RequestContext%2A?displayProperty=nameWithType> property.</span></span>  
+  
+> [!NOTE]
+>  <span data-ttu-id="fd35f-153">由于 <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> 方法可以从许多不同的位置进行调用，所以不能确保该方法调用的线程。</span><span class="sxs-lookup"><span data-stu-id="fd35f-153">Because the <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> method can be called from many different places there are no guarantees made about which thread the method is called on.</span></span> <span data-ttu-id="fd35f-154">不要依赖操作线程上调用的 <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> 方法。</span><span class="sxs-lookup"><span data-stu-id="fd35f-154">Do not depend on <xref:System.ServiceModel.Dispatcher.IErrorHandler.ProvideFault%2A> method being called on the operation thread.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="fd35f-155">下面的代码示例演示了服务方法引发托管异常时，实现 <xref:System.ServiceModel.Dispatcher.IErrorHandler>（仅返回类型为 <xref:System.ServiceModel.FaultException%601> 的 `GreetingFault`）的服务。</span><span class="sxs-lookup"><span data-stu-id="fd35f-155">The following code example demonstrates a service that implements <xref:System.ServiceModel.Dispatcher.IErrorHandler> that returns only <xref:System.ServiceModel.FaultException%601> of type `GreetingFault` when a service method throws a managed exception.</span></span>  
+  
+ [!code-csharp[IErrorHandler#6](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/ierrorhandler.cs#6)]
+ [!code-vb[IErrorHandler#6](~/samples/snippets/visualbasic/VS_Snippets_CFX/ierrorhandler/vb/ierrorhandler.vb#6)]  
+  
+ <span data-ttu-id="fd35f-156">下面的代码示例演示了如何使用服务行为将 <xref:System.ServiceModel.Dispatcher.IErrorHandler> 实现添加到 <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A> 属性。</span><span class="sxs-lookup"><span data-stu-id="fd35f-156">The following code example shows how to use a service behavior to add the <xref:System.ServiceModel.Dispatcher.IErrorHandler> implementation to the <xref:System.ServiceModel.Dispatcher.ChannelDispatcher.ErrorHandlers%2A> property.</span></span>  
+  
+ [!code-csharp[IErrorHandler#7](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/ierrorhandler.cs#7)]
+ [!code-vb[IErrorHandler#7](~/samples/snippets/visualbasic/VS_Snippets_CFX/ierrorhandler/vb/ierrorhandler.vb#7)]  
+  
+ <span data-ttu-id="fd35f-157">下面的代码示例演示了如何通过使用应用程序配置文件来配置服务，从而加载服务行为。</span><span class="sxs-lookup"><span data-stu-id="fd35f-157">The following code example shows how to configure the service to load the service behavior using an application configuration file.</span></span> <span data-ttu-id="fd35f-158">有关如何在配置文件中公开服务行为的详细信息，请参见 <xref:System.ServiceModel.Description.IServiceBehavior>。</span><span class="sxs-lookup"><span data-stu-id="fd35f-158">For more details about how to expose a service behavior in a configuration file, see <xref:System.ServiceModel.Description.IServiceBehavior>.</span></span>  
+  
+ [!code-xml[IErrorHandler#4](~/samples/snippets/csharp/VS_Snippets_CFX/ierrorhandler/cs/hostapplication.exe.config#4)]   
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
