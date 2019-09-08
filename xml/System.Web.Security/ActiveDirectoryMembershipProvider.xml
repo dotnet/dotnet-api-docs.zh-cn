@@ -1,0 +1,2252 @@
+<Type Name="ActiveDirectoryMembershipProvider" FullName="System.Web.Security.ActiveDirectoryMembershipProvider">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="e7a85b7af6c0d492882e98cbb49ab2f9a86f57e5" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70702082" /></Metadata><TypeSignature Language="C#" Value="public class ActiveDirectoryMembershipProvider : System.Web.Security.MembershipProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ActiveDirectoryMembershipProvider extends System.Web.Security.MembershipProvider" />
+  <TypeSignature Language="DocId" Value="T:System.Web.Security.ActiveDirectoryMembershipProvider" />
+  <TypeSignature Language="VB.NET" Value="Public Class ActiveDirectoryMembershipProvider&#xA;Inherits MembershipProvider" />
+  <TypeSignature Language="C++ CLI" Value="public ref class ActiveDirectoryMembershipProvider : System::Web::Security::MembershipProvider" />
+  <TypeSignature Language="F#" Value="type ActiveDirectoryMembershipProvider = class&#xA;    inherit MembershipProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Web.Security.MembershipProvider</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>为 Active Directory 和 Active Directory 应用程序模式服务器中的 ASP.NET 应用程序管理成员资格信息的存储。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.Membership> 和 <xref:System.Web.Security.MembershipUser> 类使用此类为使用 Active Directory （AD）或 Active Directory 应用程序模式（ADAM）服务器的 ASP.NET 应用程序提供成员身份服务。  
+  
+> [!NOTE]
+>  使用 ADAM 服务器需要特定的配置。 有关详细信息，请参阅下面的 ADAM 配置部分。  
+  
+> [!IMPORTANT]
+>  <xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例仅适用于 ASP.NET 的完全信任策略默认配置。 若要在任何部分<xref:System.Web.Security.ActiveDirectoryMembershipProvider>信任级别使用实例，你必须对应用程序进行相应的信任策略文件的更改，或者必须创建一个部署在 GAC 中的 "沙盒" 程序集。  
+>   
+>  类需要无限制<xref:System.DirectoryServices.DirectoryServicesPermission>的权限才能运行。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider> 此权限不会添加到 ASP.NET 提供的任何部分信任策略文件中。 尽管向部分<xref:System.DirectoryServices.DirectoryServicesPermission>信任策略文件添加权限将允许使用<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类，但这样做会使命名空间类可<xref:System.DirectoryServices>用于在 ASP.NET 页中运行的任何代码。 对于需要在安全、锁定模式下运行的任何 Web 服务器，不建议使用此选项。  
+>   
+>  作为替代方法，可以创建调用<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类的 "沙盒" 程序集。 此程序集可以包含将方法调用转发给<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类的包装类或<xref:System.Web.Security.ActiveDirectoryMembershipProvider>从类派生的类。 在任一情况下，包装类都必须断言<xref:System.DirectoryServices.DirectoryServicesPermission>无限制权限。 在 GAC 中部署沙盒程序集，并将程序集标记<xref:System.Security.AllowPartiallyTrustedCallersAttribute>为（APTCA）特性。 这将允许部分受信任的 ASP.NET 代码调用包装器类，因此，由于包装类在内部断言无<xref:System.DirectoryServices.DirectoryServicesPermission>限制的权限，因此包装类将能够成功调用该提供程序  
+  
+ 必须在 web.config 文件中创建一个[ConnectionStrings 元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b6ffbb2e-a4d1-410e-8f7e-9755e92c65de)条目，该条目用于标识要使用的 Active Directory 服务器、Active Directory 域或 ADAM 应用程序分区。 提供程序将仅在域范围内或在域内的 subscope 中运行。 下表列出了允许的连接字符串和所使用的作用域。  
+  
+|连接字符串|范围|  
+|-----------------------|-----------|  
+|LDAP://\<域或服务器 >： [端口]<br /><br /> 端口号对于 ADAM 是可选的，不需要 Active Directory。|提供程序针对指定的域或服务器运行。 在 AD 中，用户创建和删除是在默认的用户容器中完成的。 所有其他操作（包括任何搜索方法）将以域的默认命名上下文为根。<br /><br /> 如果连接字符串指定 Active Directory 域而不是特定服务器，并且<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A>属性为`true`，则<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例将始终连接到具有域 PDC 角色的服务器，以确保密码更改将生效，并且在调用<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ValidateUser%2A>方法时可用。<br /><br /> 使用 ADAM 时不允许使用此连接字符串，并且将引发<xref:System.NotSupportedException>。|  
+|LDAP://\<域或服务器 >： [端口]/\<容器 dn ><br /><br /> 端口号对于 ADAM 是可选的，不需要 Active Directory。|提供程序针对指定的域或服务器运行。 仅在指定的容器中创建和删除用户。 所有其他操作（包括任何搜索方法）都会在容器中执行子树搜索。<br /><br /> 对于 ADAM 服务器，容器在应用程序分区中指定应用程序分区的根目录或容器。<br /><br /> 建议连接字符串定义特定容器以提高性能。|  
+  
+ 实例<xref:System.Web.Security.ActiveDirectoryMembershipProvider>将目录特性映射到<xref:System.Web.Security.ActiveDirectoryMembershipUser>属性。 如果在 web.config 文件中未完成任何属性映射，则使用默认属性。 有关属性映射的详细信息，请参阅<xref:System.Web.Security.ActiveDirectoryMembershipUser>类文档中的各个属性。  
+  
+ 下表列出<xref:System.Web.Security.ActiveDirectoryMembershipUser>了属性及其默认属性映射。  
+  
+> [!IMPORTANT]
+>  <xref:System.Web.Security.ActiveDirectoryMembershipProvider>类不显式检查提供程序特性是否未映射到目录中的用户对象的核心特性。 必须确保不会通过映射属性公开目录中的敏感信息。  
+  
+|Property|默认目录属性|是否可以映射？|  
+|--------------|---------------------------------|--------------------|  
+|<xref:System.Web.Security.ActiveDirectoryMembershipUser.ProviderUserKey%2A>|securityIdentifier|No|  
+|<xref:System.Web.Security.MembershipUser.UserName%2A>|userPrincipalName|是，但必须是 userPrincipalName 或 sAMAccountName|  
+|<xref:System.Web.Security.ActiveDirectoryMembershipUser.Comment%2A>|注释|No|  
+|<xref:System.Web.Security.MembershipUser.CreationDate%2A>|whenCreated|No|  
+|<xref:System.Web.Security.ActiveDirectoryMembershipUser.Email%2A>|邮件|是，但必须是 Unicode 字符串类型的单值属性。|  
+|<xref:System.Web.Security.ActiveDirectoryMembershipUser.LastActivityDate%2A>|n/a|不受支持<xref:System.Web.Security.ActiveDirectoryMembershipProvider>。|  
+|<xref:System.Web.Security.ActiveDirectoryMembershipUser.LastLoginDate%2A>|n/a|不受支持<xref:System.Web.Security.ActiveDirectoryMembershipProvider>。|  
+|<xref:System.Web.Security.MembershipUser.LastPasswordChangedDate%2A>|pwdLastSet|No|  
+|<xref:System.Web.Security.MembershipUser.PasswordQuestion%2A>|无|是，但必须是 Unicode 字符串类型的单值属性。|  
+|<xref:System.Web.Security.ActiveDirectoryMembershipUser.IsApproved%2A>|用户帐户控制（AD）<br /><br /> mDS-Msds-useraccountdisabled （ADAM）|No|  
+|<xref:System.Web.Security.MembershipUser.IsLockedOut%2A>|lockoutTime 和 AD 锁定持续时间（Windows 2000 上的 AD）的计算<br /><br /> 用户-帐户控制-计算（Windows Server 2003 上的 AD）<br /><br /> 用户-帐户-控制--已计算（ADAM）|No|  
+|<xref:System.Web.Security.MembershipUser.LastLockoutDate%2A>|如果用户因错误密码尝试次数过多而被锁定，则将返回 "锁定时间" 属性。<br /><br /> 如果用户因错误密码答案尝试次数过多而被锁定，则返回由`attributeMapFailedPasswordAnswerLockoutTime`定义的属性中存储的值。<br /><br /> 如果用户因密码错误而被锁定，并且密码尝试次数过多，则返回最近的日期/时间值。<br /><br /> 如果该帐户未锁定，则返回1/1/1754 以了解 SQL 兼容性。|No|  
+  
+ `true` <xref:System.Web.Security.ActiveDirectoryMembershipProvider>当和属性 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A> 均为时，类通过要求用户回答预先确定的问题来支持密码重置安全。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresQuestionAndAnswer%2A> 若要支持问题和答案，必须使用应用程序配置文件中的 "[为成员身份提供程序的 Add 元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/8423ec7f-a06d-4606-977e-a46400b2fc18) " 设置以下配置特性。  
+  
+|配置属性|特性类型|  
+|-----------------------------|--------------------|  
+|`attributeMapPasswordQuestion`|必须是 Unicode 字符串类型的单值属性。|  
+|`attributeMapPasswordAnswer`|必须是 Unicode 字符串类型的单值属性。|  
+|`attributeMapFailedPasswordAnswerCount`|必须是整数类型的单值属性。|  
+|`attributeMapFailedPasswordAnswerTime`|必须是类型为大整数/间隔的单值属性。|  
+|`attributeMapFailedPasswordAnswerLockoutTime`|必须是类型为大整数/间隔的单值属性。|  
+  
+ 有关使用密码重置安全性的详细信息，请参阅<xref:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresQuestionAndAnswer%2A>属性。  
+  
+## <a name="active-directory-connections"></a>Active Directory 连接  
+ 当类用于连接到 Active Directory 或 Active Directory 应用程序模式（ADAM）服务器时`connectionProtection` ，使用为[成员身份提供程序的 add 元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/8423ec7f-a06d-4606-977e-a46400b2fc18)设置的属性<xref:System.Web.Security.ActiveDirectoryMembershipProvider>应用程序配置文件可能会限制<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类可通过连接执行的操作的类型。 属性还确定<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例将用于创建与 Active Directory 或 ADAM 服务器的连接的方法。 `connectionProtection`  
+  
+ 下表显示了在连接到 Active Directory `connectionProtection`时属性的效果。  
+  
+|`connectionProtection` 设置|效果|  
+|------------------------------------|------------|  
+|<xref:System.Web.Security.ActiveDirectoryConnectionProtection.None>|<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类将连接到 Active Directory，并具有这些限制。<br /><br /> -任何用于设置密码的方法都将失败。 更改密码时，Active Directory 需要安全连接。<br />- `connectionUsername`必须使用应用程序 `connectionPassword` 配置文件中的 "[为成员身份提供程序的 add 元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/8423ec7f-a06d-4606-977e-a46400b2fc18) " 显式设置和属性; 否则，实例将引发 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  <xref:System.Configuration.Provider.ProviderException> exception。|  
+|`Secure`|<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类将尝试使用 SSL 连接到 Active Directory。 如果 SSL 失败，将进行第二次尝试使用签名连接到 Active Directory。 如果两次尝试都失败<xref:System.Web.Security.ActiveDirectoryMembershipProvider> ，则实例将<xref:System.Configuration.Provider.ProviderException>引发异常。<br /><br /> 同时支持进程凭据和显式凭据。|  
+  
+ 下表显示了在连接到 ADAM `connectionProtection`服务器时属性的影响。  
+  
+|`connectionProtection` 设置|效果|  
+|------------------------------------|------------|  
+|<xref:System.Web.Security.ActiveDirectoryConnectionProtection.None>|<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类将连接到具有此限制的 ADAM 服务器。<br /><br /> -任何用于设置密码的方法都将失败，除非你显式配置 ADAM 服务器以允许通过不安全连接发送和更改密码。<br /><br /> 同时支持进程凭据和显式凭据。|  
+|`Secure`|<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类将尝试使用 SSL 连接到 ADAM 服务器。 如果无法建立连接，则<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例将<xref:System.Configuration.Provider.ProviderException>引发异常。<br /><br /> 同时支持进程凭据和显式凭据。|  
+  
+## <a name="adam-configuration"></a>ADAM 配置  
+ 使用 adam 服务器时，adam 实例必须包含定义`User`类的架构。 您可以`User`使用 ADAM 安装目录中提供的`MS-User.ldf`文件的 LDIF 导入类。  
+  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider>类将与配置为使用默认网络端口的 ADAM 服务器一起工作。 下表显示了 ADAM 服务器需要的默认值。  
+  
+|connectionProtection 设置|预期的 ADAM 端口|  
+|----------------------------------|------------------------|  
+|<xref:System.Web.Security.ActiveDirectoryConnectionProtection.None>|389|  
+|`Secure`|636|  
+  
+ 如果你的 ADAM 服务器未使用默认端口，请参阅[Microsoft 知识库](https://go.microsoft.com/fwlink/?linkid=37115)中的文章 Q817583，"Active Directory Services 不请求通过 SSL 连接的安全授权"。  
+  
+   
+  
+## Examples  
+ 下面的代码示例显示了配置为使用<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例的 ASP.NET 应用程序的 web.config 文件。 第一个示例使用 Active Directory 特性的默认映射，并且不支持使用问题和答案的密码重置安全性，也不支持调用搜索方法的功能。 第二个示例显示了<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例允许的所有属性设置。  
+  
+ 第一个示例是使用 Active Directory 特性的默认映射的简单配置文件。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,   
+          PublicKeyToken=b03f5f7f11d50a3a" />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ 此示例显示可用于实例<xref:System.Web.Security.ActiveDirectoryMembershipProvider>的所有属性设置。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership  
+      defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"  
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,  
+          System.Web, Version=1.0.3600, Culture=neutral,  
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          connectionStringName="ADService"  
+          connectionUsername="UserWithAppropriateRights"  
+          connectionPassword="PasswordForUser"  
+          connectionProtection="Secure"  
+          enablePasswordReset="true"  
+          enableSearchMethods="true"  
+          requiresQuestionAndAnswer="true"  
+          applicationName="/"  
+          description="Default AD connection"  
+          requiresUniqueEmail="false"  
+          clientSearchTimeout="30"  
+          serverSearchTimeout="30"  
+          timeoutUnit="Minutes"  
+          attributeMapPasswordQuestion="department"  
+          attributeMapPasswordAnswer="division"  
+          attributeMapFailedPasswordAnswerCount="singleIntAttribute"  
+         attributeMapFailedPasswordAnswerTime="singleLargeIntAttribute"  
+         attributeMapFailedPasswordAnswerLockoutTime="singleLargeIntAttribute"  
+          attributeMapEmail = "mail"  
+          attributeMapUsername = "userPrincipalName"  
+          maxInvalidPasswordAttempts = "5"  
+          passwordAttemptWindow = "10"  
+          passwordAnswerAttemptLockoutDuration = "30"  
+          minRequiredPasswordLength="7"  
+          minRequiredNonalphanumericCharacters="1"  
+          passwordStrengthRegularExpression="  
+          @\"(?=.{6,})(?=(.*\d){1,})(?=(.*\W){1,})" />  
+        />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ `clientSearchTimeout``serverSearchTimeout`默认值为分钟。 若要更改单位，请将`timeoutUnit`属性值设置为 "天"、"小时"、"分钟"、"秒" 或 "毫秒"。 如果未指定该属性，则默认值为 "分钟"。  
+  
+ ]]></format>
+    </remarks>
+    <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+    <related type="ExternalDocumentation" href="https://go.microsoft.com/fwlink/?linkid=149233">如何：在 ASP.NET 2.0 中使用成员资格</related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ActiveDirectoryMembershipProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; ActiveDirectoryMembershipProvider();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>创建 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 构造函数由 ASP.NET 调用，以创建在应用程序的<xref:System.Web.Security.ActiveDirectoryMembershipProvider>配置中指定的类的实例。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider> 不应在代码中使用此构造函数。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplicationName">
+      <MemberSignature Language="C#" Value="public override string ApplicationName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ApplicationName" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.ApplicationName" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Property ApplicationName As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::String ^ ApplicationName { System::String ^ get(); void set(System::String ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.ApplicationName : string with get, set" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.ApplicationName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>使用自定义成员资格提供程序的应用程序的名称。</summary>
+        <value>使用自定义成员资格提供程序的应用程序的名称。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 属性可以设置为 ASP.NET 应用程序的名称，但<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类不使用应用程序名称。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.ApplicationName%2A>  
+  
+ 因此，与其他<xref:System.Web.Security.MembershipProvider>实现不同，访问同一 Active Directory 数据存储的所有 ASP.NET 应用程序都将始终共享相同的用户数据。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">已尝试设置 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.ApplicationName" /> 属性。</exception>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.ApplicationName" /> 实例之前，已尝试访问 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ChangePassword">
+      <MemberSignature Language="C#" Value="public override bool ChangePassword (string username, string oldPassword, string newPassword);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool ChangePassword(string username, string oldPassword, string newPassword) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.ChangePassword(System.String,System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function ChangePassword (username As String, oldPassword As String, newPassword As String) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override bool ChangePassword(System::String ^ username, System::String ^ oldPassword, System::String ^ newPassword);" />
+      <MemberSignature Language="F#" Value="override this.ChangePassword : string * string * string -&gt; bool" Usage="activeDirectoryMembershipProvider.ChangePassword (username, oldPassword, newPassword)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+        <Parameter Name="oldPassword" Type="System.String" />
+        <Parameter Name="newPassword" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="username">要为其更新密码的用户的名称。</param>
+        <param name="oldPassword">指定的用户的当前密码。</param>
+        <param name="newPassword">指定的用户的新密码。</param>
+        <summary>更改指定用户的密码。</summary>
+        <returns>如果密码更新成功，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider.ChangePassword%2A>方法用于更新 Active Directory 的数据存储中的用户密码。 无论<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例配置为使用的凭据如何，提供程序都`username`使用和`oldPassword`参数作为连接凭据连接到 Active Directory 服务器。  
+  
+ 如果该<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A>属性为`true`，则当该帐户以前被锁定，则用户无法更改其密码，因为用户尝试回答密码提示问题的次数过多。 用户需要等待<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration%2A>属性中指定的分钟数，然后再更改密码。  
+  
+ 如果密码更改成功并且<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A>属性为`true`，则重置用户的错误密码答案跟踪计数器。  
+  
+ 提供程序通过在连接字符串中指定的搜索点上执行子树搜索来查找要更新的用户实例。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ 若要更改 Active Directory 服务器上的密码`connectionProtection` ，该属性必须设置<xref:System.Web.Security.ActiveDirectoryConnectionProtection.SignAndSeal>为。  
+  
+ 使用 adam 服务器`connectionProtection`时，可以将属性设置为，但<xref:System.Web.Security.ActiveDirectoryConnectionProtection.None>仅当你显式配置 ADAM 服务器以允许通过不安全连接进行密码更改时才可以设置为。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="username" /> 为空，或超过用户名的最大长度（通常为 256 个字符）。  
+  
+- 或 - 
+ <paramref name="username" /> 包含逗号。  
+  
+或 
+用户名映射到 <see langword="userPrincipalName" /> 特性，并且 <paramref name="username" /> 参数包含反斜杠。  
+  
+- 或 - 
+ <paramref name="oldPassword" /> 或 <paramref name="newPassword" /> 是长度为零的字符串。  
+  
+或 
+ <paramref name="oldPassword" /> 或 <paramref name="newPassword" /> 超过最大密码长度（通常为 128 个字符）。  
+  
+或 
+ <paramref name="newPassword" /> 小于 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredPasswordLength" /> 属性所指定的最小密码长度 
+- 或 - 
+ <paramref name="newPassword" /> 包含的非字母字符数比 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredNonAlphanumericCharacters" /> 属性所指定的数目少。  
+  
+或 
+ 根据 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordStrengthRegularExpression" /> 属性中定义的正则表达式进行的 <paramref name="newPassword" /> 验证失败。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="username" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="oldPassword" /> 为 <see langword="null" />。  
+  
+- 或 - 
+ <paramref name="newPassword" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Web.Security.MembershipPasswordException"><paramref name="newPassword" /> 不满足 Active Directory 服务器所定义的复杂性要求。</exception>
+        <exception cref="T:System.Configuration.Provider.ProviderException">未能建立到 Active Directory 应用程序模式服务器的安全连接。</exception>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.ChangePassword(System.String,System.String,System.String)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <exception cref="T:System.Exception">发生了未经处理的异常。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="ChangePasswordQuestionAndAnswer">
+      <MemberSignature Language="C#" Value="public override bool ChangePasswordQuestionAndAnswer (string username, string password, string newPasswordQuestion, string newPasswordAnswer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool ChangePasswordQuestionAndAnswer(string username, string password, string newPasswordQuestion, string newPasswordAnswer) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.ChangePasswordQuestionAndAnswer(System.String,System.String,System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function ChangePasswordQuestionAndAnswer (username As String, password As String, newPasswordQuestion As String, newPasswordAnswer As String) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override bool ChangePasswordQuestionAndAnswer(System::String ^ username, System::String ^ password, System::String ^ newPasswordQuestion, System::String ^ newPasswordAnswer);" />
+      <MemberSignature Language="F#" Value="override this.ChangePasswordQuestionAndAnswer : string * string * string * string -&gt; bool" Usage="activeDirectoryMembershipProvider.ChangePasswordQuestionAndAnswer (username, password, newPasswordQuestion, newPasswordAnswer)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+        <Parameter Name="password" Type="System.String" />
+        <Parameter Name="newPasswordQuestion" Type="System.String" />
+        <Parameter Name="newPasswordAnswer" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="username">要为其更改密码提示问题和答案的用户。</param>
+        <param name="password">指定的用户的密码。</param>
+        <param name="newPasswordQuestion">指定的用户的新密码提示问题。</param>
+        <param name="newPasswordAnswer">指定的用户的新密码提示问题答案。</param>
+        <summary>更新 Active Directory 存储区中的用户密码提示问题和答案。</summary>
+        <returns>如果更新操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。 如果密码不正确、用户已锁定或用户不在 Active Directory 数据存储区中，也会返回一个 <see langword="false" /> 值。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipUser>类调用方法来更新 Active Directory 成员资格存储区中用户的密码提示问题和答案。  
+  
+ 在重置用户密码时，需要密码提示问题和答案会提供额外的安全层。 创建用户名时，用户可以提供稍后可用于重置忘记密码的问题和答案。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.ChangePasswordQuestionAndAnswer%2A>方法将成员资格用户的密码提示问题和答案更新为新值。  
+  
+ 若要使用<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ChangePasswordQuestionAndAnswer%2A>方法，必须在应用程序的配置文件中设置以下附加属性：  
+  
+-   `requiresQuestionAndAnswer`必须为`true.`  
+  
+-   `attributeMapPasswordQuestion`和`attributeMapPasswordAnswer`必须映射到 Active Directory 架构中的属性。  
+  
+ 如果未满足上述条件， <xref:System.Configuration.Provider.ProviderException>则在初始化时引发。  
+  
+ 实例用`username` 和 `password` 参数中提供的凭据连接到 Active Directory 数据存储，以验证用户名/密码组合。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider> 问题和答案的实际更新是通过提供程序的已配置连接凭据来执行的。  
+  
+ 如果为<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ChangePasswordQuestionAndAnswer%2A>方法提供了不正确的密码，目录服务器将递增跟踪无效密码尝试次数的计数器。 这可能会导致用户被锁定，并且在通过调用<xref:System.Web.Security.ActiveDirectoryMembershipProvider.UnlockUser%2A>方法清除锁定状态或在目录传递中指定的锁定持续时间之前，将无法登录。  
+  
+ 如果问题和答案的更新成功并且<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A>属性为`true`，则将重置用户的错误密码答案跟踪计数器。  
+  
+ 使用<xref:System.Web.Security.MembershipProvider.EncryptPassword%2A>方法对密码答案进行加密，然后将其存储在 Active Directory 数据存储中。 加密密钥和算法由[MachineKey 元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/4b5699a9-bc21-4c4a-85f1-8b3b8ebd2d46)配置元素指定。 必须指定[machineKey 元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/4b5699a9-bc21-4c4a-85f1-8b3b8ebd2d46)元素上的解密属性， <xref:System.Web.Security.ActiveDirectoryMembershipProvider>该类不支持自动生成的加密密钥。  
+  
+ 密码提示问题的最大长度为256个字符。 密码答案的最大长度为128个字符。  
+  
+ 除之外`password`的所有参数值中，还会修整前导空格和尾随空格。  
+  
+ 提供程序通过在连接字符串中指定的搜索点上执行子树搜索来查找要更新的用户实例。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">管理员尚未将密码提示问题和答案字段映射到 Active Directory 架构的特性。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="username" /> 为空，或超过用户名的最大长度（通常为 256 个字符）。  
+  
+- 或 - 
+ <paramref name="username" /> 包含逗号。  
+  
+- 或 - 
+用户名映射到 <see langword="userPrincipalName" /> 特性，并且 <paramref name="username" /> 参数包含反斜杠。  
+  
+或 
+ <paramref name="password" /> 是一个长度为零的字符串。  
+  
+- 或 - 
+ <paramref name="password" /> 超过最大密码长度（通常为 128 个字符）。  
+  
+或 
+ <paramref name="newPasswordQuestion" /> 为空，并且 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresQuestionAndAnswer" /> 属性值为 <see langword="true" />。  
+  
+或 
+ <paramref name="newPasswordQuestion" /> 的长度超过 256 个字符。  
+  
+或 
+ <paramref name="newPasswordAnswer" /> 加密后的长度超过 128 个字符。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="username" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="password" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="newPasswordQuestion" /> 为 <see langword="null" />，但 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresQuestionAndAnswer" /> 属性为 <see langword="true" />。  
+  
+或 
+ <paramref name="newPasswordAnswer" /> 为 <see langword="null" />，但 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresQuestionAndAnswer" /> 属性为 <see langword="true" />。</exception>
+        <exception cref="T:System.Configuration.Provider.ProviderException">[machineKey 元素（ASP.NET 设置框架）](https://msdn.microsoft.com/library/4b5699a9-bc21-4c4a-85f1-8b3b8ebd2d46)配置元素指示自动生成的计算机加密密钥。 必须将 [machineKey 元素（ASP.NET 设置框架）](https://msdn.microsoft.com/library/4b5699a9-bc21-4c4a-85f1-8b3b8ebd2d46)元素的 <see langword="decryptionKey" /> 属性显式设置为使用 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 存储密码提示问题答案。</exception>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.ChangePasswordQuestionAndAnswer(System.String,System.String,System.String,System.String)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateUser">
+      <MemberSignature Language="C#" Value="public override System.Web.Security.MembershipUser CreateUser (string username, string password, string email, string passwordQuestion, string passwordAnswer, bool isApproved, object providerUserKey, out System.Web.Security.MembershipCreateStatus status);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Web.Security.MembershipUser CreateUser(string username, string password, string email, string passwordQuestion, string passwordAnswer, bool isApproved, object providerUserKey, [out] valuetype System.Web.Security.MembershipCreateStatus&amp; status) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.CreateUser(System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Object,System.Web.Security.MembershipCreateStatus@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function CreateUser (username As String, password As String, email As String, passwordQuestion As String, passwordAnswer As String, isApproved As Boolean, providerUserKey As Object, ByRef status As MembershipCreateStatus) As MembershipUser" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Web::Security::MembershipUser ^ CreateUser(System::String ^ username, System::String ^ password, System::String ^ email, System::String ^ passwordQuestion, System::String ^ passwordAnswer, bool isApproved, System::Object ^ providerUserKey, [Runtime::InteropServices::Out] System::Web::Security::MembershipCreateStatus % status);" />
+      <MemberSignature Language="F#" Value="override this.CreateUser : string * string * string * string * string * bool * obj *  -&gt; System.Web.Security.MembershipUser" Usage="activeDirectoryMembershipProvider.CreateUser (username, password, email, passwordQuestion, passwordAnswer, isApproved, providerUserKey, status)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Security.MembershipUser</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+        <Parameter Name="password" Type="System.String" />
+        <Parameter Name="email" Type="System.String" />
+        <Parameter Name="passwordQuestion" Type="System.String" />
+        <Parameter Name="passwordAnswer" Type="System.String" />
+        <Parameter Name="isApproved" Type="System.Boolean" />
+        <Parameter Name="providerUserKey" Type="System.Object" />
+        <Parameter Name="status" Type="System.Web.Security.MembershipCreateStatus" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="username">新用户的用户名。</param>
+        <param name="password">新用户的密码。</param>
+        <param name="email">新用户的电子邮件地址。</param>
+        <param name="passwordQuestion">新用户的密码提示问题。</param>
+        <param name="passwordAnswer">新用户的密码提示问题答案。</param>
+        <param name="isApproved">是否允许验证新用户。</param>
+        <param name="providerUserKey">成员资格数据源中该用户的唯一标识符。 使用 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 类时，此参数必须为 <see langword="null" />。</param>
+        <param name="status">此方法返回时，包含一个 <see cref="T:System.Web.Security.MembershipCreateStatus" /> 枚举值，指示是否成功创建了用户。</param>
+        <summary>将新用户添加到 Active Directory 数据存储区。</summary>
+        <returns>一个 <see cref="T:System.Web.Security.ActiveDirectoryMembershipUser" /> 实例，包含新创建用户的信息；如果未成功创建用户，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider.CreateUser%2A> 方法 <xref:System.Web.Security.Membership> 由类调用，以在 Active Directory 数据存储区中创建新用户。  
+  
+ 对于 Active Directory 和 Active Directory 应用程序模式（ADAM）服务器，此<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类要求目录中的实例类为。 `user` 不支持等`inetOrgPerson`其他用户类。  
+  
+ 当使用 Active Directory 服务器并且用户名映射到`userPrincipalName`属性时<xref:System.Web.Security.ActiveDirectoryMembershipProvider> ，该类会自动为`sAMAccountName`参数生成一个随机的20个字符的用户名。  
+  
+ 参数默认为以下最大长度。  
+  
+|参数|最大长度|  
+|---------------|--------------------|  
+|`username`|如果使用属性， `userPrincipalName`则为64个字符。 如果使用`sAMAccountName`属性，则常见限制为20个字符或更少。|  
+|`password`|128个字符。|  
+|`email`|256个字符。|  
+|`passwordQuestion`|256个字符。|  
+|`passwordAnswer`|加密之前和之后为128个字符。|  
+  
+ <xref:System.Web.Security.ActiveDirectoryMembershipUser.Comment%2A> 返回 <xref:System.Web.Security.ActiveDirectoryMembershipUser> 的实例的属性限制为1024个字符。  
+  
+ 如果通过减少这些属性允许的最大长度来修改目录架构，则这些长度将优先。  
+  
+ 在创建用户之前， <xref:System.Web.Security.ActiveDirectoryMembershipProvider>类将确保用户名是唯一的。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>如果实例配置为要求唯一的电子邮件地址，则它还将确保电子邮件地址是唯一的。  
+  
+ 在中，如果用户名映射到`userPrincipalName`，则会执行垃圾搜索，从而强制执行用户名的 Active Directory。 如果`sAMAccountName`使用，则目录将自动强制实施跨 Active Directory 域的`sAMAccountName`唯一性。  
+  
+ ADAM 服务器会在所有应用程序分区中自动强制`userPrincipalName`实施用户名的唯一名称。  
+  
+ 电子邮件地址的唯一性是通过执行子树搜索来执行的，该地址从创建用户的容器的根目录开始搜索。 这是默认的用户容器（如果已连接到 Active Directory，且未在连接字符串中指定容器）或连接字符串中指定的容器。  
+  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider>类直接在连接字符串中指定的用户容器中创建用户。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ 对于要在 Active Directory 服务器上设置的密码， `connectionProtection`特性必须设置为。 <xref:System.Web.Security.ActiveDirectoryConnectionProtection.SignAndSeal>  
+  
+ 使用 adam 服务器时， `connectionProtection`可以将属性设置为<xref:System.Web.Security.ActiveDirectoryConnectionProtection.None>，但仅当你显式配置 adam 服务器以允许通过不安全连接进行密码更改时。  
+  
+ 除了之外`password`的所有字符串参数值，前导空格和尾随空格都将被截断。  
+  
+> [!IMPORTANT]
+>  除非用于连接到 Active Directory 服务器的凭据具有域管理员权限（不推荐）或 "创建子实例"、"删除子实例" 和 "设置密码" 访问权限，否则不能创建新用户。 "删除子实例" 访问权限是必需的，因为创建用户是一个多步骤过程，如果用户创建的任何步骤失败， <xref:System.Web.Security.ActiveDirectoryMembershipProvider>该类将删除该用户实例，而不是将部分构造的用户实例保留在文件夹.  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="providerUserKey" /> 参数不为 <see langword="null" />。</exception>
+        <exception cref="T:System.NotSupportedException">管理员尚未将密码提示问题和答案字段映射到 Active Directory 架构的特性，并且 <paramref name="passwordQuestion" /> 或 <paramref name="passwordAnswer" /> 参数不是 <see langword="null" />。</exception>
+        <exception cref="T:System.Configuration.Provider.ProviderException">[machineKey 元素（ASP.NET 设置框架）](https://msdn.microsoft.com/library/4b5699a9-bc21-4c4a-85f1-8b3b8ebd2d46)配置元素指示自动生成的计算机加密密钥。 必须将 [machineKey 元素（ASP.NET 设置框架）](https://msdn.microsoft.com/library/4b5699a9-bc21-4c4a-85f1-8b3b8ebd2d46)元素的 <see langword="decryptionKey" /> 属性显式设置为使用 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 存储密码提示问题答案。  
+  
+或 
+尝试设置新用户的密码时，<see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 无法建立到目录的安全连接。</exception>
+        <exception cref="T:System.Runtime.InteropServices.COMException">尝试创建用户时出现错误。</exception>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.CreateUser(System.String,System.String,System.String,System.String,System.String,System.Boolean,System.Object,System.Web.Security.MembershipCreateStatus@)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentConnectionProtection">
+      <MemberSignature Language="C#" Value="public System.Web.Security.ActiveDirectoryConnectionProtection CurrentConnectionProtection { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Web.Security.ActiveDirectoryConnectionProtection CurrentConnectionProtection" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.CurrentConnectionProtection" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property CurrentConnectionProtection As ActiveDirectoryConnectionProtection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Web::Security::ActiveDirectoryConnectionProtection CurrentConnectionProtection { System::Web::Security::ActiveDirectoryConnectionProtection get(); };" />
+      <MemberSignature Language="F#" Value="member this.CurrentConnectionProtection : System.Web.Security.ActiveDirectoryConnectionProtection" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.CurrentConnectionProtection" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Security.ActiveDirectoryConnectionProtection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取用于保护与服务器的通信的当前安全级别。</summary>
+        <value><see cref="T:System.Web.Security.ActiveDirectoryConnectionProtection" /> 值之一。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 属性指示<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例配置为使用的当前安全级别。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.CurrentConnectionProtection%2A> 属性基于应用程序配置文件`connnectionProtection`中为[成员资格的 add 元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/8423ec7f-a06d-4606-977e-a46400b2fc18)设置的属性。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.CurrentConnectionProtection%2A>  
+  
+ 特性只能在配置文件中设置<xref:System.Web.Security.ActiveDirectoryConnectionProtection.None>为 <xref:System.Web.Security.ActiveDirectoryConnectionProtection.SignAndSeal> 或。 `connectionProtection`  
+  
+ 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示一个 web.config 条目，该条目将<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例配置为使用 SSL 安全协议连接到 Active Directory 服务器。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,  
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          connectionProtection="SignAndSeal" />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.CurrentConnectionProtection" /> 实例之前，已尝试访问 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteUser">
+      <MemberSignature Language="C#" Value="public override bool DeleteUser (string username, bool deleteAllRelatedData);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool DeleteUser(string username, bool deleteAllRelatedData) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.DeleteUser(System.String,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function DeleteUser (username As String, deleteAllRelatedData As Boolean) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override bool DeleteUser(System::String ^ username, bool deleteAllRelatedData);" />
+      <MemberSignature Language="F#" Value="override this.DeleteUser : string * bool -&gt; bool" Usage="activeDirectoryMembershipProvider.DeleteUser (username, deleteAllRelatedData)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+        <Parameter Name="deleteAllRelatedData" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="username">要删除的用户的名称。</param>
+        <param name="deleteAllRelatedData"><see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.DeleteUser(System.String,System.Boolean)" /> 方法将此参数忽略。</param>
+        <summary>从 Active Directory 数据存储区移除用户的成员资格信息。</summary>
+        <returns>如果删除了用户，则为 <see langword="true" />；如果在数据存储区中未找到该用户，则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法会立即删除`username`由参数标识的用户。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.DeleteUser%2A> 由于 Active Directory 的数据存储不会将用户信息存储在目录的单独区域中， `deleteAllRelatedData`因此将忽略参数，但该参数必须设置`true`为或`false`在调用<xref:System.Web.Security.ActiveDirectoryMembershipProvider.DeleteUser%2A>方法时设置。  
+  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider>类通过对连接字符串确定的用户容器中的用户名执行单级搜索，查找要删除的用户实例。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ `username`长度不得超过64个字符。  
+  
+> [!IMPORTANT]
+>  你无法删除用户，除非用于连接到 Active Directory 服务器的凭据具有域管理员权限（不推荐）或 "删除子实例" 访问权限。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="username" /> 为空，或超过用户名的最大长度（通常为 256 个字符）。  
+  
+或 
+ <paramref name="username" /> 包含逗号。  
+  
+- 或 - 
+用户名映射到 <see langword="userPrincipalName" /> 特性，并且 <paramref name="userName" /> 参数包含反斜杠。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="username" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Runtime.InteropServices.COMException">尝试删除用户时出现错误。</exception>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.DeleteUser(System.String,System.Boolean)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="EnablePasswordReset">
+      <MemberSignature Language="C#" Value="public override bool EnablePasswordReset { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool EnablePasswordReset" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property EnablePasswordReset As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property bool EnablePasswordReset { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.EnablePasswordReset : bool" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个值，该值指示 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 实例是否已配置为允许用户重置其密码。</summary>
+        <value>如果允许密码重置，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 属性指示是否可以<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ResetPassword%2A>使用方法重置用户的密码。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A> 在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A>应用程序的配置文件中， `enablePasswordReset`使用[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素的特性设置该属性。  
+  
+ 仅当设置了以下<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A> [成员身份元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素设置时，才能设置属性`true` 。  
+  
+-   `requiresQuestionAndAnswer`必须是`true`。  
+  
+-   必须修改 Active Directory 架构，使其包含用于存储密码提示问题和答案的属性，以及用于密码答案更改尝试的三个跟踪字段。  
+  
+-   `attributeMapPasswordQuestion`、、、和 `attributeMapFailedPasswordAnswerLockoutTime` 必须映射到 Active Directory 架构中的属性。 `attributeMapPasswordAnswer` `attributeMapFailedPasswordAnswerCount` `attributeMapFailedPasswordAnswerTime`  
+  
+ 如果未满足上述条件， <xref:System.Configuration.Provider.ProviderException>则在初始化时引发。  
+  
+ 当应用程序配置文件中的连接字符串指定 Active Directory 域而不是特定服务器时， <xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例将始终连接到域控制器，该控制器具有域的 PDC 角色，以确保密码更改将生效，并且在调用<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ValidateUser%2A>方法时可用。  
+  
+> [!NOTE]
+>  即使属性为`true`，也不能重置用户密码，除非用于连接到 Active Directory 服务器的凭据具有域管理员权限（不推荐）或 "重置密码" 访问权限。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A>  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示了一个 web.config 条目，该条目将<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例配置为启用密码重置。 它使用给定了 "重置密码" 访问权限的用户的显式凭据。  
+  
+> [!IMPORTANT]
+>  在 web.config 文件中放置用户凭据时，存在潜在的安全威胁。 对包含 web.config 文件的目录具有访问权限的用户可以读取该文件，从而查看凭据。 有关如何防范此威胁的详细信息，请参阅[使用受保护的配置加密配置信息](https://msdn.microsoft.com/library/51cdfe5b-9d82-458c-94ff-c551c4f38ed1)。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,   
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          connectionUsername="UserWithResetPasswordRights"  
+          connectionPassword="PasswordForUser"  
+          enablePasswordReset="true"  
+          requiresQuestionAndAnswer="true"  
+          attributeMapPasswordQuestion="PasswordQuestionADAttribute"  
+          attributeMapPasswordAnswer="PasswordAnswerADAttribute"  
+          attributeMapFailedPasswordAnswerCount="AnswerCountADAttribute"  
+          attributeMapFailedPasswordAnswerTime="AnswerTimeADAttribute"  
+          attributeMapFailedPasswordAnswerLockoutTime="LockOutTimeADAttribute" />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset" /> 实例之前，已尝试访问 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="EnablePasswordRetrieval">
+      <MemberSignature Language="C#" Value="public override bool EnablePasswordRetrieval { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool EnablePasswordRetrieval" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordRetrieval" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property EnablePasswordRetrieval As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property bool EnablePasswordRetrieval { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.EnablePasswordRetrieval : bool" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordRetrieval" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个值，该值指示是否可从 Active Directory 数据存储区检索用户密码。 此属性始终返回 <see langword="false" />。</summary>
+        <value><see langword="false" /> 指示 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 类不支持密码检索。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider>类不支持密码检索。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordRetrieval" /> 实例之前，已尝试访问 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="EnableSearchMethods">
+      <MemberSignature Language="C#" Value="public bool EnableSearchMethods { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool EnableSearchMethods" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property EnableSearchMethods As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool EnableSearchMethods { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.EnableSearchMethods : bool" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个值，该值指示面向搜索的 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法是否可用。</summary>
+        <value>如果搜索方法可用，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 由于搜索 Active Directory 服务器可能会消耗大量资源，因此<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods%2A>可以使用属性关闭面向<xref:System.Web.Security.ActiveDirectoryMembershipProvider>搜索的方法。 在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods%2A>应用程序的配置文件中， `enableSearchMethods`使用[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素的特性设置该属性。  
+  
+ 当属性为`false`时，以下方法不可用： <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods%2A>  
+  
+-   <xref:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByName%2A>  
+  
+-   <xref:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByEmail%2A>  
+  
+-   <xref:System.Web.Security.ActiveDirectoryMembershipProvider.GetAllUsers%2A>  
+  
+ 提供程序使用子树搜索，从连接字符串中指定的搜索点开始。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ 建议您不要在生产系统上启用搜索，直到您确认<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类发出的搜索查询不会对目录服务器的性能产生负面影响。 由于类是为无状态 Web 环境设计的，因此无法使用由基础<xref:System.DirectoryServices> api 公开的分页优化。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider> 这意味着，搜索大型目录时的分页操作非常昂贵，应避免这样做。 搜索操作始终针对在连接字符串中配置的目录服务器发出，或在指向域的连接字符串的情况下，为自动选择的服务器。 提供程序不会将全局编录用于其搜索方法。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示了一个 web.config 条目，该条目配置<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例以启用搜索 Active Directory 服务器。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,   
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          enableSearchMethods="true" />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods" /> 实例之前，已尝试访问 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="FindUsersByEmail">
+      <MemberSignature Language="C#" Value="public override System.Web.Security.MembershipUserCollection FindUsersByEmail (string emailToMatch, int pageIndex, int pageSize, out int totalRecords);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Web.Security.MembershipUserCollection FindUsersByEmail(string emailToMatch, int32 pageIndex, int32 pageSize, [out] int32&amp; totalRecords) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByEmail(System.String,System.Int32,System.Int32,System.Int32@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function FindUsersByEmail (emailToMatch As String, pageIndex As Integer, pageSize As Integer, ByRef totalRecords As Integer) As MembershipUserCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Web::Security::MembershipUserCollection ^ FindUsersByEmail(System::String ^ emailToMatch, int pageIndex, int pageSize, [Runtime::InteropServices::Out] int % totalRecords);" />
+      <MemberSignature Language="F#" Value="override this.FindUsersByEmail : string * int * int *  -&gt; System.Web.Security.MembershipUserCollection" Usage="activeDirectoryMembershipProvider.FindUsersByEmail (emailToMatch, pageIndex, pageSize, totalRecords)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Security.MembershipUserCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="emailToMatch" Type="System.String" />
+        <Parameter Name="pageIndex" Type="System.Int32" />
+        <Parameter Name="pageSize" Type="System.Int32" />
+        <Parameter Name="totalRecords" Type="System.Int32" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="emailToMatch">要搜索的电子邮件地址或部分电子邮件地址。</param>
+        <param name="pageIndex">要返回的结果页的索引。 <paramref name="pageIndex" /> 从零开始。</param>
+        <param name="pageSize">要返回的结果页的大小。</param>
+        <param name="totalRecords">此方法返回时，包含集合中返回的用户总数。 此参数未经初始化即被传递。</param>
+        <summary>根据用户的电子邮件地址，从 Active Directory 数据存储返回成员资格用户集合。</summary>
+        <returns>一个 <see cref="T:System.Web.Security.MembershipUserCollection" />，其中包含从 <paramref name="pageSize" /> 所指定的页开始的 <paramref name="pageIndex" /> <see cref="T:System.Web.Security.MembershipUser" /> 实例。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法从与`emailToMatch`参数<xref:System.Web.Security.MembershipUserCollection>匹配的 Active Directory 存储中获取包含用户记录的。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByEmail%2A> 按电子邮件地址按升序顺序返回用户记录。  
+  
+ `emailToMatch`参数限制为256个字符。  
+  
+ 类将使用`clientSearchTimeout` 和 `serverSearchTimeout` 配置值发出搜索。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider> 由于类使用每页包含512行的页对目录服务器执行搜索，因此超时适用于类所<xref:System.Web.Security.ActiveDirectoryMembershipProvider>获取的每个结果页。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider> 例如，如果搜索查询导致了1000行的数据，则<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类会将此信息作为两页数据提取。 这意味着当<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类请求第二页数据时，客户端和搜索超时值将从零开始计数。  
+  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByEmail%2A>方法返回的结果受`pageIndex`和`pageSize`参数的约束。 参数指定要在中返回的<xref:System.Web.Security.MembershipUser>最大<xref:System.Web.Security.MembershipUserCollection>实例数。 `pageSize` `pageIndex`参数指定要返回的结果页，其中0（零）指示第一页。  
+  
+ 参数是设置为在 Active Directory 数据存储中找到的匹配成员身份用户总数的参数。 `out`  `totalRecords` 例如，如果已配置的数据存储有13个用户，并且`pageIndex`值为 1 `pageSize`且为5，则<xref:System.Web.Security.MembershipUserCollection>返回的将包含第六到第十个用户。 `totalRecords`参数将设置为13。  
+  
+ 您可以通过在应用程序的配置文件中<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods%2A> `enableSearchMethods`使用[成员资格元素（ASP.NET Settings Schema）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素的属性设置属性，来控制是否允许搜索用户。 如果将`false`  <xref:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByEmail%2A> 属性设置为， <xref:System.NotSupportedException> 则会引发异常。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods%2A>  
+  
+ 提供程序使用子树搜索，从连接字符串中指定的搜索点开始。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ 建议您不要在生产系统上启用搜索，直到您确认<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类发出的搜索查询不会对目录服务器的性能产生负面影响。 由于类是为无状态 Web 环境设计的，因此无法使用由基础<xref:System.DirectoryServices> api 公开的分页优化。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider> 这意味着，搜索大型目录时的分页操作非常昂贵，应避免这样做。 搜索操作始终针对在连接字符串中配置的目录服务器发出，或在指向域的连接字符串的情况下，为自动选择的服务器。 提供程序不会将全局编录用于其搜索方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByEmail(System.String,System.Int32,System.Int32,System.Int32@)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="emailToMatch" /> 为空。  
+  
+或 
+ <paramref name="emailToMatch" /> 的长度超过 256 个字符。  
+  
+- 或 - 
+ <paramref name="pageIndex" /> 小于 0。  
+  
+或 
+ <paramref name="pageSize" /> 小于 1。  
+  
+或 
+ <paramref name="pageSize" /> 乘以 <paramref name="pageIndex" />，然后加上 <paramref name="pageSize" />，再减去 1 后得到的值大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+        <exception cref="T:System.NotSupportedException"><see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods" /> 属性为 <see langword="false" />。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="FindUsersByName">
+      <MemberSignature Language="C#" Value="public override System.Web.Security.MembershipUserCollection FindUsersByName (string usernameToMatch, int pageIndex, int pageSize, out int totalRecords);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Web.Security.MembershipUserCollection FindUsersByName(string usernameToMatch, int32 pageIndex, int32 pageSize, [out] int32&amp; totalRecords) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByName(System.String,System.Int32,System.Int32,System.Int32@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function FindUsersByName (usernameToMatch As String, pageIndex As Integer, pageSize As Integer, ByRef totalRecords As Integer) As MembershipUserCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Web::Security::MembershipUserCollection ^ FindUsersByName(System::String ^ usernameToMatch, int pageIndex, int pageSize, [Runtime::InteropServices::Out] int % totalRecords);" />
+      <MemberSignature Language="F#" Value="override this.FindUsersByName : string * int * int *  -&gt; System.Web.Security.MembershipUserCollection" Usage="activeDirectoryMembershipProvider.FindUsersByName (usernameToMatch, pageIndex, pageSize, totalRecords)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Security.MembershipUserCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="usernameToMatch" Type="System.String" />
+        <Parameter Name="pageIndex" Type="System.Int32" />
+        <Parameter Name="pageSize" Type="System.Int32" />
+        <Parameter Name="totalRecords" Type="System.Int32" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="usernameToMatch">要搜索的用户名或部分用户名。</param>
+        <param name="pageIndex">要返回的结果页的索引。 <paramref name="pageIndex" /> 从零开始。</param>
+        <param name="pageSize">要返回的结果页的大小。</param>
+        <param name="totalRecords">当此方法返回时，此参数包含在集合中返回的记录的总数。 此参数未经初始化即被传递。</param>
+        <summary>根据用户名从 Active Directory 数据存储区返回用户的集合。</summary>
+        <returns>一个 <see cref="T:System.Web.Security.MembershipUserCollection" />，其中包含从 <paramref name="pageSize" /> 所指定的页开始的 <paramref name="pageIndex" /> <see cref="T:System.Web.Security.MembershipUser" /> 实例。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法返回一个<xref:System.Web.Security.MembershipUserCollection>实例，该实例包含与`userNameToMatch`参数匹配的所有用户名的 Active Directory 数据存储区中的用户记录。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByName%2A> 返回按用户名字母顺序排序的记录。  
+  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByName%2A>方法返回的结果受`pageIndex`和`pageSize`参数的约束。 参数指定要在中返回的<xref:System.Web.Security.MembershipUser>最大<xref:System.Web.Security.MembershipUserCollection>实例数。 `pageSize` `pageIndex`参数指定要返回的结果页，其中0（零）指示第一页。  
+  
+ 参数是设置为在 Active Directory 数据存储中找到的匹配成员身份用户总数的参数。 `out`  `totalRecords` 例如，如果已配置的数据存储有13个用户，并且`pageIndex`值为 1 `pageSize`且为5，则<xref:System.Web.Security.MembershipUserCollection>返回的将包含第六到第十个用户。 `totalRecords`参数将设置为13。  
+  
+ 您可以通过在应用程序的配置文件中<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods%2A> `enableSearchMethods`使用[成员资格元素（ASP.NET Settings Schema）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素的属性设置属性，来控制是否允许搜索用户。 如果将`false` <xref:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByName%2A> <xref:System.NotSupportedException>属性值设置为，则会引发异常。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods%2A>  
+  
+ 提供程序使用子树搜索，从连接字符串中指定的搜索点开始。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ 建议您不要在生产系统上启用搜索，直到您确认<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类发出的搜索查询不会对目录服务器的性能产生负面影响。 由于类是为无状态 Web 环境设计的，因此无法使用由基础<xref:System.DirectoryServices> api 公开的分页优化。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider> 这意味着，搜索大型目录时的分页操作非常昂贵，应避免这样做。 搜索操作始终针对在连接字符串中配置的目录服务器发出，或在指向域的连接字符串的情况下，为自动选择的服务器。 提供程序不会将全局编录用于其搜索方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.FindUsersByName(System.String,System.Int32,System.Int32,System.Int32@)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="usernameToMatch" /> 为空，或超过用户名的最大长度（通常为 256 个字符）。  
+  
+- 或 - 
+ <paramref name="usernameToMatch" /> 包含逗号。  
+  
+或 
+ <paramref name="pageIndex" /> 小于 0。  
+  
+- 或 - 
+ <paramref name="pageSize" /> 小于 1。  
+  
+或 
+ <paramref name="pageSize" /> 乘以 <paramref name="pageIndex" />，然后加上 <paramref name="pageSize" />，再减去 1 后得到的值大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="usernameToMatch" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.NotSupportedException"><see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods" /> 属性为 <see langword="false" />。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GeneratePassword">
+      <MemberSignature Language="C#" Value="public virtual string GeneratePassword ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GeneratePassword() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.GeneratePassword" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GeneratePassword () As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::String ^ GeneratePassword();" />
+      <MemberSignature Language="F#" Value="abstract member GeneratePassword : unit -&gt; string&#xA;override this.GeneratePassword : unit -&gt; string" Usage="activeDirectoryMembershipProvider.GeneratePassword " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>生成随机密码。</summary>
+        <returns>随机密码。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider>类的<xref:System.Web.Security.ActiveDirectoryMembershipProvider.GeneratePassword%2A> 方法 <xref:System.Web.Security.Membership.GeneratePassword%2A> 调用类的方法来检索随机密码。 <xref:System.Web.Security.Membership> 密码长度设置为<xref:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredPasswordLength%2A>属性的值。 密码长度绝不能小于14。  
+  
+ 您可以通过直接从<xref:System.Web.Security.Membership.GeneratePassword%2A> <xref:System.Web.Security.Membership>类的提供程序<xref:System.Web.Security.ActiveDirectoryMembershipProvider>属性引用类来专门调用方法。  
+  
+ 生成的密码只包含字母数字字符和以下标点符号：！ @ # $% ^ & * （） _-+ = [{]};： < >&#124;./？。 生成的密码中不包含隐藏或不可打印的控制字符。  
+  
+ 生成的密码将至少包含<xref:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredNonAlphanumericCharacters%2A>属性中指定的非字母数字字符数。 生成的密码不会在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordStrengthRegularExpression%2A>属性中用正则表达式进行测试。  
+  
+> [!NOTE]
+>  <xref:System.Web.Security.ActiveDirectoryMembershipProvider>类不会生成与目录中设置的复杂性要求匹配的密码。 可以生成随机密码，该密码会导致目录设置的密码复杂性规则失败。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAllUsers">
+      <MemberSignature Language="C#" Value="public override System.Web.Security.MembershipUserCollection GetAllUsers (int pageIndex, int pageSize, out int totalRecords);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Web.Security.MembershipUserCollection GetAllUsers(int32 pageIndex, int32 pageSize, [out] int32&amp; totalRecords) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetAllUsers(System.Int32,System.Int32,System.Int32@)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetAllUsers (pageIndex As Integer, pageSize As Integer, ByRef totalRecords As Integer) As MembershipUserCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Web::Security::MembershipUserCollection ^ GetAllUsers(int pageIndex, int pageSize, [Runtime::InteropServices::Out] int % totalRecords);" />
+      <MemberSignature Language="F#" Value="override this.GetAllUsers : int * int *  -&gt; System.Web.Security.MembershipUserCollection" Usage="activeDirectoryMembershipProvider.GetAllUsers (pageIndex, pageSize, totalRecords)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Security.MembershipUserCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="pageIndex" Type="System.Int32" />
+        <Parameter Name="pageSize" Type="System.Int32" />
+        <Parameter Name="totalRecords" Type="System.Int32" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="pageIndex">要返回的结果页的索引。 <paramref name="pageIndex" /> 从零开始。</param>
+        <param name="pageSize">要返回的结果页的大小。</param>
+        <param name="totalRecords">当此方法返回时，此参数包含在集合中返回的记录的总数。 此参数未经初始化即被传递。</param>
+        <summary>获取 Active Directory 数据源中存储的所有用户的集合。</summary>
+        <returns>一个 <see cref="T:System.Web.Security.MembershipUserCollection" />，其中包含从 <paramref name="pageSize" /> 所指定的页开始的 <paramref name="pageIndex" /> <see cref="T:System.Web.Security.MembershipUser" /> 实例。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法由<xref:System.Web.Security.Membership>类调用，以从 ASP.NET 应用程序的配置文件中指定的 Active Directory 数据存储区中检索用户信息。  
+  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider.GetAllUsers%2A>方法返回的结果受`pageIndex`和`pageSize`参数的约束。 参数指定要在<xref:System.Web.Security.MembershipUserCollection>集合中返回<xref:System.Web.Security.MembershipUser>的实例的最大数量。 `pageSize` `pageIndex`参数指定要返回的结果页，其中0（零）指示第一页。  
+  
+ 参数是设置为在 Active Directory 数据存储中找到的匹配成员身份用户总数的参数。 `out`  `totalRecords` 例如，如果已配置的数据存储有13个用户，并且`pageIndex`值为1且 la `pageSize`为5，则<xref:System.Web.Security.MembershipUserCollection>返回的将包含第六到第十个用户。 `totalRecords`参数将设置为13。  
+  
+ 可以通过在应用程序的配置文件中<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods%2A> `enableSearchMethods`使用[成员资格元素（ASP.NET Settings Schema）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素的属性设置属性来控制是否允许搜索用户。 如果将`false`  <xref:System.Web.Security.ActiveDirectoryMembershipProvider.GetAllUsers%2A> 属性设置为， <xref:System.NotSupportedException> 则会引发异常。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods%2A>  
+  
+ 提供程序使用子树搜索，从连接字符串中指定的搜索点开始。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ 建议您不要在生产系统上启用搜索，直到您确认<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类发出的搜索查询不会对目录服务器的性能产生负面影响。 由于类是为无状态 Web 环境设计的，因此无法使用由基础<xref:System.DirectoryServices> api 公开的分页优化。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider> 这意味着，搜索大型目录时的分页操作非常昂贵，应避免这样做。 搜索操作始终针对在连接字符串中配置的目录服务器发出，或在指向域的连接字符串的情况下，为自动选择的服务器。 提供程序不会将全局编录用于其搜索方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetAllUsers(System.Int32,System.Int32,System.Int32@)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="pageIndex" /> 小于 0。  
+  
+- 或 - 
+ <paramref name="pageSize" /> 小于 1。  
+  
+- 或 - 
+ <paramref name="pageSize" /> 乘以 <paramref name="pageIndex" />，然后加上 <paramref name="pageSize" />，再减去 1 后得到的值大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+        <exception cref="T:System.NotSupportedException"><see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods" /> 属性为 <see langword="false" />。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetNumberOfUsersOnline">
+      <MemberSignature Language="C#" Value="public override int GetNumberOfUsersOnline ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetNumberOfUsersOnline() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetNumberOfUsersOnline" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetNumberOfUsersOnline () As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override int GetNumberOfUsersOnline();" />
+      <MemberSignature Language="F#" Value="override this.GetNumberOfUsersOnline : unit -&gt; int" Usage="activeDirectoryMembershipProvider.GetNumberOfUsersOnline " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>任何情况下均引发 <see cref="T:System.NotSupportedException" /> 异常。</summary>
+        <returns>所有情况下均为 <see cref="T:System.NotSupportedException" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider>类不支持返回联机用户数。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">对 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetNumberOfUsersOnline" /> 方法的任何调用。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetPassword">
+      <MemberSignature Language="C#" Value="public override string GetPassword (string username, string passwordAnswer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string GetPassword(string username, string passwordAnswer) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetPassword(System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetPassword (username As String, passwordAnswer As String) As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::String ^ GetPassword(System::String ^ username, System::String ^ passwordAnswer);" />
+      <MemberSignature Language="F#" Value="override this.GetPassword : string * string -&gt; string" Usage="activeDirectoryMembershipProvider.GetPassword (username, passwordAnswer)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+        <Parameter Name="passwordAnswer" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="username">为其检索密码的用户。</param>
+        <param name="passwordAnswer">用户的密码提示问题答案。</param>
+        <summary>从数据库返回指定用户的密码。 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 类不支持此方法。</summary>
+        <returns>总是引发 <see cref="T:System.NotSupportedException" /> 异常。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider>类不支持返回用户的密码。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.NotSupportedException"><see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 不支持密码检索。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="GetUser">
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>获取 Active Directory 数据存储区中的成员资格用户的信息。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="GetUser">
+      <MemberSignature Language="C#" Value="public override System.Web.Security.MembershipUser GetUser (object providerUserKey, bool userIsOnline);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Web.Security.MembershipUser GetUser(object providerUserKey, bool userIsOnline) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetUser(System.Object,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetUser (providerUserKey As Object, userIsOnline As Boolean) As MembershipUser" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Web::Security::MembershipUser ^ GetUser(System::Object ^ providerUserKey, bool userIsOnline);" />
+      <MemberSignature Language="F#" Value="override this.GetUser : obj * bool -&gt; System.Web.Security.MembershipUser" Usage="activeDirectoryMembershipProvider.GetUser (providerUserKey, userIsOnline)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Security.MembershipUser</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="providerUserKey" Type="System.Object" />
+        <Parameter Name="userIsOnline" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="providerUserKey">用户的唯一标识符。</param>
+        <param name="userIsOnline"><see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetUser(System.Object,System.Boolean)" /> 方法忽略此参数。</param>
+        <summary>获取与指定用户密钥关联的成员资格用户信息。</summary>
+        <returns>一个 <see cref="T:System.Web.Security.MembershipUser" /> 实例，它表示指定的用户。 如果在 Active Directory 数据存储区中没有找到任何具有指定 <paramref name="providerUserKey" /> 值的用户，则返回 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider.GetUser%2A> 方法 <xref:System.Web.Security.Membership> 由类调用，以从 Active Directory 数据存储中检索有关指定用户的信息。  
+  
+ 搜索将查找`objectSID`属性`providerUserKey`与参数匹配的用户实例。  
+  
+ 提供程序使用子树搜索，从连接字符串中指定的搜索点开始。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetUser(System.Object,System.Boolean)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="providerUserKey" /> 的类型不是 <see cref="T:System.Security.Principal.SecurityIdentifier" />。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="providerUserKey" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetUser">
+      <MemberSignature Language="C#" Value="public override System.Web.Security.MembershipUser GetUser (string username, bool userIsOnline);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Web.Security.MembershipUser GetUser(string username, bool userIsOnline) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetUser(System.String,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetUser (username As String, userIsOnline As Boolean) As MembershipUser" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Web::Security::MembershipUser ^ GetUser(System::String ^ username, bool userIsOnline);" />
+      <MemberSignature Language="F#" Value="override this.GetUser : string * bool -&gt; System.Web.Security.MembershipUser" Usage="activeDirectoryMembershipProvider.GetUser (username, userIsOnline)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Security.MembershipUser</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+        <Parameter Name="userIsOnline" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="username">要获取其信息的用户名。</param>
+        <param name="userIsOnline"><see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetUser(System.String,System.Boolean)" /> 方法忽略此参数。</param>
+        <summary>获取与指定用户名关联的成员资格用户信息。</summary>
+        <returns>一个 <see cref="T:System.Web.Security.MembershipUser" /> 实例，它表示指定的用户。 如果在 Active Directory 数据存储区中没有找到任何具有指定 <paramref name="username" /> 值的用户，则返回 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider.GetUser%2A> 方法 <xref:System.Web.Security.Membership> 由类调用，以从 Active Directory 数据存储中检索有关指定用户的信息。  
+  
+ 提供程序使用子树搜索，从连接字符串中指定的搜索点开始。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ 删除 `username` 参数值的前导和尾随空格。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="username" /> 为空，或超过用户名的最大长度（通常为 256 个字符）。  
+  
+- 或 - 
+ <paramref name="username" /> 包含逗号。  
+  
+或 
+用户名映射到 <see langword="userPrincipalName" /> 特性，并且 <paramref name="username" /> 参数包含反斜杠。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="username" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetUser(System.String,System.Boolean)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetUserNameByEmail">
+      <MemberSignature Language="C#" Value="public override string GetUserNameByEmail (string email);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string GetUserNameByEmail(string email) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.GetUserNameByEmail(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetUserNameByEmail (email As String) As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::String ^ GetUserNameByEmail(System::String ^ email);" />
+      <MemberSignature Language="F#" Value="override this.GetUserNameByEmail : string -&gt; string" Usage="activeDirectoryMembershipProvider.GetUserNameByEmail email" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="email" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="email">要搜索的电子邮件地址。</param>
+        <summary>获取与指定电子邮件地址关联的用户名。</summary>
+        <returns>与指定电子邮件地址关联的用户名。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法由<xref:System.Web.Security.Membership>类调用，以根据用户的电子邮件地址从 Active Directory 数据存储区中检索用户名。  
+  
+ 如果成员资格数据存储区中有多个用户具有相同的电子邮件地址，则返回第一个遇到的用户名。 您可以`true`在应用`requiresUniqueEmail`程序配置文件中将[成员资格元素（ASP.NET Settings Schema）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素的特性设置为，以确保数据库中的每个电子邮件地址都是唯一的。  
+  
+ 删除 `email` 参数值的前导和尾随空格。 如果在修整后电子邮件地址为空， <xref:System.ArgumentException>则会引发。 如果电子邮件地址为`null`，则会搜索 Active Directory 的数据存储中的所有用户名，并返回第一个用户名。  
+  
+ 建议您不要在生产系统上启用搜索，直到您确认<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类发出的搜索查询不会对目录服务器的性能产生负面影响。  
+  
+> [!IMPORTANT]
+>  即使<xref:System.Web.Security.ActiveDirectoryMembershipProvider.GetUserNameByEmail%2A> 属性 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnableSearchMethods%2A>  为 `false` ，该方法也会运行。  
+  
+ 由于类是为无状态 Web 环境设计的，因此无法使用由基础<xref:System.DirectoryServices> api 公开的分页优化。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider> 这意味着，搜索大型目录时的分页操作非常昂贵，应避免这样做。 搜索操作始终针对在连接字符串中配置的目录服务器发出，或在指向域的连接字符串的情况下，为自动选择的服务器。 提供程序不会将全局编录用于其搜索方法。  
+  
+ 提供程序使用子树搜索，从连接字符串中指定的搜索点开始。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="email" /> 的长度超过 256 个字符 
+或 
+修整后，<paramref name="email" /> 为空。</exception>
+        <exception cref="T:System.Configuration.Provider.ProviderException">数据存储区中存在多个具有相同电子邮件地址的用户，而 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresUniqueEmail" /> 属性值为 <see langword="true" />。</exception>
+        <exception cref="T:System.InvalidOperationException">该提供程序未初始化。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="public override void Initialize (string name, System.Collections.Specialized.NameValueCollection config);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Initialize(string name, class System.Collections.Specialized.NameValueCollection config) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.Initialize(System.String,System.Collections.Specialized.NameValueCollection)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub Initialize (name As String, config As NameValueCollection)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void Initialize(System::String ^ name, System::Collections::Specialized::NameValueCollection ^ config);" />
+      <MemberSignature Language="F#" Value="override this.Initialize : string * System.Collections.Specialized.NameValueCollection -&gt; unit" Usage="activeDirectoryMembershipProvider.Initialize (name, config)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="config" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <param name="name">要初始化的 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 实例的名称。</param>
+        <param name="config">包含名称和值的 <see cref="T:System.Collections.Specialized.NameValueCollection" />，这些名称和值用于成员资格提供程序的配置选项。</param>
+        <summary>使用应用程序配置文件中的属性值初始化 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 实例。 此方法不应在您的代码中调用。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法使用在<xref:System.Web.Security.ActiveDirectoryMembershipProvider> ASP.NET 应用程序配置文件（web.config）中指定的属性值初始化对象，但不应在代码中直接使用。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="config" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Configuration.Provider.ProviderException">在应用程序配置中指定的 <see langword="applicationName" /> 特性超过 256 个字符。  
+  
+或 
+<see langword="connectionStringName" /> 特性为空或应用程序配置中不存在该特性。  
+  
+- 或 - 
+在应用程序配置文件中的 <see langword="connectionStringName" /> 特性中指定的连接字符串为空或不存在。  
+  
+- 或 - 
+在应用程序配置文件中，<see langword="connectionProtection" /> 特性设置为 <see cref="F:System.Web.Security.ActiveDirectoryConnectionProtection.SignAndSeal" /> 或 <see cref="F:System.Web.Security.ActiveDirectoryConnectionProtection.None" /> 以外的值。  
+  
+- 或 - 
+应用程序配置文件中指定了 <see langword="connectionUsername" /> 特性，但其值为空。  
+  
+- 或 - 
+应用程序配置文件中指定了 <see langword="connectionPassword" /> 特性，但其值为空。  
+  
+- 或 - 
+在应用程序配置文件中指定了 <see langword="connectionUsername" /> 特性或 <see langword="connectionPassword" /> 特性，但未同时指定两者。  
+  
+或 
+指定了 <see langword="clientSearchTimeout" /> 特性，但它不是正整数。  
+  
+或 
+指定了 <see langword="serverSearchTimeout" /> 特性，但它不是正整数。  
+  
+或 
+指定了 <see langword="enableSearchMethods" /> 特性，但它不是布尔值。  
+  
+或 
+指定了 <see langword="requiresUniqueEmail" /> 特性，但它不是布尔值。  
+  
+- 或 - 
+指定了 <see langword="enablePasswordReset" /> 特性，但它不是布尔值。  
+  
+- 或 - 
+指定了 <see langword="requiresQuestionAndAnswer" /> 特性，但它不是布尔值。  
+  
+或 
+指定了 <see langword="minRequiredPasswordLength" /> 特性，但它为负或大于 128。  
+  
+或 
+指定了 <see langword="minRequiredNonalphanumericCharacters" /> 特性，但它为负或大于 128。  
+  
+或 
+在应用程序配置文件的 <see langword="passwordStrengthRegularExpression" /> 特性中指定的正则表达式不是有效的正则表达式 
+或 
+指定了 <see langword="attributeMapUsername" /> 特性，但它是一个空字符串。  
+  
+- 或 - 
+<see langword="connectionString" /> 特性不以“LDAP”开头。  
+  
+- 或 - 
+在 <see langword="connectionString" /> 特性中指定的连接字符串无效。  
+  
+- 或 - 
+<see langword="connectionString" /> 特性中的连接字符串指定了一个无服务器绑定。  
+  
+或 
+<see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 未能建立与域或目录服务器的连接。  
+  
+或 
+<see langword="connectionProtection" /> 特性设置为 <see cref="F:System.Web.Security.ActiveDirectoryConnectionProtection.SignAndSeal" />，但不能与服务器建立 SSL 和经过签名且密封的连接。  
+  
+或 
+<see langword="connectionProtection" /> 特性设置为 <see cref="F:System.Web.Security.ActiveDirectoryConnectionProtection.None" />，但未设置 <see langword="connectionUsername" /> 和 <see langword="connectionPassword" /> 特性。  
+  
+或 
+<see langword="connectionProtection" /> 特性设置为 <see cref="F:System.Web.Security.ActiveDirectoryConnectionProtection.SignAndSeal" />，但 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 未能与 ADAM 服务器建立 SSL 连接。  
+  
+或 
+<see langword="connectionString" /> 特性指定全局编录 (GC) 或 SSL 全局编录端口。  
+  
+或 
+<see langword="connectionString" /> 特性指定 Active Directory 服务器或域，但 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 未能检索域的默认命名上下文。  
+  
+或 
+<see langword="connectionString" /> 特性指定 Active Directory 服务器或域，但 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 未能检索默认用户容器。  
+  
+或 
+<see langword="connectionString" /> 特性指定 ADAM 服务器，但未指定应用程序分区或容器。  
+  
+或 
+<see langword="connectionString" /> 特性指定应用程序分区或容器，但指定的容器不存在。  
+  
+或 
+<see langword="connectionString" /> 特性指定的容器不允许包含用户实例。  
+  
+指定了一个特性映射，但该特性映射的值为空。  
+  
+或 
+同一个特性映射指定了两次。  
+  
+或 
+指定了一个特性映射，但用户实例中不存在该特性。  
+  
+- 或 - 
+指定了一个特性映射，但该目录特性的数据类型不正确。  
+  
+或 
+指定了一个特性映射，但该目录特性是多值特性。  
+  
+或 
+指定了 <see langword="attributeMapUserName" /> 特性，但在连接到 Active Directory 时未将该特性映射到 <c>sAMAccountName</c> 或 <c>userPrincipalName</c> 目录特性。  
+  
+或 
+指定了 <see langword="attributeMapUserName" /> 特性，但在连接到 ADAM 服务器时未将该特性映射到 <c>userPrincipalName</c> 目录特性。  
+  
+或 
+在应用程序配置文件中，<see langword="enablePasswordReset" /> 特性为 <see langword="true" />，<see langword="requiresQuestionAndAnswer" /> 特性为 <see langword="false" />。  
+  
+- 或 - 
+指定了 <see langword="maxInvalidPasswordAttempts" /> 特性，但它不是非零正整数。  
+  
+或 
+指定了 <see langword="passwordAttemptWindow" /> 特性，但它不是非零正整数。  
+  
+或 
+指定了 <see langword="passwordAnswerAttemptLockoutDuration" /> 特性，但它不是非零正整数。  
+  
+- 或 - 
+<see langword="enablePasswordReset" /> 特性为 <see langword="true" />，但 <see langword="attributeMapFailedPasswordAnswerCount" />、<see langword="attributeMapFailedPasswordAnswerTime" /> 和 <see langword="attributeMapFailedPasswordAnswerLockoutTime" /> 特性中的任何一个为空。  
+  
+- 或 - 
+<see langword="requiresQuestionAndAnswer" /> 特性为 <see langword="true" />，但 <see langword="attributeMapPasswordQuestion" /> 或 <see langword="attributeMapPasswordAnswer" /> 特性为空。  
+  
+或 
+在应用程序配置文件中指定的一个特性无效。</exception>
+        <exception cref="T:System.Web.HttpException">应用程序在承载环境中运行，但 <see cref="T:System.Web.AspNetHostingPermissionLevel" /> 设置为 <see cref="F:System.Web.AspNetHostingPermissionLevel.Minimal" />。</exception>
+        <exception cref="T:System.Runtime.InteropServices.COMException">查询目录时发生错误。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxInvalidPasswordAttempts">
+      <MemberSignature Language="C#" Value="public override int MaxInvalidPasswordAttempts { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxInvalidPasswordAttempts" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.MaxInvalidPasswordAttempts" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property MaxInvalidPasswordAttempts As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property int MaxInvalidPasswordAttempts { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.MaxInvalidPasswordAttempts : int" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.MaxInvalidPasswordAttempts" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取用户回答密码重置问题时允许失败的次数。</summary>
+        <value>在帐户被锁定之前，允许用户回答密码提示问题的失败次数。 默认值为<c>5</c>。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当属性为`true`时，用户必须回答密码问题才能重置其密码。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A> 允许用户在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow%2A>属性所建立的时间范围内进行有限数量的答案尝试。 如果密码答案尝试次数大于或等于<xref:System.Web.Security.ActiveDirectoryMembershipProvider.MaxInvalidPasswordAttempts%2A>属性中存储的值，则用户将被锁定，以便进一步尝试存储<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration%2A>在属性中的分钟数。  
+  
+> [!NOTE]
+>  此属性不控制用户在锁定之前可以执行的失败登录尝试次数。Active Directory 服务器处理失败的登录尝试，并且不受此属性的值的影响。  
+  
+ 在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.MaxInvalidPasswordAttempts%2A>应用程序的配置文件中， `maxInvalidPasswordAttempts`使用[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素的特性设置该属性。 如果未在应用程序的配置文件中设置该属性，则<xref:System.Web.Security.ActiveDirectoryMembershipProvider.MaxInvalidPasswordAttempts%2A>属性将设置为的默认`5`值。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示一个 web.config 条目，该条目可将<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例配置为锁定在10分钟时间范围内尝试三次输入密码提示问题答案的用户。 如果用户被锁定，则不会再进一步回答密码问题。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,  
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          maxInvalidPasswordAttempts="3"  
+          passwordAttemptWindow="10"  
+          passwordAnswerAttemptLockoutDuration="15" />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.MaxInvalidPasswordAttempts" /> 实例之前，已尝试访问 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="MinRequiredNonAlphanumericCharacters">
+      <MemberSignature Language="C#" Value="public override int MinRequiredNonAlphanumericCharacters { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MinRequiredNonAlphanumericCharacters" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredNonAlphanumericCharacters" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property MinRequiredNonAlphanumericCharacters As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property int MinRequiredNonAlphanumericCharacters { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.MinRequiredNonAlphanumericCharacters : int" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredNonAlphanumericCharacters" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取有效密码中必须包含的最少特殊字符数。</summary>
+        <value>有效密码中必须包含的最少特殊字符数。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredNonAlphanumericCharacters%2A>属性返回创建有效密码时必须输入的特殊非字母数字字符的最小数目。  
+  
+ 属性值是`minRequiredNonalphanumericCharacters`使用[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)配置元素的特性在应用程序配置中设置的。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredNonAlphanumericCharacters%2A>  
+  
+ 非字母数字字符是该<xref:System.Char.IsLetterOrDigit%2A>方法返回`false`的字符。  
+  
+   
+  
+## Examples  
+ 下面的示例显示了应用程序的 web.config 文件的`system.web`部分中的[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)配置元素。 它指定应用程序使用<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类的实例来提供成员身份服务，并`minRequiredNonalphanumericCharacters`将特性设置为一个字符。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,   
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          minRequiredNonalphanumericCharacters = "1" />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredNonAlphanumericCharacters" /> 实例前，访问了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="MinRequiredPasswordLength">
+      <MemberSignature Language="C#" Value="public override int MinRequiredPasswordLength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MinRequiredPasswordLength" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredPasswordLength" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property MinRequiredPasswordLength As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property int MinRequiredPasswordLength { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.MinRequiredPasswordLength : int" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredPasswordLength" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取密码所要求的最小长度。</summary>
+        <value>密码所要求的最小长度。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredPasswordLength%2A>属性获取创建有效密码时必须输入的最小字符数。  
+  
+ 属性值是`minRequiredPasswordLength`使用[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)配置元素的特性在应用程序配置中设置的。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredPasswordLength%2A>  
+  
+   
+  
+## Examples  
+ 下面的示例显示了应用程序的 web.config 文件的`system.web`部分中的[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)配置元素。 它指定应用程序使用<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类的实例来提供成员身份服务，并将该`minRequiredPasswordLength`属性设置为七个字符。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,   
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          minRequiredPasswordLength = "7" />  
+  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredPasswordLength" /> 实例前，访问了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="PasswordAnswerAttemptLockoutDuration">
+      <MemberSignature Language="C#" Value="public int PasswordAnswerAttemptLockoutDuration { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 PasswordAnswerAttemptLockoutDuration" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property PasswordAnswerAttemptLockoutDuration As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int PasswordAnswerAttemptLockoutDuration { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.PasswordAnswerAttemptLockoutDuration : int" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取用户多次未能正确回答密码提示问题后用户帐户的锁定时间长度。</summary>
+        <value>用户多次提供错误的密码提示问题答案后的锁定时间（以分钟为单位）。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当属性为`true`时，用户必须回答密码问题才能重置其密码。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A> 如果用户在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow%2A>由属性指定的观察时间段内不能提供正确答案（ <xref:System.Web.Security.ActiveDirectoryMembershipProvider.MaxInvalidPasswordAttempts%2A>等于属性值），则用户将被锁定，超过分钟数的次数包含在属性<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration%2A>中的。  
+  
+> [!NOTE]
+>  此属性不会设置用户在未能输入有效密码后锁定的持续时间。 Active Directory 服务器处理失败的登录尝试，并且不受此属性的值的影响。 建议<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration%2A>将属性设置为与指定的帐户锁定持续时间相同的值，因为在 Active Directory 配置中失败的登录尝试次数过多。 这将为用户提供一致的自动锁定行为，无论用户是否因登录尝试失败或密码答案是否被锁定。  
+  
+ 在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration%2A>应用程序的配置文件中， `passwordAnswerAttemptLockoutDuration`使用[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素的特性设置该属性。 如果未在应用程序的配置文件中设置该属性，则<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration%2A>该属性将设置为默认值30分钟。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示一个 web.config 条目，该条目可将<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例配置为锁定在10分钟时间范围内尝试三次输入密码提示问题答案的用户。 如果用户被锁定，则不会再进一步回答密码问题。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,   
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          maxInvalidPasswordAttempts="3"  
+          passwordAttemptWindow="10"  
+          passwordAnswerAttemptLockoutDuration="15" />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration" /> 实例之前，已尝试访问 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="PasswordAttemptWindow">
+      <MemberSignature Language="C#" Value="public override int PasswordAttemptWindow { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 PasswordAttemptWindow" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property PasswordAttemptWindow As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property int PasswordAttemptWindow { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.PasswordAttemptWindow : int" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取时间长度，在该时间间隔内对提供有效密码或密码答案的连续失败尝试次数进行跟踪。</summary>
+        <value>对未能提供有效密码或密码答案的连续尝试次数进行跟踪的时间长度（以分钟为单位）。 默认值为10分钟。 如果两次失败尝试之间的间隔大于 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow" /> 属性设置，则 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 实例将每次失败尝试都视为第一次失败尝试。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow%2A> 属性 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.MaxInvalidPasswordAttempts%2A> 与属性结合使用，以帮助防止不需要的源通过重复尝试来猜测成员资格用户的密码或密码答案。 当用户尝试登录、更改其密码或重置其密码时，在指定的时间范围内只允许一定数量的连续尝试。 时间范围的长度由<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow%2A>属性指定，该属性用于标识无效尝试之间允许的分钟数。 如果用户重置其密码的连续失败尝试次数等于<xref:System.Web.Security.ActiveDirectoryMembershipProvider.MaxInvalidPasswordAttempts%2A>属性中存储的值，并且自上次无效尝试以来所经过的时间小于指定<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow%2A>的分钟数属性，则用户帐户被锁定，以表示<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration%2A>属性中包含的分钟数。 如果当前失败尝试与上次失败尝试之间的间隔大于<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow%2A>属性设置，则当前的无效尝试将计为第一次尝试。 如果在达到允许的最大尝试无效次数之前提供了有效密码答案，则无效密码答案尝试的计数将设置为零。 如果在达到允许的最大尝试无效次数之前提供了有效密码，则无效密码尝试次数和无效密码答案尝试计数将设置为零。  
+  
+ 建议<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration%2A>将属性设置为与在 Active Directory 配置中为失败登录尝试次数指定的帐户锁定持续时间相同的值。 这将为用户提供一致的自动锁定行为，使用户无论登录尝试失败或密码提示答案是否被锁定。  
+  
+ 在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration%2A>应用程序的配置文件中， `passwordAttemptWindow`使用[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素的特性设置该属性。 如果未在应用程序的配置文件中设置该属性，则<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration%2A>该属性将设置为默认值10分钟。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示一个 web.config 条目，该条目可将<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例配置为锁定在10分钟时间范围内尝试三次输入密码提示问题答案的用户。 如果用户被锁定，则不会再进一步回答密码问题。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,  
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          maxInvalidPasswordAttempts="3"  
+          passwordAttemptWindow="10"  
+        passwordAnswerAttemptLockoutDuration="15" />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow" /> 实例之前，已尝试访问 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="PasswordFormat">
+      <MemberSignature Language="C#" Value="public override System.Web.Security.MembershipPasswordFormat PasswordFormat { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Web.Security.MembershipPasswordFormat PasswordFormat" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordFormat" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property PasswordFormat As MembershipPasswordFormat" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Web::Security::MembershipPasswordFormat PasswordFormat { System::Web::Security::MembershipPasswordFormat get(); };" />
+      <MemberSignature Language="F#" Value="member this.PasswordFormat : System.Web.Security.MembershipPasswordFormat" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.PasswordFormat" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Security.MembershipPasswordFormat</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个值，该值指示 Active Directory 数据存储区中的密码的格式。</summary>
+        <value><see cref="T:System.Web.Security.MembershipPasswordFormat" /> 值之一。 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordFormat" /> 属性总是返回 <see cref="F:System.Web.Security.MembershipPasswordFormat.Hashed" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider>属性不支持密码检索。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>对象的行为与其他`Hashed`使用密码的提供程序相同。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="PasswordStrengthRegularExpression">
+      <MemberSignature Language="C#" Value="public override string PasswordStrengthRegularExpression { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PasswordStrengthRegularExpression" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordStrengthRegularExpression" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property PasswordStrengthRegularExpression As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::String ^ PasswordStrengthRegularExpression { System::String ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.PasswordStrengthRegularExpression : string" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.PasswordStrengthRegularExpression" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取用于计算密码的正则表达式。</summary>
+        <value>用于计算密码的正则表达式。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordStrengthRegularExpression%2A>属性获取用于评估密码复杂性的正则表达式。  
+  
+ 此<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordStrengthRegularExpression%2A>属性不用于验证<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ResetPassword%2A>方法中自动生成的密码。  
+  
+ 在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordStrengthRegularExpression%2A>应用程序配置中， `passwordStrengthRegularExpression`使用[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)配置元素的属性设置该属性。  
+  
+   
+  
+## Examples  
+ 下面的示例显示了应用程序的 web.config 文件的`system.web`部分中的[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)配置元素。 它指定应用程序使用<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类的实例来提供成员身份服务，并`passwordStrengthRegularExpression`将特性设置为一个正则表达式，该表达式用于验证密码是否满足以下条件：  
+  
+-   超过7个字符。  
+  
+-   包含至少一个数字。  
+  
+-   包含至少一个特殊字符（非字母数字）。  
+  
+ 如果密码不符合这些条件，则成员资格提供程序不接受该密码。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,   
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          passwordStrengthRegularExpression=  
+            "@\"(?=.{6,})(?=(.*\d){1,})(?=(.*\W){1,})" />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordStrengthRegularExpression" /> 实例前，访问了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="RequiresQuestionAndAnswer">
+      <MemberSignature Language="C#" Value="public override bool RequiresQuestionAndAnswer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RequiresQuestionAndAnswer" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresQuestionAndAnswer" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property RequiresQuestionAndAnswer As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property bool RequiresQuestionAndAnswer { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.RequiresQuestionAndAnswer : bool" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.RequiresQuestionAndAnswer" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个值，该值指示成员资格提供程序是否配置为要求在创建用户时提供密码提示问题和答案。</summary>
+        <value>如果 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 对象配置为需要用户的密码提示问题和答案，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresQuestionAndAnswer%2A>应用程序的配置文件中， `requiresQuestionAndAnswer`使用[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素的特性设置该属性。 如果未在应用程序的配置文件中设置该属性，则<xref:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresQuestionAndAnswer%2A>属性将设置为的默认`false`值。  
+  
+ 当属性设置为`true`时，还必须设置这些附加属性。 `requiresQuestionAndAnswer`  
+  
+-   `attributeMapPasswordQuestion`和`attributeMapPasswordAnswer`必须映射到 Active Directory 架构中的属性。  
+  
+ 如果未满足上述条件， <xref:System.Configuration.Provider.ProviderException>则在初始化时引发。  
+  
+> [!NOTE]
+>  您可以在创建用户时要求密码问题和答案，但将<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A>属性设置为`false` ，以防止用户使用<xref:System.Web.Security.ActiveDirectoryMembershipProvider>类更改其密码。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示了一个 web.config 条目，该条目将<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例配置为启用密码重置。 它使用给定了 "重置密码" 访问权限的用户的显式凭据。  
+  
+> [!IMPORTANT]
+>  在 web.config 文件中放置用户凭据时，存在潜在的安全威胁。 对包含 web.config 文件的目录具有访问权限的用户可以读取该文件，从而查看凭据。 有关如何防范此威胁的详细信息，请参阅[使用受保护的配置加密配置信息](https://msdn.microsoft.com/library/51cdfe5b-9d82-458c-94ff-c551c4f38ed1)。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,  
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          connectionUsername="UserWithResetPasswordRights"  
+          connectionPassword="PasswordForUser"  
+          enablePasswordReset="true"  
+          requiresQuestionAndAnswer="true"  
+          attributeMapPasswordQuestion="PasswordQuestionADAttribute"  
+          attributeMapPasswordAnswer="PasswordAnswerADAttribute"  
+          attributeMapFailedPasswordAnswerCount="AnswerCountADAttribute"  
+          attributeMapFailedPasswordAnswerTime="AnswerTimeADAttribute"  
+          attributeMapFailedPasswordAnswerLockoutTime="LockOutTimeADAttribute" />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresQuestionAndAnswer" /> 实例之前，已尝试访问 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="RequiresUniqueEmail">
+      <MemberSignature Language="C#" Value="public override bool RequiresUniqueEmail { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RequiresUniqueEmail" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresUniqueEmail" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property RequiresUniqueEmail As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property bool RequiresUniqueEmail { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.RequiresUniqueEmail : bool" Usage="System.Web.Security.ActiveDirectoryMembershipProvider.RequiresUniqueEmail" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个值，该值指示 Active Directory 服务器中存储的电子邮件地址是否必须是唯一的。</summary>
+        <value><see langword="true" />如果电子邮件地址必须唯一，则为;否则为<see langword="false" />。 默认值为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ `true` <xref:System.Web.Security.ActiveDirectoryMembershipProvider>当属性为时，如果调用<xref:System.Web.Security.ActiveDirectoryMembershipProvider.CreateUser%2A>或<xref:System.Web.Security.ActiveDirectoryMembershipProvider.UpdateUser%2A>方法，实例将确保当前范围内的任何其他用户不会使用电子邮件地址。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresUniqueEmail%2A>  
+  
+ 在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresUniqueEmail%2A>应用程序的配置文件中， `requiresUniqueEmail`使用[成员资格元素（ASP.NET 设置架构）](https://msdn.microsoft.com/library/b9c1ee8f-33ca-4361-8666-b42a0fe86049)元素的特性设置该属性。 如果未在应用程序的配置文件中设置该属性，则<xref:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresUniqueEmail%2A>属性将设置为的默认`false`值。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示一个 web.config 条目，该条目将<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例配置为在 Active Directory 服务器上存储的用户需要唯一的电子邮件地址。  
+  
+```  
+<configuration>  
+  <connectionStrings>  
+    <add name="ADService" connectionString="LDAP://ldapServer/" />  
+  </connectionStrings>  
+  <system.web>  
+    <membership defaultProvider="AspNetActiveDirectoryMembershipProvider">  
+      <providers>  
+        <add name="AspNetActiveDirectoryMembershipProvider"   
+          type="System.Web.Security.ActiveDirectoryMembershipProvider,   
+          System.Web, Version=2.0.3600, Culture=neutral,   
+          PublicKeyToken=b03f5f7f11d50a3a"  
+          requiresUniqueEmail="true" />  
+      </providers>  
+    </membership>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresUniqueEmail" /> 实例之前，已尝试访问 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="ResetPassword">
+      <MemberSignature Language="C#" Value="public override string ResetPassword (string username, string passwordAnswer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ResetPassword(string username, string passwordAnswer) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.ResetPassword(System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function ResetPassword (username As String, passwordAnswer As String) As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::String ^ ResetPassword(System::String ^ username, System::String ^ passwordAnswer);" />
+      <MemberSignature Language="F#" Value="override this.ResetPassword : string * string -&gt; string" Usage="activeDirectoryMembershipProvider.ResetPassword (username, passwordAnswer)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+        <Parameter Name="passwordAnswer" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="username">为其重置密码的用户。</param>
+        <param name="passwordAnswer">指定的用户的密码提示问题答案。</param>
+        <summary>将用户密码重置为一个自动生成的新密码。</summary>
+        <returns>指定的用户的新密码。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Security.Membership>类调用方法，将 Active Directory 数据存储区中的用户的密码重置为新随机生成的值。 返回新密码。  
+  
+> [!NOTE]
+>  不保证通过<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ResetPassword%2A>方法创建的随机密码<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordStrengthRegularExpression%2A>在属性中传递正则表达式。 但是，随机密码会满足<xref:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredPasswordLength%2A>和<xref:System.Web.Security.ActiveDirectoryMembershipProvider.MinRequiredNonAlphanumericCharacters%2A>属性所建立的条件。  
+  
+ 如果为<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ResetPassword%2A>方法提供的答案不正确，则跟踪无效密码答案尝试的内部计数器会递增1。 这可能会导致用户在通过调用<xref:System.Web.Security.ActiveDirectoryMembershipProvider.UnlockUser%2A>方法清除锁定状态之前无法登录。 如果提供了正确的密码答案并且用户当前未锁定，则跟踪无效密码尝试的内部计数器将重置为零。 有关详细信息，请参阅<xref:System.Web.Security.ActiveDirectoryMembershipProvider.MaxInvalidPasswordAttempts%2A>和<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow%2A>属性。  
+  
+ 将从所有参数值中去除前导空格和尾随空格。  
+  
+ 您可以通过先<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ResetPassword%2A>从<xref:System.Web.Security.Membership.Provider%2A?displayProperty=nameWithType>属性获取<xref:System.Web.Security.ActiveDirectoryMembershipProvider>对实例的引用来直接调用方法。  
+  
+ 提供程序使用子树搜索，从连接字符串中指定的搜索点开始。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ 若要在 Active Directory 服务器上设置密码， `connectionProtection`属性必须设置为。 <xref:System.Web.Security.ActiveDirectoryConnectionProtection.SignAndSeal>  
+  
+ 使用 adam 服务器时， `connectionProtection`可以将属性设置为<xref:System.Web.Security.ActiveDirectoryConnectionProtection.None>，但前提是你显式配置了 ADAM 服务器以允许通过不安全连接进行密码更改。  
+  
+> [!IMPORTANT]
+>  你无法重置密码，除非用于连接到 Active Directory 服务器的凭据具有域管理员权限（不推荐）或 "重置密码" 访问权限。  
+  
+ 若要重置密码，必须满足以下所有条件：  
+  
+-   属性必须设置为 `true` 。  <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A>  
+  
+-   必须修改 Active Directory 架构，使其包含用于存储密码提示问题和答案的属性，以及用于密码答案更改的三个跟踪字段。  
+  
+-   `attributeMapFailedPasswordAnswerTime` `attributeMapPasswordAnswer` `attributeMapFailedPasswordAnswerCount`必须在应用程序配置文件`attributeMapFailedPasswordAnswerLockedTime`中设置、、、和属性。 `attributeMapPasswordQuestion`  
+  
+-   属性必须设置为 `true` 。  <xref:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresQuestionAndAnswer%2A>  
+  
+-   用于连接到 Active Directory 数据存储（进程帐户或显式凭据）的安全上下文必须具有足够的权限来更改密码。 用于连接到 Active Directory 服务器的凭据具有域管理员权限（不推荐）或 "重置密码" 访问权限。  
+  
+> [!NOTE]
+>  在 Active Directory 服务器上设置的安全策略可能会使<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ResetPassword%2A>方法无法生成满足策略的密码。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.GeneratePassword%2A>方法的默认实现将在运行 Windows Server 2003 SP1 的域控制器上生成满足默认密码策略的密码。 如果由于 Active Directory 服务器上的安全策略而无法重置密码， <xref:System.Configuration.Provider.ProviderException>则会引发。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.ResetPassword(System.String,System.String)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <exception cref="T:System.NotSupportedException"><see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset" /> 属性值为 <see langword="false" />。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="passwordAnswer" /> 为 <see langword="null" />。  
+  
+- 或 - 
+ <paramref name="username" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException">修整后，<paramref name="passwordAnswer" /> 为空 
+- 或 - 
+ <paramref name="passwordAnswer" /> 的长度超过 128 个字符。  
+  
+或 
+ <paramref name="username" /> 为空，或超过用户名允许的最大长度（通常为 256 个字符）。  
+  
+- 或 - 
+ <paramref name="username" /> 包含逗号。  
+  
+或 
+用户名映射到 <see langword="userPrincipalName" />，但 <paramref name="username" /> 参数包含反斜杠。</exception>
+        <exception cref="T:System.Web.Security.MembershipPasswordException">由于多次登录失败或多次重置密码提示问题失败，用户被锁定。  
+  
+或 
+ <paramref name="passwordAnswer" /> 与存储的密码提示问题答案不一致。</exception>
+        <exception cref="T:System.Configuration.Provider.ProviderException"><paramref name="username" /> 所指定的用户在 Active Directory 数据存储区中不存在。  
+  
+- 或 - 
+生成的密码不能传递自定义验证处理程序。  
+  
+- 或 - 
+生成的密码不够复杂，无法满足 Active Directory 服务器所设置的自定义密码策略。  
+  
+或 
+无法建立到 Active Directory 应用程序模式服务器的安全连接，因此不能设置新密码。</exception>
+        <exception cref="T:System.Exception">发生了未经处理的异常。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="UnlockUser">
+      <MemberSignature Language="C#" Value="public override bool UnlockUser (string username);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool UnlockUser(string username) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.UnlockUser(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function UnlockUser (username As String) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override bool UnlockUser(System::String ^ username);" />
+      <MemberSignature Language="F#" Value="override this.UnlockUser : string -&gt; bool" Usage="activeDirectoryMembershipProvider.UnlockUser username" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="username">要为其清除锁定状态的成员资格用户的名称。</param>
+        <summary>清除锁定，以便成员资格用户能够进行验证。</summary>
+        <returns>如果成功取消成员资格用户的锁定，则为 <see langword="true" />；否则为 <see langword="false" />。 如果数据存储区中找不到该成员资格用户，<see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.UnlockUser(System.String)" /> 方法也会返回 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ValidateUser%2A> <xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAttemptWindow%2A>属性中指定的时间内超过属性或使用错误的密码登录失败时，用户通常被锁定，并且不能通过方法进行验证。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.MaxInvalidPasswordAttempts%2A>  
+  
+ 如果属性为`true`，则当解锁用户时，会重置错误密码的计数器。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A>  
+  
+ 提供程序使用子树搜索，从连接字符串中指定的搜索点开始。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ 删除 `username` 参数值的前导和尾随空格。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="username" /> 为空，或超过用户名允许的最大长度（通常为 256 个字符）。  
+  
+或 
+ <paramref name="username" /> 包含逗号。  
+  
+- 或 - 
+用户名映射到 <see langword="userPrincipalName" />，但 <paramref name="username" /> 参数包含反斜杠。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="username" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.UnlockUser(System.String)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateUser">
+      <MemberSignature Language="C#" Value="public override void UpdateUser (System.Web.Security.MembershipUser user);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void UpdateUser(class System.Web.Security.MembershipUser user) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.UpdateUser(System.Web.Security.MembershipUser)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub UpdateUser (user As MembershipUser)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void UpdateUser(System::Web::Security::MembershipUser ^ user);" />
+      <MemberSignature Language="F#" Value="override this.UpdateUser : System.Web.Security.MembershipUser -&gt; unit" Usage="activeDirectoryMembershipProvider.UpdateUser user" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="user" Type="System.Web.Security.MembershipUser" />
+      </Parameters>
+      <Docs>
+        <param name="user">一个 <see cref="T:System.Web.Security.MembershipUser" /> 实例，它表示要更新的用户以及该用户的更新信息。</param>
+        <summary>更新 Active Directory 数据存储区中某个用户的信息。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法由<xref:System.Web.Security.Membership>类调用，以更新 Active Directory 的数据存储中的用户信息。 为指定<xref:System.Web.Security.MembershipUser.Comment%2A>的成员<xref:System.Web.Security.MembershipUser.IsApproved%2A>资格用户更新、和属性值。 <xref:System.Web.Security.MembershipUser.Email%2A> 所有其他属性都将被忽略。  
+  
+ `username`参数的最大长度为256个字符。 <xref:System.Web.Security.MembershipUser.Email%2A>属性的最大长度为256个字符。  
+  
+ 成员资格用户的密码不能使用<xref:System.Web.Security.ActiveDirectoryMembershipProvider.UpdateUser%2A>方法进行更新。 若要更新成员资格用户的密码，请使用<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ChangePassword%2A>方法。  
+  
+ 提供程序使用子树搜索，从连接字符串中指定的搜索点开始。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.UpdateUser(System.Web.Security.MembershipUser)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="user" /> 为 <see langword="null" />。  
+  
+- 或 - 
+<see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresUniqueEmail" /> 属性为 <see langword="true" />，但所提供的 <see cref="T:System.Web.Security.MembershipUser" /> 实例的电子邮件地址为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException">修整后，<see cref="P:System.Web.Security.MembershipUser.Email" /> 属性为空。  
+  
+或 
+<see cref="P:System.Web.Security.MembershipUser.Email" /> 属性超过 256 个字符。  
+  
+或 
+<see cref="P:System.Web.Security.MembershipUser.Comment" /> 属性超过 1024 个字符。  
+  
+- 或 - 
+<see cref="P:System.Web.Security.MembershipUser.Comment" /> 属性为空。  
+  
+或 
+所提供的 <see cref="T:System.Web.Security.MembershipUser" /> 实例的用户名为空，或超过用户名允许的最大长度（通常为 256 个字符）。  
+  
+或 
+所提供的 <see cref="T:System.Web.Security.MembershipUser" /> 实例的用户名包含逗号。  
+  
+- 或 - 
+用户名已映射到 <see langword="userPrincipalName" />，但所提供的 <see cref="T:System.Web.Security.MembershipUser" /> 实例的用户名包含反斜杠。</exception>
+        <exception cref="T:System.Configuration.Provider.ProviderException">Active Directory 数据存储区中找不到指定的用户。  
+  
+- 或 - 
+<see cref="P:System.Web.Security.ActiveDirectoryMembershipProvider.RequiresUniqueEmail" /> 属性为 <see langword="true" />，而 <see cref="P:System.Web.Security.MembershipUser.Email" /> 属性的新值与现有电子邮件地址重复。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateUser">
+      <MemberSignature Language="C#" Value="public override bool ValidateUser (string username, string password);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool ValidateUser(string username, string password) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Security.ActiveDirectoryMembershipProvider.ValidateUser(System.String,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function ValidateUser (username As String, password As String) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override bool ValidateUser(System::String ^ username, System::String ^ password);" />
+      <MemberSignature Language="F#" Value="override this.ValidateUser : string * string -&gt; bool" Usage="activeDirectoryMembershipProvider.ValidateUser (username, password)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+        <Parameter Name="password" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="username">要验证的用户的名称。</param>
+        <param name="password">指定的用户的密码。</param>
+        <summary>验证 Active Directory 数据存储区中是否存在指定的用户名和密码。</summary>
+        <returns>如果指定的 <paramref name="username" /> 和 <paramref name="password" /> 有效，则为 <see langword="true" />；否则为 <see langword="false" />。 如果 Active Directory 数据存储区中不存在指定的用户，<see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.ValidateUser(System.String,System.String)" /> 方法则返回 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法由<xref:System.Web.Security.Membership>类调用，以根据 Active Directory 数据存储验证用户凭据。  
+  
+ 如果属性为`true` ，并且提供的凭据有效，则会重置错误密码答案的用户跟踪计数器。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A>  
+  
+ 如果<xref:System.Web.Security.ActiveDirectoryMembershipProvider.ValidateUser%2A>在以下情况`false`下提供了正确的凭据，则该方法可能会返回：  
+  
+1.  由于登录尝试失败次数过多，目录服务器已锁定用户帐户。 在目录的锁定持续时间通过之前，用户将无法登录。  
+  
+2.  如果属性为`true`，则当用户提供错误密码答案太多次时，用户帐户将被锁定。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A> 用户的帐户将在<xref:System.Web.Security.ActiveDirectoryMembershipProvider.PasswordAnswerAttemptLockoutDuration%2A>属性中指定的时间过后解除锁定。  
+  
+3.  用户必须存在于连接字符串中指定的容器中。 为位于不同容器或不同域中的用户帐户提供有效的凭据。 用户必须存在于连接字符串中指定的容器中。  
+  
+ 验证用户时，提供程序通过使用指定的用户名和密码（而不是在应用程序配置文件中配置的凭据）连接到 Active Directory 的数据存储区来验证凭据。  
+  
+ 不过，由于<xref:System.Web.Security.ActiveDirectoryMembershipProvider>以下原因，实例将使用配置的凭据连接到目录。  
+  
+-   若要确认用户在搜索范围内是否存在由<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例的连接字符串确定的。 提供程序在连接字符串中指定的搜索点处开始使用子树搜索来确定用户是否存在。 用户必须存在于指定的容器中。 不会验证在连接字符串的指定容器外有效的凭据。 有关连接字符串的详细信息，请参阅类主题。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider>  
+  
+-   如果该<xref:System.Web.Security.ActiveDirectoryMembershipProvider.EnablePasswordReset%2A>属性为`true`，则<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例将使用配置的凭据来加载用户实例，以检查用户是否已被锁定，因为他（她）尝试更改密码答案失败的尝试次数过多.  
+  
+> [!IMPORTANT]
+>  连接到已启用 "来宾" 帐户的 Active Directory 域控制器是一个潜在的安全威胁。 在启用了 "来宾" 帐户的 Active Directory 域控制器上进行的所有验证尝试都将成功。 若要在使用 Active Directory 域控制器时提高安全性，应禁用域控制器上的 "来宾" 帐户。  
+  
+ 当<xref:System.Web.Security.ActiveDirectoryMembershipProvider>满足以下条件之一时，实例将尝试对 Active Directory 进行并发绑定：  
+  
+-   <xref:System.Web.Security.ActiveDirectoryMembershipProvider.CurrentConnectionProtection%2A> 属性设置为 <xref:System.Web.Security.ActiveDirectoryConnectionProtection.None>。  
+  
+-   属性设置为<xref:System.Web.Security.ActiveDirectoryConnectionProtection.SignAndSeal> ，并且<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例选择 SSL 来保护连接。 <xref:System.Web.Security.ActiveDirectoryMembershipProvider.CurrentConnectionProtection%2A>  
+  
+ 此外，若要进行并发绑定，必须满足以下条件：  
+  
+-   目录服务器必须在 Windows Server 2003 上运行。  
+  
+-   运行<xref:System.Web.Security.ActiveDirectoryMembershipProvider>实例的 Web 服务器的操作系统必须支持并发绑定（例如，Windows server 2003）。  
+  
+ 使用并发绑定时，不会在目录中更新用户的上次登录日期;因此，该<xref:System.Web.Security.ActiveDirectoryMembershipUser.LastLoginDate%2A>属性不能依赖于。  
+  
+ 前导空格和尾随空格从`username`参数中去除。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">在初始化 <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.ValidateUser(System.String,System.String)" /> 实例前，调用了 <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> 方法。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/79184d17-f4c7-4c9f-a073-cec4f5543980(v=vs.100)">ASP.NET 成员资格简介</related>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

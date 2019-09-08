@@ -1,0 +1,1680 @@
+<Type Name="SocketAsyncEventArgs" FullName="System.Net.Sockets.SocketAsyncEventArgs">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="21dc7fd4d34fef5b379d12798f61c49b92b79923" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70695889" /></Metadata><TypeSignature Language="C#" Value="public class SocketAsyncEventArgs : EventArgs, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SocketAsyncEventArgs extends System.EventArgs implements class System.IDisposable" />
+  <TypeSignature Language="DocId" Value="T:System.Net.Sockets.SocketAsyncEventArgs" />
+  <TypeSignature Language="VB.NET" Value="Public Class SocketAsyncEventArgs&#xA;Inherits EventArgs&#xA;Implements IDisposable" />
+  <TypeSignature Language="C++ CLI" Value="public ref class SocketAsyncEventArgs : EventArgs, IDisposable" />
+  <TypeSignature Language="F#" Value="type SocketAsyncEventArgs = class&#xA;    inherit EventArgs&#xA;    interface IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Net.Sockets</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Net</AssemblyName>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.EventArgs</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>表示异步套接字操作。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 类是<xref:System.Net.Sockets.Socket?displayProperty=nameWithType>类的一组增强功能的一部分，这些增强功能提供了一种可供专用高性能套接字应用程序使用的替代异步模式。 <xref:System.Net.Sockets.SocketAsyncEventArgs> 此类专为需要高性能的网络服务器应用程序而设计。 应用程序可以独占方式使用增强的异步模式，也可以仅在目标热点范围内使用（例如，在接收大量数据时）。  
+  
+ 这些增强功能的主要功能是避免在大容量异步套接字 I/O 期间重复分配和同步对象。 当前由<xref:System.Net.Sockets.Socket?displayProperty=nameWithType>类实现的开始/结束设计模式需要为每<xref:System.IAsyncResult?displayProperty=nameWithType>个异步套接字操作分配一个对象。  
+  
+ 在新<xref:System.Net.Sockets.Socket?displayProperty=nameWithType>的类增强功能中，异步套接字操作由<xref:System.Net.Sockets.SocketAsyncEventArgs>应用程序分配和维护的可重用对象进行描述。 高性能套接字应用程序非常清楚必须维持的重叠套接字操作的数量。 该应用程序可创建所需的 <xref:System.Net.Sockets.SocketAsyncEventArgs> 对象数量。 例如，如果服务器应用程序在任何时候都需要有15个套接字接受操作来支持传入的客户端连接速率，则它可以<xref:System.Net.Sockets.SocketAsyncEventArgs>分配15个可重复使用的对象来实现此目的。  
+  
+ 使用此类执行异步套接字操作的模式包括以下步骤：  
+  
+1.  分配一个新的 <xref:System.Net.Sockets.SocketAsyncEventArgs> 上下文对象，或从应用程序池中获取一个空闲对象。  
+  
+2.  将上下文对象的属性设置为要执行的操作（例如完成回调方法、数据缓冲区、缓冲区中的偏移量和要传输的最大数据量）。  
+  
+3.  调用适当的套接字方法 (xxxAsync) 以启动异步操作。  
+  
+4.  如果异步套接字方法（xxxAsync）在回调中返回 true，则查询上下文属性的完成状态。  
+  
+5.  如果异步套接字方法（xxxAsync）返回 false，则操作同步完成。 可查询上下文属性获取操作结果。  
+  
+6.  重新使用上下文进行另一项操作，将其放回池中，或放弃它。  
+  
+ 新的异步套接字操作上下文对象的生存期由应用程序代码和异步 i/o 引用的引用确定。 作为参数提交给异步套接字操作方法之一后，应用程序不必保留对异步套接字操作上下文对象的引用。 完成回调返回之前，应用程序会继续引用它。 但是，应用程序保留对上下文的引用是有利的，以便以后可以重复使用它进行异步套接字操作。  
+  
+   
+  
+## Examples  
+ 下面的代码示例实现使用<xref:System.Net.Sockets.SocketAsyncEventArgs>类的套接字服务器的连接逻辑。 接受连接后，从客户端读取的所有数据都将发送回客户端。 读取和回显到客户端模式将继续，直到客户端断开连接。 此示例使用的 BufferManager 类显示在<xref:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer%28System.Byte%5B%5D%2CSystem.Int32%2CSystem.Int32%29>方法的代码示例中。 在此示例中使用的 SocketAsyncEventArgsPool 类显示在<xref:System.Net.Sockets.SocketAsyncEventArgs.%23ctor%2A>构造函数的代码示例中。  
+  
+ [!code-csharp[NCLAsyncSocketServer#3](~/samples/snippets/csharp/VS_Snippets_Remoting/NCLAsyncSocketServer/CS/AsyncSocketServer.cs#3)]  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.IAsyncResult" />
+    <altmember cref="T:System.Net.Sockets.Socket" />
+    <altmember cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+    <altmember cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+    <altmember cref="M:System.Net.Sockets.Socket.DisconnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+    <altmember cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+    <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+    <altmember cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+    <altmember cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+    <altmember cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+    <altmember cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+    <related type="Article" href="~/docs/framework/network-programming/index.md">.NET Framework 中的网络编程</related>
+    <related type="Article" href="~/docs/framework/network-programming/network-tracing.md">.NET Framework 中的网络跟踪</related>
+    <related type="Article" href="~/docs/framework/network-programming/socket-performance-enhancements-in-version-3-5.md">版本 3.5 中的套接字性能增强</related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SocketAsyncEventArgs ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Net.Sockets.SocketAsyncEventArgs.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; SocketAsyncEventArgs();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>创建一个空的 <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> 实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 调用此构造函数后，所有属性都将具有其默认值：  
+  
+-   对象引用将为 null  
+  
+-   返回整数的属性将返回零。  
+  
+-   <xref:System.Net.Sockets.SocketAsyncEventArgs.LastOperation%2A>属性将<xref:System.Net.Sockets.SocketAsyncOperation.None>等于。  
+  
+-   <xref:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsFlags%2A>属性将 <xref:System.Net.Sockets.TransmitFileOptions.UseDefaultWorkerThread?displayProperty=nameWithType> 等于，这将不会使用指定的标志。  
+  
+-   <xref:System.Net.Sockets.SocketAsyncEventArgs.SocketFlags%2A>属性将<xref:System.Net.Sockets.SocketAsyncOperation.None>等于。  
+  
+ 调用方必须先设置相应的属性，然后才能将对象传递到适当的异步套接字（xxxAsync）方法。  
+  
+   
+  
+## Examples  
+ 下面的代码示例表示一个可重用<xref:System.Net.Sockets.SocketAsyncEventArgs>对象的集合。  
+  
+ [!code-csharp[NCLAsyncSocketServer#2](~/samples/snippets/csharp/VS_Snippets_Remoting/NCLAsyncSocketServer/CS/AsyncSocketServer.cs#2)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.NotSupportedException">该平台不受支持。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AcceptSocket">
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.Socket AcceptSocket { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Sockets.Socket AcceptSocket" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.AcceptSocket" />
+      <MemberSignature Language="VB.NET" Value="Public Property AcceptSocket As Socket" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Net::Sockets::Socket ^ AcceptSocket { System::Net::Sockets::Socket ^ get(); void set(System::Net::Sockets::Socket ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.AcceptSocket : System.Net.Sockets.Socket with get, set" Usage="System.Net.Sockets.SocketAsyncEventArgs.AcceptSocket" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.Socket</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置要使用的套接字或创建用于接受与异步套接字方法的连接的套接字。</summary>
+        <value>要使用的 <see cref="T:System.Net.Sockets.Socket" /> 或者创建用于接受与异步套接字方法的连接的套接字。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性可用于提供已创建<xref:System.Net.Sockets.Socket>的，它将用于异步套接字接受操作。 在接受操作完成后，它是表示接受的连接的套接字。 如果在调用<xref:System.Net.Sockets.Socket.AcceptAsync%2A?displayProperty=nameWithType>方法之前未提供（设置为 null），则将自动创建新的套接字，并使用此属性在完成回调中访问该套接字。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+      </Docs>
+    </Member>
+    <Member MemberName="Buffer">
+      <MemberSignature Language="C#" Value="public byte[] Buffer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int8[] Buffer" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Buffer As Byte()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property cli::array &lt;System::Byte&gt; ^ Buffer { cli::array &lt;System::Byte&gt; ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Buffer : byte[]" Usage="System.Net.Sockets.SocketAsyncEventArgs.Buffer" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取要用于异步套接字方法的数据缓冲区。</summary>
+        <value>一个 <see cref="T:System.Byte" /> 数组，表示要用于异步套接字方法的数据缓冲区。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性获取当前与<xref:System.Net.Sockets.SocketAsyncEventArgs>实例关联的数据缓冲区。 若要设置缓冲区， <xref:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer%2A>必须使用方法。  
+  
+ <xref:System.Net.Sockets.Socket.AcceptAsync%2A?displayProperty=nameWithType>此属性用于<xref:System.Net.Sockets.Socket.ConnectAsync%2A?displayProperty=nameWithType> 、 <xref:System.Net.Sockets.Socket.ReceiveMessageFromAsync%2A?displayProperty=nameWithType>  、、 <xref:System.Net.Sockets.Socket.SendToAsync%2A?displayProperty=nameWithType>  、 、 <xref:System.Net.Sockets.Socket.SendAsync%2A?displayProperty=nameWithType> 和方法。 <xref:System.Net.Sockets.Socket.ReceiveAsync%2A?displayProperty=nameWithType> <xref:System.Net.Sockets.Socket.ReceiveFromAsync%2A?displayProperty=nameWithType>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="Overload:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer" />
+      </Docs>
+    </Member>
+    <Member MemberName="BufferList">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; BufferList { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;valuetype System.ArraySegment`1&lt;unsigned int8&gt;&gt; BufferList" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.BufferList" />
+      <MemberSignature Language="VB.NET" Value="Public Property BufferList As IList(Of ArraySegment(Of Byte))" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ BufferList { System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ get(); void set(System::Collections::Generic::IList&lt;ArraySegment&lt;System::Byte&gt;&gt; ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.BufferList : System.Collections.Generic.IList&lt;ArraySegment&lt;byte&gt;&gt; with get, set" Usage="System.Net.Sockets.SocketAsyncEventArgs.BufferList" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个要用于异步套接字方法的数据缓冲区数组。</summary>
+        <value>一个 <see cref="T:System.Collections.IList" />，表示要用于异步套接字方法的数据缓冲区数组。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性与<xref:System.Net.Sockets.Socket.ReceiveAsync%2A?displayProperty=nameWithType>和<xref:System.Net.Sockets.Socket.SendAsync%2A?displayProperty=nameWithType>方法一起使用。  
+  
+ 此属性用于提供要发送的多个数据缓冲区，或者提供多个缓冲区，以便在其中存储可以发送或接收数据的异步套接字操作的接收数据。 <xref:System.Net.Sockets.Socket.ReceiveAsync%2A?displayProperty=nameWithType> <xref:System.Net.Sockets.SocketAsyncEventArgs.BufferList%2A> 和 <xref:System.Net.Sockets.Socket.SendAsync%2A?displayProperty=nameWithType> 方法支持使用属性的多个缓冲区。  
+  
+ 如果该<xref:System.Net.Sockets.SocketAsyncEventArgs.BufferList%2A>属性设置为非 null 值<xref:System.Net.Sockets.SocketAsyncEventArgs.Buffer%2A> ，则该属性必须为 null， <xref:System.Net.Sockets.Socket.ReceiveAsync%2A?displayProperty=nameWithType>并且将被和<xref:System.Net.Sockets.Socket.SendAsync%2A?displayProperty=nameWithType>方法忽略。  
+  
+ 如果设置为非 null 值，并且尝试将该<xref:System.Net.Sockets.SocketAsyncEventArgs.BufferList%2A>属性设置为非 null 值，则会引发异常。 <xref:System.Net.Sockets.SocketAsyncEventArgs.Buffer%2A>  
+  
+ 如果将<xref:System.Net.Sockets.Socket.ConnectAsync%2A?displayProperty=nameWithType> <xref:System.Net.Sockets.Socket.AcceptAsync%2A?displayProperty=nameWithType> <xref:System.ArgumentException>属性设置为非 null 值，则和方法将引发。 <xref:System.Net.Sockets.SocketAsyncEventArgs.BufferList%2A>  
+  
+ <xref:System.Net.Sockets.Socket.DisconnectAsync%2A?displayProperty=nameWithType> <xref:System.Net.Sockets.SocketAsyncEventArgs.BufferList%2A> 和 <xref:System.Net.Sockets.Socket.SendPacketsAsync%2A?displayProperty=nameWithType> 方法会忽略该参数。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">存在不明确的缓冲区，这些缓冲区是在 set 操作上指定的。 如果 <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> 属性已设置为非空值并且尝试将 <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.BufferList" /> 属性设置为非空值，将引发此异常。</exception>
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" />
+      </Docs>
+    </Member>
+    <Member MemberName="BytesTransferred">
+      <MemberSignature Language="C#" Value="public int BytesTransferred { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 BytesTransferred" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.BytesTransferred" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property BytesTransferred As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int BytesTransferred { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.BytesTransferred : int" Usage="System.Net.Sockets.SocketAsyncEventArgs.BytesTransferred" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取在套接字操作中传输的字节数。</summary>
+        <value>一个 <see cref="T:System.Int32" />，包含在套接字操作中传输的字节数。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性提供可接收或发送数据的异步套接字操作中传输的字节数。 如果从读取操作返回零，则远程端已关闭连接。  
+  
+ 此属性由除<xref:System.Net.Sockets.Socket.DisconnectAsync%2A?displayProperty=nameWithType>方法之外的所有异步套接字操作设置。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+      </Docs>
+    </Member>
+    <Member MemberName="Completed">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;System.Net.Sockets.SocketAsyncEventArgs&gt; Completed;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.Net.Sockets.SocketAsyncEventArgs&gt; Completed" />
+      <MemberSignature Language="DocId" Value="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event Completed As EventHandler(Of SocketAsyncEventArgs) " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler&lt;System::Net::Sockets::SocketAsyncEventArgs ^&gt; ^ Completed;" />
+      <MemberSignature Language="F#" Value="member this.Completed : EventHandler&lt;System.Net.Sockets.SocketAsyncEventArgs&gt; " Usage="member this.Completed : System.EventHandler&lt;System.Net.Sockets.SocketAsyncEventArgs&gt; " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.Net.Sockets.SocketAsyncEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>用于完成异步操作的事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Net.Sockets.SocketAsyncEventArgs.Completed>事件为客户端应用程序提供了一种完成异步套接字操作的方法。 当异步套接字操作启动时，事件处理程序<xref:System.Net.Sockets.SocketAsyncEventArgs>应附加到实例中的事件，否则应用程序将无法确定操作完成的时间。  
+  
+ <xref:System.Net.Sockets.SocketAsyncEventArgs.Completed>事件引用的完成回调委托包含处理客户端的异步套接字操作的程序逻辑。  
+  
+ 当事件收到信号时，应用程序将使用<xref:System.Net.Sockets.SocketAsyncEventArgs> object 参数获取已完成的异步套接字操作的状态。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConnectByNameError">
+      <MemberSignature Language="C#" Value="public Exception ConnectByNameError { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Exception ConnectByNameError" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.ConnectByNameError" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property ConnectByNameError As Exception" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property Exception ^ ConnectByNameError { Exception ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.ConnectByNameError : Exception" Usage="System.Net.Sockets.SocketAsyncEventArgs.ConnectByNameError" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Exception</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当使用 <see cref="T:System.Net.DnsEndPoint" /> 时，在出现连接故障的情况下获取异常。</summary>
+        <value>一个 <see cref="T:System.Exception" />，指示在为 <see cref="T:System.Net.DnsEndPoint" /> 属性指定 <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.RemoteEndPoint" /> 时发生连接错误的原因。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果在为<xref:System.Net.DnsEndPoint> <xref:System.Net.Sockets.SocketAsyncEventArgs.RemoteEndPoint%2A>属性指定了时连接失败，则该<xref:System.Net.Sockets.SocketAsyncEventArgs.ConnectByNameError%2A>属性将包含指示套接字错误的详细原因的异常。  
+  
+ 如果为<xref:System.Net.Sockets.SocketAsyncEventArgs.RemoteEndPoint%2A>属性指定了并发生连接失败， `null`则该<xref:System.Net.Sockets.SocketAsyncEventArgs.ConnectByNameError%2A>属性将是引用。 <xref:System.Net.IPEndPoint>  
+  
+ 在<xref:System.Net.Sockets.SocketAsyncEventArgs.SocketError%2A>连接失败的情况下，始终设置属性。 如果连接到失败， <xref:System.Net.Sockets.SocketAsyncEventArgs.ConnectByNameError%2A>属性包含有关失败的详细信息。 <xref:System.Net.DnsEndPoint> 如果应用程序只对连接操作是否成功或失败感兴趣，则应用程序只需检查<xref:System.Net.Sockets.SocketAsyncEventArgs.SocketError%2A>属性。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="Overload:System.Net.Sockets.Socket.ConnectAsync" />
+      </Docs>
+    </Member>
+    <Member MemberName="ConnectSocket">
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.Socket ConnectSocket { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Sockets.Socket ConnectSocket" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.ConnectSocket" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property ConnectSocket As Socket" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Net::Sockets::Socket ^ ConnectSocket { System::Net::Sockets::Socket ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.ConnectSocket : System.Net.Sockets.Socket" Usage="System.Net.Sockets.SocketAsyncEventArgs.ConnectSocket" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.Socket</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>成功完成 <see cref="T:System.Net.Sockets.Socket" /> 方法后创建和连接的 <see cref="Overload:System.Net.Sockets.Socket.ConnectAsync" /> 对象。</summary>
+        <value>连接的 <see cref="T:System.Net.Sockets.Socket" /> 对象。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 成功完成<xref:System.Net.Sockets.Socket.ConnectAsync%2A>方法后，此属性包含新创建和连接<xref:System.Net.Sockets.Socket>的对象。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="Overload:System.Net.Sockets.Socket.ConnectAsync" />
+      </Docs>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.Count" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Count As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int Count { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.Count : int" Usage="System.Net.Sockets.SocketAsyncEventArgs.Count" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取可在异步操作中发送或接收的最大数据量（以字节为单位）。</summary>
+        <value>一个 <see cref="T:System.Int32" />，包含可发送或接收的最大数据量（以字节为单位）。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性通过调用<xref:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer%2A>方法来设置。  
+  
+ <xref:System.Net.Sockets.Socket.AcceptAsync%2A?displayProperty=nameWithType>此属性用于<xref:System.Net.Sockets.Socket.ConnectAsync%2A?displayProperty=nameWithType> 、 <xref:System.Net.Sockets.Socket.ReceiveMessageFromAsync%2A?displayProperty=nameWithType>  、、 <xref:System.Net.Sockets.Socket.SendToAsync%2A?displayProperty=nameWithType>  、 、 <xref:System.Net.Sockets.Socket.SendAsync%2A?displayProperty=nameWithType> 和方法。 <xref:System.Net.Sockets.Socket.ReceiveAsync%2A?displayProperty=nameWithType> <xref:System.Net.Sockets.Socket.ReceiveFromAsync%2A?displayProperty=nameWithType>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="Overload:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer" />
+      </Docs>
+    </Member>
+    <Member MemberName="DisconnectReuseSocket">
+      <MemberSignature Language="C#" Value="public bool DisconnectReuseSocket { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DisconnectReuseSocket" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.DisconnectReuseSocket" />
+      <MemberSignature Language="VB.NET" Value="Public Property DisconnectReuseSocket As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool DisconnectReuseSocket { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.DisconnectReuseSocket : bool with get, set" Usage="System.Net.Sockets.SocketAsyncEventArgs.DisconnectReuseSocket" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，该值指定套接字能否在断开操作之后重用。</summary>
+        <value>一个 <see cref="T:System.Boolean" />，指定套接字能否在断开操作之后重用。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性用于更改方法的<xref:System.Net.Sockets.Socket.DisconnectAsync%2A?displayProperty=nameWithType>行为。 如果为 true，则在后续套<xref:System.Net.Sockets.Socket.DisconnectAsync%2A?displayProperty=nameWithType>接字接受或连接操作完成后，可以重新使用通过方法断开连接的套接字。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.DisconnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Net.Sockets.SocketAsyncEventArgs.Dispose" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Dispose ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void Dispose();" />
+      <MemberSignature Language="F#" Value="abstract member Dispose : unit -&gt; unit&#xA;override this.Dispose : unit -&gt; unit" Usage="socketAsyncEventArgs.Dispose " />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IDisposable.Dispose</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>释放由 <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> 实例使用的非托管资源，并可选择释放托管资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法由公共`Dispose()`方法<xref:System.Object.Finalize%2A>和方法调用。 `Dispose()`调用受保护`Dispose(Boolean)`的方法， `disposing`并将参数`true`设置为。 <xref:System.Object.Finalize%2A>在`Dispose` 设置 `disposing`  为 `false` 的情况调用。  
+  
+ 当 `disposing` 参数为 `true` 时，此方法释放该 <xref:System.Net.Sockets.SocketAsyncEventArgs> 引用的、由任何托管对象持有的全部资源。 此方法调用每个引用对象的 `Dispose()` 方法。  
+  
+> [!NOTE]
+>  当你在应用程序中启用网络跟踪后，此成员将输出跟踪信息。 有关详细信息，请参阅[.NET Framework 中的网络跟踪](~/docs/framework/network-programming/network-tracing.md)。  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>
+            <see langword="Dispose" /> 可以由其他对象多次调用。 重写 <see langword="Dispose(Boolean)" /> 时，请注意不要引用在以前调用 <see langword="Dispose" /> 时已释放的对象。 有关如何实现<see langword="Dispose(Boolean)" />的详细信息，请参阅[实现 Dispose 方法](~/docs/standard/garbage-collection/implementing-dispose.md)。  
+  
+有关<see langword="Dispose" /> 和 <see cref="M:System.Object.Finalize" /> 的详细信息，请参阅[清理非托管资源](~/docs/standard/garbage-collection/unmanaged.md)和[重写 Finalize 方法](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ddae83kx(v=vs.100))。</para></block>
+        <altmember cref="M:System.Object.Finalize" />
+      </Docs>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~SocketAsyncEventArgs ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Net.Sockets.SocketAsyncEventArgs.Finalize" />
+      <MemberSignature Language="VB.NET" Value="Finalize ()" />
+      <MemberSignature Language="C++ CLI" Value="!SocketAsyncEventArgs ()" />
+      <MemberSignature Language="F#" Value="override this.Finalize : unit -&gt; unit" Usage="socketAsyncEventArgs.Finalize " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>释放 <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> 类使用的资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 类终结器将<xref:System.Net.Sockets.SocketAsyncEventArgs>关闭与相关联的和<xref:System.Net.Sockets.SocketAsyncEventArgs>可用资源。 <xref:System.Net.Sockets.SocketAsyncEventArgs>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LastOperation">
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketAsyncOperation LastOperation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.SocketAsyncOperation LastOperation" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.LastOperation" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property LastOperation As SocketAsyncOperation" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Net::Sockets::SocketAsyncOperation LastOperation { System::Net::Sockets::SocketAsyncOperation get(); };" />
+      <MemberSignature Language="F#" Value="member this.LastOperation : System.Net.Sockets.SocketAsyncOperation" Usage="System.Net.Sockets.SocketAsyncEventArgs.LastOperation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketAsyncOperation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取最近使用此上下文对象执行的套接字操作类型。</summary>
+        <value>一个 <see cref="T:System.Net.Sockets.SocketAsyncOperation" /> 实例，指示最近使用此上下文对象执行的套接字操作类型。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性描述使用此<xref:System.Net.Sockets.SocketAsyncEventArgs>对象最近完成的异步套接字操作。 此属性的值将一直为<xref:System.Net.Sockets.SocketAsyncOperation.None?displayProperty=nameWithType> ， <xref:System.Net.Sockets.SocketAsyncEventArgs>直到使用实例开始异步套接字操作。 然后，将属性设置为采用<xref:System.Net.Sockets.SocketAsyncEventArgs>作为参数的方法中所执行的操作的类型。 此属性更便于使用单个完成回调委托实现多种类型的异步套接字操作。  
+  
+ 此属性在<xref:System.Net.Sockets.SocketAsyncEventArgs>实例中保持有效，直到<xref:System.Net.Sockets.SocketAsyncEventArgs>将该实例用于另一个异步套接字（xxxAsync）操作。  
+  
+ 此属性由所有异步套接字（xxxAsync）方法设置。  
+  
+ 在<xref:System.Net.Sockets.Socket?displayProperty=nameWithType>类上调用异步套接字方法（xxxAsync）将设置此属性值。 此属性用于与应用程序实现的 SocketAsyncCallback 完成例程一起使用。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.DisconnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="T:System.Net.Sockets.SocketAsyncOperation" />
+      </Docs>
+    </Member>
+    <Member MemberName="MemoryBuffer">
+      <MemberSignature Language="C#" Value="public Memory&lt;byte&gt; MemoryBuffer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Memory`1&lt;unsigned int8&gt; MemoryBuffer" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.MemoryBuffer" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property MemoryBuffer As Memory(Of Byte)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property Memory&lt;System::Byte&gt; MemoryBuffer { Memory&lt;System::Byte&gt; get(); };" />
+      <MemberSignature Language="F#" Value="member this.MemoryBuffer : Memory&lt;byte&gt;" Usage="System.Net.Sockets.SocketAsyncEventArgs.MemoryBuffer" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Memory&lt;System.Byte&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Offset">
+      <MemberSignature Language="C#" Value="public int Offset { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Offset" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.Offset" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Offset As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int Offset { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.Offset : int" Usage="System.Net.Sockets.SocketAsyncEventArgs.Offset" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> 属性引用的数据缓冲区的偏移量（以字节为单位）。</summary>
+        <value>一个 <see cref="T:System.Int32" />，包含 <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> 属性引用的数据缓冲区的偏移量（以字节为单位）。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性描述<xref:System.Net.Sockets.SocketAsyncEventArgs.Buffer%2A>属性中数据的起始字节偏移量。 此值通过调用<xref:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer%2A>方法来设置。  
+  
+ 此属性不适用于<xref:System.Net.Sockets.SocketAsyncEventArgs.BufferList%2A>属性。  
+  
+ <xref:System.Net.Sockets.Socket.AcceptAsync%2A?displayProperty=nameWithType>此属性用于<xref:System.Net.Sockets.Socket.ConnectAsync%2A?displayProperty=nameWithType> 、 <xref:System.Net.Sockets.Socket.ReceiveMessageFromAsync%2A?displayProperty=nameWithType>  、、 <xref:System.Net.Sockets.Socket.SendToAsync%2A?displayProperty=nameWithType>  、 、 <xref:System.Net.Sockets.Socket.SendAsync%2A?displayProperty=nameWithType> 和方法。 <xref:System.Net.Sockets.Socket.ReceiveAsync%2A?displayProperty=nameWithType> <xref:System.Net.Sockets.Socket.ReceiveFromAsync%2A?displayProperty=nameWithType>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" />
+      </Docs>
+    </Member>
+    <Member MemberName="OnCompleted">
+      <MemberSignature Language="C#" Value="protected virtual void OnCompleted (System.Net.Sockets.SocketAsyncEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnCompleted(class System.Net.Sockets.SocketAsyncEventArgs e) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Net.Sockets.SocketAsyncEventArgs.OnCompleted(System.Net.Sockets.SocketAsyncEventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnCompleted (e As SocketAsyncEventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnCompleted(System::Net::Sockets::SocketAsyncEventArgs ^ e);" />
+      <MemberSignature Language="F#" Value="abstract member OnCompleted : System.Net.Sockets.SocketAsyncEventArgs -&gt; unit&#xA;override this.OnCompleted : System.Net.Sockets.SocketAsyncEventArgs -&gt; unit" Usage="socketAsyncEventArgs.OnCompleted e" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.Net.Sockets.SocketAsyncEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="e">终止的事件。</param>
+        <summary>表示异步操作完成时调用的方法。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 用户代码无法调用此方法。 当当前操作完成时， <xref:System.Net.Sockets.SocketAsyncEventArgs>对象的内部机制将调用此方法。 此方法用于所有异步套接字（xxxAsync）方法。  
+  
+ 创建从<xref:System.Net.Sockets.SocketAsyncEventArgs>继承的类的应用程序可以重写此方法以挂钩到此完成通知，并清理它为操作分配的任何资源。 默认实现仅引发<xref:System.Net.Sockets.SocketAsyncEventArgs.Completed>事件。  
+  
+ 此方法用于挂钩要用作后续异步套接字操作的完成回调的事件处理程序。 调用方必须在启动异步套接字操作之前，通过使用<xref:System.Net.Sockets.Socket?displayProperty=nameWithType>类上的某个异步（xxxAsync）方法，至少实现从此方法继承的一个回调委托。  
+  
+ 调用方的<xref:System.Net.Sockets.SocketAsyncEventArgs.OnCompleted%2A>方法提供了一种方法，使客户端应用程序能够完成异步套接字操作。 启动异步套接字操作时必须实现回调委托。 从<xref:System.Net.Sockets.SocketAsyncEventArgs.OnCompleted%2A>方法继承的完成回调委托必须包含用于完成客户端的异步套接字操作处理的程序逻辑。  
+  
+ 当异步操作收到信号时，应用程序将使用<xref:System.Net.Sockets.SocketAsyncEventArgs> object 参数获取已完成的异步套接字操作的状态。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.DisconnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+      </Docs>
+    </Member>
+    <Member MemberName="ReceiveMessageFromPacketInfo">
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.IPPacketInformation ReceiveMessageFromPacketInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.IPPacketInformation ReceiveMessageFromPacketInfo" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.ReceiveMessageFromPacketInfo" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property ReceiveMessageFromPacketInfo As IPPacketInformation" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Net::Sockets::IPPacketInformation ReceiveMessageFromPacketInfo { System::Net::Sockets::IPPacketInformation get(); };" />
+      <MemberSignature Language="F#" Value="member this.ReceiveMessageFromPacketInfo : System.Net.Sockets.IPPacketInformation" Usage="System.Net.Sockets.SocketAsyncEventArgs.ReceiveMessageFromPacketInfo" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.IPPacketInformation</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取接收的数据包的 IP 地址和接口。</summary>
+        <value>一个 <see cref="T:System.Net.Sockets.IPPacketInformation" /> 实例，该实例包含接收的数据包的目标 IP 地址和接口。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性提供有关使用<xref:System.Net.Sockets.Socket.ReceiveMessageFromAsync%2A?displayProperty=nameWithType>方法接收的数据包的信息。  
+  
+ 此属性与<xref:System.Net.Sockets.Socket.ReceiveMessageFromAsync%2A?displayProperty=nameWithType>方法一起使用。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Net.IPAddress" />
+        <altmember cref="T:System.Net.Sockets.IPPacketInformation" />
+        <altmember cref="P:System.Net.Sockets.IPPacketInformation.Address" />
+        <altmember cref="P:System.Net.Sockets.IPPacketInformation.Interface" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+      </Docs>
+    </Member>
+    <Member MemberName="RemoteEndPoint">
+      <MemberSignature Language="C#" Value="public System.Net.EndPoint RemoteEndPoint { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.EndPoint RemoteEndPoint" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.RemoteEndPoint" />
+      <MemberSignature Language="VB.NET" Value="Public Property RemoteEndPoint As EndPoint" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Net::EndPoint ^ RemoteEndPoint { System::Net::EndPoint ^ get(); void set(System::Net::EndPoint ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.RemoteEndPoint : System.Net.EndPoint with get, set" Usage="System.Net.Sockets.SocketAsyncEventArgs.RemoteEndPoint" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.EndPoint</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置异步操作的远程 IP 终结点。</summary>
+        <value>一个 <see cref="T:System.Net.EndPoint" />，表示异步操作的远程 IP 终结点。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性指定远程终结点。 此属性可使用<xref:System.Net.Sockets.Socket.ConnectAsync%2A?displayProperty=nameWithType>方法指定要连接到的远程终结点。 此属性可使用<xref:System.Net.Sockets.Socket.SendToAsync%2A?displayProperty=nameWithType>方法指定要向其发送数据的远程终结点。 此属性可以指定使用<xref:System.Net.Sockets.Socket.ReceiveFromAsync%2A?displayProperty=nameWithType>或<xref:System.Net.Sockets.Socket.ReceiveMessageFromAsync%2A?displayProperty=nameWithType>方法从中接收数据的远程终结点。  
+  
+ 此属性指定的远程终结点可以包括 IPv4 或 IPv6 地址。  
+  
+ 此属性用于<xref:System.Net.Sockets.Socket.ConnectAsync%2A?displayProperty=nameWithType>、 <xref:System.Net.Sockets.Socket.ReceiveFromAsync%2A?displayProperty=nameWithType>、 <xref:System.Net.Sockets.Socket.ReceiveMessageFromAsync%2A?displayProperty=nameWithType>或<xref:System.Net.Sockets.Socket.SendToAsync%2A?displayProperty=nameWithType>方法。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Net.EndPoint" />
+        <altmember cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+      </Docs>
+    </Member>
+    <Member MemberName="SendPacketsElements">
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SendPacketsElement[] SendPacketsElements { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.Sockets.SendPacketsElement[] SendPacketsElements" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsElements" />
+      <MemberSignature Language="VB.NET" Value="Public Property SendPacketsElements As SendPacketsElement()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property cli::array &lt;System::Net::Sockets::SendPacketsElement ^&gt; ^ SendPacketsElements { cli::array &lt;System::Net::Sockets::SendPacketsElement ^&gt; ^ get(); void set(cli::array &lt;System::Net::Sockets::SendPacketsElement ^&gt; ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.SendPacketsElements : System.Net.Sockets.SendPacketsElement[] with get, set" Usage="System.Net.Sockets.SocketAsyncEventArgs.SendPacketsElements" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SendPacketsElement[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置要为 <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> 方法使用的异步操作发送的缓冲区数组。</summary>
+        <value>表示要发送的缓冲区数组的 <see cref="T:System.Net.Sockets.SendPacketsElement" /> 对象数组。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 缓冲区数组可以表示内存中的一个文件或一组内存数据缓冲区。 此属性与<xref:System.Net.Sockets.Socket.SendPacketsAsync%2A?displayProperty=nameWithType>方法一起使用。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Net.Sockets.SendPacketsElement" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+      </Docs>
+    </Member>
+    <Member MemberName="SendPacketsFlags">
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.TransmitFileOptions SendPacketsFlags { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.TransmitFileOptions SendPacketsFlags" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsFlags" />
+      <MemberSignature Language="VB.NET" Value="Public Property SendPacketsFlags As TransmitFileOptions" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Net::Sockets::TransmitFileOptions SendPacketsFlags { System::Net::Sockets::TransmitFileOptions get(); void set(System::Net::Sockets::TransmitFileOptions value); };" />
+      <MemberSignature Language="F#" Value="member this.SendPacketsFlags : System.Net.Sockets.TransmitFileOptions with get, set" Usage="System.Net.Sockets.SocketAsyncEventArgs.SendPacketsFlags" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.TransmitFileOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>为 <see cref="T:System.Net.Sockets.TransmitFileOptions" /> 方法使用的异步操作获取或设置 <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> 值的按位组合。</summary>
+        <value>一个 <see cref="T:System.Net.Sockets.TransmitFileOptions" />，包含用于异步操作的值的按位组合。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性指定<xref:System.Net.Sockets.TransmitFileOptions> <xref:System.Net.Sockets.Socket.SendPacketsAsync%2A?displayProperty=nameWithType>方法使用的。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="T:System.Net.Sockets.TransmitFileOptions" />
+      </Docs>
+    </Member>
+    <Member MemberName="SendPacketsSendSize">
+      <MemberSignature Language="C#" Value="public int SendPacketsSendSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 SendPacketsSendSize" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.SendPacketsSendSize" />
+      <MemberSignature Language="VB.NET" Value="Public Property SendPacketsSendSize As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int SendPacketsSendSize { int get(); void set(int value); };" />
+      <MemberSignature Language="F#" Value="member this.SendPacketsSendSize : int with get, set" Usage="System.Net.Sockets.SocketAsyncEventArgs.SendPacketsSendSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("unused property")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置发送操作中使用的数据块的大小（以字节为单位）。</summary>
+        <value>一个 <see cref="T:System.Int32" />，包含在发送操作中使用的数据块的大小（以字节为单位）。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将此属性设置为零，使套接字层选择默认发送大小。 如果将此属性设置为0xffffffff，则调用方可以通过使用<xref:System.Net.Sockets.SendPacketsElement.EndOfPacket%2A?displayProperty=nameWithType>属性来控制每个发送请求的大小和内容。 此功能适用于对各个发送请求的大小施加限制的消息协议。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Net.Sockets.SendPacketsElement.EndOfPacket" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="SetBuffer">
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化要用于异步套接字方法的数据缓冲区。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法将<xref:System.Net.Sockets.SocketAsyncEventArgs.Buffer%2A>属性设置为 null <xref:System.Net.Sockets.SocketAsyncEventArgs.Count%2A> ，并将<xref:System.Net.Sockets.SocketAsyncEventArgs.Offset%2A>和属性设置为零。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" />
+        <altmember cref="P:System.Net.Sockets.SocketAsyncEventArgs.Count" />
+        <altmember cref="P:System.Net.Sockets.SocketAsyncEventArgs.Offset" />
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="SetBuffer">
+      <MemberSignature Language="C#" Value="public void SetBuffer (Memory&lt;byte&gt; buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetBuffer(valuetype System.Memory`1&lt;unsigned int8&gt; buffer) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer(System.Memory{System.Byte})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub SetBuffer (buffer As Memory(Of Byte))" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void SetBuffer(Memory&lt;System::Byte&gt; buffer);" />
+      <MemberSignature Language="F#" Value="member this.SetBuffer : Memory&lt;byte&gt; -&gt; unit" Usage="socketAsyncEventArgs.SetBuffer buffer" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Memory&lt;System.Byte&gt;" Index="0" FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetBuffer">
+      <MemberSignature Language="C#" Value="public void SetBuffer (int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetBuffer(int32 offset, int32 count) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer(System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub SetBuffer (offset As Integer, count As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void SetBuffer(int offset, int count);" />
+      <MemberSignature Language="F#" Value="member this.SetBuffer : int * int -&gt; unit" Usage="socketAsyncEventArgs.SetBuffer (offset, count)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="offset">数据缓冲区中操作开始位置处的偏移量，以字节为单位。</param>
+        <param name="count">可在缓冲区中发送或接收的最大数据量（以字节为单位）。</param>
+        <summary>设置要用于异步套接字方法的数据缓冲区。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ `offset` 和 `count` 参数不能为负数。 `offset` <xref:System.Net.Sockets.SocketAsyncEventArgs.Buffer%2A>和参数的组合必须位于属性中的缓冲区数组的边界内。 `count`  
+  
+ 此方法将<xref:System.Net.Sockets.SocketAsyncEventArgs.Count%2A>属性设置`count`为参数`offset` ， <xref:System.Net.Sockets.SocketAsyncEventArgs.Offset%2A>将属性设置为参数。 <xref:System.Net.Sockets.SocketAsyncEventArgs.Count%2A> <xref:System.Net.Sockets.SocketAsyncEventArgs.Offset%2A> `count` `offset`如果属性为 null，则此方法将忽略和参数，并将和属性设置为0。 <xref:System.Net.Sockets.SocketAsyncEventArgs.Buffer%2A>  
+  
+ 此方法不会更改<xref:System.Net.Sockets.SocketAsyncEventArgs.Buffer%2A>属性。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">参数超出范围。 如果 <paramref name="offset" /> 参数小于零或大于 <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> 属性中的数组长度，将发生此异常。 如果 <paramref name="count" /> 参数小于零或大于 <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> 属性中的数组长度减去 <paramref name="offset" /> 参数的值，也会发生此异常。</exception>
+        <altmember cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" />
+        <altmember cref="P:System.Net.Sockets.SocketAsyncEventArgs.Count" />
+        <altmember cref="P:System.Net.Sockets.SocketAsyncEventArgs.Offset" />
+      </Docs>
+    </Member>
+    <Member MemberName="SetBuffer">
+      <MemberSignature Language="C#" Value="public void SetBuffer (byte[] buffer, int offset, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetBuffer(unsigned int8[] buffer, int32 offset, int32 count) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Net.Sockets.SocketAsyncEventArgs.SetBuffer(System.Byte[],System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub SetBuffer (buffer As Byte(), offset As Integer, count As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void SetBuffer(cli::array &lt;System::Byte&gt; ^ buffer, int offset, int count);" />
+      <MemberSignature Language="F#" Value="member this.SetBuffer : byte[] * int * int -&gt; unit" Usage="socketAsyncEventArgs.SetBuffer (buffer, offset, count)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="buffer" Type="System.Byte[]" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="buffer">要用于异步套接字方法的数据缓冲区。</param>
+        <param name="offset">数据缓冲区中操作开始位置处的偏移量，以字节为单位。</param>
+        <param name="count">可在缓冲区中发送或接收的最大数据量（以字节为单位）。</param>
+        <summary>设置要用于异步套接字方法的数据缓冲区。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ `offset` 和 `count` 参数不能为负数。 `offset` `buffer`和参数的组合必须在参数中的数据数组边界内。 `count`  
+  
+ 此方法将 [\<SetBuffer 方法（byte x： SocketAsyncEventArgs% 2a > 属性设置`buffer`为参数，将 [SetBuffer 方法（byte\<x：% 2a% > 2a] 属性`count`设置为参数，并将 [SocketAsyncEventArgs 方法（byte\<SetBuffer：% 2a > 属性设置为该参数的`offset`属性。参数.  
+  
+   
+  
+## Examples  
+ 下面的代码示例创建一个大缓冲区，该缓冲区可被分割并分配给 [SetBuffer 方法（Byte\<x： SocketAsyncEventArgs > 对象，以便与每个套接字 i/o 操作一起使用。 这使得可以轻松地重复使用缓冲区，并防止分段堆内存。  
+  
+ [!code-csharp[NCLAsyncSocketServer#1](~/samples/snippets/csharp/VS_Snippets_Remoting/NCLAsyncSocketServer/CS/AsyncSocketServer.cs#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException">指定的缓冲区不明确。 如果 <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> 属性不为 null，<see cref="P:System.Net.Sockets.SocketAsyncEventArgs.BufferList" /> 属性也不为 null，将发生此异常。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">参数超出范围。 如果 <paramref name="offset" /> 参数小于零或大于 <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> 属性中的数组长度，将发生此异常。 如果 <paramref name="count" /> 参数小于零或大于 <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" /> 属性中的数组长度减去 <paramref name="offset" /> 参数的值，也会发生此异常。</exception>
+        <altmember cref="P:System.Net.Sockets.SocketAsyncEventArgs.Buffer" />
+        <altmember cref="P:System.Net.Sockets.SocketAsyncEventArgs.Count" />
+        <altmember cref="P:System.Net.Sockets.SocketAsyncEventArgs.Offset" />
+      </Docs>
+    </Member>
+    <Member MemberName="SocketClientAccessPolicyProtocol">
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketClientAccessPolicyProtocol SocketClientAccessPolicyProtocol { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.SocketClientAccessPolicyProtocol SocketClientAccessPolicyProtocol" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.SocketClientAccessPolicyProtocol" />
+      <MemberSignature Language="VB.NET" Value="Public Property SocketClientAccessPolicyProtocol As SocketClientAccessPolicyProtocol" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Net::Sockets::SocketClientAccessPolicyProtocol SocketClientAccessPolicyProtocol { System::Net::Sockets::SocketClientAccessPolicyProtocol get(); void set(System::Net::Sockets::SocketClientAccessPolicyProtocol value); };" />
+      <MemberSignature Language="F#" Value="member this.SocketClientAccessPolicyProtocol : System.Net.Sockets.SocketClientAccessPolicyProtocol with get, set" Usage="System.Net.Sockets.SocketAsyncEventArgs.SocketClientAccessPolicyProtocol" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8">
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8">
+          <AttributeName>System.Obsolete("This API supports the .NET Framework infrastructure and is not intended to be used directly from your code.", true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketClientAccessPolicyProtocol</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置用于下载套接字客户端访问策略文件的协议。</summary>
+        <value>用于下载套接字客户端访问策略文件的协议。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Net.Sockets.SocketClientAccessPolicyProtocol>指定下载客户端访问策略文件的方法。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SocketError">
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketError SocketError { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.SocketError SocketError" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.SocketError" />
+      <MemberSignature Language="VB.NET" Value="Public Property SocketError As SocketError" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Net::Sockets::SocketError SocketError { System::Net::Sockets::SocketError get(); void set(System::Net::Sockets::SocketError value); };" />
+      <MemberSignature Language="F#" Value="member this.SocketError : System.Net.Sockets.SocketError with get, set" Usage="System.Net.Sockets.SocketAsyncEventArgs.SocketError" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketError</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置异步套接字操作的结果。</summary>
+        <value>一个 <see cref="T:System.Net.Sockets.SocketError" />，表示异步套接字操作的结果。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性提供异步套接字操作的完成状态。 值为<xref:System.Net.Sockets.SocketError.Success?displayProperty=nameWithType>指示操作成功完成。 此属性主要在应用程序的事件处理程序例程中使用。  
+  
+ 此属性用于所有异步套接字（xxxAsync）方法。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.DisconnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="T:System.Net.Sockets.SocketError" />
+      </Docs>
+    </Member>
+    <Member MemberName="SocketFlags">
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.SocketFlags SocketFlags { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.SocketFlags SocketFlags" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.SocketFlags" />
+      <MemberSignature Language="VB.NET" Value="Public Property SocketFlags As SocketFlags" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Net::Sockets::SocketFlags SocketFlags { System::Net::Sockets::SocketFlags get(); void set(System::Net::Sockets::SocketFlags value); };" />
+      <MemberSignature Language="F#" Value="member this.SocketFlags : System.Net.Sockets.SocketFlags with get, set" Usage="System.Net.Sockets.SocketAsyncEventArgs.SocketFlags" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取异步套接字操作的结果或设置异步操作的行为。</summary>
+        <value>一个 <see cref="T:System.Net.Sockets.SocketFlags" />，表示异步套接字操作的结果。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 属性指定要用于异步套接字操作<xref:System.Net.Sockets.SocketFlags?displayProperty=nameWithType>的的按位组合。  
+  
+ 此属性与<xref:System.Net.Sockets.Socket.ReceiveAsync%2A?displayProperty=nameWithType>、 <xref:System.Net.Sockets.Socket.ReceiveFromAsync%2A?displayProperty=nameWithType>、 <xref:System.Net.Sockets.Socket.SendAsync%2A?displayProperty=nameWithType>和<xref:System.Net.Sockets.Socket.SendToAsync%2A?displayProperty=nameWithType>方法一起使用。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="T:System.Net.Sockets.SocketFlags" />
+      </Docs>
+    </Member>
+    <Member MemberName="UserToken">
+      <MemberSignature Language="C#" Value="public object UserToken { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object UserToken" />
+      <MemberSignature Language="DocId" Value="P:System.Net.Sockets.SocketAsyncEventArgs.UserToken" />
+      <MemberSignature Language="VB.NET" Value="Public Property UserToken As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Object ^ UserToken { System::Object ^ get(); void set(System::Object ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.UserToken : obj with get, set" Usage="System.Net.Sockets.SocketAsyncEventArgs.UserToken" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Sockets</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Net</AssemblyName>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置与此异步套接字操作关联的用户或应用程序对象。</summary>
+        <value>一个对象，表示与此异步套接字操作关联的用户或应用程序对象。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 应用程序可以使用此属性将应用程序状态对象与<xref:System.Net.Sockets.SocketAsyncEventArgs>对象相关联。 此属性主要用于向应用程序传递状态和应用程序的事件处理程序（例如异步操作完成方法）。  
+  
+ 此属性用于所有异步套接字（xxxAsync）方法。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.DisconnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+        <altmember cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" />
+      </Docs>
+    </Member>
+  </Members>
+</Type>
