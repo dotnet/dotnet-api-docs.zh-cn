@@ -1,0 +1,371 @@
+<Type Name="ExportAttribute" FullName="System.Composition.ExportAttribute">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="a36f750427578670b692056af23bab7f4ffec06e" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70671059" /></Metadata><TypeSignature Language="C#" Value="public class ExportAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ExportAttribute extends System.Attribute" />
+  <TypeSignature Language="DocId" Value="T:System.Composition.ExportAttribute" />
+  <TypeSignature Language="VB.NET" Value="Public Class ExportAttribute&#xA;Inherits Attribute" />
+  <TypeSignature Language="C++ CLI" Value="public ref class ExportAttribute : Attribute" />
+  <TypeSignature Language="F#" Value="type ExportAttribute = class&#xA;    inherit Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.Composition.AttributedModel</AssemblyName>
+    <AssemblyVersion>1.0.31.0</AssemblyVersion>
+    <AssemblyVersion>1.0.32.0</AssemblyVersion>
+    <AssemblyVersion>1.0.33.0</AssemblyVersion>
+    <AssemblyVersion>1.0.34.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netcore-1.1;netcore-2.0;dotnet-plat-ext-2.1;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0">
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Property, AllowMultiple=true, Inherited=false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary><span data-ttu-id="afef8-101">指定某个类型、属性、字段或方法提供特定的导出。</span><span class="sxs-lookup"><span data-stu-id="afef8-101">Specifies that a type, property, field, or method provides a particular export.</span></span></summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+<span data-ttu-id="afef8-102">在特性化编程模型中，ExportAttribute 属性声明部件导出或提供给组合容器，该对象用于满足特定协定的对象。</span><span class="sxs-lookup"><span data-stu-id="afef8-102">In the attributed programming model, the ExportAttribute attribute declares that a part exports, or provides to the composition container, an object that fulfills a particular contract.</span></span> <span data-ttu-id="afef8-103">在撰写过程中，具有匹配协定的导入的部件具有由导出的对象填充的这些依赖项。</span><span class="sxs-lookup"><span data-stu-id="afef8-103">During composition, parts with imports that have matching contracts have those dependencies filled by the exported object.</span></span>
+
+<span data-ttu-id="afef8-104">ExportAttribute 特性可以应用于整个类，也可以应用于类的属性、字段或方法。</span><span class="sxs-lookup"><span data-stu-id="afef8-104">The ExportAttribute attribute can apply to either an entire class, or a property, field, or method of a class.</span></span> <span data-ttu-id="afef8-105">如果将它应用于整个类，则类的实例是导出的对象。</span><span class="sxs-lookup"><span data-stu-id="afef8-105">If it's applied to the entire class, an instance of the class is the exported object.</span></span> <span data-ttu-id="afef8-106">如果将它应用于类的成员，则导出的对象将是该成员的值。</span><span class="sxs-lookup"><span data-stu-id="afef8-106">If it's applied to a member of a class, the exported object will be the value of that member.</span></span>
+
+<span data-ttu-id="afef8-107">协定匹配是否主要由协定名称和协定类型确定。</span><span class="sxs-lookup"><span data-stu-id="afef8-107">Whether or not a contract matches is determined primarily by the contract name and the contract type.</span></span> <span data-ttu-id="afef8-108">有关详细信息，请参阅<xref:System.Composition.ImportAttribute>参考。</span><span class="sxs-lookup"><span data-stu-id="afef8-108">For more information, see the <xref:System.Composition.ImportAttribute> reference.</span></span> 
+
+
+
+## Examples  
+ <span data-ttu-id="afef8-109">下面的示例演示如何将 ExportAttribute 应用于三个类，并显示三个匹配它们的导入。</span><span class="sxs-lookup"><span data-stu-id="afef8-109">The following example shows ExportAttribute being applied to three classes, and three imports that match them.</span></span>  
+
+```csharp
+//Default export infers type and contract name from the
+//exported type.  This is the preferred method.
+[Export]
+public class MyExport1
+{
+    public String data = "Test Data 1.";
+}
+
+public class MyImporter1
+{
+    [Import]
+    public MyExport1 importedMember { get; set; }
+}
+
+public interface MyInterface
+{
+
+}
+
+//Specifying the contract type may be important if
+//you want to export a type other then the base type,
+//such as an interface.
+[Export(typeof(MyInterface))]
+public class MyExport2 : MyInterface
+{
+    public String data = "Test Data 2.";
+}
+
+public class MyImporter2
+{
+    //The import must match the contract type!
+    [Import(typeof(MyInterface))]
+    public MyExport2 importedMember { get; set; }
+}
+
+//Specifying a contract name should only be 
+//needed in rare cases. Usually, using metadata
+//is a better approach.
+[Export("MyContractName", typeof(MyInterface))]
+public class MyExport3 : MyInterface
+{
+    public String data = "Test Data 3.";
+}
+
+public class MyImporter3
+{
+    //Both contract name and type must match!
+    [Import("MyContractName", typeof(MyInterface))]
+    public MyExport3 importedMember { get; set; }
+}
+
+class Program
+{      
+
+    static void Main(string[] args)
+    {
+        AggregateCatalog catalog = new AggregateCatalog();
+        catalog.Catalogs.Add(new AssemblyCatalog(typeof(MyExport1).Assembly));
+        CompositionContainer _container = new CompositionContainer(catalog);
+        MyImporter1 test1 = new MyImporter1();
+        MyImporter2 test2 = new MyImporter2();
+        MyImporter3 test3 = new MyImporter3();
+        _container.SatisfyImportsOnce(test1);
+        _container.SatisfyImportsOnce(test2);
+        _container.SatisfyImportsOnce(test3);
+        Console.WriteLine(test1.importedMember.data);
+        Console.WriteLine(test2.importedMember.data);
+        Console.WriteLine(test3.importedMember.data);
+        Console.ReadLine();
+
+    }
+}
+```
+
+```vb
+'Default export infers type and contract name from the
+'exported type.  This is the preferred method.
+<Export()>
+Public Class MyExport1
+    Public ReadOnly Property data As String
+        Get
+            Return "Test Data 1."
+        End Get
+    End Property
+End Class
+
+Public Class MyImporter1
+
+    <Import()>
+    Public Property ImportedMember As MyExport1
+
+End Class
+
+Public Interface MyInterface
+
+End Interface
+
+'Specifying the contract type may be important if
+'you want to export a type other then the base type,
+'such as an interface.
+<Export(GetType(MyInterface))>
+Public Class MyExport2
+    Implements MyInterface
+    Public ReadOnly Property data As String
+        Get
+            Return "Test Data 2."
+        End Get
+    End Property
+End Class
+
+Public Class MyImporter2
+    'The import must match the contract type!
+    <Import(GetType(MyInterface))>
+    Public Property ImportedMember As MyExport2
+End Class
+
+'Specifying a contract name should only be 
+'needed in rare cases. Usually, using metadata
+'is a better approach.
+<Export("MyContractName", GetType(MyInterface))>
+Public Class MyExport3
+    Implements MyInterface
+    Public ReadOnly Property data As String
+        Get
+            Return "Test Data 3."
+        End Get
+    End Property
+End Class
+
+Public Class MyImporter3
+    'Both contract name and type must match!
+    <Import("MyContractName", GetType(MyInterface))>
+    Public Property ImportedMember As MyExport3
+End Class
+
+
+
+Sub Main()
+    Dim catalog As AggregateCatalog = New AggregateCatalog()
+    catalog.Catalogs.Add(New AssemblyCatalog(GetType(MyExport1).Assembly))
+    Dim container As CompositionContainer = New CompositionContainer(catalog)
+    Dim test1 As MyImporter1 = New MyImporter1()
+    Dim test2 As MyImporter2 = New MyImporter2()
+    Dim test3 As MyImporter3 = New MyImporter3()
+    container.SatisfyImportsOnce(test1)
+    container.SatisfyImportsOnce(test2)
+    container.SatisfyImportsOnce(test3)
+    Console.WriteLine(test1.ImportedMember.data)
+    Console.WriteLine(test2.ImportedMember.data)
+    Console.WriteLine(test3.ImportedMember.data)
+    Console.ReadLine()
+End Sub
+```
+
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ExportAttribute ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Composition.ExportAttribute.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; ExportAttribute();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Composition.AttributedModel</AssemblyName>
+        <AssemblyVersion>1.0.31.0</AssemblyVersion>
+        <AssemblyVersion>1.0.32.0</AssemblyVersion>
+        <AssemblyVersion>1.0.33.0</AssemblyVersion>
+        <AssemblyVersion>1.0.34.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="afef8-110">通过在默认协定名称下导出使用此特性标记的类型或成员，初始化 <see cref="T:System.Composition.ExportAttribute" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="afef8-110">Initializes a new instance of the <see cref="T:System.Composition.ExportAttribute" /> class, exporting the type or member marked with this attribute under the default contract name.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+<span data-ttu-id="afef8-111">使用此特性标记的方法必须使用<xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.String)> <xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.Type)>或方法指定协定名称或类型。</span><span class="sxs-lookup"><span data-stu-id="afef8-111">Methods that are marked with this attribute must specify a contract name or a type by using either the <xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.String)> or the <xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.Type)> method.</span></span>
+
+<span data-ttu-id="afef8-112">通过使用<xref:System.StringComparer.Ordinal>属性执行区分大小写的非语言比较，对协定名称进行比较。</span><span class="sxs-lookup"><span data-stu-id="afef8-112">The contract name is compared by using the <xref:System.StringComparer.Ordinal> property to perform a case-sensitive, non-linguistic comparison.</span></span> 
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ExportAttribute (string contractName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string contractName) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Composition.ExportAttribute.#ctor(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (contractName As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; ExportAttribute(System::String ^ contractName);" />
+      <MemberSignature Language="F#" Value="new System.Composition.ExportAttribute : string -&gt; System.Composition.ExportAttribute" Usage="new System.Composition.ExportAttribute contractName" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Composition.AttributedModel</AssemblyName>
+        <AssemblyVersion>1.0.31.0</AssemblyVersion>
+        <AssemblyVersion>1.0.32.0</AssemblyVersion>
+        <AssemblyVersion>1.0.33.0</AssemblyVersion>
+        <AssemblyVersion>1.0.34.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="contractName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="contractName"><span data-ttu-id="afef8-113">用于导出使用此特性标记的类型或成员的协定名称，或 <see langword="null" /> 或空字符串 ("") 以使用默认协定名称。</span><span class="sxs-lookup"><span data-stu-id="afef8-113">The contract name that is used to export the type or member marked with this attribute, or <see langword="null" /> or an empty string ("") to use the default contract name.</span></span></param>
+        <summary><span data-ttu-id="afef8-114">通过在指定的协定名称下导出用此属性标记的类型或成员，来初始化 <see cref="T:System.Composition.ExportAttribute" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="afef8-114">Initializes a new instance of the <see cref="T:System.Composition.ExportAttribute" /> class, exporting the type or member marked with this attribute under the specified contract name.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+
+<span data-ttu-id="afef8-115">使用此特性标记的方法必须使用<xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.String)> <xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.Type)>或方法指定协定名称或类型。</span><span class="sxs-lookup"><span data-stu-id="afef8-115">Methods that are marked with this attribute must specify a contract name or a type by using either the <xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.String)> or the <xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.Type)> method.</span></span>
+
+<span data-ttu-id="afef8-116">通过使用<xref:System.StringComparer.Ordinal>属性执行区分大小写的非语言比较，对协定名称进行比较。</span><span class="sxs-lookup"><span data-stu-id="afef8-116">The contract name is compared by using the <xref:System.StringComparer.Ordinal> property to perform a case-sensitive, non-linguistic comparison.</span></span> 
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ExportAttribute (Type contractType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Type contractType) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Composition.ExportAttribute.#ctor(System.Type)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (contractType As Type)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; ExportAttribute(Type ^ contractType);" />
+      <MemberSignature Language="F#" Value="new System.Composition.ExportAttribute : Type -&gt; System.Composition.ExportAttribute" Usage="new System.Composition.ExportAttribute contractType" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Composition.AttributedModel</AssemblyName>
+        <AssemblyVersion>1.0.31.0</AssemblyVersion>
+        <AssemblyVersion>1.0.32.0</AssemblyVersion>
+        <AssemblyVersion>1.0.33.0</AssemblyVersion>
+        <AssemblyVersion>1.0.34.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="contractType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="contractType"><span data-ttu-id="afef8-117">从中派生用于导出使用此特性标记的类型或成员的协定名称的类型，或 <see langword="null" /> 以使用默认协定名称。</span><span class="sxs-lookup"><span data-stu-id="afef8-117">A type from which to derive the contract name that is used to export the type or member marked with this attribute, or <see langword="null" /> to use the default contract name.</span></span></param>
+        <summary><span data-ttu-id="afef8-118">通过在派生自指定类型的协定名称下导出使用此特性标记的类型或成员，初始化 <see cref="T:System.Composition.ExportAttribute" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="afef8-118">Initializes a new instance of the <see cref="T:System.Composition.ExportAttribute" /> class, exporting the type or member marked with this attribute under a contract name derived from the specified type.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+<span data-ttu-id="afef8-119">使用此特性标记的方法必须使用<xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.String)> <xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.Type)>或方法指定协定名称或类型。</span><span class="sxs-lookup"><span data-stu-id="afef8-119">Methods that are marked with this attribute must specify a contract name or a type by using either the <xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.String)> or the <xref:System.ComponentModel.Composition.ExportAttribute.%23ctor(System.Type)> method.</span></span>
+
+<span data-ttu-id="afef8-120">通过使用<xref:System.StringComparer.Ordinal>属性执行区分大小写的非语言比较，对协定名称进行比较。</span><span class="sxs-lookup"><span data-stu-id="afef8-120">The contract name is compared by using the <xref:System.StringComparer.Ordinal> property to perform a case-sensitive, non-linguistic comparison.</span></span> 
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ExportAttribute (string contractName, Type contractType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string contractName, class System.Type contractType) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Composition.ExportAttribute.#ctor(System.String,System.Type)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (contractName As String, contractType As Type)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; ExportAttribute(System::String ^ contractName, Type ^ contractType);" />
+      <MemberSignature Language="F#" Value="new System.Composition.ExportAttribute : string * Type -&gt; System.Composition.ExportAttribute" Usage="new System.Composition.ExportAttribute (contractName, contractType)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Composition.AttributedModel</AssemblyName>
+        <AssemblyVersion>1.0.31.0</AssemblyVersion>
+        <AssemblyVersion>1.0.32.0</AssemblyVersion>
+        <AssemblyVersion>1.0.33.0</AssemblyVersion>
+        <AssemblyVersion>1.0.34.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="contractName" Type="System.String" />
+        <Parameter Name="contractType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="contractName"><span data-ttu-id="afef8-121">用于导出使用此特性标记的类型或成员的协定名称，或 <see langword="null" /> 或空字符串 ("") 以使用默认协定名称。</span><span class="sxs-lookup"><span data-stu-id="afef8-121">The contract name that is used to export the type or member marked with this attribute, or <see langword="null" /> or an empty string ("") to use the default contract name.</span></span></param>
+        <param name="contractType"><span data-ttu-id="afef8-122">要导出的类型。</span><span class="sxs-lookup"><span data-stu-id="afef8-122">The type to export.</span></span></param>
+        <summary><span data-ttu-id="afef8-123">通过在指定协定名称下导出指定类型，初始化 <see cref="T:System.Composition.ExportAttribute" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="afef8-123">Initializes a new instance of the <see cref="T:System.Composition.ExportAttribute" /> class, exporting the specified type under the specified contract name.</span></span></summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContractName">
+      <MemberSignature Language="C#" Value="public string ContractName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContractName" />
+      <MemberSignature Language="DocId" Value="P:System.Composition.ExportAttribute.ContractName" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property ContractName As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ ContractName { System::String ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.ContractName : string" Usage="System.Composition.ExportAttribute.ContractName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Composition.AttributedModel</AssemblyName>
+        <AssemblyVersion>1.0.31.0</AssemblyVersion>
+        <AssemblyVersion>1.0.32.0</AssemblyVersion>
+        <AssemblyVersion>1.0.33.0</AssemblyVersion>
+        <AssemblyVersion>1.0.34.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="afef8-124">获取用于导出使用此特性标记的类型或成员的协定名称。</span><span class="sxs-lookup"><span data-stu-id="afef8-124">Gets the contract name that is used to export the type or member marked with this attribute.</span></span></summary>
+        <value><span data-ttu-id="afef8-125">用于导出使用此特性标记的类型或成员的协定名称。</span><span class="sxs-lookup"><span data-stu-id="afef8-125">The contract name that is used to export the type or member marked with this attribute.</span></span> <span data-ttu-id="afef8-126">默认值为空字符串 ("")。</span><span class="sxs-lookup"><span data-stu-id="afef8-126">The default value is an empty string ("").</span></span></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContractType">
+      <MemberSignature Language="C#" Value="public Type ContractType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ContractType" />
+      <MemberSignature Language="DocId" Value="P:System.Composition.ExportAttribute.ContractType" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property ContractType As Type" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property Type ^ ContractType { Type ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.ContractType : Type" Usage="System.Composition.ExportAttribute.ContractType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Composition.AttributedModel</AssemblyName>
+        <AssemblyVersion>1.0.31.0</AssemblyVersion>
+        <AssemblyVersion>1.0.32.0</AssemblyVersion>
+        <AssemblyVersion>1.0.33.0</AssemblyVersion>
+        <AssemblyVersion>1.0.34.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="afef8-127">获取由此特性标记的成员导出的协定类型。</span><span class="sxs-lookup"><span data-stu-id="afef8-127">Gets the contract type that is exported by the member that is marked by this attribute.</span></span></summary>
+        <value><span data-ttu-id="afef8-128">要提供的导出的类型。</span><span class="sxs-lookup"><span data-stu-id="afef8-128">The type of export to be provided.</span></span> <span data-ttu-id="afef8-129">默认值为 <see langword="null" />，这表示将通过查看此导出附加到的成员上的类型来获取类型。</span><span class="sxs-lookup"><span data-stu-id="afef8-129">The default value is <see langword="null" />, which means that the type will be obtained by looking at the type on the member that this export is attached to.</span></span></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
