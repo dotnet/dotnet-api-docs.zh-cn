@@ -1,0 +1,209 @@
+<Type Name="TransferMode" FullName="System.ServiceModel.TransferMode">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="4a2e015b182a098a5f7884128c4837e1a3704bd4" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70665139" /></Metadata><TypeSignature Language="C#" Value="public enum TransferMode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TransferMode extends System.Enum" />
+  <TypeSignature Language="DocId" Value="T:System.ServiceModel.TransferMode" />
+  <TypeSignature Language="VB.NET" Value="Public Enum TransferMode" />
+  <TypeSignature Language="C++ CLI" Value="public enum class TransferMode" />
+  <TypeSignature Language="F#" Value="type TransferMode = " />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel.Primitives</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.1.0</AssemblyVersion>
+    <AssemblyVersion>4.2.0.0</AssemblyVersion>
+    <AssemblyVersion>4.5.0.1</AssemblyVersion>
+    <AssemblyVersion>4.5.0.3</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>指示通道是使用流处理模式还是缓冲模式来传输请求和响应消息。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ Windows Communication Foundation （WCF）传输支持在每个方向传输消息两种模式：  
+  
+-   缓冲传输将整个消息保留在内存缓冲区中，直到传输完成。  
+  
+-   流传输仅会对消息头进行缓冲，并以流形式公开消息正文，也就是，一次只能读取一小部分消息。  
+  
+ 将传输模式设置为 `Streamed` 将在两个方向上启用流通信。 将传输模式设置为 `StreamedRequest` 或 `StreamedResponse` 将仅在指示的方向上启用流通信。  
+  
+ 流传输消除了对大型内存缓冲区的需要，从而提高了服务的可伸缩性。 更改传输模式是否确实能够提高可伸缩性取决于所传输的消息大小。 当针对大型消息使用流传输而不是缓存传输时，可伸缩性的提高应最为明显。  
+  
+ 默认情况下，HTTP、TCP/IP 和命名管道传输协议使用缓冲消息传输。 `TransferMode`您可以使用在<xref:System.ServiceModel.BasicHttpBinding>、 <xref:System.ServiceModel.NetTcpBinding>和<xref:System.ServiceModel.NetNamedPipeBinding>系统提供的绑定上公开的传输模式属性设置的值。 <xref:System.ServiceModel.NetTcpBinding> 通过 <xref:System.ServiceModel.NetTcpBinding.TransferMode%2A?displayProperty=nameWithType> 使用属性，可以在类上设置模式。 也可以在绑定的配置节中进行设置。  
+  
+ 对于未公开传输模式属性的绑定，可以在传输的绑定元素上设置传输模式，此后可以将该元素添加到自定义绑定。 例如，创建 <xref:System.ServiceModel.Channels.HttpTransportBindingElement> 并在创建自定义绑定时利用 <xref:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement.TransferMode%2A> 属性设置传输模式。 也可以在自定义绑定的配置节中设置传输模式。  
+  
+ 对于 HTTP 传输，使用缓冲传输还是流传输是在终结点本地决定的。 对于 HTTP 传输，传输模式不会通过连接传播，也不会传播到代理服务器或其他中间方。 设置传输模式不会反映在服务协定的说明中。 在对服务生成一个代理后，可以但不强求为旨在与流传输一起使用的服务编辑配置文件，以设置传输模式。 对于 TCP 和命名管道传输协议，该传输模式将作为策略断言传播。  
+  
+ `Streamed`使用传输模式会导致 WCF 运行时强制实施某些限制。  
+  
+-   在编程模型层，整个流传输中发生的操作最多只能与一个输入和/或输出参数之间具有协定。 该参数对应于整个消息正文，并且必须为 <xref:System.ServiceModel.Channels.Message>、<xref:System.IO.Stream> 的子类型或实现 <xref:System.Xml.Serialization.IXmlSerializable> 接口。 具有某个操作的返回值等效于具有一个输出参数。  
+  
+-   某些 WCF 功能（如可靠消息传递和 SOAP 消息级安全）依赖于缓冲消息以便进行传输。 使用这些功能可能减小或消除通过使用流获得的性能好处。 若要保证流传输的安全，请只使用传输级安全，或者使用 WS-Security 声明外加传输安全的混合模式安全。  
+  
+-   即使传输模式设置为 `Streamed`，也总是会对 SOAP 标头进行缓冲。 消息的标头不得超过在各种绑定和绑定元素上公开的 MaxBufferSize 传输配额大小。  
+  
+ 将传输模式从 `Buffered` 更改为 `Streamed` 还会更改 TCP 和命名管道传输协议的本机通道形状。 对于缓冲传输模式，本机通道形状为 <xref:System.ServiceModel.Channels.IDuplexSessionChannel>。 对于流传输模式，本机通道为 <xref:System.ServiceModel.Channels.IRequestChannel> 和 <xref:System.ServiceModel.Channels.IReplyChannel>。 因此，会话服务协定不能与传输流一起使用。  
+  
+## Examples
+
+下面的示例通过代码将[TcpTransportBindingElement. transfermode.buffered](xref:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement.TransferMode)属性`Streamed`设置为：  
+  
+```csharp  
+TcpTransportBindingElement transport = new TcpTransportBindingElement();  
+transport.TransferMode = TransferMode.Streamed;  
+BinaryMessageEncodingBindingElement encoder = new BinaryMessageEncodingBindingElement();  
+CustomBinding binding = new CustomBinding(encoder, transport);  
+```  
+  
+下面的示例通过配置将[transfermode.buffered](xref:System.ServiceModel.Channels.ConnectionOrientedTransportBindingElement.TransferMode)属性设置为`Streamed` ：  
+  
+```xml
+<customBinding>  
+    <binding name="streamingBinding">  
+        <binaryMessageEncoding />  
+            <tcpTransport transferMode="Streamed" />  
+     </binding>  
+</customBinding>  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Buffered">
+      <MemberSignature Language="C#" Value="Buffered" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.TransferMode Buffered = int32(0)" />
+      <MemberSignature Language="DocId" Value="F:System.ServiceModel.TransferMode.Buffered" />
+      <MemberSignature Language="VB.NET" Value="Buffered" />
+      <MemberSignature Language="C++ CLI" Value="Buffered" />
+      <MemberSignature Language="F#" Value="Buffered = 0" Usage="System.ServiceModel.TransferMode.Buffered" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel.Primitives</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.5.0.1</AssemblyVersion>
+        <AssemblyVersion>4.5.0.3</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.TransferMode</ReturnType>
+      </ReturnValue>
+      <MemberValue>0</MemberValue>
+      <Docs>
+        <summary>对请求和响应消息进行缓冲处理。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Streamed">
+      <MemberSignature Language="C#" Value="Streamed" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.TransferMode Streamed = int32(1)" />
+      <MemberSignature Language="DocId" Value="F:System.ServiceModel.TransferMode.Streamed" />
+      <MemberSignature Language="VB.NET" Value="Streamed" />
+      <MemberSignature Language="C++ CLI" Value="Streamed" />
+      <MemberSignature Language="F#" Value="Streamed = 1" Usage="System.ServiceModel.TransferMode.Streamed" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel.Primitives</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.5.0.1</AssemblyVersion>
+        <AssemblyVersion>4.5.0.3</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.TransferMode</ReturnType>
+      </ReturnValue>
+      <MemberValue>1</MemberValue>
+      <Docs>
+        <summary>对请求和响应消息进行流式处理。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="StreamedRequest">
+      <MemberSignature Language="C#" Value="StreamedRequest" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.TransferMode StreamedRequest = int32(2)" />
+      <MemberSignature Language="DocId" Value="F:System.ServiceModel.TransferMode.StreamedRequest" />
+      <MemberSignature Language="VB.NET" Value="StreamedRequest" />
+      <MemberSignature Language="C++ CLI" Value="StreamedRequest" />
+      <MemberSignature Language="F#" Value="StreamedRequest = 2" Usage="System.ServiceModel.TransferMode.StreamedRequest" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel.Primitives</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.5.0.1</AssemblyVersion>
+        <AssemblyVersion>4.5.0.3</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.TransferMode</ReturnType>
+      </ReturnValue>
+      <MemberValue>2</MemberValue>
+      <Docs>
+        <summary>对请求消息进行流式处理，对响应消息进行缓冲处理。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="StreamedResponse">
+      <MemberSignature Language="C#" Value="StreamedResponse" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.ServiceModel.TransferMode StreamedResponse = int32(3)" />
+      <MemberSignature Language="DocId" Value="F:System.ServiceModel.TransferMode.StreamedResponse" />
+      <MemberSignature Language="VB.NET" Value="StreamedResponse" />
+      <MemberSignature Language="C++ CLI" Value="StreamedResponse" />
+      <MemberSignature Language="F#" Value="StreamedResponse = 3" Usage="System.ServiceModel.TransferMode.StreamedResponse" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel.Primitives</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.5.0.1</AssemblyVersion>
+        <AssemblyVersion>4.5.0.3</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.TransferMode</ReturnType>
+      </ReturnValue>
+      <MemberValue>3</MemberValue>
+      <Docs>
+        <summary>对请求消息进行缓冲处理，对响应消息进行流式处理。</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,636 @@
+<Type Name="CompositeActivity" FullName="System.Workflow.ComponentModel.CompositeActivity">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="9b8f674920d044bfd3ce695d6f8f4767c08cdcdb" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70623939" /></Metadata><TypeSignature Language="C#" Value="public class CompositeActivity : System.Workflow.ComponentModel.Activity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CompositeActivity extends System.Workflow.ComponentModel.Activity" />
+  <TypeSignature Language="DocId" Value="T:System.Workflow.ComponentModel.CompositeActivity" />
+  <TypeSignature Language="VB.NET" Value="Public Class CompositeActivity&#xA;Inherits Activity" />
+  <TypeSignature Language="C++ CLI" Value="public ref class CompositeActivity : System::Workflow::ComponentModel::Activity" />
+  <TypeSignature Language="F#" Value="type CompositeActivity = class&#xA;    inherit Activity" />
+  <AssemblyInfo>
+    <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Workflow.ComponentModel.Activity</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ComponentModel.Design.Serialization.DesignerSerializer(typeof(System.Workflow.ComponentModel.Serialization.CompositeActivityMarkupSerializer), typeof(System.Workflow.ComponentModel.Serialization.WorkflowMarkupSerializer))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.ComponentModel.TypeDescriptionProvider(typeof(System.Workflow.ComponentModel.Serialization.CompositeActivityTypeDescriptorProvider))</AttributeName>
+    </Attribute>
+    <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8">
+      <AttributeName>System.Obsolete("The System.Workflow.* types are deprecated.  Instead, please use the new types from System.Activities.*")</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Workflow.ComponentModel.Compiler.ActivityCodeGenerator(typeof(System.Workflow.ComponentModel.Compiler.CompositeActivityCodeGenerator))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Workflow.ComponentModel.Compiler.ActivityValidator(typeof(System.Workflow.ComponentModel.Compiler.CompositeActivityValidator))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Workflow.ComponentModel.Serialization.ContentProperty("Activities")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary><see cref="T:System.Workflow.ComponentModel.Activity" /> 的派生，前者是包含其他活动的所有活动的基类。 <see cref="T:System.Workflow.ComponentModel.CompositeActivity" /> 负责管理其子活动的执行。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  [!INCLUDE[DeprecatedContent](~/includes/deprecatedcontent-md.md)]  
+  
+ <xref:System.Workflow.ComponentModel.CompositeActivity> 使用在 <xref:System.Workflow.ComponentModel.ActivityExecutionContext> 类上定义的 <xref:System.Workflow.ComponentModel.Activity> 类方法和事件来管理其子活动的执行。  例如，使用 <xref:System.Workflow.ComponentModel.ActivityExecutionContext.ExecuteActivity%2A> 的 <xref:System.Workflow.ComponentModel.ActivityExecutionContext> 来计划子活动的执行。 当子活动完成执行后，通过订阅在 <xref:System.Workflow.ComponentModel.CompositeActivity> 中定义的 <xref:System.Workflow.ComponentModel.Activity.Closed> 事件，可以向 <xref:System.Workflow.ComponentModel.Activity> 活动发出通知。  
+  
+ 工作流运行时在 <xref:System.Workflow.ComponentModel.CompositeActivity> 执行上强制实施特定约束，其中最基本的约束是，如果任何子活动仍处于 <xref:System.Workflow.ComponentModel.CompositeActivity>、<xref:System.Workflow.ComponentModel.Activity.Closed>、<xref:System.Workflow.ComponentModel.Activity.Executing> 或 <xref:System.Workflow.ComponentModel.Activity.Canceling> 状态，则 <xref:System.Workflow.ComponentModel.Activity.Compensating> 活动不能进入 <xref:System.Workflow.ComponentModel.Activity.Faulting> 状态。  
+  
+   
+  
+## Examples  
+ 此示例演示一个基本的 `CompositeActivity`，它在执行时执行其第一个子活动。 当子活动进入关闭状态时，将通知复合活动，然后完成其执行。  
+  
+```csharp  
+public class HasOneChildActivity : CompositeActivity  
+{  
+    protected override ActivityExecutionStatus Execute(ActivityExecutionContext executionContext)  
+    {  
+        Activity child = this.EnabledActivities[0];  
+        child.Closed += this.ChildClosed;  
+        executionContext.ExecuteActivity(child);  
+  
+        return ActivityExecutionStatus.Executing;  
+    }  
+  
+    void ChildClosed(object sender, ActivityExecutionStatusChangedEventArgs e)  
+    {  
+        e.Activity.Closed -= this.ChildClosed;  
+        ActivityExecutionContext executionContext = sender as ActivityExecutionContext;  
+  
+        executionContext.CloseActivity();  
+    }  
+}  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Workflow.ComponentModel.CompositeActivity" /> 类的新实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CompositeActivity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; CompositeActivity();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.Workflow.ComponentModel.CompositeActivity" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CompositeActivity (System.Collections.Generic.IEnumerable&lt;System.Workflow.ComponentModel.Activity&gt; children);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.Generic.IEnumerable`1&lt;class System.Workflow.ComponentModel.Activity&gt; children) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.#ctor(System.Collections.Generic.IEnumerable{System.Workflow.ComponentModel.Activity})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (children As IEnumerable(Of Activity))" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; CompositeActivity(System::Collections::Generic::IEnumerable&lt;System::Workflow::ComponentModel::Activity ^&gt; ^ children);" />
+      <MemberSignature Language="F#" Value="new System.Workflow.ComponentModel.CompositeActivity : seq&lt;System.Workflow.ComponentModel.Activity&gt; -&gt; System.Workflow.ComponentModel.CompositeActivity" Usage="new System.Workflow.ComponentModel.CompositeActivity children" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="children" Type="System.Collections.Generic.IEnumerable&lt;System.Workflow.ComponentModel.Activity&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="children">实现 <see cref="T:System.Object" /> 类型的 <see cref="T:System.Collections.IEnumerable" /> 接口的 <see cref="T:System.Workflow.ComponentModel.Activity" />。</param>
+        <summary>从 <see cref="T:System.Workflow.ComponentModel.CompositeActivity" /> 初始化 <see cref="T:System.Object" /> 类的新实例，前者实现 <see cref="T:System.Collections.IEnumerable" /> 类型的 <see cref="T:System.Workflow.ComponentModel.Activity" /> 接口。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CompositeActivity (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.#ctor(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (name As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; CompositeActivity(System::String ^ name);" />
+      <MemberSignature Language="F#" Value="new System.Workflow.ComponentModel.CompositeActivity : string -&gt; System.Workflow.ComponentModel.CompositeActivity" Usage="new System.Workflow.ComponentModel.CompositeActivity name" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">实例的名称。</param>
+        <summary>初始化 <see cref="T:System.Workflow.ComponentModel.CompositeActivity" /> 类的新实例，包括该活动的名称。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为空引用（在 Visual Basic 中为 <see langword="Nothing" />）。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Activities">
+      <MemberSignature Language="C#" Value="public System.Workflow.ComponentModel.ActivityCollection Activities { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Workflow.ComponentModel.ActivityCollection Activities" />
+      <MemberSignature Language="DocId" Value="P:System.Workflow.ComponentModel.CompositeActivity.Activities" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Activities As ActivityCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Workflow::ComponentModel::ActivityCollection ^ Activities { System::Workflow::ComponentModel::ActivityCollection ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Activities : System.Workflow.ComponentModel.ActivityCollection" Usage="System.Workflow.ComponentModel.CompositeActivity.Activities" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Content)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Workflow.ComponentModel.ActivityCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取表示所有子活动的集合 <see cref="T:System.Workflow.ComponentModel.ActivityCollection" /> 的对象。</summary>
+        <value>所有子活动的 <see cref="T:System.Workflow.ComponentModel.ActivityCollection" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 表示由复合活动管理的子活动的集合。 可以更新此集合。  
+  
+   
+  
+## Examples  
+ 下面的代码演示如何创建活动并将其作为子级添加到复合活动中，还演示如何设置此类型的 <xref:System.Workflow.ComponentModel.CompositeActivity.CanModifyActivities%2A> 许可。  
+  
+ 此代码示例摘自 ThrowWorkFlow.cs 文件中的“引发 SDK”示例。 有关详细信息，请参阅[Throw 示例](https://msdn.microsoft.com/library/aa5b9546-ec95-4e43-8337-20e26f8d71cc)。  
+  
+ [!code-csharp[WF_Samples#179](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets11.cs#179)]
+ [!code-vb[WF_Samples#179](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets11.vb#179)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplyWorkflowChanges">
+      <MemberSignature Language="C#" Value="protected void ApplyWorkflowChanges (System.Workflow.ComponentModel.WorkflowChanges workflowChanges);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void ApplyWorkflowChanges(class System.Workflow.ComponentModel.WorkflowChanges workflowChanges) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.ApplyWorkflowChanges(System.Workflow.ComponentModel.WorkflowChanges)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void ApplyWorkflowChanges(System::Workflow::ComponentModel::WorkflowChanges ^ workflowChanges);" />
+      <MemberSignature Language="F#" Value="member this.ApplyWorkflowChanges : System.Workflow.ComponentModel.WorkflowChanges -&gt; unit" Usage="compositeActivity.ApplyWorkflowChanges workflowChanges" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="workflowChanges" Type="System.Workflow.ComponentModel.WorkflowChanges" />
+      </Parameters>
+      <Docs>
+        <param name="workflowChanges">要应用的 <see cref="T:System.Workflow.ComponentModel.WorkflowChanges" />。</param>
+        <summary>将参数中的 <see cref="T:System.Workflow.ComponentModel.WorkflowChanges" /> 清单应用到此实例。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="workflowChanges" /> 为空引用（在 Visual Basic 中为 <see langword="Nothing" />）。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CanModifyActivities">
+      <MemberSignature Language="C#" Value="protected internal bool CanModifyActivities { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanModifyActivities" />
+      <MemberSignature Language="DocId" Value="P:System.Workflow.ComponentModel.CompositeActivity.CanModifyActivities" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Property CanModifyActivities As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; property bool CanModifyActivities { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.CanModifyActivities : bool with get, set" Usage="System.Workflow.ComponentModel.CompositeActivity.CanModifyActivities" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，该值控制是否可以修改 <see cref="P:System.Workflow.ComponentModel.CompositeActivity.Activities" /> 中的单个活动。</summary>
+        <value>如果可以修改 <see langword="true" /> 中的单个活动，则为 <see cref="P:System.Workflow.ComponentModel.CompositeActivity.Activities" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的代码演示如何创建活动并将其作为子级添加到复合活动中，还演示如何设置此类型的 <xref:System.Workflow.ComponentModel.CompositeActivity.CanModifyActivities%2A> 许可。  
+  
+ 此代码示例摘自 ThrowWorkFlow.cs 文件中的“引发 SDK”示例。 有关详细信息，请参阅[Throw 示例](https://msdn.microsoft.com/library/aa5b9546-ec95-4e43-8337-20e26f8d71cc)。  
+  
+ [!code-csharp[WF_Samples#179](~/samples/snippets/csharp/VS_Snippets_CFX/wf_samples/cs/snippets11.cs#179)]
+ [!code-vb[WF_Samples#179](~/samples/snippets/visualbasic/VS_Snippets_CFX/wf_samples/vb/snippets11.vb#179)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.Dispose(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overrides Sub Dispose (disposing As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; override void Dispose(bool disposing);" />
+      <MemberSignature Language="F#" Value="override this.Dispose : bool -&gt; unit" Usage="compositeActivity.Dispose disposing" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">为 <see langword="true" /> 则释放此实例及其所有子活动占用的托管资源和非托管资源；为 <see langword="false" /> 则只释放此实例占用的非托管资源。</param>
+        <summary>在此实例上调用 <see cref="M:System.Workflow.ComponentModel.DependencyObject.Dispose(System.Boolean)" />，并可以选择在此实例的所有子活动上调用 <see cref="M:System.Workflow.ComponentModel.DependencyObject.Dispose" />。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在活动的整个生存期中，可能会创建或释放多个 .NET 对象。 每次从内存中卸载工作流实例时，释放与工作流树中的活动对应的 .NET 对象（在每个活动上调用 <xref:System.Workflow.ComponentModel.DependencyObject.Dispose%2A> 方法）。 将工作流实例重新加载回内存时，使用对应卸载操作中的状态为每个活动创建新的 .NET 对象。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EnabledActivities">
+      <MemberSignature Language="C#" Value="public System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Workflow.ComponentModel.Activity&gt; EnabledActivities { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.Workflow.ComponentModel.Activity&gt; EnabledActivities" />
+      <MemberSignature Language="DocId" Value="P:System.Workflow.ComponentModel.CompositeActivity.EnabledActivities" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property EnabledActivities As ReadOnlyCollection(Of Activity)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Collections::ObjectModel::ReadOnlyCollection&lt;System::Workflow::ComponentModel::Activity ^&gt; ^ EnabledActivities { System::Collections::ObjectModel::ReadOnlyCollection&lt;System::Workflow::ComponentModel::Activity ^&gt; ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.EnabledActivities : System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Workflow.ComponentModel.Activity&gt;" Usage="System.Workflow.ComponentModel.CompositeActivity.EnabledActivities" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Workflow.ComponentModel.Activity&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取表示已启用的 <see cref="P:System.Workflow.ComponentModel.CompositeActivity.Activities" /> 的子集的只读集合。</summary>
+        <value>表示已启用的 <see cref="P:System.Workflow.ComponentModel.CompositeActivity.Activities" /> 的子集的只读集合。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDynamicActivities">
+      <MemberSignature Language="C#" Value="protected System.Workflow.ComponentModel.Activity[] GetDynamicActivities (System.Workflow.ComponentModel.Activity activity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance class System.Workflow.ComponentModel.Activity[] GetDynamicActivities(class System.Workflow.ComponentModel.Activity activity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.GetDynamicActivities(System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; cli::array &lt;System::Workflow::ComponentModel::Activity ^&gt; ^ GetDynamicActivities(System::Workflow::ComponentModel::Activity ^ activity);" />
+      <MemberSignature Language="F#" Value="member this.GetDynamicActivities : System.Workflow.ComponentModel.Activity -&gt; System.Workflow.ComponentModel.Activity[]" Usage="compositeActivity.GetDynamicActivities activity" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Workflow.ComponentModel.Activity[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="activity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="activity">指定的 <see cref="T:System.Workflow.ComponentModel.Activity" />。</param>
+        <summary>返回包含指定活动的所有当前正在执行的实例的数组。</summary>
+        <returns>当前正在执行的活动实例的数组。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="HandleFault">
+      <MemberSignature Language="C#" Value="protected internal override System.Workflow.ComponentModel.ActivityExecutionStatus HandleFault (System.Workflow.ComponentModel.ActivityExecutionContext executionContext, Exception exception);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance valuetype System.Workflow.ComponentModel.ActivityExecutionStatus HandleFault(class System.Workflow.ComponentModel.ActivityExecutionContext executionContext, class System.Exception exception) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.HandleFault(System.Workflow.ComponentModel.ActivityExecutionContext,System.Exception)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; override System::Workflow::ComponentModel::ActivityExecutionStatus HandleFault(System::Workflow::ComponentModel::ActivityExecutionContext ^ executionContext, Exception ^ exception);" />
+      <MemberSignature Language="F#" Value="override this.HandleFault : System.Workflow.ComponentModel.ActivityExecutionContext * Exception -&gt; System.Workflow.ComponentModel.ActivityExecutionStatus" Usage="compositeActivity.HandleFault (executionContext, exception)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Workflow.ComponentModel.ActivityExecutionStatus</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="executionContext" Type="System.Workflow.ComponentModel.ActivityExecutionContext" />
+        <Parameter Name="exception" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="executionContext">此实例的 <see cref="T:System.Workflow.ComponentModel.ActivityExecutionContext" />。</param>
+        <param name="exception">导致此错误的 <see cref="T:System.Exception" />。</param>
+        <summary>此实例的执行上下文中引发了异常时调用。</summary>
+        <returns>试图取消此实例时产生的 <see cref="T:System.Workflow.ComponentModel.ActivityExecutionStatus" />。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="executionContext" /> 为空引用（在 Visual Basic 中为 <see langword="Nothing" />）。
+
+或
+
+<paramref name="exception" /> 为空引用（在 Visual Basic 中为 <see langword="Nothing" />）。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="protected internal override void Initialize (IServiceProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance void Initialize(class System.IServiceProvider provider) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.Initialize(System.IServiceProvider)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overrides Sub Initialize (provider As IServiceProvider)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; override void Initialize(IServiceProvider ^ provider);" />
+      <MemberSignature Language="F#" Value="override this.Initialize : IServiceProvider -&gt; unit" Usage="compositeActivity.Initialize provider" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IServiceProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">指定的 <see cref="T:System.IServiceProvider" />。</param>
+        <summary>初始化此实例的所有适当的子活动和指定的 <see cref="T:System.IServiceProvider" />。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="provider" /> 为空引用（在 Visual Basic 中为 <see langword="Nothing" />）。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="OnActivityChangeAdd">
+      <MemberSignature Language="C#" Value="protected internal virtual void OnActivityChangeAdd (System.Workflow.ComponentModel.ActivityExecutionContext executionContext, System.Workflow.ComponentModel.Activity addedActivity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void OnActivityChangeAdd(class System.Workflow.ComponentModel.ActivityExecutionContext executionContext, class System.Workflow.ComponentModel.Activity addedActivity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.OnActivityChangeAdd(System.Workflow.ComponentModel.ActivityExecutionContext,System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Sub OnActivityChangeAdd (executionContext As ActivityExecutionContext, addedActivity As Activity)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void OnActivityChangeAdd(System::Workflow::ComponentModel::ActivityExecutionContext ^ executionContext, System::Workflow::ComponentModel::Activity ^ addedActivity);" />
+      <MemberSignature Language="F#" Value="abstract member OnActivityChangeAdd : System.Workflow.ComponentModel.ActivityExecutionContext * System.Workflow.ComponentModel.Activity -&gt; unit&#xA;override this.OnActivityChangeAdd : System.Workflow.ComponentModel.ActivityExecutionContext * System.Workflow.ComponentModel.Activity -&gt; unit" Usage="compositeActivity.OnActivityChangeAdd (executionContext, addedActivity)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="executionContext" Type="System.Workflow.ComponentModel.ActivityExecutionContext" />
+        <Parameter Name="addedActivity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="executionContext">指定的 <see cref="T:System.Workflow.ComponentModel.ActivityExecutionContext" />。</param>
+        <param name="addedActivity">指定的 <see cref="T:System.Workflow.ComponentModel.Activity" />。</param>
+        <summary>在添加活动时调用。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="executionContext" /> 为空引用（在 Visual Basic 中为 <see langword="Nothing" />）。
+
+或
+
+<paramref name="addedActivity" /> 为空引用 (<see langword="Nothing" />)。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="OnActivityChangeRemove">
+      <MemberSignature Language="C#" Value="protected internal virtual void OnActivityChangeRemove (System.Workflow.ComponentModel.ActivityExecutionContext executionContext, System.Workflow.ComponentModel.Activity removedActivity);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void OnActivityChangeRemove(class System.Workflow.ComponentModel.ActivityExecutionContext executionContext, class System.Workflow.ComponentModel.Activity removedActivity) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.OnActivityChangeRemove(System.Workflow.ComponentModel.ActivityExecutionContext,System.Workflow.ComponentModel.Activity)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Sub OnActivityChangeRemove (executionContext As ActivityExecutionContext, removedActivity As Activity)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void OnActivityChangeRemove(System::Workflow::ComponentModel::ActivityExecutionContext ^ executionContext, System::Workflow::ComponentModel::Activity ^ removedActivity);" />
+      <MemberSignature Language="F#" Value="abstract member OnActivityChangeRemove : System.Workflow.ComponentModel.ActivityExecutionContext * System.Workflow.ComponentModel.Activity -&gt; unit&#xA;override this.OnActivityChangeRemove : System.Workflow.ComponentModel.ActivityExecutionContext * System.Workflow.ComponentModel.Activity -&gt; unit" Usage="compositeActivity.OnActivityChangeRemove (executionContext, removedActivity)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="executionContext" Type="System.Workflow.ComponentModel.ActivityExecutionContext" />
+        <Parameter Name="removedActivity" Type="System.Workflow.ComponentModel.Activity" />
+      </Parameters>
+      <Docs>
+        <param name="executionContext">指定的 <see cref="T:System.Workflow.ComponentModel.ActivityExecutionContext" />。</param>
+        <param name="removedActivity">指定的 <see cref="T:System.Workflow.ComponentModel.Activity" />。</param>
+        <summary>移除活动时调用。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当前实现未提供任何功能。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnActivityExecutionContextLoad">
+      <MemberSignature Language="C#" Value="protected internal override void OnActivityExecutionContextLoad (IServiceProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance void OnActivityExecutionContextLoad(class System.IServiceProvider provider) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.OnActivityExecutionContextLoad(System.IServiceProvider)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overrides Sub OnActivityExecutionContextLoad (provider As IServiceProvider)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; override void OnActivityExecutionContextLoad(IServiceProvider ^ provider);" />
+      <MemberSignature Language="F#" Value="override this.OnActivityExecutionContextLoad : IServiceProvider -&gt; unit" Usage="compositeActivity.OnActivityExecutionContextLoad provider" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IServiceProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">一个 <see cref="T:System.Object" />，它实现 <see cref="T:System.IServiceProvider" /> 并为此实例提供服务。</param>
+        <summary>每次加载此活动的 <see cref="T:System.Workflow.ComponentModel.ActivityExecutionContext" /> 时由工作流运行时引擎调用。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnActivityExecutionContextUnload">
+      <MemberSignature Language="C#" Value="protected internal override void OnActivityExecutionContextUnload (IServiceProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance void OnActivityExecutionContextUnload(class System.IServiceProvider provider) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.OnActivityExecutionContextUnload(System.IServiceProvider)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overrides Sub OnActivityExecutionContextUnload (provider As IServiceProvider)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; override void OnActivityExecutionContextUnload(IServiceProvider ^ provider);" />
+      <MemberSignature Language="F#" Value="override this.OnActivityExecutionContextUnload : IServiceProvider -&gt; unit" Usage="compositeActivity.OnActivityExecutionContextUnload provider" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IServiceProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">一个 <see cref="T:System.Object" />，它实现 <see cref="T:System.IServiceProvider" /> 并为此实例提供服务。</param>
+        <summary>每次卸载此活动的 <see cref="T:System.Workflow.ComponentModel.ActivityExecutionContext" /> 时由工作流运行时引擎调用。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnListChanged">
+      <MemberSignature Language="C#" Value="protected virtual void OnListChanged (System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnListChanged(class System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs e) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.OnListChanged(System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnListChanged (e As ActivityCollectionChangeEventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnListChanged(System::Workflow::ComponentModel::ActivityCollectionChangeEventArgs ^ e);" />
+      <MemberSignature Language="F#" Value="abstract member OnListChanged : System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs -&gt; unit&#xA;override this.OnListChanged : System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs -&gt; unit" Usage="compositeActivity.OnListChanged e" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="e">事件所广播的 <see cref="T:System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs" />。</param>
+        <summary>当 <see cref="P:System.Workflow.ComponentModel.CompositeActivity.Activities" /> 属性发生更改时，执行附加处理。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnListChanging">
+      <MemberSignature Language="C#" Value="protected virtual void OnListChanging (System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnListChanging(class System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs e) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.OnListChanging(System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnListChanging (e As ActivityCollectionChangeEventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnListChanging(System::Workflow::ComponentModel::ActivityCollectionChangeEventArgs ^ e);" />
+      <MemberSignature Language="F#" Value="abstract member OnListChanging : System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs -&gt; unit&#xA;override this.OnListChanging : System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs -&gt; unit" Usage="compositeActivity.OnListChanging e" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.Workflow.ComponentModel.ActivityCollectionChangeEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="e">与事件相关的 <see cref="T:System.EventArgs" />。</param>
+        <summary>在对基础 <see cref="P:System.Workflow.ComponentModel.CompositeActivity.Activities" /> 进行更改之前发生的事件。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnWorkflowChangesCompleted">
+      <MemberSignature Language="C#" Value="protected internal virtual void OnWorkflowChangesCompleted (System.Workflow.ComponentModel.ActivityExecutionContext rootContext);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void OnWorkflowChangesCompleted(class System.Workflow.ComponentModel.ActivityExecutionContext rootContext) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.OnWorkflowChangesCompleted(System.Workflow.ComponentModel.ActivityExecutionContext)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Sub OnWorkflowChangesCompleted (rootContext As ActivityExecutionContext)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void OnWorkflowChangesCompleted(System::Workflow::ComponentModel::ActivityExecutionContext ^ rootContext);" />
+      <MemberSignature Language="F#" Value="abstract member OnWorkflowChangesCompleted : System.Workflow.ComponentModel.ActivityExecutionContext -&gt; unit&#xA;override this.OnWorkflowChangesCompleted : System.Workflow.ComponentModel.ActivityExecutionContext -&gt; unit" Usage="compositeActivity.OnWorkflowChangesCompleted rootContext" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rootContext" Type="System.Workflow.ComponentModel.ActivityExecutionContext" />
+      </Parameters>
+      <Docs>
+        <param name="rootContext">与此实例关联的 <see cref="T:System.Workflow.ComponentModel.ActivityExecutionContext" />。</param>
+        <summary>对此实例的集合 <see cref="P:System.Workflow.ComponentModel.CompositeActivity.Activities" /> 进行更改之后调用。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当在派生类中重写时，提供对此事件的处理。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Uninitialize">
+      <MemberSignature Language="C#" Value="protected internal override void Uninitialize (IServiceProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance void Uninitialize(class System.IServiceProvider provider) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.ComponentModel.CompositeActivity.Uninitialize(System.IServiceProvider)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overrides Sub Uninitialize (provider As IServiceProvider)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; override void Uninitialize(IServiceProvider ^ provider);" />
+      <MemberSignature Language="F#" Value="override this.Uninitialize : IServiceProvider -&gt; unit" Usage="compositeActivity.Uninitialize provider" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.ComponentModel</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.IServiceProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">一个 <see cref="T:System.Object" />，它实现 <see cref="T:System.IServiceProvider" /> 并为此实例提供服务。</param>
+        <summary>当活动从 <see cref="F:System.Workflow.ComponentModel.ActivityExecutionStatus.Closed" /> 状态转换到 <see cref="F:System.Workflow.ComponentModel.ActivityExecutionStatus.Initialized" /> 状态时，由工作流运行时引擎调用。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法用于活动清理，例如清除依赖属性和删除队列。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
