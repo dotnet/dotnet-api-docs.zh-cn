@@ -1,0 +1,862 @@
+<Type Name="ProfileBase" FullName="System.Web.Profile.ProfileBase">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="2ce400f9d6941eb2082d0fa1938e4d2e301081dd" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70603059" /></Metadata><TypeSignature Language="C#" Value="public class ProfileBase : System.Configuration.SettingsBase" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ProfileBase extends System.Configuration.SettingsBase" />
+  <TypeSignature Language="DocId" Value="T:System.Web.Profile.ProfileBase" />
+  <TypeSignature Language="VB.NET" Value="Public Class ProfileBase&#xA;Inherits SettingsBase" />
+  <TypeSignature Language="C++ CLI" Value="public ref class ProfileBase : System::Configuration::SettingsBase" />
+  <TypeSignature Language="F#" Value="type ProfileBase = class&#xA;    inherit SettingsBase" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Configuration.SettingsBase</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>提供对配置文件属性值和信息的非类型化访问。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ ASP.NET 使用<xref:System.Web.Profile.ProfileBase>类创建用于用户配置文件的类。 当已启用用户配置文件的应用程序启动时，ASP.NET 将创建一个类型`ProfileCommon`为的新类，该类继承<xref:System.Web.Profile.ProfileBase>自类。 强类型访问器将添加到`ProfileCommon` [配置文件](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100))配置节中定义的每个属性的类。 `ProfileCommon`类的强类型访问器调用<xref:System.Web.Profile.ProfileBase>基类的<xref:System.Web.Profile.ProfileBase.GetPropertyValue%2A>和<xref:System.Web.Profile.ProfileBase.SetPropertyValue%2A>方法，分别检索和设置配置文件属性值。 `ProfileCommon`类的实例被设置为 ASP.NET 应用程序的<xref:System.Web.HttpContext.Profile%2A>属性值。  
+  
+ 若要在 ASP.NET 应用程序中创建用户配置文件的实例，建议使用<xref:System.Web.Profile.ProfileBase.Create%2A>方法。  
+  
+## <a name="notes-to-inheritors"></a>对继承者的说明   
+
+您可以创建从<xref:System.Web.Profile.ProfileBase>抽象类继承的自定义配置文件实现，并为未在[配置文件](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100))配置元素中指定的用户配置文件定义属性。 可以在 web.config 文件中使用`inherits` [配置文件](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100))配置元素的属性指定自定义用户配置文件类型，如下面的示例中所示。 `EmployeeProfile`类的代码包含在本主题的 "示例" 部分中。
+
+[!code-xml[System.Web.Profile.ProfileBase-Config](~/samples/snippets/csharp/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/CS/config.xml)]  
+
+## Examples  
+ 下面的代码示例演示一个 web.config 文件，该文件指定一个用户配置文件，该`ZipCode`文件包含类型`string`为的`RecentSearchList`属性和类型<xref:System.Collections.Specialized.StringCollection>为的属性。 <xref:System.Web.HttpContext.Profile%2A> 当前 <xref:System.Web.HttpContext> 生成的属性将具有每个指定属性的强类型访问器。  
+  
+```xml  
+<configuration>  
+  <system.web>  
+    <anonymousIdentification enabled="true" />  
+  
+    <profile enabled="true" defaultProvider="SqlProvider" >  
+      <properties>  
+        <add name="ZipCode" allowAnonymous="true" />  
+        <add name="RecentSearchList"  
+          type="System.Collections.Specialized.StringCollection"  
+          serializeAs="Xml"  
+          allowAnonymous="true" />  
+      </properties>  
+    </profile>  
+  </system.web>  
+</configuration>  
+```  
+  
+ 下面的示例显示一个 ASP.NET 页，该页读取和设置`ZipCode`为用户配置文件指定的属性。 尝试运行此代码之前，请在网站的 ASP.NET 配置设置`AspNetSqlProvider`中将提供程序设置为默认值。  
+  
+ [!code-aspx-csharp[System.Web.Profile.HttpProfileBase#1](~/samples/snippets/csharp/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/CS/defaultcs.aspx#1)]
+ [!code-aspx-vb[System.Web.Profile.HttpProfileBase#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/VB/defaultvb.aspx#1)]  
+  
+ 下面的代码示例定义一个继承<xref:System.Web.Profile.ProfileBase>自类的类，以创建自定义配置文件。 自定义配置文件的类型是在应用程序`inherits`的 web.config 文件的[配置](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100))文件配置元素的属性中指定的。  
+  
+> [!IMPORTANT]
+>  此示例包含一个文本框，该文本框接受用户输入，这是一个潜在的安全威胁。 默认情况下，ASP.NET 网页验证用户输入是否不包含脚本或 HTML 元素。 有关详细信息，请参阅[脚本侵入概述](https://msdn.microsoft.com/library/772c7312-211a-4eb3-8d6e-eec0aa1dcc07)。  
+  
+ [!code-csharp[System.Web.Profile.ProfileBase#1](~/samples/snippets/csharp/VS_Snippets_WebNet/System.Web.Profile.ProfileBase/CS/employeeprofile.cs#1)]
+ [!code-vb[System.Web.Profile.ProfileBase#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/System.Web.Profile.ProfileBase/VB/employeeprofile.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ProfileBase ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Profile.ProfileBase.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; ProfileBase();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>创建 <see cref="T:System.Web.Profile.ProfileBase" /> 类的实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ ASP.NET 使用<xref:System.Web.Profile.ProfileBase>类创建用于用户配置文件的类。 当已启用用户配置文件的应用程序启动时，ASP.NET 将创建一个类型`ProfileCommon`为的新类，该类继承<xref:System.Web.Profile.ProfileBase>自类。 强类型访问器将添加到`ProfileCommon` [配置文件](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100))配置节中定义的每个属性的类。 `ProfileCommon`类的强类型访问器调用<xref:System.Web.Profile.ProfileBase>基类的<xref:System.Web.Profile.ProfileBase.GetPropertyValue%2A>和<xref:System.Web.Profile.ProfileBase.SetPropertyValue%2A>方法，分别检索和设置配置文件属性值。 `ProfileCommon`类的实例被设置为 ASP.NET 应用程序的<xref:System.Web.HttpContext.Profile%2A>属性值。  
+  
+> [!NOTE]
+>  用于生成存储在<xref:System.Web.HttpContext.Profile%2A>属性中的类的基类可以`inherits`使用配置文件的[配置](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100))文件节的属性重写。 在这种情况下，您将指定从<xref:System.Web.Profile.ProfileBase>基类继承的自定义类。  
+  
+ 此构造函数不应在应用程序代码中使用。 若要创建用户配置文件的实例，请使用<xref:System.Web.Profile.ProfileBase.Create%2A>方法。  
+  
+   
+  
+## Examples  
+ 下面的 web.config 文件指定了一个用户配置文件，其中包含`ZipCode`类型`string`为的属性和`RecentSearchList`类型<xref:System.Collections.Specialized.StringCollection>为的属性。 <xref:System.Web.HttpContext.Profile%2A> 当前 <xref:System.Web.HttpContext> 生成的属性将具有每个指定属性的强类型访问器。  
+  
+```xml  
+<configuration>  
+   <connectionStrings>  
+       <add name="SqlServices" connectionString="Data Source=localhost;Integrated Security=SSPI;Initial Catalog=aspnetdb;" />  
+   </connectionStrings>  
+  
+  <system.web>  
+   <anonymousIdentification enabled="true" />  
+  
+   <profile defaultProvider="SqlProvider" >  
+     <providers>  
+       <add  
+         name="SqlProvider"  
+         connectionStringName="SqlServices"  
+         applicationName="ProfileBaseApplication"  
+         type="System.Web.Profile.SqlProfileProvider" />  
+     </providers>  
+  
+     <properties>  
+       <add name="ZipCode" allowAnonymous="true" />  
+       <add name="RecentSearchList"  
+            type="System.Collections.Specialized.StringCollection"  
+            serializeAs="Xml"  
+            allowAnonymous="true" />  
+      </properties>  
+    </profile>  
+   </system.web>  
+</configuration>  
+```  
+  
+ 以下 ASP.NET 页读取和设置`ZipCode`为用户配置文件指定的属性。  
+  
+> [!IMPORTANT]
+>  此示例包含一个文本框，该文本框接受用户输入，这是一个潜在的安全威胁。 默认情况下，ASP.NET 网页验证用户输入是否不包含脚本或 HTML 元素。 有关详细信息，请参阅[脚本侵入概述](https://msdn.microsoft.com/library/772c7312-211a-4eb3-8d6e-eec0aa1dcc07)。  
+  
+ [!code-aspx-csharp[System.Web.Profile.HttpProfileBase#1](~/samples/snippets/csharp/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/CS/defaultcs.aspx#1)]
+ [!code-aspx-vb[System.Web.Profile.HttpProfileBase#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/VB/defaultvb.aspx#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.Provider.ProviderException">Web.config 文件的<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中的 <see langword="enabled" /> 特性为 <see langword="false" />。</exception>
+        <exception cref="T:System.Configuration.ConfigurationErrorsException">未能创建在 Web.config 文件的<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中指定的属性类型。  
+  
+或 
+将 Web.config 文件的<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中某个属性的 <see langword="allowAnonymous" /> 特性设置为 <see langword="true" />，并将 <see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/91ka2e6a(v%3dvs.100)">&lt;anonymousIdentification&gt;</see> 元素的 <see langword="enabled" /> 特性设置为 <see langword="false" />。  
+  
+或 
+将 Web.config 文件<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中某个属性的 <see langword="serializeAs" /> 特性设置为 <see cref="F:System.Configuration.SettingsSerializeAs.Binary" />，指定的 <see langword="type" /> 的 <see cref="P:System.Type.IsSerializable" /> 属性将返回 <see langword="false" />。  
+  
+- 或 - 
+未能在 <see cref="P:System.Web.Profile.ProfileManager.Providers" /> 集合中找到使用配置文件属性的 <see langword="provider" /> 特性指定的提供程序名称。  
+  
+- 或 - 
+未能找到为配置文件属性指定的 <see langword="type" />。  
+  
+- 或 - 
+使用与基类中的属性名称匹配的名称指定配置文件属性，基类在<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节的 <see langword="inherits" /> 特性中指定。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Create">
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>创建用户配置文件的实例。</summary>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Web.Profile.ProfileBase Create (string username);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Web.Profile.ProfileBase Create(string username) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Profile.ProfileBase.Create(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function Create (username As String) As ProfileBase" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Web::Profile::ProfileBase ^ Create(System::String ^ username);" />
+      <MemberSignature Language="F#" Value="static member Create : string -&gt; System.Web.Profile.ProfileBase" Usage="System.Web.Profile.ProfileBase.Create username" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Web.Profile.ProfileBase</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="username">要为其创建配置文件的用户的名称。</param>
+        <summary>ASP.NET 使用它为指定的用户名创建配置文件的一个实例。</summary>
+        <returns>表示指定用户的配置文件的 <see cref="T:System.Web.Profile.ProfileBase" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Profile.ProfileBase.Create%2A>方法创建并初始化新的配置文件实例，适用于使用自定义配置文件对象或在 non-ASP.NET 环境中管理用户配置文件的应用程序。  
+  
+ 此<xref:System.Web.Profile.ProfileBase.Create%2A>方法的重载假定指定的用户名是经过身份验证的用户。  
+  
+   
+  
+## Examples  
+ 下面的代码示例创建自定义配置文件对象的实例、设置属性，并将配置文件保存到数据源。  
+  
+ [!code-csharp[System.Web.Profile.ProfileBase.Create#1](~/samples/snippets/csharp/VS_Snippets_WebNet/System.Web.Profile.ProfileBase.Create/CS/profileBaseCreatecs.aspx.cs#1)]
+ [!code-vb[System.Web.Profile.ProfileBase.Create#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/System.Web.Profile.ProfileBase.Create/VB/profileBaseCreatevb.aspx.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.Provider.ProviderException">Web.config 文件的<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中的 <see langword="enabled" /> 特性为 <see langword="false" />。</exception>
+        <exception cref="T:System.Web.HttpException">当前承载权限级别低于 <see cref="F:System.Web.AspNetHostingPermissionLevel.Medium" />。</exception>
+        <exception cref="T:System.Configuration.ConfigurationErrorsException">未能创建在 Web.config 文件的<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中指定的属性类型。
+  
+或 
+将 Web.config 文件的<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中某个属性的 <see langword="allowAnonymous" /> 特性设置为 <see langword="true" />，并将 <see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/91ka2e6a(v%3dvs.100)">&lt;anonymousIdentification&gt;</see> 元素的 <see langword="enabled" /> 特性设置为 <see langword="false" />。  
+  
+或 
+将 Web.config 文件<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中某个属性的 <see langword="serializeAs" /> 特性设置为 <see cref="F:System.Configuration.SettingsSerializeAs.Binary" />，指定的 <see langword="type" /> 的 <see cref="P:System.Type.IsSerializable" /> 属性将返回 <see langword="false" />。  
+  
+或 
+未能在 <see cref="P:System.Web.Profile.ProfileManager.Providers" /> 集合中找到使用配置文件属性的 <see langword="provider" /> 特性指定的提供程序名称。  
+  
+或 
+未能找到为配置文件属性指定的 <see langword="type" />。  
+  
+- 或 - 
+使用与基类中的属性名称匹配的名称指定配置文件属性，基类在<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节的 <see langword="inherits" /> 特性中指定。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Web.Profile.ProfileBase Create (string username, bool isAuthenticated);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Web.Profile.ProfileBase Create(string username, bool isAuthenticated) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Profile.ProfileBase.Create(System.String,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function Create (username As String, isAuthenticated As Boolean) As ProfileBase" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Web::Profile::ProfileBase ^ Create(System::String ^ username, bool isAuthenticated);" />
+      <MemberSignature Language="F#" Value="static member Create : string * bool -&gt; System.Web.Profile.ProfileBase" Usage="System.Web.Profile.ProfileBase.Create (username, isAuthenticated)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Profile.ProfileBase</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+        <Parameter Name="isAuthenticated" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="username">要为其创建配置文件的用户的名称。</param>
+        <param name="isAuthenticated"><see langword="true" /> 指示用户是经过身份验证的用户；<see langword="false" /> 指示用户是匿名用户。</param>
+        <summary>ASP.NET 使用它为指定的用户名创建配置文件的一个实例。 带有一个参数，用来指示用户是经过身份验证的用户还是匿名用户。</summary>
+        <returns>表示指定用户的配置文件的 <see cref="T:System.Web.Profile.ProfileBase" /> 对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.Profile.ProfileBase.Create%2A>方法创建并初始化新的配置文件实例，适用于使用自定义配置文件对象或在 non-ASP.NET 环境中管理用户配置文件的应用程序。  
+  
+ 此<xref:System.Web.Profile.ProfileBase.Create%2A>方法的重载可用于为经过身份验证的用户或匿名用户创建配置文件。  
+  
+   
+  
+## Examples  
+ 下面的代码示例创建自定义配置文件对象的实例、设置属性，并将配置文件保存到数据源。  
+  
+ [!code-csharp[System.Web.Profile.ProfileBase.Create#2](~/samples/snippets/csharp/VS_Snippets_WebNet/System.Web.Profile.ProfileBase.Create/CS/profileBaseCreatecs.aspx.cs#2)]
+ [!code-vb[System.Web.Profile.ProfileBase.Create#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/System.Web.Profile.ProfileBase.Create/VB/profileBaseCreatevb.aspx.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.Provider.ProviderException">Web.config 文件的<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中的 <see langword="enabled" /> 特性为 <see langword="false" />。</exception>
+        <exception cref="T:System.Web.HttpException">当前承载权限级别低于 <see cref="F:System.Web.AspNetHostingPermissionLevel.Medium" />。</exception>
+        <exception cref="T:System.Configuration.ConfigurationErrorsException">未能创建在 Web.config 文件的<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中指定的属性类型。  
+  
+- 或 - 
+将 Web.config 文件的<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中某个属性的 <see langword="allowAnonymous" /> 特性设置为 <see langword="true" />，并将 <see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/91ka2e6a(v%3dvs.100)">&lt;anonymousIdentification&gt;</see> 元素的 <see langword="enabled" /> 特性设置为 <see langword="false" />。  
+  
+或 
+将 Web.config 文件<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中某个属性的 <see langword="serializeAs" /> 特性设置为 <see cref="F:System.Configuration.SettingsSerializeAs.Binary" />，指定的 <see langword="type" /> 的 <see cref="P:System.Type.IsSerializable" /> 属性将返回 <see langword="false" />。  
+  
+或 
+未能在 <see cref="P:System.Web.Profile.ProfileManager.Providers" /> 集合中找到使用配置文件属性的 <see langword="provider" /> 特性指定的提供程序名称。  
+  
+或 
+未能找到为配置文件属性指定的 <see langword="type" />。  
+  
+- 或 - 
+使用与基类中的属性名称匹配的名称指定配置文件属性，基类在<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节的 <see langword="inherits" /> 特性中指定。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetProfileGroup">
+      <MemberSignature Language="C#" Value="public System.Web.Profile.ProfileGroupBase GetProfileGroup (string groupName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Web.Profile.ProfileGroupBase GetProfileGroup(string groupName) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Profile.ProfileBase.GetProfileGroup(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetProfileGroup (groupName As String) As ProfileGroupBase" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Web::Profile::ProfileGroupBase ^ GetProfileGroup(System::String ^ groupName);" />
+      <MemberSignature Language="F#" Value="member this.GetProfileGroup : string -&gt; System.Web.Profile.ProfileGroupBase" Usage="profileBase.GetProfileGroup groupName" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.Profile.ProfileGroupBase</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="groupName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="groupName">属性组的名称。</param>
+        <summary>获取按组名标识的属性组。</summary>
+        <returns>利用指定组名进行配置的属性组的 <see cref="T:System.Web.Profile.ProfileGroupBase" /> 对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 对于更好的组织，可将配置文件属性分成不同的组。 <xref:System.Web.Profile.ProfileBase.GetProfileGroup%2A>属性可用于按组名称检索一组属性。 还可以通过将组名称指定为每个页面上可用的`Profile`属性的成员，来访问组中的配置文件属性。 例如， `ZipCode`可以使用`Address` `Profile.Address.ZipCode`访问配置文件组的成员的配置文件属性。  
+  
+   
+  
+## Examples  
+ 下面的 web.config 文件指定了一个用户配置文件，其中包含组名为的`Address`属性组。 为<xref:System.Web.HttpContext.Profile%2A> 当前 <xref:System.Web.HttpContext> 的属性生成的分组属性将位于组名称之前。 例如 `Profile.Address.Street`。  
+  
+```xml  
+<configuration>  
+  <connectionStrings>  
+    <add name="SqlServices" connectionString=  
+      "Data Source=localhost;Integrated Security=SSPI;Initial Catalog=aspnetdb;" />  
+  </connectionStrings>  
+  
+  <system.web>  
+    <authentication mode="Forms" >  
+      <forms loginUrl="login.aspx"  
+        name=".ASPXFORMSAUTH" />  
+    </authentication>  
+  
+    <authorization>  
+      <deny users="?" />  
+    </authorization>  
+  
+    <membership defaultProvider="SqlProvider"   
+      userIsOnlineTimeWindow="15">  
+      <providers>  
+        <clear />  
+        <add   
+          name="SqlProvider"   
+          type="System.Web.Security.SqlMembershipProvider"   
+          connectionStringName="SqlServices"  
+          enablePasswordRetrieval="false"  
+          enablePasswordReset="true"  
+          requiresQuestionAndAnswer="true"   
+          requiresUniqueEmail="false"  
+          passwordFormat="Hashed"  
+          applicationName="MyApplication" />  
+      </providers>  
+    </membership>  
+  
+    <profile defaultProvider="SqlProvider">  
+      <providers>  
+        <add  
+          name="SqlProvider"  
+          connectionStringName="SqlServices"  
+          applicationName="MyApplication"  
+          type="System.Web.Profile.SqlProfileProvider" />  
+  
+      </providers>  
+  
+      <properties>  
+        <add name="ZipCode" />  
+        <group name="Address">  
+          <add name="Street" />  
+          <add name="City" />  
+          <add name="State" />  
+          <add name="CountryOrRegion" />  
+        </group>  
+      </properties>  
+    </profile>  
+  </system.web>  
+</configuration>  
+```  
+  
+ 以下 ASP.NET 页读取和设置为用户配置文件指定的分组属性。  
+  
+> [!IMPORTANT]
+>  此示例包含一个文本框，该文本框接受用户输入，这是一个潜在的安全威胁。 默认情况下，ASP.NET 网页验证用户输入是否不包含脚本或 HTML 元素。 有关详细信息，请参阅[脚本侵入概述](https://msdn.microsoft.com/library/772c7312-211a-4eb3-8d6e-eec0aa1dcc07)。  
+  
+ [!code-aspx-csharp[System.Web.Profile.HttpProfileGroupBase#1](~/samples/snippets/csharp/VS_Snippets_WebNet/System.Web.Profile.HttpProfileGroupBase/CS/defaultcs.aspx#1)]
+ [!code-aspx-vb[System.Web.Profile.HttpProfileGroupBase#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/System.Web.Profile.HttpProfileGroupBase/VB/defaultvb.aspx#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.Provider.ProviderException">未在 <see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">properties</see> 配置节中找到指定的配置文件属性组名。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetPropertyValue">
+      <MemberSignature Language="C#" Value="public object GetPropertyValue (string propertyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance object GetPropertyValue(string propertyName) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Profile.ProfileBase.GetPropertyValue(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetPropertyValue (propertyName As String) As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Object ^ GetPropertyValue(System::String ^ propertyName);" />
+      <MemberSignature Language="F#" Value="member this.GetPropertyValue : string -&gt; obj" Usage="profileBase.GetPropertyValue propertyName" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="propertyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="propertyName">配置文件属性的名称。</param>
+        <summary>获取配置文件属性的值。</summary>
+        <returns>指定的配置文件属性的值，类型化为 <see langword="object" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ ASP.NET 使用<xref:System.Web.Profile.ProfileBase>类创建用于用户配置文件的类。 当已启用用户配置文件的应用程序启动时，ASP.NET 将创建一个类型`ProfileCommon`为的新类，该类继承<xref:System.Web.Profile.ProfileBase>自类。 强类型访问器将添加到`ProfileCommon` [配置文件](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100))配置节中定义的每个属性的类。 `ProfileCommon`类的强类型化访问器<xref:System.Web.Profile.ProfileBase.GetPropertyValue%2A>调用方法，以从生成的访问器<xref:System.Web.Profile.ProfileProvider>中检索非类型化的值，然后将其转换为指定的类型并返回为属性值。  
+  
+ 可以使用<xref:System.Web.Profile.ProfileBase.GetPropertyValue%2A>方法，按名称检索应用程序的用户配置文件的属性值。 返回的值是非类型化的，并且必须在检索时强制转换为特定的对象类型。 对于对配置文件属性值的强类型访问，你可以按名称作为每个页面上提供的配置文件属性（例如） `Profile.CustomerAddress`的成员访问属性。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示一个 ASP.NET 页，该页读取和设置`ZipCode`为用户配置文件指定的属性。 有关指定用户配置文件属性的 web.config 文件的示例，请参阅为<xref:System.Web.Profile.ProfileBase>类提供的示例。  
+  
+> [!IMPORTANT]
+>  此示例包含一个文本框，该文本框接受用户输入，这是一个潜在的安全威胁。 默认情况下，ASP.NET 网页验证用户输入是否不包含脚本或 HTML 元素。 有关详细信息，请参阅[脚本侵入概述](https://msdn.microsoft.com/library/772c7312-211a-4eb3-8d6e-eec0aa1dcc07)。  
+  
+ [!code-aspx-csharp[System.Web.Profile.HttpProfileBase#1](~/samples/snippets/csharp/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/CS/defaultcs.aspx#1)]
+ [!code-aspx-vb[System.Web.Profile.HttpProfileBase#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/VB/defaultvb.aspx#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.Provider.ProviderException">尝试为匿名配置文件中 <see langword="allowAnonymous" /> 特性为 <see langword="false" /> 的属性设置一个属性值。</exception>
+        <exception cref="T:System.Configuration.SettingsPropertyNotFoundException">没有为当前配置文件定义的属性。  
+  
+ - 或 -  
+  
+ 当前配置文件中不存在指定的配置文件属性名。  
+  
+ 或  
+  
+ 指定的配置文件属性的提供程序不能识别所指定的属性。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="public void Initialize (string username, bool isAuthenticated);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Initialize(string username, bool isAuthenticated) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Profile.ProfileBase.Initialize(System.String,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Initialize (username As String, isAuthenticated As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Initialize(System::String ^ username, bool isAuthenticated);" />
+      <MemberSignature Language="F#" Value="override this.Initialize : string * bool -&gt; unit" Usage="profileBase.Initialize (username, isAuthenticated)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="username" Type="System.String" />
+        <Parameter Name="isAuthenticated" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="username">要为其初始化配置文件的用户的名称。</param>
+        <param name="isAuthenticated"><see langword="true" /> 指示用户是经过身份验证的用户；<see langword="false" /> 指示用户是匿名用户。</param>
+        <summary>初始化当前用户的配置文件属性值和信息。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法不适于在您的代码中使用。 使用其中一个<xref:System.Web.Profile.ProfileBase.Create%2A>重载创建用户配置文件的实例。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="IsAnonymous">
+      <MemberSignature Language="C#" Value="public bool IsAnonymous { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAnonymous" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Profile.ProfileBase.IsAnonymous" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property IsAnonymous As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IsAnonymous { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsAnonymous : bool" Usage="System.Web.Profile.ProfileBase.IsAnonymous" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个指示用户配置文件是否用于匿名用户的值。</summary>
+        <value>如果用户配置文件是用于匿名用户，则为 <see langword="true" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用[anonymousIdentification](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/91ka2e6a(v%3dvs.100))配置节和用于指定配置文件属性的[添加](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164646(v%3dvs.100))配置元素的 allowAnonymous 特性来启用对用户配置文件的匿名访问。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="IsDirty">
+      <MemberSignature Language="C#" Value="public bool IsDirty { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsDirty" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Profile.ProfileBase.IsDirty" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property IsDirty As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IsDirty { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsDirty : bool" Usage="System.Web.Profile.ProfileBase.IsDirty" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个值，该值表明是否修改了任何配置文件属性。</summary>
+        <value>如果修改了任何配置文件属性，则为 <see langword="true" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 属性可由配置文件提供程序<xref:System.Configuration.SettingsBase.Save%2A>在方法中使用，以确定由基元类型、字符串或<xref:System.DateTime>对象组成的属性是否已更改。 <xref:System.Web.Profile.ProfileBase.IsDirty%2A> 然后， <xref:System.Configuration.SettingsBase.Save%2A>方法中的配置文件提供程序将更新已更改的属性。 如果属性为，则在页执行结束时自动调用方法。 <xref:System.Configuration.SettingsBase.Save%2A>  <xref:System.Web.Profile.ProfileManager.AutomaticSaveEnabled%2A>`true`  
+  
+ <xref:System.Configuration.SettingsBase.Save%2A>方法中调用的配置文件提供程序无法显式确定具有自定义类类型或复杂类型（如集合）的配置文件属性是否已更改。 您可以使用<xref:System.Web.Profile.ProfileModule.ProfileAutoSaving>事件来确定自定义对象是否已修改并继续自动保存已修改的对象，或者在未修改任何对象时取消自动保存。 <xref:System.Web.Profile.ProfileBase>类的默认行为是在第一次访问<xref:System.Web.Profile.ProfileBase.IsDirty%2A>该属性`true`时，将属性设置为，以获取自定义类型或复杂类型的属性。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public override object this[string propertyName] { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Item(string)" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Profile.ProfileBase.Item(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Default Public Overrides Property Item(propertyName As String) As Object" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Object ^ default[System::String ^] { System::Object ^ get(System::String ^ propertyName); void set(System::String ^ propertyName, System::Object ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.Item(string) : obj with get, set" Usage="System.Web.Profile.ProfileBase.Item" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="propertyName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="propertyName">配置文件属性的名称。</param>
+        <summary>获取或设置按属性名进行索引的配置文件属性值。</summary>
+        <value>指定的配置文件属性的值，类型化为 <see langword="object" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 可以使用此属性按名称检索或设置应用程序的用户配置文件的属性值。 返回的值的类型`object`为，并且在检索时必须强制转换为特定的对象类型。 对于对配置文件属性值的强类型访问，你可以按名称作为每个页面上可用`Profile`属性的成员访问属性， `Profile.CustomerAddress`例如。  
+  
+   
+  
+## Examples  
+ 下面的<xref:System.Configuration.SettingsProperty.Name%2A>代码示例通过将属性从静态<xref:System.Web.Profile.ProfileBase.Properties%2A> <xref:System.Configuration.SettingsProperty>对象<xref:System.Web.UI.WebControls.GridView>集合绑定到控件来列出用户配置文件中的属性的名称。 选定的属性值使用<xref:System.Web.Profile.ProfileBase.Item%2A>集合按名称检索。 有关指定用户配置文件属性的 web.config 文件的示例，请参阅为<xref:System.Web.Profile.ProfileBase>类提供的示例。  
+  
+ [!code-aspx-csharp[System.Web.Profile.HttpProfileBase#2](~/samples/snippets/csharp/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/CS/ViewProfilecs.aspx#2)]
+ [!code-aspx-vb[System.Web.Profile.HttpProfileBase#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/VB/ViewProfilevb.aspx#2)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.Provider.ProviderException">尝试为匿名配置文件中 <see langword="allowAnonymous" /> 特性为 <see langword="false" /> 的属性设置一个属性值。</exception>
+        <exception cref="T:System.Configuration.SettingsPropertyNotFoundException">没有为当前配置文件定义的属性。  
+  
+ - 或 -  
+  
+ 当前配置文件中不存在指定的配置文件属性名。  
+  
+ - 或 -  
+  
+ 指定的配置文件属性的提供程序不能识别所指定的属性。</exception>
+        <exception cref="T:System.Configuration.SettingsPropertyIsReadOnlyException">尝试设置标记为只读的属性值。</exception>
+        <exception cref="T:System.Configuration.SettingsPropertyWrongTypeException">尝试使用不兼容的类型给属性赋值。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="LastActivityDate">
+      <MemberSignature Language="C#" Value="public DateTime LastActivityDate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastActivityDate" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Profile.ProfileBase.LastActivityDate" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property LastActivityDate As DateTime" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property DateTime LastActivityDate { DateTime get(); };" />
+      <MemberSignature Language="F#" Value="member this.LastActivityDate : DateTime" Usage="System.Web.Profile.ProfileBase.LastActivityDate" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取最近一次读取或修改配置文件的日期和时间。</summary>
+        <value>默认提供程序最近一次读取或修改配置文件的日期和时间。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性值仅由默认的配置文件提供程序进行修改。 默认配置文件提供程序以外的某个提供程序对配置文件属性所做的更改不会影响<xref:System.Web.Profile.ProfileBase.LastActivityDate%2A>属性的值。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="LastUpdatedDate">
+      <MemberSignature Language="C#" Value="public DateTime LastUpdatedDate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime LastUpdatedDate" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Profile.ProfileBase.LastUpdatedDate" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property LastUpdatedDate As DateTime" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property DateTime LastUpdatedDate { DateTime get(); };" />
+      <MemberSignature Language="F#" Value="member this.LastUpdatedDate : DateTime" Usage="System.Web.Profile.ProfileBase.LastUpdatedDate" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取最近一次修改配置文件的日期和时间。</summary>
+        <value>默认提供程序最近一次修改配置文件的日期和时间。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性值仅由默认的配置文件提供程序进行修改。 默认配置文件提供程序以外的某个提供程序对配置文件属性所做的更改不会影响<xref:System.Web.Profile.ProfileBase.LastUpdatedDate%2A>属性的值。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Properties">
+      <MemberSignature Language="C#" Value="public static System.Configuration.SettingsPropertyCollection Properties { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Configuration.SettingsPropertyCollection Properties" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Profile.ProfileBase.Properties" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly Property Properties As SettingsPropertyCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property System::Configuration::SettingsPropertyCollection ^ Properties { System::Configuration::SettingsPropertyCollection ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Properties : System.Configuration.SettingsPropertyCollection" Usage="System.Web.Profile.ProfileBase.Properties" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Configuration.SettingsPropertyCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取配置文件中每个属性的 <see cref="T:System.Configuration.SettingsProperty" /> 对象的集合。</summary>
+        <value>应用程序配置文件中每个属性的 <see cref="T:System.Configuration.SettingsPropertyCollection" /> 对象的 <see cref="T:System.Configuration.SettingsProperty" /> 集合。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 您可以使用此属性来获取有关为应用程序配置的配置文件属性的信息，包括属性名称和类型。 您还可以引用<xref:System.Web.Profile.ProfileProvider>每个属性的。 <xref:System.Web.Profile.ProfileProvider>管理与数据源之间的属性值的存储和检索。  
+  
+   
+  
+## Examples  
+ 下面的<xref:System.Configuration.SettingsProperty.Name%2A>代码示例通过将属性从静态<xref:System.Web.Profile.ProfileBase.Properties%2A> <xref:System.Configuration.SettingsProperty>对象<xref:System.Web.UI.WebControls.GridView>集合绑定到控件来列出用户配置文件中的属性的名称。 选定的属性值使用<xref:System.Web.Profile.ProfileBase.Item%2A>集合按名称检索。 有关指定用户配置文件属性的 web.config 文件的示例，请参阅为<xref:System.Web.Profile.ProfileBase>类提供的示例。  
+  
+ [!code-aspx-csharp[System.Web.Profile.HttpProfileBase#2](~/samples/snippets/csharp/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/CS/ViewProfilecs.aspx#2)]
+ [!code-aspx-vb[System.Web.Profile.HttpProfileBase#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/VB/ViewProfilevb.aspx#2)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.ConfigurationErrorsException">未能创建在 Web.config 文件的<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中指定的属性类型。
+  
+或 
+将 Web.config 文件的<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中某个属性的 <see langword="allowAnonymous" /> 特性设置为 <see langword="true" />，并将 <see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/91ka2e6a(v%3dvs.100)">&lt;anonymousIdentification&gt;</see> 元素的 <see langword="enabled" /> 特性设置为 <see langword="false" />。  
+  
+或 
+将 Web.config 文件<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节中某个属性的 <see langword="serializeAs" /> 特性设置为 <see cref="F:System.Configuration.SettingsSerializeAs.Binary" />，指定的 <see langword="type" /> 的 <see cref="P:System.Type.IsSerializable" /> 属性将返回 <see langword="false" />。  
+  
+或 
+未能在 <see cref="P:System.Web.Profile.ProfileManager.Providers" /> 集合中找到使用配置文件属性的 <see langword="provider" /> 特性指定的提供程序名称。  
+  
+或 
+未能找到为配置文件属性指定的 <see langword="type" />。  
+  
+或 
+使用与基类中的属性名称匹配的名称指定配置文件属性，基类在<see href="https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100)">配置文件</see>节的 <see langword="inherits" /> 特性中指定。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public override void Save ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Save() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Profile.ProfileBase.Save" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub Save ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void Save();" />
+      <MemberSignature Language="F#" Value="override this.Save : unit -&gt; unit" Usage="profileBase.Save " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>用已更改的配置文件属性值更新配置文件数据源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法<xref:System.Web.Profile.ProfileBase.Save%2A>将修改后的配置文件属性值写入数据源。 仅当<xref:System.Web.Profile.ProfileBase.IsDirty%2A>属性设置为`true`时，配置文件提供程序才能通过执行更新来减少数据源上的活动量。 默认情况下，这是默认<xref:System.Web.Profile.SqlProfileProvider>值。 方法将属性值保存到数据源后， <xref:System.Web.Profile.ProfileBase.IsDirty%2A>将设置为 `false` 。  <xref:System.Web.Profile.ProfileBase.Save%2A>  
+  
+ 您可以使用<xref:System.Web.Profile.ProfileModule.ProfileAutoSaving>事件实现自定义逻辑，以确定是否已修改具有自定义类型或复杂类型的配置文件属性，并继续自动保存已修改的对象，或者如果没有对象具有，则取消自动保存已被修改。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="SetPropertyValue">
+      <MemberSignature Language="C#" Value="public void SetPropertyValue (string propertyName, object propertyValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetPropertyValue(string propertyName, object propertyValue) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.Profile.ProfileBase.SetPropertyValue(System.String,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub SetPropertyValue (propertyName As String, propertyValue As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void SetPropertyValue(System::String ^ propertyName, System::Object ^ propertyValue);" />
+      <MemberSignature Language="F#" Value="member this.SetPropertyValue : string * obj -&gt; unit" Usage="profileBase.SetPropertyValue (propertyName, propertyValue)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="propertyName" Type="System.String" />
+        <Parameter Name="propertyValue" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="propertyName">要设置的属性的名称。</param>
+        <param name="propertyValue">要分配给属性的值。</param>
+        <summary>设置配置文件属性的值。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ ASP.NET 使用<xref:System.Web.Profile.ProfileBase>类创建用于用户配置文件的类。 当已启用用户配置文件的应用程序启动时，ASP.NET 将创建一个类型`ProfileCommon`为的新类，该类继承<xref:System.Web.Profile.ProfileBase>自类。 强类型访问器将添加到`ProfileCommon` [配置文件](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164644(v%3dvs.100))配置节中定义的每个属性的类。 `ProfileCommon`类的强类型访问器<xref:System.Web.Profile.ProfileBase.SetPropertyValue%2A>调用方法，以将属性值传递到， <xref:System.Web.Profile.ProfileProvider>以存储在数据源。  
+  
+ 可以使用<xref:System.Web.Profile.ProfileBase.SetPropertyValue%2A>方法通过名称为应用程序分配用户配置文件中的属性值。 值是非类型化的，并且会在运行时（而非编译时）执行类型检查。 对于对配置文件属性值的强类型访问，你可以按名称作为每个页面上可用`Profile`的属性的成员访问属性（例如）。 `Profile.CustomerAddress`  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示一个 ASP.NET 页，该页读取和设置`ZipCode`为用户配置文件指定的属性。 有关指定用户配置文件属性的 web.config 文件的示例，请参阅为<xref:System.Web.Profile.ProfileBase>类提供的示例。  
+  
+> [!IMPORTANT]
+>  此示例包含一个文本框，该文本框接受用户输入，这是一个潜在的安全威胁。 默认情况下，ASP.NET 网页验证用户输入是否不包含脚本或 HTML 元素。 有关详细信息，请参阅[脚本侵入概述](https://msdn.microsoft.com/library/772c7312-211a-4eb3-8d6e-eec0aa1dcc07)。  
+  
+ [!code-aspx-csharp[System.Web.Profile.HttpProfileBase#1](~/samples/snippets/csharp/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/CS/defaultcs.aspx#1)]
+ [!code-aspx-vb[System.Web.Profile.HttpProfileBase#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/System.Web.Profile.HttpProfileBase/VB/defaultvb.aspx#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.Provider.ProviderException">尝试为匿名配置文件中 <see langword="allowAnonymous" /> 特性为 <see langword="false" /> 的属性设置一个属性值。</exception>
+        <exception cref="T:System.Configuration.SettingsPropertyNotFoundException">没有为当前配置文件定义的属性。  
+  
+ 或  
+  
+ 当前配置文件中不存在指定的配置文件属性名。  
+  
+ - 或 -  
+  
+ 指定的配置文件属性的提供程序不能识别所指定的属性。</exception>
+        <exception cref="T:System.Configuration.SettingsPropertyIsReadOnlyException">已尝试设置标记为只读的属性的值。</exception>
+        <exception cref="T:System.Configuration.SettingsPropertyWrongTypeException">尝试使用不兼容的类型给属性赋值。</exception>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="UserName">
+      <MemberSignature Language="C#" Value="public string UserName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string UserName" />
+      <MemberSignature Language="DocId" Value="P:System.Web.Profile.ProfileBase.UserName" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property UserName As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ UserName { System::String ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.UserName : string" Usage="System.Web.Profile.ProfileBase.UserName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取该配置文件的用户名。</summary>
+        <value>配置文件的用户名，或分配给配置文件的匿名用户标识符。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 属性返回与配置文件关联的经过身份验证的用户的名称，或者<xref:System.Web.Profile.ProfileBase.IsAnonymous%2A>如果属性为`true`，则返回分配给配置文件的匿名用户标识符。 <xref:System.Web.Profile.ProfileBase.UserName%2A>  
+  
+ 使用[anonymousIdentification](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/91ka2e6a(v%3dvs.100))配置节和用于指定配置文件属性的[添加](https://docs.microsoft.com/previous-versions/dotnet/netframework-4.0/ms164646(v%3dvs.100))配置元素的 allowAnonymous 特性来启用对用户配置文件的匿名访问。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET 配置文件属性概述</related>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

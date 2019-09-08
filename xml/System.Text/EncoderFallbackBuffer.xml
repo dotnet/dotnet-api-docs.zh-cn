@@ -1,0 +1,392 @@
+<Type Name="EncoderFallbackBuffer" FullName="System.Text.EncoderFallbackBuffer">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="36d20c01a10df1ac3b8d9349072ea2049fe240af" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70695159" /></Metadata><TypeSignature Language="C#" Value="public abstract class EncoderFallbackBuffer" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit EncoderFallbackBuffer extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Text.EncoderFallbackBuffer" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class EncoderFallbackBuffer" />
+  <TypeSignature Language="C++ CLI" Value="public ref class EncoderFallbackBuffer abstract" />
+  <TypeSignature Language="F#" Value="type EncoderFallbackBuffer = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Text.Encoding</AssemblyName>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime</AssemblyName>
+    <AssemblyVersion>4.2.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>提供一个允许回退处理程序在无法编码输入的字符时返回备用字符串到编码器的缓冲区。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 编码定义 Unicode 字符和编码字节序列之间的映射。 如果没有为特定字符定义映射，则将输入字符转换为输出字节序列的编码操作将失败。  
+  
+ 如果无法执行转换，.NET Framework 将提供一个称为 "回退" 的失败处理机制。 所有编码器回退处理程序都必须实现以下各项：  
+  
+-   编码器回退，由派生自<xref:System.Text.EncoderFallback>类的类表示。  
+  
+-   编码器回退缓冲区，由派生自<xref:System.Text.EncoderFallbackBuffer>类的类型表示，该类型可将字符串返回到转换运算。  
+  
+ 回退可以使用三种策略来处理转换失败：  
+  
+-   最佳映射。 编码器回退缓冲区可以返回一个字符串，该字符串表示对输入字符的接近的近似值。 .NET Framework 未提供公共最佳<xref:System.Text.EncoderFallbackBuffer>实现。  
+  
+-   处. 编码器回退缓冲区可以返回一个字符串（如问号（"？"）），指示无法对字符进行编码。 在 .NET Framework 中， <xref:System.Text.EncoderReplacementFallback>和<xref:System.Text.EncoderReplacementFallbackBuffer>类提供公共替换回退缓冲区实现。 <xref:System.Text.EncoderReplacementFallback>类的构造函数使你能够定义替换字符串。  
+  
+-   异常。 <xref:System.Text.EncoderFallbackBuffer>实现会引发异常，这表示不能对字符进行编码，并终止编码操作。 在这种情况下，回退处理程序必须<xref:System.Text.EncoderFallbackBuffer>提供实现，尽管它不会将字符串返回给编码器。 在 .NET Framework 中， <xref:System.Text.EncoderExceptionFallback>和<xref:System.Text.EncoderExceptionFallbackBuffer>类提供公共异常<xref:System.Text.EncoderFallbackException>回退实现，当无法对字符进行编码时，将引发。  
+  
+ <xref:System.Text.EncoderFallbackBuffer>实现中的缓冲区表示要返回给编码器以响应编码器回退的整个字符串。 通常，实现还包括状态信息，如要返回到编码器的下一个字符的索引以及要返回的剩余字符数。 由于<xref:System.Text.EncoderFallbackBuffer>是抽象类，因此它要求派生类至少实现以下成员：  
+  
+-   重载<xref:System.Text.EncoderFallbackBuffer.Fallback%2A>的方法，当编码器无法对字符进行编码时，它会调用它。 编码器将两部分信息传递到回退缓冲区实现：不能进行编码的字符或代理项对以及输入中字符的索引。 在编码器回退异常处理程序中，此方法会引发异常。 否则，如果该方法`true`提供回退`false` ，则返回; 否则返回。  
+  
+-   如果<xref:System.Text.EncoderFallbackBuffer.GetNextChar%2A>该<xref:System.Text.EncoderFallbackBuffer.Fallback%2A>方法返回 `true` ，则编码器将重复调用此方法。 在后续调用中，处理程序应返回其缓冲区中的每个字符。 返回所有字符后，应返回 U + 0000。 异常处理程序始终返回 U + 0000。  
+  
+-   <xref:System.Text.EncoderFallbackBuffer.MovePrevious%2A>方法，它尝试将指针移动到缓冲区中的上一个位置，并指示移动是否成功。 异常处理程序总是返回`false`。  
+  
+-   <xref:System.Text.EncoderFallbackBuffer.Remaining%2A>属性，指示要返回到编码器的剩余字符数。 异常回退处理程序始终返回零。  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.Text.EncoderFallback" />
+    <related type="Article" href="~/docs/standard/base-types/character-encoding.md">.NET Framework 中的字符编码</related>
+    <related type="ExternalDocumentation" href="https://code.msdn.microsoft.com/Cyrillic-to-Roman-f7e88b29">示例：西里尔文到罗马音译实用工具</related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected EncoderFallbackBuffer ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Text.EncoderFallbackBuffer.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; EncoderFallbackBuffer();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.Text.EncoderFallbackBuffer" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Fallback">
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>指示在无法对原始输入进行编码时是否有可用的替代字符串，或是否应忽略原始输入。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Fallback">
+      <MemberSignature Language="C#" Value="public abstract bool Fallback (char charUnknown, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Fallback(char charUnknown, int32 index) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Text.EncoderFallbackBuffer.Fallback(System.Char,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function Fallback (charUnknown As Char, index As Integer) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract bool Fallback(char charUnknown, int index);" />
+      <MemberSignature Language="F#" Value="abstract member Fallback : char * int -&gt; bool" Usage="encoderFallbackBuffer.Fallback (charUnknown, index)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="charUnknown" Type="System.Char" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="charUnknown">一个输入字符。</param>
+        <param name="index">该字符在输入缓冲区中的索引位置。</param>
+        <summary>在派生类中重写后，此方法对回退缓冲区进行准备，以处理指定的输入字符。</summary>
+        <returns>如果回退缓冲区能处理 <paramref name="charUnknown" /> 则为 <see langword="true" />；如果回退缓冲区忽略 <paramref name="charUnknown" />，则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果<xref:System.Text.Encoding.GetBytes%2A?displayProperty=nameWithType> <xref:System.Text.DecoderFallbackBuffer.Fallback%28System.Byte%5B%5D%2CSystem.Int32%29>和<xref:System.Text.Encoder.Convert%2A?displayProperty=nameWithType>方法遇到无法编码的未知输入字符，则调用。 返回值`true`指示回退缓冲区可以处理输入字符，这将导致调用方法<xref:System.Text.EncoderFallbackBuffer.GetNextChar%2A>调用方法来获取回退缓冲区的每个字符。 由于它不处理单个字符，异常回退<xref:System.Text.EncoderFallbackBuffer.Fallback%2A>处理程序中的方法将引发异常。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Fallback">
+      <MemberSignature Language="C#" Value="public abstract bool Fallback (char charUnknownHigh, char charUnknownLow, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Fallback(char charUnknownHigh, char charUnknownLow, int32 index) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Text.EncoderFallbackBuffer.Fallback(System.Char,System.Char,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function Fallback (charUnknownHigh As Char, charUnknownLow As Char, index As Integer) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract bool Fallback(char charUnknownHigh, char charUnknownLow, int index);" />
+      <MemberSignature Language="F#" Value="abstract member Fallback : char * char * int -&gt; bool" Usage="encoderFallbackBuffer.Fallback (charUnknownHigh, charUnknownLow, index)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="charUnknownHigh" Type="System.Char" />
+        <Parameter Name="charUnknownLow" Type="System.Char" />
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="charUnknownHigh">输入对的高代理项。</param>
+        <param name="charUnknownLow">输入对的低代理项。</param>
+        <param name="index">该代理项对在输入缓冲区中的索引位置。</param>
+        <summary>在派生类中重写后，此方法对回退缓冲区进行准备，以处理指定的代理项对。</summary>
+        <returns>如果回退缓冲区可以处理 <paramref name="charUnknownHigh" /> 和 <paramref name="charUnknownLow" />，则为 <see langword="true" />；如果回退缓冲区忽略代理项对，则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果和方法在其输入中遇到代理项对， <xref:System.Text.Encoder.Convert%2A?displayProperty=nameWithType>则调用 <xref:System.Text.EncoderFallbackBuffer.Fallback%28System.Char%2CSystem.Char%2CSystem.Int32%29> 。 <xref:System.Text.Encoding.GetBytes%2A?displayProperty=nameWithType> 返回值`true`指示回退缓冲区可以处理代理项对，这将导致调用方法<xref:System.Text.EncoderFallbackBuffer.GetNextChar%2A>调用方法来获取回退缓冲区的每个字符。  由于它不处理单个字符，异常回退<xref:System.Text.EncoderFallbackBuffer.Fallback%2A>处理程序中的方法将引发异常。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetNextChar">
+      <MemberSignature Language="C#" Value="public abstract char GetNextChar ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance char GetNextChar() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Text.EncoderFallbackBuffer.GetNextChar" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function GetNextChar () As Char" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract char GetNextChar();" />
+      <MemberSignature Language="F#" Value="abstract member GetNextChar : unit -&gt; char" Usage="encoderFallbackBuffer.GetNextChar " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>在派生类中重写后，此方法检索回退缓冲区中的下一个字符。</summary>
+        <returns>回退缓冲区中的下一个字符。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果操作在输入中<xref:System.Text.EncoderFallbackBuffer.Fallback%2A>遇到未知字符或代理项对，则编码操作将调用方法。 例如，在更换回退情况下，如果<xref:System.Text.EncoderFallbackBuffer.Fallback%2A>方法返回`true`，则存在可进行编码而不是未知输入的替换字符串。 编码操作重复调用<xref:System.Text.EncoderFallbackBuffer.GetNextChar%2A>方法，并一次获取一个字符的替换字符串。 回退缓冲区中的所有字符都返回到编码器后，该<xref:System.Text.EncoderFallbackBuffer.GetNextChar%2A>方法应返回 U + 0000。  
+  
+ 对于异常回退处理程序，该<xref:System.Text.EncoderFallbackBuffer.GetNextChar%2A>方法应返回 U + 0000。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MovePrevious">
+      <MemberSignature Language="C#" Value="public abstract bool MovePrevious ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool MovePrevious() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Text.EncoderFallbackBuffer.MovePrevious" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function MovePrevious () As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract bool MovePrevious();" />
+      <MemberSignature Language="F#" Value="abstract member MovePrevious : unit -&gt; bool" Usage="encoderFallbackBuffer.MovePrevious " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>在派生类中重写后，此方法将使对 <see cref="M:System.Text.EncoderFallbackBuffer.GetNextChar" /> 方法的下一次调用访问当前字符位置之前的数据缓冲区字符位置。</summary>
+        <returns>如果 <see cref="M:System.Text.EncoderFallbackBuffer.MovePrevious" /> 操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 异常回退处理程序应返回`false`。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Remaining">
+      <MemberSignature Language="C#" Value="public abstract int Remaining { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Remaining" />
+      <MemberSignature Language="DocId" Value="P:System.Text.EncoderFallbackBuffer.Remaining" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride ReadOnly Property Remaining As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract property int Remaining { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.Remaining : int" Usage="System.Text.EncoderFallbackBuffer.Remaining" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>在派生类中重写后，此属性获取当前 <see cref="T:System.Text.EncoderFallbackBuffer" /> 对象中要处理的剩余字符数。</summary>
+        <value>尚未处理的当前回退缓冲区中的字符数。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ `true`如果<xref:System.Text.EncoderFallbackBuffer.Fallback%2A> 为非零值，则 <xref:System.Text.EncoderFallbackBuffer.Remaining%2A> 该方法返回。  
+  
+ 对于异常回退处理程序，该<xref:System.Text.DecoderFallbackBuffer.Remaining%2A>方法应返回零。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public virtual void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Text.EncoderFallbackBuffer.Reset" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Sub Reset ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void Reset();" />
+      <MemberSignature Language="F#" Value="abstract member Reset : unit -&gt; unit&#xA;override this.Reset : unit -&gt; unit" Usage="encoderFallbackBuffer.Reset " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>初始化所有与此回退缓冲区相关的数据和状态信息。</summary>
+        <remarks>To be added.</remarks>
+        <block subset="none" type="overrides"><para>调用<see cref="M:System.Text.EncoderFallbackBuffer.Reset" />方法后<see cref="P:System.Text.EncoderFallbackBuffer.Remaining" /> ，属性<see cref="M:System.Text.EncoderFallbackBuffer.GetNextChar" />应返回0，方法<see cref="M:System.Text.EncoderFallbackBuffer.MovePrevious" />应返回 U + 0000，方法应返回<see langword="false" />。</para></block>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

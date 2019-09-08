@@ -1,0 +1,262 @@
+<Type Name="RuleAction" FullName="System.Workflow.Activities.Rules.RuleAction">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="010f59aea4a85264ea55e6565a6ff2100b3135f1" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70578798" /></Metadata><TypeSignature Language="C#" Value="public abstract class RuleAction" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit RuleAction extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Workflow.Activities.Rules.RuleAction" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class RuleAction" />
+  <TypeSignature Language="C++ CLI" Value="public ref class RuleAction abstract" />
+  <TypeSignature Language="F#" Value="type RuleAction = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Workflow.Activities</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Serializable</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>表示一个抽象类，该抽象类定义关联的 <see cref="P:System.Workflow.Activities.Rules.Rule.Condition" /> 的计算结果为 <see langword="true" />（对于 <see cref="P:System.Workflow.Activities.Rules.Rule.ThenActions" />）或 <see langword="false" />（对于 <see cref="P:System.Workflow.Activities.Rules.Rule.ElseActions" />）时要执行的操作。 必须继承此类。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Workflow.Activities.Rules.RuleStatementAction> 对象（可用作 <xref:System.Workflow.Activities.Rules.Rule.ThenActions%2A> 和 <xref:System.Workflow.Activities.Rules.Rule.ElseActions%2A>）通常对活动的一个属性设置变量值、调用活动的一个方法或对引用的程序集中的类型调用静态方法。  
+  
+ <xref:System.Workflow.Activities.Rules.RuleAction> 是派生 <xref:System.Workflow.Activities.Rules.RuleStatementAction>、<xref:System.Workflow.Activities.Rules.RuleHaltAction> 和 <xref:System.Workflow.Activities.Rules.RuleUpdateAction> 类的基本类型。 这些类的用法如下所述：  
+  
+-   <xref:System.Workflow.Activities.Rules.RuleStatementAction> 可修改属性或调用方法。  
+  
+-   <xref:System.Workflow.Activities.Rules.RuleHaltAction> 导致 <xref:System.Workflow.Activities.Rules.RuleSet> 停止执行并使控制返回到调用方法。  
+  
+-   <xref:System.Workflow.Activities.Rules.RuleUpdateAction> 显式指示规则在更新变量。 这将导致重新计算所有受影响的规则。  
+  
+   
+  
+## Examples  
+ 下面的代码创建可在规则集中使用的操作。 操作名为 `Log`，使用一个参数，该参数的计算结果必须为字符串。 此操作将字符串输出到控制台。  
+  
+ 若要使用此代码，请将它添加到类库项目并从工作流项目中引用该库。  
+  
+```csharp  
+using System;  
+using System.CodeDom;  
+using System.Collections.Generic;  
+using System.Text;  
+using System.Workflow.Activities.Rules;  
+using System.Workflow.ComponentModel.Compiler;  
+  
+namespace LogRuleAction  
+{  
+    public class Log : RuleAction  
+    {  
+        CodeExpression message;  
+  
+        public CodeExpression Message  
+        {  
+            get { return message; }  
+            set { message = value; }  
+        }  
+  
+        public Log()  
+        {  
+            // constructor required for deserialization  
+        }  
+  
+        public Log(CodeExpression expression)  
+        {  
+            // constructor required by parser  
+            message = expression;  
+        }  
+  
+        public override bool Validate(RuleValidation validator)  
+        {  
+            ValidationError error;  
+            if (message == null)  
+            {  
+                error = new ValidationError("Message cannot be null", 123);  
+                validator.Errors.Add(error);  
+                return false;  
+            }  
+            else  
+            {  
+                RuleExpressionInfo result = RuleExpressionWalker.Validate(validator, message, false);  
+                if ((result == null) || (result.ExpressionType != typeof(string)))  
+                {  
+                    error = new ValidationError("Message must return string result", 123);  
+                    validator.Errors.Add(error);  
+                    return false;  
+                }  
+            }  
+            return (validator.Errors.Count == 0);  
+        }  
+  
+        public override RuleAction Clone()  
+        {  
+            Log result = new Log();  
+            result.Message = RuleExpressionWalker.Clone(message);  
+            return result;  
+        }  
+  
+        public override void Execute(RuleExecution context)  
+        {  
+            RuleExpressionResult result = RuleExpressionWalker.Evaluate(context, message);  
+            if (result != null)  
+                Console.WriteLine(result.Value);  
+        }  
+  
+        public override ICollection<string> GetSideEffects(RuleValidation validation)  
+        {  
+            RuleAnalysis analysis = new RuleAnalysis(validation, true);  
+            if (message != null)  
+                RuleExpressionWalker.AnalyzeUsage(analysis, message, true, false, null);  
+            return analysis.GetSymbols();  
+        }  
+  
+        public override string ToString()  
+        {  
+            // what should be displayed by the parser  
+            StringBuilder result = new StringBuilder("Log(");  
+            RuleExpressionWalker.Decompile(result, message, null);  
+            result.Append(")");  
+            return result.ToString();  
+        }  
+    }  
+}  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected RuleAction ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Activities.Rules.RuleAction.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; RuleAction();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Activities</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>在派生类中实现时，初始化 <see cref="T:System.Workflow.Activities.Rules.RuleAction" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public abstract System.Workflow.Activities.Rules.RuleAction Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Workflow.Activities.Rules.RuleAction Clone() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Activities.Rules.RuleAction.Clone" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function Clone () As RuleAction" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract System::Workflow::Activities::Rules::RuleAction ^ Clone();" />
+      <MemberSignature Language="F#" Value="abstract member Clone : unit -&gt; System.Workflow.Activities.Rules.RuleAction" Usage="ruleAction.Clone " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Activities</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Workflow.Activities.Rules.RuleAction</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>创建当前 <see cref="T:System.Workflow.Activities.Rules.RuleAction" /> 的深层副本。</summary>
+        <returns>与此实例完全相同的 <see cref="T:System.Workflow.Activities.Rules.RuleAction" />。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Execute">
+      <MemberSignature Language="C#" Value="public abstract void Execute (System.Workflow.Activities.Rules.RuleExecution context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Execute(class System.Workflow.Activities.Rules.RuleExecution context) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Activities.Rules.RuleAction.Execute(System.Workflow.Activities.Rules.RuleExecution)" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Sub Execute (context As RuleExecution)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract void Execute(System::Workflow::Activities::Rules::RuleExecution ^ context);" />
+      <MemberSignature Language="F#" Value="abstract member Execute : System.Workflow.Activities.Rules.RuleExecution -&gt; unit" Usage="ruleAction.Execute context" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Activities</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Workflow.Activities.Rules.RuleExecution" />
+      </Parameters>
+      <Docs>
+        <param name="context">执行 <see cref="T:System.Workflow.Activities.Rules.RuleAction" /> 的运行时状态。</param>
+        <summary>使用指定的 <see cref="T:System.Workflow.Activities.Rules.RuleAction" /> 实例执行 <see cref="T:System.Workflow.Activities.Rules.RuleExecution" />。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSideEffects">
+      <MemberSignature Language="C#" Value="public abstract System.Collections.Generic.ICollection&lt;string&gt; GetSideEffects (System.Workflow.Activities.Rules.RuleValidation validation);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.ICollection`1&lt;string&gt; GetSideEffects(class System.Workflow.Activities.Rules.RuleValidation validation) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Activities.Rules.RuleAction.GetSideEffects(System.Workflow.Activities.Rules.RuleValidation)" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function GetSideEffects (validation As RuleValidation) As ICollection(Of String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract System::Collections::Generic::ICollection&lt;System::String ^&gt; ^ GetSideEffects(System::Workflow::Activities::Rules::RuleValidation ^ validation);" />
+      <MemberSignature Language="F#" Value="abstract member GetSideEffects : System.Workflow.Activities.Rules.RuleValidation -&gt; System.Collections.Generic.ICollection&lt;string&gt;" Usage="ruleAction.GetSideEffects validation" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Activities</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.ICollection&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="validation" Type="System.Workflow.Activities.Rules.RuleValidation" />
+      </Parameters>
+      <Docs>
+        <param name="validation">在对 <see cref="T:System.Workflow.Activities.Rules.RuleValidation" /> 的调用中先前使用的 <see cref="M:System.Workflow.Activities.Rules.RuleAction.Validate(System.Workflow.Activities.Rules.RuleValidation)" />。</param>
+        <summary>返回由 <see cref="T:System.Workflow.Activities.Rules.RuleAction" /> 更新的字段和属性。</summary>
+        <returns>一个字符串集合，表示由 <see cref="T:System.Workflow.Activities.Rules.RuleAction" /> 更改的字段和属性的名称。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Validate">
+      <MemberSignature Language="C#" Value="public abstract bool Validate (System.Workflow.Activities.Rules.RuleValidation validator);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Validate(class System.Workflow.Activities.Rules.RuleValidation validator) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Workflow.Activities.Rules.RuleAction.Validate(System.Workflow.Activities.Rules.RuleValidation)" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function Validate (validator As RuleValidation) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract bool Validate(System::Workflow::Activities::Rules::RuleValidation ^ validator);" />
+      <MemberSignature Language="F#" Value="abstract member Validate : System.Workflow.Activities.Rules.RuleValidation -&gt; bool" Usage="ruleAction.Validate validator" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Workflow.Activities</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="validator" Type="System.Workflow.Activities.Rules.RuleValidation" />
+      </Parameters>
+      <Docs>
+        <param name="validator">要管理验证过程的 <see cref="T:System.Workflow.Activities.Rules.RuleValidation" />。</param>
+        <summary>验证 <see cref="T:System.Workflow.Activities.Rules.RuleAction" /> 是否已正确配置且没有错误。</summary>
+        <returns>如果显示 <see cref="T:System.Workflow.Activities.Rules.RuleAction" /> 已正确验证且没有错误；则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果 <xref:System.Workflow.Activities.Rules.RuleAction> 包含错误（`Validate` 方法返回 `false`），则 <xref:System.Workflow.Activities.Rules.RuleValidation.Errors%2A?displayProperty=nameWithType> 将包含遇到的错误的列表。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
