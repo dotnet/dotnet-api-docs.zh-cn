@@ -1,0 +1,963 @@
+<Type Name="SessionAuthenticationModule" FullName="System.IdentityModel.Services.SessionAuthenticationModule">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="62f0f61a3c52bab77b13deb299045ef39e220ddc" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70670279" /></Metadata><TypeSignature Language="C#" Value="public class SessionAuthenticationModule : System.IdentityModel.Services.HttpModuleBase" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SessionAuthenticationModule extends System.IdentityModel.Services.HttpModuleBase" />
+  <TypeSignature Language="DocId" Value="T:System.IdentityModel.Services.SessionAuthenticationModule" />
+  <TypeSignature Language="VB.NET" Value="Public Class SessionAuthenticationModule&#xA;Inherits HttpModuleBase" />
+  <TypeSignature Language="C++ CLI" Value="public ref class SessionAuthenticationModule : System::IdentityModel::Services::HttpModuleBase" />
+  <TypeSignature Language="F#" Value="type SessionAuthenticationModule = class&#xA;    inherit HttpModuleBase" />
+  <AssemblyInfo>
+    <AssemblyName>System.IdentityModel.Services</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.IdentityModel.Services.HttpModuleBase</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>实现一个 在 ws-discovery 方案下处理会话 cookies 的 ASP.NET 模块。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当 ASP.NET 管道中存在时，（ <xref:System.IdentityModel.Services.SessionAuthenticationModule> SAM）处理 ws-federation 方案中的会话 cookie。 它使用<xref:System.IdentityModel.Services.SessionAuthenticationModule.CookieHandler%2A>属性指定的 cookie 处理程序从 http 请求中读取原始会话 cookie，并将其写入 http 响应。 它使用<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler>为应用程序配置的，将原始会话<xref:System.IdentityModel.Tokens.SessionSecurityToken> cookie 反序列化为对象。 会话安全令牌包含与要为其<xref:System.Security.Claims.Claim>提供请求的实体<xref:System.Security.Claims.ClaimsPrincipal>关联的声明（）和主体（）。  
+  
+ SAM 将其<xref:System.IdentityModel.Services.SessionAuthenticationModule.OnAuthenticateRequest%2A>事件处理程序添加到<xref:System.Web.HttpApplication.AuthenticateRequest?displayProperty=nameWithType> ASP.NET 管道中的事件。 此处理程序截获登录请求，如果存在会话 cookie，则将其反序列化为会话令牌，并将<xref:System.Threading.Thread.CurrentPrincipal%2A?displayProperty=nameWithType>和<xref:System.Web.HttpContext.User%2A?displayProperty=nameWithType>属性设置为会话令牌中包含的声明主体。 在此过程中，它将调用 SAM 公开的几个其他方法。  
+  
+ 可以<xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOut%2A>调用方法将用户从会话中注销（例如，在 SignOut.aspx.cs 代码隐藏文件中）。  
+  
+ SAM 公开了若干事件，这些事件可提供对其处理管道的访问权限。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenReceived> 和 <xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenCreated> 事件使你可以修改从 cookie 读取或在处理过程中创建的会话令牌。 通常，这样做是为了在令牌中添加、删除或转换声明，或调整其过期时间。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.SigningOut>、和事件 <xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOutError> 为处理注销请求提供挂钩。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.SignedOut> 在许多情况下，只需将这些事件的处理程序添加到 global.asax.cs 文件即可。  
+  
+ 对于更复杂的方案，可以从<xref:System.IdentityModel.Services.SessionAuthenticationModule>派生，以实现自定义 SAM。 为此，将公开和<xref:System.IdentityModel.Services.SessionAuthenticationModule.OnAuthenticateRequest%2A> <xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOut%2A>中调用的许多方法，以便在会话处理生命周期的特定阶段提供自定义行为。  
+  
+ 可以通过将 SAM 添加到 iis 7 和更高版本`<system.webServer>`元素下或`<system.web>` iis 7 之前的版本元素中的 HTTP 模块，将 SAM 添加到配置文件中的 ASP.NET 管道。 SAM 使用的 cookie 处理程序可以使用[ &lt;cookieHandler&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/cookiehandler.md)元素进行配置。  
+  
+   
+  
+## Examples  
+ [!code-csharp[WifSAM#1](~/samples/snippets/csharp/VS_Snippets_Misc/wifsam/cs/webapplication1/global.asax.cs#1)]  
+  
+ 下面的 XML 演示如何配置 ASP.NET 管道中的 SAM。 为了简洁起见，此处省略了典型配置中存在的许多其他元素。  
+  
+```xml  
+<configuration>  
+  <system.webServer>  
+    <modules>  
+      <!--WIF 4.5 modules -->  
+      <add name="SessionAuthenticationModule" type="System.IdentityModel.Services.SessionAuthenticationModule, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>  
+      <add name="WsFederationAuthenticationModule" type="System.IdentityModel.Services.WSFederationAuthenticationModule, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>  
+    </modules>  
+  </system.webServer>  
+</configuration>  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SessionAuthenticationModule ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; SessionAuthenticationModule();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.IdentityModel.Services.SessionAuthenticationModule" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将属性设置为`false` ，并将<xref:System.IdentityModel.Services.SessionAuthenticationModule.CookieHandler%2A>属性初始化为<xref:System.IdentityModel.Services.CookieHandlerElement.ChunkedCookieHandler%2A>类的默认实例。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.IsReferenceMode%2A>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthenticateSessionSecurityToken">
+      <MemberSignature Language="C#" Value="public virtual void AuthenticateSessionSecurityToken (System.IdentityModel.Tokens.SessionSecurityToken sessionToken, bool writeCookie);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AuthenticateSessionSecurityToken(class System.IdentityModel.Tokens.SessionSecurityToken sessionToken, bool writeCookie) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.AuthenticateSessionSecurityToken(System.IdentityModel.Tokens.SessionSecurityToken,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Sub AuthenticateSessionSecurityToken (sessionToken As SessionSecurityToken, writeCookie As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void AuthenticateSessionSecurityToken(System::IdentityModel::Tokens::SessionSecurityToken ^ sessionToken, bool writeCookie);" />
+      <MemberSignature Language="F#" Value="abstract member AuthenticateSessionSecurityToken : System.IdentityModel.Tokens.SessionSecurityToken * bool -&gt; unit&#xA;override this.AuthenticateSessionSecurityToken : System.IdentityModel.Tokens.SessionSecurityToken * bool -&gt; unit" Usage="sessionAuthenticationModule.AuthenticateSessionSecurityToken (sessionToken, writeCookie)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sessionToken" Type="System.IdentityModel.Tokens.SessionSecurityToken" />
+        <Parameter Name="writeCookie" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="sessionToken">使用会话安全令牌检查传入的 HTTP 请求。</param>
+        <param name="writeCookie">编写会话 cookie，则为 <see langword="true" />；否则 <see langword="false" />。</param>
+        <summary>通过验证传入会话标志请求该传入的身份验证。 在成功验证之后，其将使用指定的 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 更新当前 HTTP 上下文和线程主体。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.IdentityModel.Services.SessionAuthenticationModule.AuthenticateSessionSecurityToken%2A> 方法 <xref:System.IdentityModel.Services.SessionAuthenticationModule.OnAuthenticateRequest%2A> 从方法中调用。 它调用<xref:System.IdentityModel.Services.SessionAuthenticationModule.SetPrincipalFromSessionToken%2A>方法来验证传入标记，并<xref:System.Threading.Thread.CurrentPrincipal%2A?displayProperty=nameWithType>更新和<xref:System.Web.HttpContext.User%2A?displayProperty=nameWithType>属性。 如果参数为`true` ， <xref:System.IdentityModel.Services.SessionAuthenticationModule.WriteSessionTokenToCookie%2A> 则调用方法将会话令牌写入 cookie。 `writeCookie`  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContainsSessionTokenCookie">
+      <MemberSignature Language="C#" Value="public bool ContainsSessionTokenCookie (System.Web.HttpCookieCollection httpCookieCollection);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool ContainsSessionTokenCookie(class System.Web.HttpCookieCollection httpCookieCollection) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.ContainsSessionTokenCookie(System.Web.HttpCookieCollection)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool ContainsSessionTokenCookie(System::Web::HttpCookieCollection ^ httpCookieCollection);" />
+      <MemberSignature Language="F#" Value="member this.ContainsSessionTokenCookie : System.Web.HttpCookieCollection -&gt; bool" Usage="sessionAuthenticationModule.ContainsSessionTokenCookie httpCookieCollection" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="httpCookieCollection" Type="System.Web.HttpCookieCollection" />
+      </Parameters>
+      <Docs>
+        <param name="httpCookieCollection">要在其中搜索的 cookies 集合。</param>
+        <summary>确定指定的会话cookie是否在指定的cookie集合中。</summary>
+        <returns>如果找到一个会话 cookie，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="httpCookieCollection" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ContextSessionSecurityToken">
+      <MemberSignature Language="C#" Value="public virtual System.IdentityModel.Tokens.SessionSecurityToken ContextSessionSecurityToken { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IdentityModel.Tokens.SessionSecurityToken ContextSessionSecurityToken" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Services.SessionAuthenticationModule.ContextSessionSecurityToken" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable ReadOnly Property ContextSessionSecurityToken As SessionSecurityToken" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::IdentityModel::Tokens::SessionSecurityToken ^ ContextSessionSecurityToken { System::IdentityModel::Tokens::SessionSecurityToken ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.ContextSessionSecurityToken : System.IdentityModel.Tokens.SessionSecurityToken" Usage="System.IdentityModel.Services.SessionAuthenticationModule.ContextSessionSecurityToken" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Tokens.SessionSecurityToken</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取当前 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 的活动 <see cref="T:System.Web.HttpContext" />。</summary>
+        <value>活动会话安全标记。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CookieHandler">
+      <MemberSignature Language="C#" Value="public System.IdentityModel.Services.CookieHandler CookieHandler { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.IdentityModel.Services.CookieHandler CookieHandler" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Services.SessionAuthenticationModule.CookieHandler" />
+      <MemberSignature Language="VB.NET" Value="Public Property CookieHandler As CookieHandler" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::IdentityModel::Services::CookieHandler ^ CookieHandler { System::IdentityModel::Services::CookieHandler ^ get(); void set(System::IdentityModel::Services::CookieHandler ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.CookieHandler : System.IdentityModel.Services.CookieHandler with get, set" Usage="System.IdentityModel.Services.SessionAuthenticationModule.CookieHandler" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Services.CookieHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取用于读取、写入和删除会话 Cookie 的 Cookie 处理程序。</summary>
+        <value>Cookie 处理程序。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.IdentityModel.Services.SessionAuthenticationModule.CookieHandler%2A> 属性 <xref:System.IdentityModel.Services.SessionAuthenticationModule.InitializePropertiesFromConfiguration%2A> 由方法进行初始化。 此方法基于在<xref:System.IdentityModel.Services.Configuration.FederationConfiguration> <xref:System.IdentityModel.Services.FederatedAuthentication.FederationConfiguration%2A?displayProperty=nameWithType>属性上设置的对象上指定的 cookie 处理程序来初始化属性。 可以通过[ &lt; cookieHandler &gt;  ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/cookiehandler.md)元素在配置文件中设置 cookie 处理程序。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.IdentityModel.Services.SessionAuthenticationModule.DeleteSessionTokenCookie" />
+        <altmember cref="M:System.IdentityModel.Services.SessionAuthenticationModule.TryReadSessionTokenFromCookie(System.IdentityModel.Tokens.SessionSecurityToken@)" />
+        <altmember cref="M:System.IdentityModel.Services.SessionAuthenticationModule.WriteSessionTokenToCookie(System.IdentityModel.Tokens.SessionSecurityToken)" />
+      </Docs>
+    </Member>
+    <Member MemberName="CreateSessionSecurityToken">
+      <MemberSignature Language="C#" Value="public System.IdentityModel.Tokens.SessionSecurityToken CreateSessionSecurityToken (System.Security.Claims.ClaimsPrincipal principal, string context, DateTime validFrom, DateTime validTo, bool isPersistent);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IdentityModel.Tokens.SessionSecurityToken CreateSessionSecurityToken(class System.Security.Claims.ClaimsPrincipal principal, string context, valuetype System.DateTime validFrom, valuetype System.DateTime validTo, bool isPersistent) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.CreateSessionSecurityToken(System.Security.Claims.ClaimsPrincipal,System.String,System.DateTime,System.DateTime,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Function CreateSessionSecurityToken (principal As ClaimsPrincipal, context As String, validFrom As DateTime, validTo As DateTime, isPersistent As Boolean) As SessionSecurityToken" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::IdentityModel::Tokens::SessionSecurityToken ^ CreateSessionSecurityToken(System::Security::Claims::ClaimsPrincipal ^ principal, System::String ^ context, DateTime validFrom, DateTime validTo, bool isPersistent);" />
+      <MemberSignature Language="F#" Value="member this.CreateSessionSecurityToken : System.Security.Claims.ClaimsPrincipal * string * DateTime * DateTime * bool -&gt; System.IdentityModel.Tokens.SessionSecurityToken" Usage="sessionAuthenticationModule.CreateSessionSecurityToken (principal, context, validFrom, validTo, isPersistent)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Tokens.SessionSecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="principal" Type="System.Security.Claims.ClaimsPrincipal" />
+        <Parameter Name="context" Type="System.String" />
+        <Parameter Name="validFrom" Type="System.DateTime" />
+        <Parameter Name="validTo" Type="System.DateTime" />
+        <Parameter Name="isPersistent" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="principal">在令牌中要被捕捉的主体。</param>
+        <param name="context">应用程序定义的上下文字符串。</param>
+        <param name="validFrom">该标识有效的最初时刻。</param>
+        <param name="validTo">该令牌有效的最初时刻。</param>
+        <param name="isPersistent">如果值应由用户代理执行，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>使用配置会话标记处理程序，从指定参数创建 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 。</summary>
+        <returns>会话标识。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.InvalidOperationException">没有已配置的无效会话标记处理程序。 （在 <see cref="T:System.IdentityModel.Tokens.SessionSecurityTokenHandler" /> 属性中未配置  <see cref="P:System.IdentityModel.Configuration.IdentityConfiguration.SecurityTokenHandlers" />。）</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteSessionTokenCookie">
+      <MemberSignature Language="C#" Value="public void DeleteSessionTokenCookie ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DeleteSessionTokenCookie() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.DeleteSessionTokenCookie" />
+      <MemberSignature Language="VB.NET" Value="Public Sub DeleteSessionTokenCookie ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void DeleteSessionTokenCookie();" />
+      <MemberSignature Language="F#" Value="member this.DeleteSessionTokenCookie : unit -&gt; unit" Usage="sessionAuthenticationModule.DeleteSessionTokenCookie " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>从堆栈中移除最顶层会话并将其返回。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用由<xref:System.IdentityModel.Services.SessionAuthenticationModule.CookieHandler%2A>属性指定的 cookie 处理程序来删除会话 cookie。 此方法在通过<xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOut%2A>方法注销过程中调用。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InitializeModule">
+      <MemberSignature Language="C#" Value="protected override void InitializeModule (System.Web.HttpApplication context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void InitializeModule(class System.Web.HttpApplication context) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.InitializeModule(System.Web.HttpApplication)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overrides Sub InitializeModule (context As HttpApplication)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; override void InitializeModule(System::Web::HttpApplication ^ context);" />
+      <MemberSignature Language="F#" Value="override this.InitializeModule : System.Web.HttpApplication -&gt; unit" Usage="sessionAuthenticationModule.InitializeModule context" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Web.HttpApplication" />
+      </Parameters>
+      <Docs>
+        <param name="context">包含该模块的 HTTP 应用对程序对象。</param>
+        <summary>初始化模块并为其从模块的 [!INCLUDE[vstecasp](~/includes/vstecasp-md.md)] 应用程序对象处理事件做好准备。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.IdentityModel.Services.SessionAuthenticationModule.OnAuthenticateRequest%2A>将<xref:System.Web.HttpApplication.AuthenticateRequest?displayProperty=nameWithType> <xref:System.Web.HttpApplication.PostAuthenticateRequest?displayProperty=nameWithType> 和处理程序 `context` 添加到由参数指定的应用程序对象的和事件。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.OnPostAuthenticateRequest%2A>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InitializePropertiesFromConfiguration">
+      <MemberSignature Language="C#" Value="protected override void InitializePropertiesFromConfiguration ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void InitializePropertiesFromConfiguration() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.InitializePropertiesFromConfiguration" />
+      <MemberSignature Language="VB.NET" Value="Protected Overrides Sub InitializePropertiesFromConfiguration ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; override void InitializePropertiesFromConfiguration();" />
+      <MemberSignature Language="F#" Value="override this.InitializePropertiesFromConfiguration : unit -&gt; unit" Usage="sessionAuthenticationModule.InitializePropertiesFromConfiguration " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>初始化基于在配置文件中的定义的模块属性。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 通过在<xref:System.IdentityModel.Services.SessionAuthenticationModule.CookieHandler%2A> 属性 <xref:System.IdentityModel.Services.FederatedAuthentication.FederationConfiguration%2A?displayProperty=nameWithType> 上设置的对象初始化在配置中指定的处理程序的属性。 <xref:System.IdentityModel.Services.Configuration.FederationConfiguration?displayProperty=nameWithType> 可以通过[ &lt; cookieHandler &gt;  ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/cookiehandler.md)元素在配置文件中指定 cookie 处理程序。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsReferenceMode">
+      <MemberSignature Language="C#" Value="public bool IsReferenceMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReferenceMode" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Services.SessionAuthenticationModule.IsReferenceMode" />
+      <MemberSignature Language="VB.NET" Value="Public Property IsReferenceMode As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IsReferenceMode { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.IsReferenceMode : bool with get, set" Usage="System.IdentityModel.Services.SessionAuthenticationModule.IsReferenceMode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，该值指定是否应在会话 Cookie 中存储会话信息（声明值等），或是否应通过使用 Cookie 仅存储引用在服务器端上存储会话内容。</summary>
+        <value>如果发布的 cookies 在引用模式中，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="false" />，指定了发布的 cookie 不处于引用模式。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在引用模式下， <xref:System.IdentityModel.Tokens.SessionSecurityToken>存储在服务器端缓存中（从<xref:System.IdentityModel.Tokens.SessionSecurityTokenCache>派生的对象）。 发出的 cookie 只包含用于从缓存中检索令牌的上下文标识符。  
+  
+> [!IMPORTANT]
+>  若要在引用模式下操作，Microsoft 建议为<xref:System.IdentityModel.Services.WSFederationAuthenticationModule.SessionSecurityTokenCreated?displayProperty=nameWithType> global.asax.cs 文件中的事件提供处理程序，并在<xref:System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs.SessionToken%2A?displayProperty=nameWithType>属性中传递的标记上<xref:System.IdentityModel.Tokens.SessionSecurityToken.IsReferenceMode%2A?displayProperty=nameWithType>设置属性。 这将确保会话令牌在对每个请求的引用模式下运行，并且优于仅在会话<xref:System.IdentityModel.Services.SessionAuthenticationModule.IsReferenceMode%2A?displayProperty=nameWithType>身份验证模块上设置属性。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnAuthenticateRequest">
+      <MemberSignature Language="C#" Value="protected virtual void OnAuthenticateRequest (object sender, EventArgs eventArgs);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnAuthenticateRequest(object sender, class System.EventArgs eventArgs) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.OnAuthenticateRequest(System.Object,System.EventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnAuthenticateRequest(System::Object ^ sender, EventArgs ^ eventArgs);" />
+      <MemberSignature Language="F#" Value="abstract member OnAuthenticateRequest : obj * EventArgs -&gt; unit&#xA;override this.OnAuthenticateRequest : obj * EventArgs -&gt; unit" Usage="sessionAuthenticationModule.OnAuthenticateRequest (sender, eventArgs)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="eventArgs" Type="System.EventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">事件的源。 这将是 <see cref="T:System.Web.HttpApplication" /> 对象。</param>
+        <param name="eventArgs">事件的数据。</param>
+        <summary>从 [!INCLUDE[vstecasp](~/includes/vstecasp-md.md)] 管道中处理的 <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> 事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法执行以下操作：  
+  
+1.  调用方法以<xref:System.IdentityModel.Tokens.SessionSecurityToken>从会话 cookie 读取（如果存在）。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.TryReadSessionTokenFromCookie%2A>  
+  
+2.  如果无法读取会话安全令牌（很可能是因为尚未建立会话），则返回。  
+  
+3.  调用方法以引发 <xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenReceived> 事件。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.OnSessionSecurityTokenReceived%2A> 这为从 cookie 读取的令牌进行修改或取消请求提供了机会。 处理程序还可以通过设置<xref:System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs.ReissueCookie%2A?displayProperty=nameWithType>属性来指定应重新颁发令牌。  
+  
+4.  如果要重新颁发令牌，则将其从缓存中删除，并调用<xref:System.IdentityModel.Services.SessionAuthenticationModule.OnSessionSecurityTokenCreated%2A>方法来<xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenCreated>引发事件。 这为再次修改标记提供了机会。 还可以通过在事件处理程序中设置<xref:System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs.WriteSessionCookie%2A?displayProperty=nameWithType>属性来修改重新发出行为。  
+  
+5.  <xref:System.IdentityModel.Services.SessionAuthenticationModule.AuthenticateSessionSecurityToken%2A>调用方法来对用户进行身份验证。 如果成功，则可以将<xref:System.Threading.Thread.CurrentPrincipal%2A?displayProperty=nameWithType>属性设置为包含<xref:System.IdentityModel.Tokens.SessionSecurityToken.ClaimsPrincipal%2A?displayProperty=nameWithType>在传入令牌的属性中的主体。  
+  
+6.  如果会话已过期，则调用<xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOut%2A>方法。  
+  
+ 方法将添加到<xref:System.IdentityModel.Services.SessionAuthenticationModule.InitializeModule%2A>方法中<xref:System.Web.HttpApplication.AuthenticateRequest?displayProperty=nameWithType>事件的处理程序。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.OnAuthenticateRequest%2A>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">没有已配置的无效会话标记处理程序。 （在 <see cref="T:System.IdentityModel.Tokens.SessionSecurityTokenHandler" /> 属性中未配置  <see cref="P:System.IdentityModel.Configuration.IdentityConfiguration.SecurityTokenHandlers" />。）</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="OnPostAuthenticateRequest">
+      <MemberSignature Language="C#" Value="protected virtual void OnPostAuthenticateRequest (object sender, EventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnPostAuthenticateRequest(object sender, class System.EventArgs e) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.OnPostAuthenticateRequest(System.Object,System.EventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnPostAuthenticateRequest (sender As Object, e As EventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnPostAuthenticateRequest(System::Object ^ sender, EventArgs ^ e);" />
+      <MemberSignature Language="F#" Value="abstract member OnPostAuthenticateRequest : obj * EventArgs -&gt; unit&#xA;override this.OnPostAuthenticateRequest : obj * EventArgs -&gt; unit" Usage="sessionAuthenticationModule.OnPostAuthenticateRequest (sender, e)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sender" Type="System.Object" />
+        <Parameter Name="e" Type="System.EventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="sender">事件的源。 这将是 <see cref="T:System.Web.HttpApplication" /> 对象。</param>
+        <param name="e">事件的数据。</param>
+        <summary>从 [!INCLUDE[vstecasp](~/includes/vstecasp-md.md)] 管道中处理的 <see cref="E:System.Web.HttpApplication.PostAuthenticateRequest" /> 事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认实现为空。  
+  
+ 处理程序将添加到<xref:System.IdentityModel.Services.SessionAuthenticationModule.InitializeModule%2A>方法中<xref:System.Web.HttpApplication.PostAuthenticateRequest?displayProperty=nameWithType>事件的处理程序。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.OnPostAuthenticateRequest%2A>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnSessionSecurityTokenCreated">
+      <MemberSignature Language="C#" Value="protected virtual void OnSessionSecurityTokenCreated (System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs args);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnSessionSecurityTokenCreated(class System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs args) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.OnSessionSecurityTokenCreated(System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnSessionSecurityTokenCreated (args As SessionSecurityTokenCreatedEventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnSessionSecurityTokenCreated(System::IdentityModel::Services::SessionSecurityTokenCreatedEventArgs ^ args);" />
+      <MemberSignature Language="F#" Value="abstract member OnSessionSecurityTokenCreated : System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs -&gt; unit&#xA;override this.OnSessionSecurityTokenCreated : System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs -&gt; unit" Usage="sessionAuthenticationModule.OnSessionSecurityTokenCreated args" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">事件的数据。</param>
+        <summary>引发 <see cref="E:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenCreated" /> 事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.IdentityModel.Services.SessionAuthenticationModule.OnAuthenticateRequest%2A>方法调用。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnSessionSecurityTokenReceived">
+      <MemberSignature Language="C#" Value="protected virtual void OnSessionSecurityTokenReceived (System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs args);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnSessionSecurityTokenReceived(class System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs args) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.OnSessionSecurityTokenReceived(System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnSessionSecurityTokenReceived (args As SessionSecurityTokenReceivedEventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnSessionSecurityTokenReceived(System::IdentityModel::Services::SessionSecurityTokenReceivedEventArgs ^ args);" />
+      <MemberSignature Language="F#" Value="abstract member OnSessionSecurityTokenReceived : System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs -&gt; unit&#xA;override this.OnSessionSecurityTokenReceived : System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs -&gt; unit" Usage="sessionAuthenticationModule.OnSessionSecurityTokenReceived args" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">事件的数据。</param>
+        <summary>引发 <see cref="E:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenReceived" /> 事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.IdentityModel.Services.SessionAuthenticationModule.OnAuthenticateRequest%2A>方法调用。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnSignedOut">
+      <MemberSignature Language="C#" Value="protected virtual void OnSignedOut (EventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnSignedOut(class System.EventArgs e) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.OnSignedOut(System.EventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnSignedOut (e As EventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnSignedOut(EventArgs ^ e);" />
+      <MemberSignature Language="F#" Value="abstract member OnSignedOut : EventArgs -&gt; unit&#xA;override this.OnSignedOut : EventArgs -&gt; unit" Usage="sessionAuthenticationModule.OnSignedOut e" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.EventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="e">事件的数据。</param>
+        <summary>引发 <see cref="E:System.IdentityModel.Services.SessionAuthenticationModule.SignedOut" /> 事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 执行注销并删除会话 cookie <xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOut%2A>后，从方法调用此方法。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnSigningOut">
+      <MemberSignature Language="C#" Value="protected virtual void OnSigningOut (System.IdentityModel.Services.SigningOutEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnSigningOut(class System.IdentityModel.Services.SigningOutEventArgs e) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.OnSigningOut(System.IdentityModel.Services.SigningOutEventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnSigningOut (e As SigningOutEventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnSigningOut(System::IdentityModel::Services::SigningOutEventArgs ^ e);" />
+      <MemberSignature Language="F#" Value="abstract member OnSigningOut : System.IdentityModel.Services.SigningOutEventArgs -&gt; unit&#xA;override this.OnSigningOut : System.IdentityModel.Services.SigningOutEventArgs -&gt; unit" Usage="sessionAuthenticationModule.OnSigningOut e" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.IdentityModel.Services.SigningOutEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="e">事件的数据。</param>
+        <summary>引发 <see cref="E:System.IdentityModel.Services.SessionAuthenticationModule.SigningOut" /> 事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将从<xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOut%2A>方法中调用此方法以执行注销。它在删除会话 cookie 之前被调用。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnSignOutError">
+      <MemberSignature Language="C#" Value="protected virtual void OnSignOutError (System.IdentityModel.Services.ErrorEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnSignOutError(class System.IdentityModel.Services.ErrorEventArgs e) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.OnSignOutError(System.IdentityModel.Services.ErrorEventArgs)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub OnSignOutError (e As ErrorEventArgs)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void OnSignOutError(System::IdentityModel::Services::ErrorEventArgs ^ e);" />
+      <MemberSignature Language="F#" Value="abstract member OnSignOutError : System.IdentityModel.Services.ErrorEventArgs -&gt; unit&#xA;override this.OnSignOutError : System.IdentityModel.Services.ErrorEventArgs -&gt; unit" Usage="sessionAuthenticationModule.OnSignOutError e" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="System.IdentityModel.Services.ErrorEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="e">事件的数据。</param>
+        <summary>引发 <see cref="E:System.IdentityModel.Services.SessionAuthenticationModule.SignOutError" /> 事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果在注销过程中发生<xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOut%2A>错误，则从方法中调用此方法。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReadSessionTokenFromCookie">
+      <MemberSignature Language="C#" Value="public System.IdentityModel.Tokens.SessionSecurityToken ReadSessionTokenFromCookie (byte[] sessionCookie);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IdentityModel.Tokens.SessionSecurityToken ReadSessionTokenFromCookie(unsigned int8[] sessionCookie) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.ReadSessionTokenFromCookie(System.Byte[])" />
+      <MemberSignature Language="VB.NET" Value="Public Function ReadSessionTokenFromCookie (sessionCookie As Byte()) As SessionSecurityToken" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::IdentityModel::Tokens::SessionSecurityToken ^ ReadSessionTokenFromCookie(cli::array &lt;System::Byte&gt; ^ sessionCookie);" />
+      <MemberSignature Language="F#" Value="member this.ReadSessionTokenFromCookie : byte[] -&gt; System.IdentityModel.Tokens.SessionSecurityToken" Usage="sessionAuthenticationModule.ReadSessionTokenFromCookie sessionCookie" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IdentityModel.Tokens.SessionSecurityToken</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sessionCookie" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="sessionCookie">包含会话标记的原始格式的 cookie。</param>
+        <summary>从指定的会话 Cookie 读取 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" />。</summary>
+        <returns>从 Cookie 读取的会话标识。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.InvalidOperationException">没有已配置的无效会话标记处理程序。 （在 <see cref="T:System.IdentityModel.Tokens.SessionSecurityTokenHandler" /> 属性中未配置  <see cref="P:System.IdentityModel.Configuration.IdentityConfiguration.SecurityTokenHandlers" />。）</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SessionSecurityTokenCreated">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs&gt; SessionSecurityTokenCreated;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs&gt; SessionSecurityTokenCreated" />
+      <MemberSignature Language="DocId" Value="E:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenCreated" />
+      <MemberSignature Language="VB.NET" Value="Public Event SessionSecurityTokenCreated As EventHandler(Of SessionSecurityTokenCreatedEventArgs) " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler&lt;System::IdentityModel::Services::SessionSecurityTokenCreatedEventArgs ^&gt; ^ SessionSecurityTokenCreated;" />
+      <MemberSignature Language="F#" Value="member this.SessionSecurityTokenCreated : EventHandler&lt;System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs&gt; " Usage="member this.SessionSecurityTokenCreated : System.EventHandler&lt;System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs&gt; " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当会话安全标记已创建时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在将会话安全令牌写入 cookie 之前，可以使用此事件来修改会话安全令牌。  
+  
+ 创建会话令牌（ <xref:System.IdentityModel.Services.SessionAuthenticationModule.OnAuthenticateRequest%2A> <xref:System.IdentityModel.Tokens.SessionSecurityToken>）后，从方法内引发事件。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenCreated> 例如，如果<xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenReceived>事件的事件处理程序修改了标记，则会发生这种情况。  
+  
+ 你可以使用此事件来修改会话令牌的属性，然后再将其传递到管道中，并用于对发出请求的实体（用户）进行身份验证。  
+  
+ 在事件处理程序中，可以通过<xref:System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs.SessionToken%2A?displayProperty=nameWithType>属性访问标记。 修改令牌后，可以通过将<xref:System.IdentityModel.Services.SessionSecurityTokenCreatedEventArgs.WriteSessionCookie%2A?displayProperty=nameWithType>属性设置为来`true`确保将其写回到 cookie。 与不同的<xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenCreated> <xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenCreated>是，事件不是可取消的事件。  
+  
+   
+  
+## Examples  
+ 下面的代码演示在 ASP.NET web 应用<xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenCreated>程序的 global.asax.cs 文件中实现的事件的处理程序。 还必须将处理程序添加到事件。 <xref:System.IdentityModel.Services.SessionAuthenticationModule>概述主题中显示了一个更完整的示例。  
+  
+ [!code-csharp[WifSAM#6](~/samples/snippets/csharp/VS_Snippets_Misc/wifsam/cs/webapplication1/global.asax.cs#6)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SessionSecurityTokenReceived">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs&gt; SessionSecurityTokenReceived;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs&gt; SessionSecurityTokenReceived" />
+      <MemberSignature Language="DocId" Value="E:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenReceived" />
+      <MemberSignature Language="VB.NET" Value="Public Event SessionSecurityTokenReceived As EventHandler(Of SessionSecurityTokenReceivedEventArgs) " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler&lt;System::IdentityModel::Services::SessionSecurityTokenReceivedEventArgs ^&gt; ^ SessionSecurityTokenReceived;" />
+      <MemberSignature Language="F#" Value="member this.SessionSecurityTokenReceived : EventHandler&lt;System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs&gt; " Usage="member this.SessionSecurityTokenReceived : System.EventHandler&lt;System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs&gt; " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当会话安全标记已从 cookie 读取时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 成功<xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenReceived>从会话 cookie 读取会话令牌<xref:System.IdentityModel.Services.SessionAuthenticationModule.OnAuthenticateRequest%2A> （<xref:System.IdentityModel.Tokens.SessionSecurityToken>）后，从方法中引发该事件。  
+  
+ 你可以使用此事件来修改会话令牌的属性，然后再将其传递到管道中，并用于对发出请求的实体（用户）进行身份验证。 最常见的一种情况涉及到修改会话过期时间（可通过<xref:System.IdentityModel.Tokens.SessionSecurityToken.ValidTo%2A?displayProperty=nameWithType>属性访问），以覆盖通过`lifetime` [ &lt;sessionTokenRequirement &gt;  ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/sessiontokenrequirement.md)元素。 通过修改每个请求的此属性，可实现滑动会话;也就是说，每次用户访问站点时，都会在该会话中扩展生存期。  
+  
+ 在事件处理程序中，可以通过<xref:System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs.SessionToken%2A?displayProperty=nameWithType>属性访问标记。 修改令牌后，可以通过将设置<xref:System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs.ReissueCookie%2A?displayProperty=nameWithType>为来`true`确保将其写回到 cookie。 最后，该<xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenReceived>事件是一个可取消的事件，你可以<xref:System.ComponentModel.CancelEventArgs.Cancel%2A>设置的<xref:System.IdentityModel.Services.SessionSecurityTokenReceivedEventArgs>属性以中止进一步处理请求。  
+  
+   
+  
+## Examples  
+ 下面的代码演示在 ASP.NET web 应用<xref:System.IdentityModel.Services.SessionAuthenticationModule.SessionSecurityTokenReceived>程序的 global.asax.cs 文件中实现的事件的处理程序。 还必须将处理程序添加到事件。 <xref:System.IdentityModel.Services.SessionAuthenticationModule>概述主题中显示了一个更完整的示例。  
+  
+ [!code-csharp[WifSAM#5](~/samples/snippets/csharp/VS_Snippets_Misc/wifsam/cs/webapplication1/global.asax.cs#5)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetPrincipalFromSessionToken">
+      <MemberSignature Language="C#" Value="protected virtual void SetPrincipalFromSessionToken (System.IdentityModel.Tokens.SessionSecurityToken sessionSecurityToken);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void SetPrincipalFromSessionToken(class System.IdentityModel.Tokens.SessionSecurityToken sessionSecurityToken) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.SetPrincipalFromSessionToken(System.IdentityModel.Tokens.SessionSecurityToken)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void SetPrincipalFromSessionToken(System::IdentityModel::Tokens::SessionSecurityToken ^ sessionSecurityToken);" />
+      <MemberSignature Language="F#" Value="abstract member SetPrincipalFromSessionToken : System.IdentityModel.Tokens.SessionSecurityToken -&gt; unit&#xA;override this.SetPrincipalFromSessionToken : System.IdentityModel.Tokens.SessionSecurityToken -&gt; unit" Usage="sessionAuthenticationModule.SetPrincipalFromSessionToken sessionSecurityToken" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sessionSecurityToken" Type="System.IdentityModel.Tokens.SessionSecurityToken" />
+      </Parameters>
+      <Docs>
+        <param name="sessionSecurityToken">从其开始设置主体的会话标识。</param>
+        <summary>将 <see cref="T:System.Web.HttpContext" /> 和 <see cref="T:System.Threading.Thread" /> 的主体设置到包含在指定会话标记的主体。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 调用方法，并<xref:System.Web.HttpContext.Current%2A?displayProperty=nameWithType>使用返回<xref:System.Threading.Thread.CurrentPrincipal%2A?displayProperty=nameWithType>的标识设置<xref:System.Web.HttpContext.User%2A?displayProperty=nameWithType>属性和属性。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.ValidateSessionToken%2A>  
+  
+ 此方法是从<xref:System.IdentityModel.Services.SessionAuthenticationModule.AuthenticateSessionSecurityToken%2A>方法中调用的。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SignedOut">
+      <MemberSignature Language="C#" Value="public event EventHandler SignedOut;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler SignedOut" />
+      <MemberSignature Language="DocId" Value="E:System.IdentityModel.Services.SessionAuthenticationModule.SignedOut" />
+      <MemberSignature Language="VB.NET" Value="Public Event SignedOut As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler ^ SignedOut;" />
+      <MemberSignature Language="F#" Value="member this.SignedOut : EventHandler " Usage="member this.SignedOut : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>在用户注销之后发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在调用<xref:System.IdentityModel.Services.SessionAuthenticationModule.DeleteSessionTokenCookie%2A>方法<xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOut%2A>后立即从方法引发。  
+  
+ 不保证每个会话都要调用此事件。 例如，可以在客户端删除 cookie，在这种情况下，将永远不会引发此事件，因为没有用于删除会话的服务器端事件。  
+  
+   
+  
+## Examples  
+ 下面的代码演示在 ASP.NET web 应用<xref:System.IdentityModel.Services.SessionAuthenticationModule.SignedOut>程序的 global.asax.cs 文件中实现的事件的处理程序。 还必须将处理程序添加到事件。 <xref:System.IdentityModel.Services.SessionAuthenticationModule>概述主题中显示了一个更完整的示例。  
+  
+ [!code-csharp[WifSAM#3](~/samples/snippets/csharp/VS_Snippets_Misc/wifsam/cs/webapplication1/global.asax.cs#3)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SigningOut">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;System.IdentityModel.Services.SigningOutEventArgs&gt; SigningOut;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.IdentityModel.Services.SigningOutEventArgs&gt; SigningOut" />
+      <MemberSignature Language="DocId" Value="E:System.IdentityModel.Services.SessionAuthenticationModule.SigningOut" />
+      <MemberSignature Language="VB.NET" Value="Public Event SigningOut As EventHandler(Of SigningOutEventArgs) " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler&lt;System::IdentityModel::Services::SigningOutEventArgs ^&gt; ^ SigningOut;" />
+      <MemberSignature Language="F#" Value="member this.SigningOut : EventHandler&lt;System.IdentityModel.Services.SigningOutEventArgs&gt; " Usage="member this.SigningOut : System.EventHandler&lt;System.IdentityModel.Services.SigningOutEventArgs&gt; " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.IdentityModel.Services.SigningOutEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>在删除登录会话之前发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在调用<xref:System.IdentityModel.Services.SessionAuthenticationModule.DeleteSessionTokenCookie%2A>方法<xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOut%2A>之前从方法引发。  
+  
+ 不保证每个会话都要调用此事件。 例如，可以在客户端删除 cookie，在这种情况下，将永远不会引发此事件，因为没有用于删除会话的服务器端事件。  
+  
+   
+  
+## Examples  
+ 下面的代码演示在 ASP.NET web 应用<xref:System.IdentityModel.Services.SessionAuthenticationModule.SigningOut>程序的 global.asax.cs 文件中实现的事件的处理程序。 还必须将处理程序添加到事件。 <xref:System.IdentityModel.Services.SessionAuthenticationModule>概述主题中显示了一个更完整的示例。  
+  
+ [!code-csharp[WifSAM#4](~/samples/snippets/csharp/VS_Snippets_Misc/wifsam/cs/webapplication1/global.asax.cs#4)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SignOut">
+      <MemberSignature Language="C#" Value="public virtual void SignOut ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SignOut() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.SignOut" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Sub SignOut ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void SignOut();" />
+      <MemberSignature Language="F#" Value="abstract member SignOut : unit -&gt; unit&#xA;override this.SignOut : unit -&gt; unit" Usage="sessionAuthenticationModule.SignOut " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>注销当前用户并引发相应事件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.IdentityModel.Services.SessionAuthenticationModule.OnSigningOut%2A>调用、 <xref:System.IdentityModel.Services.SessionAuthenticationModule.DeleteSessionTokenCookie%2A>和方法以执行注销。 <xref:System.IdentityModel.Services.SessionAuthenticationModule.OnSignedOut%2A> 如果发生异常， <xref:System.IdentityModel.Services.SessionAuthenticationModule.OnSignOutError%2A>则调用方法来<xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOutError>引发事件。 你可以设置传入<xref:System.ComponentModel.CancelEventArgs.Cancel%2A>此事件的<xref:System.IdentityModel.Services.ErrorEventArgs>事件处理程序的对象的属性，以取消注销并防止异常传播到客户端。  
+  
+ 您可以重写此方法，以添加特定于应用程序的行为。  
+  
+   
+  
+## Examples  
+ 下面的代码演示了用于从 ASP.NET <xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOut%2A> web 应用程序中的 SignOut 页（SignOut.aspx.cs）调用方法的代码。 <xref:System.IdentityModel.Services.SessionAuthenticationModule>概述主题中显示了一个更完整的示例。  
+  
+ [!code-csharp[WifSAM#7](~/samples/snippets/csharp/VS_Snippets_Misc/wifsam/cs/webapplication1/global.asax.cs#7)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SignOutError">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;System.IdentityModel.Services.ErrorEventArgs&gt; SignOutError;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.IdentityModel.Services.ErrorEventArgs&gt; SignOutError" />
+      <MemberSignature Language="DocId" Value="E:System.IdentityModel.Services.SessionAuthenticationModule.SignOutError" />
+      <MemberSignature Language="VB.NET" Value="Public Event SignOutError As EventHandler(Of ErrorEventArgs) " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler&lt;System::IdentityModel::Services::ErrorEventArgs ^&gt; ^ SignOutError;" />
+      <MemberSignature Language="F#" Value="member this.SignOutError : EventHandler&lt;System.IdentityModel.Services.ErrorEventArgs&gt; " Usage="member this.SignOutError : System.EventHandler&lt;System.IdentityModel.Services.ErrorEventArgs&gt; " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;System.IdentityModel.Services.ErrorEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当在注销期间有错误时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在注销过程<xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOut%2A>中出现错误时从方法引发。  
+  
+ 在事件处理程序中，您可以获取导致事件从<xref:System.IdentityModel.Services.ErrorEventArgs.Exception%2A?displayProperty=nameWithType>属性引发的异常。 你可以通过将的<xref:System.ComponentModel.CancelEventArgs.Cancel%2A> <xref:System.IdentityModel.Services.ErrorEventArgs>属性设置为`true`，来取消对异常的进一步处理，这将导致不会将异常传播到客户端。  
+  
+ 不保证每个会话都要调用此事件。 例如，可以在客户端删除 cookie，在这种情况下，将永远不会引发此事件，因为没有用于删除会话的服务器端事件。  
+  
+   
+  
+## Examples  
+ 下面的代码演示在 ASP.NET web 应用<xref:System.IdentityModel.Services.SessionAuthenticationModule.SignOutError>程序的 global.asax.cs 文件中实现的事件的处理程序。 还必须将处理程序添加到事件。 <xref:System.IdentityModel.Services.SessionAuthenticationModule>概述主题中显示了一个更完整的示例。  
+  
+ [!code-csharp[WifSAM#2](~/samples/snippets/csharp/VS_Snippets_Misc/wifsam/cs/webapplication1/global.asax.cs#2)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryReadSessionTokenFromCookie">
+      <MemberSignature Language="C#" Value="public bool TryReadSessionTokenFromCookie (out System.IdentityModel.Tokens.SessionSecurityToken sessionToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TryReadSessionTokenFromCookie([out] class System.IdentityModel.Tokens.SessionSecurityToken&amp; sessionToken) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.TryReadSessionTokenFromCookie(System.IdentityModel.Tokens.SessionSecurityToken@)" />
+      <MemberSignature Language="VB.NET" Value="Public Function TryReadSessionTokenFromCookie (ByRef sessionToken As SessionSecurityToken) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool TryReadSessionTokenFromCookie([Runtime::InteropServices::Out] System::IdentityModel::Tokens::SessionSecurityToken ^ % sessionToken);" />
+      <MemberSignature Language="F#" Value="member this.TryReadSessionTokenFromCookie :  -&gt; bool" Usage="sessionAuthenticationModule.TryReadSessionTokenFromCookie sessionToken" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sessionToken" Type="System.IdentityModel.Tokens.SessionSecurityToken" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="sessionToken">当此方法返回时，包含从会话 Cookie 读取的会话安全标记。</param>
+        <summary>尝试从一个会话 cookie 中读取一个 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" />，并返回指示此会话 cookie 是否成功读取的值。</summary>
+        <returns>如果从请求中成功读取了会话 cookie，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用在<xref:System.IdentityModel.Services.SessionAuthenticationModule.CookieHandler%2A>属性中配置的 cookie 处理程序读取 cookie，然后<xref:System.IdentityModel.Services.SessionAuthenticationModule.ReadSessionTokenFromCookie%2A>调用方法从 cookie 读取标记。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ValidateSessionToken">
+      <MemberSignature Language="C#" Value="protected System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Security.Claims.ClaimsIdentity&gt; ValidateSessionToken (System.IdentityModel.Tokens.SessionSecurityToken sessionSecurityToken);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance class System.Collections.ObjectModel.ReadOnlyCollection`1&lt;class System.Security.Claims.ClaimsIdentity&gt; ValidateSessionToken(class System.IdentityModel.Tokens.SessionSecurityToken sessionSecurityToken) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.ValidateSessionToken(System.IdentityModel.Tokens.SessionSecurityToken)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; System::Collections::ObjectModel::ReadOnlyCollection&lt;System::Security::Claims::ClaimsIdentity ^&gt; ^ ValidateSessionToken(System::IdentityModel::Tokens::SessionSecurityToken ^ sessionSecurityToken);" />
+      <MemberSignature Language="F#" Value="member this.ValidateSessionToken : System.IdentityModel.Tokens.SessionSecurityToken -&gt; System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Security.Claims.ClaimsIdentity&gt;" Usage="sessionAuthenticationModule.ValidateSessionToken sessionSecurityToken" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Security.Claims.ClaimsIdentity&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sessionSecurityToken" Type="System.IdentityModel.Tokens.SessionSecurityToken" />
+      </Parameters>
+      <Docs>
+        <param name="sessionSecurityToken">要验证的标记。</param>
+        <summary>验证指定的 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 并返回其标识。</summary>
+        <returns>包含在标记中的标识的集合。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法是从<xref:System.IdentityModel.Services.SessionAuthenticationModule.AuthenticateSessionSecurityToken%2A>方法中调用的。 它调用<xref:System.IdentityModel.Tokens.SessionSecurityTokenHandler.ValidateToken%2A?displayProperty=nameWithType>配置的会话令牌处理程序的方法来验证令牌并提取其标识。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.IdentityModel.Services.FederatedSessionExpiredException">标记已过期。</exception>
+        <exception cref="T:System.IdentityModel.Services.FederationException">标记的开始时间尚未有效。</exception>
+        <exception cref="T:System.InvalidOperationException">没有已配置的无效会话标记处理程序。 （在 <see cref="T:System.IdentityModel.Tokens.SessionSecurityTokenHandler" /> 属性中未配置  <see cref="P:System.IdentityModel.Configuration.IdentityConfiguration.SecurityTokenHandlers" />。）</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="WriteSessionTokenToCookie">
+      <MemberSignature Language="C#" Value="public void WriteSessionTokenToCookie (System.IdentityModel.Tokens.SessionSecurityToken sessionToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteSessionTokenToCookie(class System.IdentityModel.Tokens.SessionSecurityToken sessionToken) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.SessionAuthenticationModule.WriteSessionTokenToCookie(System.IdentityModel.Tokens.SessionSecurityToken)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub WriteSessionTokenToCookie (sessionToken As SessionSecurityToken)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void WriteSessionTokenToCookie(System::IdentityModel::Tokens::SessionSecurityToken ^ sessionToken);" />
+      <MemberSignature Language="F#" Value="member this.WriteSessionTokenToCookie : System.IdentityModel.Tokens.SessionSecurityToken -&gt; unit" Usage="sessionAuthenticationModule.WriteSessionTokenToCookie sessionToken" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sessionToken" Type="System.IdentityModel.Tokens.SessionSecurityToken" />
+      </Parameters>
+      <Docs>
+        <param name="sessionToken">要写入的会话安全令牌。</param>
+        <summary>将指定的 <see cref="T:System.IdentityModel.Tokens.SessionSecurityToken" /> 写入会话 cookie。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用<xref:System.IdentityModel.Services.SessionAuthenticationModule.CookieHandler%2A>属性中配置的 cookie 处理程序写入 cookie。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="sessionToken" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException">没有已配置的无效会话标记处理程序。 （在 <see cref="T:System.IdentityModel.Tokens.SessionSecurityTokenHandler" /> 属性中未配置  <see cref="P:System.IdentityModel.Configuration.IdentityConfiguration.SecurityTokenHandlers" />。）</exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
