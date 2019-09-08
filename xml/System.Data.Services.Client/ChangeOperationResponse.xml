@@ -1,0 +1,160 @@
+<Type Name="ChangeOperationResponse" FullName="System.Data.Services.Client.ChangeOperationResponse">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="e2560a6ef465a5d003f198bca0ee3a54764017d3" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70691599" /></Metadata><TypeSignature Language="C#" Value="public sealed class ChangeOperationResponse : System.Data.Services.Client.OperationResponse" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ChangeOperationResponse extends System.Data.Services.Client.OperationResponse" />
+  <TypeSignature Language="DocId" Value="T:System.Data.Services.Client.ChangeOperationResponse" />
+  <TypeSignature Language="VB.NET" Value="Public NotInheritable Class ChangeOperationResponse&#xA;Inherits OperationResponse" />
+  <TypeSignature Language="C++ CLI" Value="public ref class ChangeOperationResponse sealed : System::Data::Services::Client::OperationResponse" />
+  <TypeSignature Language="F#" Value="type ChangeOperationResponse = class&#xA;    inherit OperationResponse" />
+  <AssemblyInfo>
+    <AssemblyName>System.Data.Services.Client</AssemblyName>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Data.Services.Client.OperationResponse</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary><see cref="M:System.Data.Services.Client.DataServiceContext.SaveChanges" /> 类返回枚举操作响应后，调用 <see cref="T:System.Data.Services.Client.DataServiceResponse" /> 后返回的结果。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Data.Services.Client.ChangeOperationResponse> 对象预期不由此库的用户直接构造。 相反，将在 <xref:System.Data.Services.Client.DataServiceResponse> 类的枚举器返回枚举操作响应时返回引用。  
+  
+ <xref:System.Data.Services.Client.DataServiceContext.SaveChanges%2A> 会在最后一次调用 <xref:System.Data.Services.Client.DataServiceContext> 时将挂起的更改提交到 <xref:System.Data.Services.Client.DataServiceContext.SaveChanges%2A> 收集的数据服务。 通过调用 <xref:System.Data.Services.Client.DataServiceContext.AddObject%2A>、<xref:System.Data.Services.Client.DataServiceContext.AddLink%2A>、<xref:System.Data.Services.Client.DataServiceContext.DeleteObject%2A>、<xref:System.Data.Services.Client.DataServiceContext.DeleteLink%2A>、<xref:System.Data.Services.Client.DataServiceContext.Detach%2A>、<xref:System.Data.Services.Client.DataServiceContext.DetachLink%2A> 和类似的方法将更改添加到上下文。  
+  
+ <xref:System.Data.Services.Client.DataServiceContext.SaveChanges%2A> 返回表示对发送到数据服务的所有操作的响应的 <xref:System.Data.Services.Client.DataServiceResponse>。 <xref:System.Data.Services.Client.DataServiceResponse> 对象包括一系列 <xref:System.Data.Services.Client.ChangeOperationResponse> 对象，这些对象依次又包含一系列表示已保留或尝试的更改的 <xref:System.Data.Services.Client.EntityDescriptor> 或 <xref:System.Data.Services.Client.LinkDescriptor> 实例。  
+  
+   
+  
+## Examples  
+ 下面的代码演示如何处理对<xref:System.Data.Services.Client.DataServiceContext.SaveChanges%2A>的调用结果。  
+  
+```  
+DataServiceContext service = new DataServiceContext(new Uri("http://myserviceroot"));  
+  
+// Do insert, update, delete, or attach operations.  
+  
+DataServiceResponse dsr;  
+  
+try  
+{  
+    dsr = service.SaveChanges(SaveChangesOptions.Batch);    
+   // Or service.SaveChanges(SaveChangesOptions.ContinueOnError);   
+   //Or service.SaveChanges();  
+   // If there are no errors during save changes, process the results:  
+  
+    if (dsr.IsBatchResponse)  
+    {  
+           /*inspect HTTP artifacts associated with the entire batch:  
+                             dsr.BatchHeaders, dsr.BatchStatusCode*/ }  
+  
+    foreach (ChangeOperationResponse cor in dsr)  
+    {  
+  
+            if (cor.Descriptor is EntityDescriptor)  
+            {  
+                EntityDescriptor ed = (EntityDescriptor)cor.Descriptor;  
+                // This should be the case if  
+                // SaveChanges did not throw an exception.    
+  
+                // After an entity is processed by SaveChanges,  
+                // it is always moved to the unchanged state.  
+                System.Diagnostics.Debug.Assert(  
+                           ed.State == EntityStates.Unchanged);    
+                // This shows that the state should be unchanged if  
+                // the result is success.  
+  
+                //process the entity in the response payload: ed.Entity  
+            }  
+            else if (cor.Descriptor is LinkDescriptor)  
+            {  
+                LinkDescriptor ld = (LinkDescriptor)cor.Descriptor;  
+               // This should be the case if SaveChanges did not throw an exception.  
+  
+               // After an entity is processed by SaveChanges it  
+               // is always moved to the unchanged state.  
+                System.Diagnostics.Debug.Assert(  
+                            ld.State == EntityStates.Unchanged);    
+                // The state should be unchanged if the result is success.  
+  
+                //process the link in the response payload: ld.Source,  
+                // ld.SourceProperty, or ld.Target.  
+            }  
+     }  
+  
+}  
+catch (DataServiceSaveException se)  
+{  
+    // Error while saving changes  
+    dsr = se.Response;  
+  
+    if (dsr.IsBatchResponse)   
+    {   
+        /*inspect HTTP artifacts associated with the entire batch:  
+             dsr.BatchHeaders, dsr.BatchStatusCode*/   
+}      
+}  
+  
+    foreach (ChangeOperationResponse cor in dsr)  
+    {  
+        if (cor.Error != null)  
+        {  
+            //process error  
+        }  
+        else  
+        {  
+            // same success case processing as in the loop over DSRs results in   
+            // the try block. You could put that processing in a method   
+            // and call it from here.      
+        }  
+    }  
+  
+}  
+  
+ catch(Exception)  
+ {  
+    // Error while saving changes, but not thrown by the client library.  
+  
+    // Process ArgumentException, InvalidOperationException, or similar.  
+}  
+}  
+  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Descriptor">
+      <MemberSignature Language="C#" Value="public System.Data.Services.Client.Descriptor Descriptor { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Data.Services.Client.Descriptor Descriptor" />
+      <MemberSignature Language="DocId" Value="P:System.Data.Services.Client.ChangeOperationResponse.Descriptor" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Descriptor As Descriptor" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Data::Services::Client::Descriptor ^ Descriptor { System::Data::Services::Client::Descriptor ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Descriptor : System.Data.Services.Client.Descriptor" Usage="System.Data.Services.Client.ChangeOperationResponse.Descriptor" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Data.Services.Client</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Data.Services.Client.Descriptor</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取由更改操作修改的 <see cref="T:System.Data.Services.Client.EntityDescriptor" /> 或 <see cref="T:System.Data.Services.Client.LinkDescriptor" />。</summary>
+        <value>更改操作修改的 <see cref="T:System.Data.Services.Client.EntityDescriptor" /> 或 <see cref="T:System.Data.Services.Client.LinkDescriptor" />。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

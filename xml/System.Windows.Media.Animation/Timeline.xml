@@ -1,0 +1,1571 @@
+<Type Name="Timeline" FullName="System.Windows.Media.Animation.Timeline">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="ff4376f435cddd0198d7f55d48376c42271ca67c" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70517078" /></Metadata><TypeSignature Language="C#" Value="public abstract class Timeline : System.Windows.Media.Animation.Animatable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit Timeline extends System.Windows.Media.Animation.Animatable" />
+  <TypeSignature Language="DocId" Value="T:System.Windows.Media.Animation.Timeline" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class Timeline&#xA;Inherits Animatable" />
+  <TypeSignature Language="C++ CLI" Value="public ref class Timeline abstract : System::Windows::Media::Animation::Animatable" />
+  <TypeSignature Language="F#" Value="type Timeline = class&#xA;    inherit Animatable" />
+  <AssemblyInfo>
+    <AssemblyName>PresentationCore</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Windows.Media.Animation.Animatable</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Windows.Localizability(System.Windows.LocalizationCategory.None, Readability=System.Windows.Readability.Unreadable)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Windows.Markup.RuntimeNameProperty("Name")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>定义一个时间段。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 时间线表示时间段。  它提供的属性让你可以指定该时间段的长度、开始时间、重复次数、该时间段内时间进度的快慢等。  
+  
+ 从时间线类继承的类可提供附加功能，例如动画和媒体播放。 下面是一些可用的不同类型的专用时间线的示例。  
+  
+-   **动画**： <xref:System.Windows.Media.Animation.AnimationTimeline>是一种生成输出值的时间线类型。 将动画与属性关联时，动画会在其播放时更新属性的值，从而对其进行 "动画处理"。 有关动画的简介，请参阅[动画概述](~/docs/framework/wpf/graphics-multimedia/animation-overview.md)。 有关应用动画的不同方法的信息，请参阅[属性动画技术概述](~/docs/framework/wpf/graphics-multimedia/property-animation-techniques-overview.md)。  
+  
+-   **MediaTimelines**： <xref:System.Windows.Media.MediaTimeline>是一种时间线类型，用于控制媒体文件的播放。  
+  
+-   **ParallelTimelines**： <xref:System.Windows.Media.Animation.ParallelTimeline>是一种将其他时间线分组的时间线类型。  
+  
+-   **情节提要**： <xref:System.Windows.Media.Animation.Storyboard>是<xref:System.Windows.Media.Animation.ParallelTimeline>一种特殊类型的，它为其包含的时间线提供对象和属性目标信息。 有关<xref:System.Windows.Media.Animation.Storyboard>对象的详细信息，请参阅[情节提要概述](~/docs/framework/wpf/graphics-multimedia/storyboards-overview.md)。  
+  
+ 有关使用时间线的详细信息，请参阅[动画概述](~/docs/framework/wpf/graphics-multimedia/animation-overview.md)。 有关时间线的计时功能的简介，请参阅[计时行为概述](~/docs/framework/wpf/graphics-multimedia/timing-behaviors-overview.md)。  
+  
+## <a name="data-binding-and-animating-timelines"></a>数据绑定和动画处理时间线  
+ 大多数时间线属性可以是数据绑定的或动态的;但是，由于计时系统的工作方式，数据绑定或动画时间线的行为与其他数据绑定或动画对象的行为不同。 若要了解其行为，有助于理解激活时间线的方式。  
+  
+ 应用时间线时，将生成时间线及其子时间线的副本。 这些副本会被冻结（变为只读），并<xref:System.Windows.Media.Animation.Clock>从它们创建对象。 这就是对目标属性进行动画处理的实际工作所用的时钟。 如果时间线是数据绑定的或动态的，则在创建其时钟时，将生成其当前值的快照。 即使原始时间线可能会继续更改，时钟也不会更改。  
+  
+ 要使时间线反映数据绑定或动画更改，必须重新生成时钟。 时钟不会自动重新生成。 以下是应用时间线更改的几种方法：  
+  
+-   如果时间线是或属于<xref:System.Windows.Media.Animation.Storyboard>，则可以通过<xref:System.Windows.Media.Animation.BeginStoryboard>使用或<xref:System.Windows.Media.Animation.Storyboard.Begin%2A>方法重新应用它的情节提要，使其反映更改。 这还会产生重新启动动画的附带影响。 在代码中，可以使用<xref:System.Windows.Media.Animation.Storyboard.Seek%2A>方法将演示图板前进到其之前的位置。  
+  
+-   如果使用<xref:System.Windows.Media.Animation.Animatable.BeginAnimation%2A>方法将动画直接应用到属性，请再次<xref:System.Windows.Media.Animation.Animatable.BeginAnimation%2A>调用方法并向其传递已修改的动画。  
+  
+-   如果要直接在时钟级别上工作，请创建并应用一组新的时钟，然后用它们替换之前生成的一组时钟。  
+  
+ 有关数据绑定动画的示例，请参阅[主曲线动画示例](https://go.microsoft.com/fwlink/?LinkID=160011)。  
+  
+## <a name="using-a-timeline-as-a-timer"></a>使用时间线作为计时器  
+ 仅当存在与其相关联的事件处理程序时，或（在<xref:System.Windows.Media.Animation.AnimationClock>对象的情况下）与属性相关联的事件处理程序时，时间线的时钟才会进行。 出于此原因（以及其他），不建议使用<xref:System.Windows.Media.Animation.Timeline>作为计时器。  
+  
+ ]]></format>
+    </remarks>
+    <related type="ExternalDocumentation" href="https://go.microsoft.com/fwlink/?LinkID=159970">动画计时行为示例</related>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Windows.Media.Animation.Timeline" /> 类的新实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Timeline ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; Timeline();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.Windows.Media.Animation.Timeline" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Timeline (Nullable&lt;TimeSpan&gt; beginTime);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(valuetype System.Nullable`1&lt;valuetype System.TimeSpan&gt; beginTime) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.#ctor(System.Nullable{System.TimeSpan})" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New (beginTime As Nullable(Of TimeSpan))" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; Timeline(Nullable&lt;TimeSpan&gt; beginTime);" />
+      <MemberSignature Language="F#" Value="new System.Windows.Media.Animation.Timeline : Nullable&lt;TimeSpan&gt; -&gt; System.Windows.Media.Animation.Timeline" Usage="new System.Windows.Media.Animation.Timeline beginTime" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="beginTime" Type="System.Nullable&lt;System.TimeSpan&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="beginTime">此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 将要开始的时间。 有关更多信息，请参见 <see cref="P:System.Windows.Media.Animation.Timeline.BeginTime" /> 属性。</param>
+        <summary>使用指定的 <see cref="T:System.Windows.Media.Animation.Timeline" /> 初始化 <see cref="P:System.Windows.Media.Animation.Timeline.BeginTime" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+        <altmember cref="P:System.Windows.Media.Animation.Timeline.BeginTime" />
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Timeline (Nullable&lt;TimeSpan&gt; beginTime, System.Windows.Duration duration);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(valuetype System.Nullable`1&lt;valuetype System.TimeSpan&gt; beginTime, valuetype System.Windows.Duration duration) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.#ctor(System.Nullable{System.TimeSpan},System.Windows.Duration)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; Timeline(Nullable&lt;TimeSpan&gt; beginTime, System::Windows::Duration duration);" />
+      <MemberSignature Language="F#" Value="new System.Windows.Media.Animation.Timeline : Nullable&lt;TimeSpan&gt; * System.Windows.Duration -&gt; System.Windows.Media.Animation.Timeline" Usage="new System.Windows.Media.Animation.Timeline (beginTime, duration)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="beginTime" Type="System.Nullable&lt;System.TimeSpan&gt;" />
+        <Parameter Name="duration" Type="System.Windows.Duration" />
+      </Parameters>
+      <Docs>
+        <param name="beginTime">此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 将要开始的时间。 有关更多信息，请参见 <see cref="P:System.Windows.Media.Animation.Timeline.BeginTime" /> 属性。</param>
+        <param name="duration">此时间线播放的时间长度，而不是计数重复。 有关更多信息，请参见 <see cref="P:System.Windows.Media.Animation.Timeline.Duration" /> 属性。</param>
+        <summary>使用指定的 <see cref="T:System.Windows.Media.Animation.Timeline" /> 和 <see cref="P:System.Windows.Media.Animation.Timeline.BeginTime" /> 初始化 <see cref="P:System.Windows.Media.Animation.Timeline.Duration" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ <xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>  
+  
+ <xref:System.Windows.Media.Animation.Timeline.Duration%2A>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Timeline (Nullable&lt;TimeSpan&gt; beginTime, System.Windows.Duration duration, System.Windows.Media.Animation.RepeatBehavior repeatBehavior);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(valuetype System.Nullable`1&lt;valuetype System.TimeSpan&gt; beginTime, valuetype System.Windows.Duration duration, valuetype System.Windows.Media.Animation.RepeatBehavior repeatBehavior) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.#ctor(System.Nullable{System.TimeSpan},System.Windows.Duration,System.Windows.Media.Animation.RepeatBehavior)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; Timeline(Nullable&lt;TimeSpan&gt; beginTime, System::Windows::Duration duration, System::Windows::Media::Animation::RepeatBehavior repeatBehavior);" />
+      <MemberSignature Language="F#" Value="new System.Windows.Media.Animation.Timeline : Nullable&lt;TimeSpan&gt; * System.Windows.Duration * System.Windows.Media.Animation.RepeatBehavior -&gt; System.Windows.Media.Animation.Timeline" Usage="new System.Windows.Media.Animation.Timeline (beginTime, duration, repeatBehavior)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="beginTime" Type="System.Nullable&lt;System.TimeSpan&gt;" />
+        <Parameter Name="duration" Type="System.Windows.Duration" />
+        <Parameter Name="repeatBehavior" Type="System.Windows.Media.Animation.RepeatBehavior" />
+      </Parameters>
+      <Docs>
+        <param name="beginTime">此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 将要开始的时间。 有关更多信息，请参见 <see cref="P:System.Windows.Media.Animation.Timeline.BeginTime" /> 属性。</param>
+        <param name="duration">此时间线播放的时间长度，而不是计数重复。 有关更多信息，请参见 <see cref="P:System.Windows.Media.Animation.Timeline.Duration" /> 属性。</param>
+        <param name="repeatBehavior">此时间线的重复行为，可以作为迭代 <see cref="P:System.Windows.Media.Animation.RepeatBehavior.Count" />，也可以作为重复 <see cref="P:System.Windows.Media.Animation.RepeatBehavior.Duration" />。 有关更多信息，请参见 <see cref="P:System.Windows.Media.Animation.Timeline.RepeatBehavior" /> 属性。</param>
+        <summary>使用指定的 <see cref="T:System.Windows.Media.Animation.Timeline" />、<see cref="P:System.Windows.Media.Animation.Timeline.BeginTime" /> 和 <see cref="P:System.Windows.Media.Animation.Timeline.Duration" /> 初始化 <see cref="P:System.Windows.Media.Animation.Timeline.RepeatBehavior" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ <xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>  
+  
+ <xref:System.Windows.Media.Animation.Timeline.Duration%2A>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AccelerationRatio">
+      <MemberSignature Language="C#" Value="public double AccelerationRatio { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 AccelerationRatio" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Media.Animation.Timeline.AccelerationRatio" />
+      <MemberSignature Language="VB.NET" Value="Public Property AccelerationRatio As Double" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property double AccelerationRatio { double get(); void set(double value); };" />
+      <MemberSignature Language="F#" Value="member this.AccelerationRatio : double with get, set" Usage="System.Windows.Media.Animation.Timeline.AccelerationRatio" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，该值指定在将时间消逝从零加速到其最大速率过程中所占用时间线的 <see cref="P:System.Windows.Media.Animation.Timeline.Duration" /> 的百分比。</summary>
+        <value>一个介于 0 和 1 之间的值（包括 0 和 1），该值指定在将时间消逝从零加速到其最大速率的过程所占用时间线的 <see cref="P:System.Windows.Media.Animation.Timeline.Duration" /> 的百分比。 如果同时设置时间线的 <see cref="P:System.Windows.Media.Animation.Timeline.DecelerationRatio" /> 属性，则 <see cref="P:System.Windows.Media.Animation.Timeline.AccelerationRatio" /> 和 <see cref="P:System.Windows.Media.Animation.Timeline.DecelerationRatio" /> 之和必须小于等于 1。 默认值为 0。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Windows.Media.Animation.Timeline.AccelerationRatio%2A>使用属性可以创建缓慢开始的动画，并随着时间的推移而加速。 <xref:System.Windows.Media.Animation.Timeline.AccelerationRatio%2A>属性可用于创建缓动效果或使移动看起来更加自然。 一起使用<xref:System.Windows.Media.Animation.Timeline.DecelerationRatio%2A>和属性可以创建缓慢启动的动画，加速，然后在完成前再减速。 <xref:System.Windows.Media.Animation.Timeline.AccelerationRatio%2A>  
+  
+<a name="dependencyPropertyInfo_AccelerationRatio"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Media.Animation.Timeline.AccelerationRatioProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><see cref="P:System.Windows.Media.Animation.Timeline.AccelerationRatio" /> 小于 0 或大于 1。</exception>
+        <exception cref="T:System.InvalidOperationException"><see cref="P:System.Windows.Media.Animation.Timeline.AccelerationRatio" /> 和 <see cref="P:System.Windows.Media.Animation.Timeline.DecelerationRatio" /> 之和大于 1。</exception>
+        <altmember cref="P:System.Windows.Media.Animation.Timeline.AccelerationRatio" />
+      </Docs>
+    </Member>
+    <Member MemberName="AccelerationRatioProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty AccelerationRatioProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty AccelerationRatioProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Media.Animation.Timeline.AccelerationRatioProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly AccelerationRatioProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ AccelerationRatioProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable AccelerationRatioProperty : System.Windows.DependencyProperty" Usage="System.Windows.Media.Animation.Timeline.AccelerationRatioProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Media.Animation.Timeline.AccelerationRatio" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AllocateClock">
+      <MemberSignature Language="C#" Value="protected internal virtual System.Windows.Media.Animation.Clock AllocateClock ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.Windows.Media.Animation.Clock AllocateClock() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.AllocateClock" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Function AllocateClock () As Clock" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual System::Windows::Media::Animation::Clock ^ AllocateClock();" />
+      <MemberSignature Language="F#" Value="abstract member AllocateClock : unit -&gt; System.Windows.Media.Animation.Clock&#xA;override this.AllocateClock : unit -&gt; System.Windows.Media.Animation.Clock" Usage="timeline.AllocateClock " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Media.Animation.Clock</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>为此 <see cref="T:System.Windows.Media.Animation.Clock" /> 创建一个 <see cref="T:System.Windows.Media.Animation.Timeline" />。</summary>
+        <returns>此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 的时钟。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法由<xref:System.Windows.Media.Animation.Timeline.CreateClock%2A>方法调用，不应由您的代码直接调用。  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>如果的<see cref="T:System.Windows.Media.Animation.Timeline" />实现程序具有应与类一起使用的相应自定义时钟，则应重写此方法。 重写的方法应创建并返回从<see cref="T:System.Windows.Media.Animation.Clock" />继承的类的新实例。</para></block>
+      </Docs>
+    </Member>
+    <Member MemberName="AutoReverse">
+      <MemberSignature Language="C#" Value="public bool AutoReverse { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AutoReverse" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Media.Animation.Timeline.AutoReverse" />
+      <MemberSignature Language="VB.NET" Value="Public Property AutoReverse As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool AutoReverse { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.AutoReverse : bool with get, set" Usage="System.Windows.Media.Animation.Timeline.AutoReverse" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，该值指示时间线在完成向前迭代后是否按相反的顺序播放。</summary>
+        <value>如果时间线在每次迭代结束时按相反的顺序播放，则为<see langword="true" /> ；否则为 <see langword="false" />。 默认值为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果将`true`属性设置为，则时间线将播放其<xref:System.Windows.Media.Animation.Timeline.Duration%2A>属性指定的时间长度的两倍。 <xref:System.Windows.Media.Animation.Timeline.AutoReverse%2A>  
+  
+### <a name="autoreverse-and-repetitions"></a>System.windows.media.animation.timeline.autoreverse 和重复  
+ 当时间线的<xref:System.Windows.Media.Animation.Timeline.AutoReverse%2A>属性设置为`true`并且其<xref:System.Windows.Media.Animation.Timeline.RepeatBehavior%2A>属性导致其重复时，每个向前迭代都将后跟一个反向迭代。 这会导致重复一次。 例如，迭代<xref:System.Windows.Media.Animation.Timeline.AutoReverse%2A> `true` 为 2 <xref:System.Windows.Media.Animation.RepeatBehavior.Count%2A> 的值为的时间线将向前播放一次，然后向后播放，然后再次向后播放。  
+  
+<a name="dependencyPropertyInfo_AutoReverse"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Media.Animation.Timeline.AutoReverseProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Windows.Media.Animation.Timeline.RepeatBehavior" />
+      </Docs>
+    </Member>
+    <Member MemberName="AutoReverseProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty AutoReverseProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty AutoReverseProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Media.Animation.Timeline.AutoReverseProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly AutoReverseProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ AutoReverseProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable AutoReverseProperty : System.Windows.DependencyProperty" Usage="System.Windows.Media.Animation.Timeline.AutoReverseProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Media.Animation.Timeline.AutoReverse" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginTime">
+      <MemberSignature Language="C#" Value="public Nullable&lt;TimeSpan&gt; BeginTime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype System.TimeSpan&gt; BeginTime" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Media.Animation.Timeline.BeginTime" />
+      <MemberSignature Language="VB.NET" Value="Public Property BeginTime As Nullable(Of TimeSpan)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property Nullable&lt;TimeSpan&gt; BeginTime { Nullable&lt;TimeSpan&gt; get(); void set(Nullable&lt;TimeSpan&gt; value); };" />
+      <MemberSignature Language="F#" Value="member this.BeginTime : Nullable&lt;TimeSpan&gt; with get, set" Usage="System.Windows.Media.Animation.Timeline.BeginTime" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.TimeSpan&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 应开始的时间。</summary>
+        <value>相对于其父级的 <see cref="P:System.Windows.Media.Animation.Timeline.BeginTime" />，此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 应开始的时间。 如果此时间线为根时间线，则该时间相对于其交互开始时间（触发时间线的时刻）。 此值可能为正数、负数或 <see langword="null" />；<see langword="null" /> 值表示永远不会播放该时间线。 默认值为 0。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 属性可用于创建按顺序播放的时间线：通过<xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>增加共享同一父项的连续时间线，你可以错开其播放时间。 <xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>  
+  
+## <a name="negative-values"></a>负值  
+ 负值<xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>导致的<xref:System.Windows.Media.Animation.Timeline>行为就像它在过去某个时间开始一样。 例如，如果为<xref:System.Windows.Media.Animation.Timeline> <xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>负2.5 秒，为5秒，则在开始时，将显示为半双向完成。 <xref:System.Windows.Media.Animation.Timeline.Duration%2A>  
+  
+## <a name="begintime-and-speedratio"></a>System.windows.media.animation.timeline.begintime 和 SpeedRatio  
+ 该<xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>属性所描述的时间是在时间线的 parent's 时间内计量的。 例如，其父级<xref:System.Windows.Media.Animation.Timeline.BeginTime%2A> <xref:System.Windows.Media.Animation.Timeline.SpeedRatio%2A>为5的时间线实际上在2.5 秒后开始。  
+  
+ 时间线本身<xref:System.Windows.Media.Animation.Timeline.SpeedRatio%2A>的设置不影响它<xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>的。 例如，如果时间线<xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>的为5秒，a <xref:System.Windows.Media.Animation.Timeline.SpeedRatio%2A>为2，并且父时间线<xref:System.Windows.Media.Animation.Timeline.SpeedRatio%2A>为1，则在5秒后开始，而不是2.5。  
+  
+<a name="dependencyPropertyInfo_BeginTime"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Media.Animation.Timeline.BeginTimeProperty>|  
+|元数据属性设置为`true`|None|  
+  
+<a name="xamlAttributeUsage_BeginTime"></a>   
+## <a name="xaml-attribute-usage"></a>XAML 属性用法  
+ \<*对象*= "[-] [*days.]* <xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>*小时*：*分钟*：*秒*[。*fractionalSeconds*] "/>  
+  
+或
+  
+ \<*对象*= "[-] [*days.]* <xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>*小时*：*分钟*"/>  
+  
+或
+  
+ \<*对象*= "[-] days"/> <xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>  
+  
+或
+  
+ \<*对象*= "{[x:Null 标记扩展](~/docs/framework/xaml-services/x-null-markup-extension.md)}"/> <xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>  
+  
+<a name="xamlValues_BeginTime"></a>   
+## <a name="xaml-values"></a>XAML 值  
+ 方括号（`[`和`]`）中的项是可选的。  
+  
+ *天数*  
+ <xref:System.Int32?displayProperty=nameWithType>  
+  
+ 一个大于或等于0的值，该值描述此开始时间跨越的天数。  
+  
+ *小时*  
+ <xref:System.Int32?displayProperty=nameWithType>  
+  
+ 一个介于0和23之间的值，表示此开始时间跨越的小时数。  
+  
+ *）*  
+ <xref:System.Int32?displayProperty=nameWithType>  
+  
+ 一个介于0和59之间的值，该值表示此开始时间跨越的分钟数。  
+  
+ *计算*  
+ <xref:System.Int32?displayProperty=nameWithType>  
+  
+ 一个介于0和59之间的值，该值表示此开始时间跨越的秒数。  
+  
+ *fractionalSeconds*  
+ <xref:System.Int32?displayProperty=nameWithType>  
+  
+ 由1到7位数字组成的值，表示秒的小数部分。  
+  
+ 有关完整<xref:System.TimeSpan>的语法，请参阅<xref:System.TimeSpan.Parse%2A>页面的 "备注" 部分。  
+  
+   
+  
+## Examples  
+ 时间线的<xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>属性确定时间线活动期间的开始时间。 如果时间线具有父时间线，则<xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>该属性确定时间线在其父项启动后的启动时间。 如果时间线是根时间线（ <xref:System.Windows.Media.Animation.Storyboard>例如），则<xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>属性确定时间线在触发后开始播放的时间。  
+  
+ 下面的示例显示了几个具有不同<xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>设置的不同时间线。  
+  
+ [!code-xaml[timingbehaviors_snip#_graphicsmm_BeginTimeExampleWholePage](~/samples/snippets/csharp/VS_Snippets_Wpf/timingbehaviors_snip/CSharp/BeginTimeExample.xaml#_graphicsmm_begintimeexamplewholepage)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Windows.Media.Animation.Timeline.SpeedRatio" />
+      </Docs>
+    </Member>
+    <Member MemberName="BeginTimeProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty BeginTimeProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty BeginTimeProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Media.Animation.Timeline.BeginTimeProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly BeginTimeProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ BeginTimeProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable BeginTimeProperty : System.Windows.DependencyProperty" Usage="System.Windows.Media.Animation.Timeline.BeginTimeProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Media.Animation.Timeline.BeginTime" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="C#" Value="public System.Windows.Media.Animation.Timeline Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Windows.Media.Animation.Timeline Clone() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.Clone" />
+      <MemberSignature Language="VB.NET" Value="Public Function Clone () As Timeline" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Windows::Media::Animation::Timeline ^ Clone();" />
+      <MemberSignature Language="F#" Value="override this.Clone : unit -&gt; System.Windows.Media.Animation.Timeline" Usage="timeline.Clone " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Media.Animation.Timeline</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>创建此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 的可修改克隆，从而深度复制此对象的值。</summary>
+        <returns>当前对象的可修改复本。 即使源的 <see cref="P:System.Windows.Freezable.IsFrozen" /> 属性为 <see langword="true." />，所克隆对象的 <see cref="P:System.Windows.Freezable.IsFrozen" /> 属性也为 <see langword="false" /></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法用于生成冻结<xref:System.Windows.Freezable>对象（或任何<xref:System.Windows.Freezable>对象）的可修改副本。 为方便起见，此方法使用强类型实现隐藏了继承的版本。  
+  
+ 有关详细信息，请参阅 <xref:System.Windows.Freezable.Clone%2A?displayProperty=nameWithType>。  
+  
+ 在复制依赖项属性时，此方法会复制资源引用和数据绑定（但可能不再解析），但不复制动画或其当前值。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CloneCurrentValue">
+      <MemberSignature Language="C#" Value="public System.Windows.Media.Animation.Timeline CloneCurrentValue ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Windows.Media.Animation.Timeline CloneCurrentValue() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.CloneCurrentValue" />
+      <MemberSignature Language="VB.NET" Value="Public Function CloneCurrentValue () As Timeline" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Windows::Media::Animation::Timeline ^ CloneCurrentValue();" />
+      <MemberSignature Language="F#" Value="override this.CloneCurrentValue : unit -&gt; System.Windows.Media.Animation.Timeline" Usage="timeline.CloneCurrentValue " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Media.Animation.Timeline</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>创建此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 对象的可修改复本，从而深度复制此对象的当前值。</summary>
+        <returns>当前对象的可修改复本。 即使源的 <see cref="P:System.Windows.Freezable.IsFrozen" /> 属性为 <see langword="false" />，所克隆对象的 <see cref="P:System.Windows.Freezable.IsFrozen" /> 属性也为 <see langword="true" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法用于生成冻结<xref:System.Windows.Freezable>对象（或任何<xref:System.Windows.Freezable>对象）的可修改副本。 为方便起见，此方法使用强类型实现隐藏了继承的版本。  
+  
+ 有关详细信息，请参阅 <xref:System.Windows.Freezable.CloneCurrentValue%2A?displayProperty=nameWithType>。  
+  
+ 不复制资源引用、数据绑定和动画，而是复制其当前值。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Completed">
+      <MemberSignature Language="C#" Value="public event EventHandler Completed;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler Completed" />
+      <MemberSignature Language="DocId" Value="E:System.Windows.Media.Animation.Timeline.Completed" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event Completed As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler ^ Completed;" />
+      <MemberSignature Language="F#" Value="member this.Completed : EventHandler " Usage="member this.Completed : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当此时间线完全播放完毕时发生：它将不再进入其活动周期。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果此时间线是时间线树的根时间线，则该时间线在到达其活动周期的结束时间（包括重复项）后已完成播放，其所有子项已到达活动期间的结束时间。 如果此时间线是子时间线，则当其所属的时间线树的根时间线达到其活动期的终点并且其所有子时间线都已完成播放时，它将被视为已完全完成播放。  
+  
+ 停止时间线不会触发其已完成的事件，但会将其跳过填充时间段。  
+  
+ 事件处理程序的<xref:System.Object>参数<xref:System.Windows.Media.Animation.Clock>是时间线的。 <xref:System.EventHandler>  
+  
+ 尽管此事件处理程序似乎与时间线关联，但它实际上是使用为<xref:System.Windows.Media.Animation.Clock>此时间线创建的来注册的。  有关详细信息，请参阅[计时事件概述](~/docs/framework/wpf/graphics-multimedia/timing-events-overview.md)。  
+  
+   
+  
+## Examples  
+ 在下面的示例中， <xref:System.Windows.Media.Animation.Storyboard>两个对象用于在两个图像之间创建动画过渡，它们<xref:System.Windows.Media.ImageSource>使用<xref:System.Windows.Controls.Image>对象存储并使用控件进行显示。 一个情节提要收缩图像控件，直到它消失。 完成后，旧<xref:System.Windows.Media.ImageSource>的将与另<xref:System.Windows.Media.ImageSource>一个交换，另一个将图像控件扩展到最大尺寸的情节提要。  
+  
+ [!code-xaml[timingbehaviors_snip#TimelineCompletedExampleMarkupUsingWholePage](~/samples/snippets/csharp/VS_Snippets_Wpf/timingbehaviors_snip/CSharp/TimelineCompletedExample.xaml#timelinecompletedexamplemarkupusingwholepage)]  
+  
+  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="CreateClock">
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>从此 <see cref="T:System.Windows.Media.Animation.Clock" /> 创建一个 <see cref="T:System.Windows.Media.Animation.Timeline" />。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="CreateClock">
+      <MemberSignature Language="C#" Value="public System.Windows.Media.Animation.Clock CreateClock ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Windows.Media.Animation.Clock CreateClock() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.CreateClock" />
+      <MemberSignature Language="VB.NET" Value="Public Function CreateClock () As Clock" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Windows::Media::Animation::Clock ^ CreateClock();" />
+      <MemberSignature Language="F#" Value="member this.CreateClock : unit -&gt; System.Windows.Media.Animation.Clock" Usage="timeline.CreateClock " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Windows.Media.Animation.Clock</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>从此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 创建一个可以控制的新 <see cref="T:System.Windows.Media.Animation.Clock" />。 如果此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 含有子级，则创建时钟树时将此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 作为根。</summary>
+        <returns>从此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 构造的一个可以控制的新 <see cref="T:System.Windows.Media.Animation.Clock" />。 如果此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 是一个包含子时间线的 <see cref="T:System.Windows.Media.Animation.TimelineGroup" />，则创建一个 <see cref="T:System.Windows.Media.Animation.Clock" /> 对象树，将从此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 创建的可以控制的 <see cref="T:System.Windows.Media.Animation.Clock" /> 作为根。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 尽管这<xref:System.Windows.Media.Animation.Timeline>可能是一个或多个<xref:System.Windows.Media.Animation.TimelineGroup>对象的子对象，但会忽略此信息：此方法将<xref:System.Windows.Media.Animation.Timeline>当前的视为<xref:System.Windows.Media.Animation.Timeline>根。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateClock">
+      <MemberSignature Language="C#" Value="public System.Windows.Media.Animation.Clock CreateClock (bool hasControllableRoot);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Windows.Media.Animation.Clock CreateClock(bool hasControllableRoot) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.CreateClock(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Function CreateClock (hasControllableRoot As Boolean) As Clock" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Windows::Media::Animation::Clock ^ CreateClock(bool hasControllableRoot);" />
+      <MemberSignature Language="F#" Value="member this.CreateClock : bool -&gt; System.Windows.Media.Animation.Clock" Usage="timeline.CreateClock hasControllableRoot" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Media.Animation.Clock</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hasControllableRoot" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="hasControllableRoot">如果返回的根 <see cref="T:System.Windows.Media.Animation.Clock" /> 要从其 <see cref="T:System.Windows.Media.Animation.ClockController" /> 属性返回一个 <see cref="P:System.Windows.Media.Animation.Clock.Controller" />，以便可以交互控制 <see cref="T:System.Windows.Media.Animation.Clock" /> 树，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>从此 <see cref="T:System.Windows.Media.Animation.Clock" /> 创建一个新的 <see cref="T:System.Windows.Media.Animation.Timeline" /> 并指定新的 <see cref="T:System.Windows.Media.Animation.Clock" /> 是否可以控制。 如果此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 含有子级，则创建时钟树时将此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 作为根。</summary>
+        <returns>从此 <see cref="T:System.Windows.Media.Animation.Clock" /> 构造一个新 <see cref="T:System.Windows.Media.Animation.Timeline" />。 如果此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 是一个包含子时间线的 <see cref="T:System.Windows.Media.Animation.TimelineGroup" />，则创建一个 <see cref="T:System.Windows.Media.Animation.Clock" /> 对象树，将从此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 创建的可以控制的 <see cref="T:System.Windows.Media.Animation.Clock" /> 作为根。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 尽管这<xref:System.Windows.Media.Animation.Timeline>可能是一个或多个<xref:System.Windows.Media.Animation.TimelineGroup>对象的子对象，但会忽略此信息：此方法将<xref:System.Windows.Media.Animation.Timeline>当前的视为<xref:System.Windows.Media.Animation.Timeline>根。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentGlobalSpeedInvalidated">
+      <MemberSignature Language="C#" Value="public event EventHandler CurrentGlobalSpeedInvalidated;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler CurrentGlobalSpeedInvalidated" />
+      <MemberSignature Language="DocId" Value="E:System.Windows.Media.Animation.Timeline.CurrentGlobalSpeedInvalidated" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event CurrentGlobalSpeedInvalidated As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler ^ CurrentGlobalSpeedInvalidated;" />
+      <MemberSignature Language="F#" Value="member this.CurrentGlobalSpeedInvalidated : EventHandler " Usage="member this.CurrentGlobalSpeedInvalidated : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>在时间线时钟的时间前进速率发生变化时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在以下情况下，时间线时钟的当前全局速度发生变化：  
+  
+-   由于时钟时间线的<xref:System.Windows.Media.Animation.Timeline.AutoReverse%2A>设置，时钟会改变方向。  
+  
+-   由于其时间线的<xref:System.Windows.Media.Animation.Timeline.AccelerationRatio%2A>或<xref:System.Windows.Media.Animation.Timeline.DecelerationRatio%2A>属性设置，时钟加速或减速。  
+  
+-   时钟已暂停或恢复。  
+  
+-   时钟变为非活动状态或重新激活。  
+  
+-   <xref:System.Windows.Media.Animation.Clock.CurrentGlobalSpeed%2A>时钟的父项之一的更改的。  
+  
+ 事件可用于在时间线的时钟暂停时进行跟踪; 在事件处理程序中，使用情节提要的<xref:System.Windows.Media.Animation.Storyboard.GetCurrentGlobalSpeed%2A>方法或检查时钟的<xref:System.Windows.Media.Animation.Clock.IsPaused%2A>属性以确定其时钟是否暂停; 将此与<xref:System.Windows.Media.Animation.Timeline.CurrentGlobalSpeedInvalidated>以前缓存的值，用于确定是否已更改。  
+  
+ 事件处理程序的<xref:System.Object>参数<xref:System.Windows.Media.Animation.Clock>是时间线的。 <xref:System.EventHandler>  
+  
+ 尽管此事件处理程序似乎与时间线关联，但它实际上是使用为<xref:System.Windows.Media.Animation.Clock>此时间线创建的来注册的。  有关详细信息，请参阅[计时事件概述](~/docs/framework/wpf/graphics-multimedia/timing-events-overview.md)。  
+  
+   
+  
+## Examples  
+ 下面的示例演示如何注册<xref:System.Windows.Media.Animation.Timeline.CurrentGlobalSpeedInvalidated>事件。  
+  
+ [!code-csharp[timingbehaviors_procedural_snip#TimelineCurrentGlobalSpeedInvalidatedExampleWholePage](~/samples/snippets/csharp/VS_Snippets_Wpf/timingbehaviors_procedural_snip/CSharp/TimelineCurrentGlobalSpeedInvalidatedExample.cs#timelinecurrentglobalspeedinvalidatedexamplewholepage)]
+ [!code-vb[timingbehaviors_procedural_snip#TimelineCurrentGlobalSpeedInvalidatedExampleWholePage](~/samples/snippets/visualbasic/VS_Snippets_Wpf/timingbehaviors_procedural_snip/visualbasic/timelinecurrentglobalspeedinvalidatedexample.vb#timelinecurrentglobalspeedinvalidatedexamplewholepage)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Windows.Media.Animation.Storyboard.GetCurrentGlobalSpeed(System.Windows.FrameworkElement)" />
+        <altmember cref="T:System.Windows.Media.Animation.Clock" />
+        <altmember cref="P:System.Windows.Media.Animation.Clock.CurrentGlobalSpeed" />
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentStateInvalidated">
+      <MemberSignature Language="C#" Value="public event EventHandler CurrentStateInvalidated;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler CurrentStateInvalidated" />
+      <MemberSignature Language="DocId" Value="E:System.Windows.Media.Animation.Timeline.CurrentStateInvalidated" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event CurrentStateInvalidated As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler ^ CurrentStateInvalidated;" />
+      <MemberSignature Language="F#" Value="member this.CurrentStateInvalidated : EventHandler " Usage="member this.CurrentStateInvalidated : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>更新时间线的 <see cref="T:System.Windows.Media.Animation.Clock" /> 的 <see cref="P:System.Windows.Media.Animation.Clock.CurrentState" /> 属性时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果希望在时间线的<xref:System.Windows.Media.Animation.Clock>开始、停止或填充时收到通知，请使用事件。 <xref:System.Windows.Media.Animation.Timeline.CurrentStateInvalidated>  
+  
+ 暂停不会更改其 <xref:System.Windows.Media.Animation.Clock.CurrentState%2A> 。  <xref:System.Windows.Media.Animation.Clock> 若要在时钟暂停时得到通知，请使用<xref:System.Windows.Media.Animation.Timeline.CurrentGlobalSpeedInvalidated>事件。  
+  
+ 尽管<xref:System.Windows.Media.Animation.ClockState>在变为无效时发生此事件，但这并不一定<xref:System.Windows.Media.Animation.ClockState>意味着已更改<xref:System.Windows.Media.Animation.Clock> ： <xref:System.Windows.Media.Animation.ClockState.Active>从相同的<xref:System.Windows.Media.Animation.ClockState.Filling>时钟切换到然后<xref:System.Windows.Media.Animation.ClockState.Active>再返回到的将导致此事件将触发，但其<xref:System.Windows.Media.Animation.Clock.CurrentState%2A>属性不会实际更改。  
+  
+ 事件处理程序的<xref:System.Object>参数<xref:System.Windows.Media.Animation.Clock>是为此时间线创建的。 <xref:System.EventHandler>  
+  
+ 尽管此事件处理程序似乎与时间线关联，但它实际上是使用为<xref:System.Windows.Media.Animation.Clock>此时间线创建的来注册的。  有关详细信息，请参阅[计时事件概述](~/docs/framework/wpf/graphics-multimedia/timing-events-overview.md)。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Windows.Media.Animation.Clock" />
+        <altmember cref="P:System.Windows.Media.Animation.Clock.CurrentState" />
+        <altmember cref="E:System.Windows.Media.Animation.Timeline.CurrentStateInvalidated" />
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentTimeInvalidated">
+      <MemberSignature Language="C#" Value="public event EventHandler CurrentTimeInvalidated;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler CurrentTimeInvalidated" />
+      <MemberSignature Language="DocId" Value="E:System.Windows.Media.Animation.Timeline.CurrentTimeInvalidated" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event CurrentTimeInvalidated As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler ^ CurrentTimeInvalidated;" />
+      <MemberSignature Language="F#" Value="member this.CurrentTimeInvalidated : EventHandler " Usage="member this.CurrentTimeInvalidated : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>更新时间线的 <see cref="T:System.Windows.Media.Animation.Clock" /> 的 <see cref="P:System.Windows.Media.Animation.Clock.CurrentTime" /> 属性时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果希望在更新时间线<xref:System.Windows.Media.Animation.Clock>的<xref:System.Windows.Media.Animation.Clock.CurrentTime%2A>时收到通知，请使用事件。 <xref:System.Windows.Media.Animation.Timeline.CurrentStateInvalidated>  
+  
+ 事件处理程序的<xref:System.Object>参数<xref:System.Windows.Media.Animation.Clock>是时间线的。 <xref:System.EventHandler>  
+  
+ 尽管此事件处理程序似乎与时间线关联，但它实际上是使用为<xref:System.Windows.Media.Animation.Clock>此时间线创建的来注册的。  有关详细信息，请参阅[计时事件概述](~/docs/framework/wpf/graphics-multimedia/timing-events-overview.md)。  
+  
+   
+  
+## Examples  
+ 下面的示例演示如何注册<xref:System.Windows.Media.Animation.Timeline.CurrentTimeInvalidated>事件。  
+  
+ [!code-csharp[timingbehaviors_procedural_snip#TimelineCurrentTimeInvalidatedExampleWholePage](~/samples/snippets/csharp/VS_Snippets_Wpf/timingbehaviors_procedural_snip/CSharp/TimelineCurrentTimeInvalidatedExample.cs#timelinecurrenttimeinvalidatedexamplewholepage)]
+ [!code-vb[timingbehaviors_procedural_snip#TimelineCurrentTimeInvalidatedExampleWholePage](~/samples/snippets/visualbasic/VS_Snippets_Wpf/timingbehaviors_procedural_snip/visualbasic/timelinecurrenttimeinvalidatedexample.vb#timelinecurrenttimeinvalidatedexamplewholepage)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DecelerationRatio">
+      <MemberSignature Language="C#" Value="public double DecelerationRatio { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 DecelerationRatio" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Media.Animation.Timeline.DecelerationRatio" />
+      <MemberSignature Language="VB.NET" Value="Public Property DecelerationRatio As Double" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property double DecelerationRatio { double get(); void set(double value); };" />
+      <MemberSignature Language="F#" Value="member this.DecelerationRatio : double with get, set" Usage="System.Windows.Media.Animation.Timeline.DecelerationRatio" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，该值指定在将时间消逝从其最大速率减速到零的过程中所占用时间线的 <see cref="P:System.Windows.Media.Animation.Timeline.Duration" /> 的百分比。</summary>
+        <value>一个介于 0 和 1 之间的值（包括 0 和 1），用于指定在将时间消逝从其最大速率减速到零所占用时间线的 <see cref="P:System.Windows.Media.Animation.Timeline.Duration" /> 的百分比。 如果同时设置时间线的 <see cref="P:System.Windows.Media.Animation.Timeline.AccelerationRatio" /> 属性，则 <see cref="P:System.Windows.Media.Animation.Timeline.DecelerationRatio" /> 和 <see cref="P:System.Windows.Media.Animation.Timeline.AccelerationRatio" /> 之和必须小于等于 1。 默认值为 0。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Windows.Media.Animation.Timeline.DecelerationRatio%2A>使用属性来创建在停止之前减速的动画。 <xref:System.Windows.Media.Animation.Timeline.DecelerationRatio%2A>属性可用于创建缓动效果或使移动看起来更加自然。 一起使用<xref:System.Windows.Media.Animation.Timeline.DecelerationRatio%2A>和属性可以创建缓慢启动的动画，加速，然后在完成前再减速。 <xref:System.Windows.Media.Animation.Timeline.AccelerationRatio%2A>  
+  
+<a name="dependencyPropertyInfo_DecelerationRatio"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Media.Animation.Timeline.DecelerationRatioProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><see cref="P:System.Windows.Media.Animation.Timeline.DecelerationRatio" /> 小于 0 或大于 1。</exception>
+        <exception cref="T:System.InvalidOperationException"><see cref="P:System.Windows.Media.Animation.Timeline.AccelerationRatio" /> 和 <see cref="P:System.Windows.Media.Animation.Timeline.DecelerationRatio" /> 之和大于 1。</exception>
+        <altmember cref="P:System.Windows.Media.Animation.Timeline.AccelerationRatio" />
+      </Docs>
+    </Member>
+    <Member MemberName="DecelerationRatioProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty DecelerationRatioProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty DecelerationRatioProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Media.Animation.Timeline.DecelerationRatioProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly DecelerationRatioProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ DecelerationRatioProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable DecelerationRatioProperty : System.Windows.DependencyProperty" Usage="System.Windows.Media.Animation.Timeline.DecelerationRatioProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Media.Animation.Timeline.DecelerationRatio" /> 依赖属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DesiredFrameRate">
+      <MemberSignature Language="C#" Value="see GetDesiredFrameRate, and SetDesiredFrameRate" />
+      <MemberSignature Language="ILAsm" Value="see GetDesiredFrameRate, and SetDesiredFrameRate" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Media.Animation.Timeline.DesiredFrameRate" />
+      <MemberSignature Language="VB.NET" Value="see GetDesiredFrameRate, and SetDesiredFrameRate" />
+      <MemberSignature Language="F#" Value="see GetDesiredFrameRate, and SetDesiredFrameRate" Usage="see GetDesiredFrameRate, and SetDesiredFrameRate" />
+      <MemberType>AttachedProperty</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>获取或设置此时间线及其子时间线所需的帧速率。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks  
+使用此属性可以定义应在其中运行动画的特定帧速率。  这只是一条指导原则，不是一个保证值。 此属性有两个主要用途：
+
+- 限制不需要高度保真的缓慢移动背景类型动画的处理资源量。 这可以通过在时间线上设置一个小帧速率值来实现。
+
+- 降低图像的快速移动水平动画的视觉效果。 为此，可以在时间线上设置较高的帧速率值。
+
+只能在根时间线上设置此属性。
+
+## Examples  
+下面的示例使用 DesiredFrameRate 属性将多个动画的数量限制为10帧/秒。
+
+[!code-xaml[timingbehaviors_snip#GraphicsMMDesiredFrameRateExample](~/samples/snippets/csharp/VS_Snippets_Wpf/timingbehaviors_snip/CSharp/DesiredFrameRateExample.xaml#GraphicsMMDesiredFrameRateExample)]
+
+]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/framework/wpf/graphics-multimedia/animation-overview.md">动画概述</related>
+      </Docs>
+    </Member>
+    <Member MemberName="DesiredFrameRateProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty DesiredFrameRateProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty DesiredFrameRateProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Media.Animation.Timeline.DesiredFrameRateProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly DesiredFrameRateProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ DesiredFrameRateProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable DesiredFrameRateProperty : System.Windows.DependencyProperty" Usage="System.Windows.Media.Animation.Timeline.DesiredFrameRateProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Media.Animation.Timeline.DesiredFrameRate" /> 附加属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Duration">
+      <MemberSignature Language="C#" Value="public System.Windows.Duration Duration { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Windows.Duration Duration" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Media.Animation.Timeline.Duration" />
+      <MemberSignature Language="VB.NET" Value="Public Property Duration As Duration" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Windows::Duration Duration { System::Windows::Duration get(); void set(System::Windows::Duration value); };" />
+      <MemberSignature Language="F#" Value="member this.Duration : System.Windows.Duration with get, set" Usage="System.Windows.Media.Animation.Timeline.Duration" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Duration</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置此时间线播放的时间长度，而不是计数重复。</summary>
+        <value>时间线的简单持续时间：此时间线完成一次向前迭代所花费的时间。 默认值为 <see cref="P:System.Windows.Duration.Automatic" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 时间线的简单持续时间表示一次向前迭代的时间与总播放时间的时间，包括重复。  
+  
+## <a name="default-duration-behavior"></a>默认持续时间行为  
+ 具有值的<xref:System.Windows.Media.Animation.Timeline.Duration%2A> <xref:System.Windows.Duration.Automatic%2A>结构的行为取决于时间线的类型：  
+  
+|**线**|**行为**|  
+|-|-|  
+|<xref:System.Windows.Media.Animation.Timeline>|不确定<xref:System.Windows.Media.Animation.Timeline> （为抽象）|  
+|<xref:System.Windows.Media.Animation.ParallelTimeline>,<br /><br /> <xref:System.Windows.Media.Animation.Storyboard>,<br /><br /> <xref:System.Windows.Media.Animation.TimelineGroup>|扩展以适应子时间线|  
+|\<*键入*动画 > （称为 "From/To/By" 或 "基本" 动画）|1秒|  
+|\<*类型*> AnimationUsingKeyFrames （称为关键帧动画）|所有关键帧<xref:System.Windows.Media.Animation.KeyTime>值的总和|  
+  
+<a name="dependencyPropertyInfo_Duration"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Media.Animation.Timeline.DurationProperty>|  
+|元数据属性设置为`true`|None|  
+  
+   
+  
+## Examples  
+ <xref:System.Windows.Media.Animation.ParallelTimeline>和<xref:System.Windows.Media.Animation.Storyboard>是对象的<xref:System.Windows.Media.Animation.TimelineGroup>类型。 的持续时间<xref:System.Windows.Media.Animation.TimelineGroup>取决于其子时间线的持续时间。 例如， <xref:System.Windows.Media.Animation.Storyboard>以下将运行六秒钟（持续时间为6秒），因为这是其最后一个子时间线（<xref:System.Windows.Media.Animation.DoubleAnimation>）结束的时间。  
+  
+> [!NOTE]
+>  注意：下面的示例中省略了代码，这些示例仅为说明用作其他用途提供。  
+  
+ [xaml]  
+  
+```  
+...  
+  <Storyboard>  
+    <DoubleAnimation Duration="0:0:2" …/>  
+    <DoubleAnimation Duration="0:0:4" BeginTime="0:0:2" …/>  
+  </Storyboard>   
+...  
+```  
+  
+ > 动画\<*类型*的示例包括<xref:System.Windows.Media.Animation.DoubleAnimation>、 <xref:System.Windows.Media.Animation.PointAnimation>、 <xref:System.Windows.Media.Animation.ColorAnimation>等。如果没有<xref:System.Windows.Media.Animation.Timeline.Duration%2A>为这些类型的动画指定 "否"，则将运行一秒钟。  
+  
+ [xaml]  
+  
+```  
+...  
+  <!-- With no Duration specified, this animation will run for   
+       one second -->  
+  <DoubleAnimation .../>  
+...  
+```  
+  
+ > AnimationUsingKeyFrames \<*类型*的示例包括<xref:System.Windows.Media.Animation.DoubleAnimationUsingKeyFrames>、 <xref:System.Windows.Media.Animation.PointAnimationUsingKeyFrames>等。如果为<xref:System.Windows.Media.Animation.Timeline.Duration%2A>这些类型的动画指定 "否"，则在所有关键帧完成后才会运行。  
+  
+ [xaml]  
+  
+```  
+...  
+  <Storyboard>  
+  
+    <!-- This key frame animation will end at 4.5 seconds  
+         Because that is when its last KeyFrame KeyTime ends. -->  
+    <DoubleAnimationUsingKeyFrames ...>  
+      <LinearDoubleKeyFrame ... KeyTime="0:0:3" />  
+      <DiscreteDoubleKeyFrame ... KeyTime="0:0:3.5" />  
+      <DiscreteDoubleKeyFrame ... KeyTime="0:0:4" />  
+      <DiscreteDoubleKeyFrame ... KeyTime="0:0:4.5" />  
+    </DoubleAnimationUsingKeyFrames>  
+  </Storyboard>   
+...  
+```  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Windows.Media.Animation.ClockController.SkipToFill" />
+        <altmember cref="M:System.Windows.Media.Animation.ClockController.Stop" />
+      </Docs>
+    </Member>
+    <Member MemberName="DurationProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty DurationProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty DurationProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Media.Animation.Timeline.DurationProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly DurationProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ DurationProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable DurationProperty : System.Windows.DependencyProperty" Usage="System.Windows.Media.Animation.Timeline.DurationProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Media.Animation.Timeline.Duration" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FillBehavior">
+      <MemberSignature Language="C#" Value="public System.Windows.Media.Animation.FillBehavior FillBehavior { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Windows.Media.Animation.FillBehavior FillBehavior" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Media.Animation.Timeline.FillBehavior" />
+      <MemberSignature Language="VB.NET" Value="Public Property FillBehavior As FillBehavior" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Windows::Media::Animation::FillBehavior FillBehavior { System::Windows::Media::Animation::FillBehavior get(); void set(System::Windows::Media::Animation::FillBehavior value); };" />
+      <MemberSignature Language="F#" Value="member this.FillBehavior : System.Windows.Media.Animation.FillBehavior with get, set" Usage="System.Windows.Media.Animation.Timeline.FillBehavior" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Media.Animation.FillBehavior</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个值，该值指定 <see cref="T:System.Windows.Media.Animation.Timeline" /> 在活动周期结束后的行为方式。</summary>
+        <value>一个值，用于指定时间线在其活动周期结束后但其父时间线仍处于活动周期或填充周期时的行为方式。 默认值为 <see cref="F:System.Windows.Media.Animation.FillBehavior.HoldEnd" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果希望动画<xref:System.Windows.Media.Animation.Timeline.FillBehavior%2A>在其<xref:System.Windows.Media.Animation.FillBehavior.HoldEnd>活动周期结束后保留其值，请将动画属性设置为。 如果某个动画的活动期结束， <xref:System.Windows.Media.Animation.Timeline.FillBehavior%2A>其<xref:System.Windows.Media.Animation.FillBehavior.HoldEnd>设置为，则表示其填充时间为。 当不希望动画在其活动周期结束后保存其值时，请设置其  
+  
+ <xref:System.Windows.Media.Animation.Timeline.FillBehavior%2A>属性为<xref:System.Windows.Media.Animation.FillBehavior.Stop>。  
+  
+ 由于其填充期内的动画会继续替代其目标属性的值，因此尝试通过其他方式设置目标属性的值可能看起来不起作用。 有关演示如何在对属性值进行动画处理后设置该属性值的示例，请参阅[如何：使用情节提要对属性进行动画处理后设置该属性](~/docs/framework/wpf/graphics-multimedia/how-to-set-a-property-after-animating-it-with-a-storyboard.md)。  
+  
+ 子时间线在其父时间线停止时停止播放并填充;如果要填充子时间线，请确保其父时间线<xref:System.Windows.Media.Animation.Timeline.FillBehavior%2A> <xref:System.Windows.Media.Animation.FillBehavior.HoldEnd>的为。  
+  
+<a name="dependencyPropertyInfo_FillBehavior"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Media.Animation.Timeline.FillBehaviorProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FillBehaviorProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty FillBehaviorProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty FillBehaviorProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Media.Animation.Timeline.FillBehaviorProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly FillBehaviorProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ FillBehaviorProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable FillBehaviorProperty : System.Windows.DependencyProperty" Usage="System.Windows.Media.Animation.Timeline.FillBehaviorProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Media.Animation.Timeline.FillBehavior" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FreezeCore">
+      <MemberSignature Language="C#" Value="protected override bool FreezeCore (bool isChecking);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance bool FreezeCore(bool isChecking) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.FreezeCore(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overrides Function FreezeCore (isChecking As Boolean) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; override bool FreezeCore(bool isChecking);" />
+      <MemberSignature Language="F#" Value="override this.FreezeCore : bool -&gt; bool" Usage="timeline.FreezeCore isChecking" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="isChecking" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="isChecking">如果是 <see langword="true" />，则检查是否可冻结该实例；如果是 <see langword="false" />，则冻结该实例。</param>
+        <summary>使此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 成为不可修改的，或确定是否可使其成为不可修改的。</summary>
+        <returns>如果 <paramref name="isChecking" /> 为 true，则该方法将在可使该实例为只读的情况下返回 <see langword="true" />，而在其他情况下返回 <see langword="false" />。  
+  
+如果 <paramref name="isChecking" /> 为 false，则该方法将在该实例目前为只读的情况下返回 <see langword="true" />，而在其他情况下返回 <see langword="false" />，并且其副作用是已开始更改该对象的冻结状态。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 请勿直接调用此方法（在实现中调用基时除外）。 此方法由<xref:System.Windows.Freezable.Freeze%2A>在内部调用。  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>
+            <see cref="T:System.Windows.Media.Animation.Timeline" />如果类包含未使用依赖项属性存储的数据，则实现程序必须重写此方法。  
+  
+典型的实现将调用 base，然后对类所<see cref="M:System.Windows.Freezable.Freeze" />包含的所有<see cref="T:System.Windows.Freezable" />类型属性调用静态方法， <see langword="true" />仅当所有属性都已冻结（或者在传递通过的<see langword="false" />值） <paramref name="isChecking" />。</para></block>
+        <altmember cref="M:System.Windows.Freezable.Freeze" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetAsFrozenCore">
+      <MemberSignature Language="C#" Value="protected override void GetAsFrozenCore (System.Windows.Freezable sourceFreezable);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void GetAsFrozenCore(class System.Windows.Freezable sourceFreezable) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.GetAsFrozenCore(System.Windows.Freezable)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overrides Sub GetAsFrozenCore (sourceFreezable As Freezable)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; override void GetAsFrozenCore(System::Windows::Freezable ^ sourceFreezable);" />
+      <MemberSignature Language="F#" Value="override this.GetAsFrozenCore : System.Windows.Freezable -&gt; unit" Usage="timeline.GetAsFrozenCore sourceFreezable" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sourceFreezable" Type="System.Windows.Freezable" />
+      </Parameters>
+      <Docs>
+        <param name="sourceFreezable">要克隆的 <see cref="T:System.Windows.Media.Animation.Timeline" /> 实例。</param>
+        <summary>使此实例成为指定 <see cref="T:System.Windows.Media.Animation.Timeline" /> 对象的副本。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在复制依赖项属性时，此方法会复制资源引用和数据绑定（但可能不再解析），但不复制动画或其当前值。 请注意，如果这些属性包含资源引用或数据绑定<xref:System.Windows.Freezable.GetAsFrozen%2A> ，则在尝试冻结对象并<xref:System.InvalidOperationException>引发时会失败。  
+  
+ 此方法由<xref:System.Windows.Freezable.GetAsFrozen%2A>方法调用，不应在代码中直接调用，除非在重写此方法时调用基实现。 若要创建当前对象的冻结副本，请调用<xref:System.Windows.Freezable.GetAsFrozen%2A> ，而不是直接调用此方法。  
+  
+ 有关详细信息，请参阅 <xref:System.Windows.Freezable.GetAsFrozenCore%2A?displayProperty=nameWithType>。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCurrentValueAsFrozenCore">
+      <MemberSignature Language="C#" Value="protected override void GetCurrentValueAsFrozenCore (System.Windows.Freezable sourceFreezable);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void GetCurrentValueAsFrozenCore(class System.Windows.Freezable sourceFreezable) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.GetCurrentValueAsFrozenCore(System.Windows.Freezable)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overrides Sub GetCurrentValueAsFrozenCore (sourceFreezable As Freezable)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; override void GetCurrentValueAsFrozenCore(System::Windows::Freezable ^ sourceFreezable);" />
+      <MemberSignature Language="F#" Value="override this.GetCurrentValueAsFrozenCore : System.Windows.Freezable -&gt; unit" Usage="timeline.GetCurrentValueAsFrozenCore sourceFreezable" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sourceFreezable" Type="System.Windows.Freezable" />
+      </Parameters>
+      <Docs>
+        <param name="sourceFreezable">要复制和冻结的 <see cref="T:System.Windows.Media.Animation.Timeline" />。</param>
+        <summary>使此实例成为指定 <see cref="T:System.Windows.Media.Animation.Timeline" /> 的冻结复本。 不复制资源引用、数据绑定和动画，而是复制其当前值。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法由<xref:System.Windows.Freezable.GetCurrentValueAsFrozen%2A>方法调用，不应在代码中直接调用，除非在重写此方法时调用基实现。 若要创建当前对象的冻结副本，请调用<xref:System.Windows.Freezable.GetCurrentValueAsFrozen%2A> ，而不是直接调用此方法。  
+  
+ 有关详细信息，请参阅 <xref:System.Windows.Freezable.GetCurrentValueAsFrozenCore%2A?displayProperty=nameWithType>。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDesiredFrameRate">
+      <MemberSignature Language="C#" Value="public static Nullable&lt;int&gt; GetDesiredFrameRate (System.Windows.Media.Animation.Timeline timeline);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;int32&gt; GetDesiredFrameRate(class System.Windows.Media.Animation.Timeline timeline) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.GetDesiredFrameRate(System.Windows.Media.Animation.Timeline)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static Nullable&lt;int&gt; GetDesiredFrameRate(System::Windows::Media::Animation::Timeline ^ timeline);" />
+      <MemberSignature Language="F#" Value="static member GetDesiredFrameRate : System.Windows.Media.Animation.Timeline -&gt; Nullable&lt;int&gt;" Usage="System.Windows.Media.Animation.Timeline.GetDesiredFrameRate timeline" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.Int32&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeline" Type="System.Windows.Media.Animation.Timeline" />
+      </Parameters>
+      <Docs>
+        <param name="timeline">要从其中检索所需帧速率的时间线。</param>
+        <summary>获取指定 <see cref="T:System.Windows.Media.Animation.Timeline" /> 所需的帧速率。</summary>
+        <returns>此时间线所需的帧速率。 默认值为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法提供对附加属性的<xref:System.Windows.Media.Animation.Timeline.DesiredFrameRate%2A>读取访问权限。 有关详细信息，请参阅<xref:System.Windows.Media.Animation.Timeline.DesiredFrameRate%2A>页。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Windows.Media.Animation.Timeline.DesiredFrameRate" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetNaturalDuration">
+      <MemberSignature Language="C#" Value="protected internal System.Windows.Duration GetNaturalDuration (System.Windows.Media.Animation.Clock clock);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig instance valuetype System.Windows.Duration GetNaturalDuration(class System.Windows.Media.Animation.Clock clock) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.GetNaturalDuration(System.Windows.Media.Animation.Clock)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; System::Windows::Duration GetNaturalDuration(System::Windows::Media::Animation::Clock ^ clock);" />
+      <MemberSignature Language="F#" Value="member this.GetNaturalDuration : System.Windows.Media.Animation.Clock -&gt; System.Windows.Duration" Usage="timeline.GetNaturalDuration clock" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Windows.Duration</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="clock" Type="System.Windows.Media.Animation.Clock" />
+      </Parameters>
+      <Docs>
+        <param name="clock">为此 <see cref="T:System.Windows.Media.Animation.Clock" /> 创建的 <see cref="T:System.Windows.Media.Animation.Timeline" />。</param>
+        <summary>返回此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 单次迭代的长度。</summary>
+        <returns>此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 单个迭代的长度；如果自然持续时间未知，则为 <see cref="P:System.Windows.Duration.Automatic" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 仅当<xref:System.Windows.Media.Animation.Timeline.Duration%2A>属性设置为<xref:System.Windows.Duration.Automatic%2A>时，才应调用此方法。 如果<xref:System.Windows.Media.Animation.Timeline.Duration%2A> <xref:System.Windows.Media.Animation.Timeline.GetNaturalDurationCore%2A>为<xref:System.Windows.Duration.Automatic%2A>，则自然持续时间由的特定类实现确定。  
+  
+ 如果<xref:System.Windows.Media.Animation.Timeline.GetNaturalDuration%2A> <xref:System.Windows.Duration.Forever%2A>返回<xref:System.Windows.Duration.Automatic%2A>，则表示自然持续时间未知，这表示自然持续时间。 这就是流式处理媒体的情况。  
+  
+ 请注意，将此方法传递到为此时间线创建的时钟以外的时钟是可行的，但会提供不可靠的结果。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Windows.Media.Animation.Timeline.Duration" />
+        <altmember cref="M:System.Windows.Media.Animation.Timeline.GetNaturalDurationCore(System.Windows.Media.Animation.Clock)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetNaturalDurationCore">
+      <MemberSignature Language="C#" Value="protected virtual System.Windows.Duration GetNaturalDurationCore (System.Windows.Media.Animation.Clock clock);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance valuetype System.Windows.Duration GetNaturalDurationCore(class System.Windows.Media.Animation.Clock clock) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.GetNaturalDurationCore(System.Windows.Media.Animation.Clock)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual System::Windows::Duration GetNaturalDurationCore(System::Windows::Media::Animation::Clock ^ clock);" />
+      <MemberSignature Language="F#" Value="abstract member GetNaturalDurationCore : System.Windows.Media.Animation.Clock -&gt; System.Windows.Duration&#xA;override this.GetNaturalDurationCore : System.Windows.Media.Animation.Clock -&gt; System.Windows.Duration" Usage="timeline.GetNaturalDurationCore clock" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Duration</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="clock" Type="System.Windows.Media.Animation.Clock" />
+      </Parameters>
+      <Docs>
+        <param name="clock">为此 <see cref="T:System.Windows.Media.Animation.Clock" /> 创建的 <see cref="T:System.Windows.Media.Animation.Timeline" />。</param>
+        <summary>返回此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 单次迭代的长度。 此方法提供 <see cref="M:System.Windows.Media.Animation.Timeline.GetNaturalDuration(System.Windows.Media.Animation.Clock)" /> 的实现。</summary>
+        <returns>此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 单个迭代的长度；如果自然持续时间未知，则为 <see cref="P:System.Windows.Duration.Automatic" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法提供的实现<xref:System.Windows.Media.Animation.Timeline.GetNaturalDuration%2A> ，不应在代码中直接调用。 请改用 <xref:System.Windows.Media.Animation.Timeline.GetNaturalDuration%2A>。  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>此方法应由需要在将<see cref="T:System.Windows.Duration" /> <see cref="P:System.Windows.Media.Animation.Timeline.Duration" />属性设置为<see cref="P:System.Windows.Duration.Automatic" />时提供自定义自然的时间线类实现。 如果作者无法确定自然持续时间，则此方法应返回<see cref="P:System.Windows.Duration.Automatic" />。</para></block>
+        <altmember cref="M:System.Windows.Media.Animation.Timeline.GetNaturalDuration(System.Windows.Media.Animation.Clock)" />
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Media.Animation.Timeline.Name" />
+      <MemberSignature Language="VB.NET" Value="Public Property Name As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ Name { System::String ^ get(); void set(System::String ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.Name : string with get, set" Usage="System.Windows.Media.Animation.Timeline.Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(null)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.MergableProperty(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 的名称。</summary>
+        <value>此时间线的名称。 默认值为 <see langword="null" />。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NameProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty NameProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty NameProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Media.Animation.Timeline.NameProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly NameProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ NameProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable NameProperty : System.Windows.DependencyProperty" Usage="System.Windows.Media.Animation.Timeline.NameProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Media.Animation.Timeline.Name" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveRequested">
+      <MemberSignature Language="C#" Value="public event EventHandler RemoveRequested;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler RemoveRequested" />
+      <MemberSignature Language="DocId" Value="E:System.Windows.Media.Animation.Timeline.RemoveRequested" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event RemoveRequested As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event EventHandler ^ RemoveRequested;" />
+      <MemberSignature Language="F#" Value="member this.RemoveRequested : EventHandler " Usage="member this.RemoveRequested : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当移除为此时间线创建的时钟或其中一个父时间线时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此事件通过以下方法引发： <xref:System.Windows.Media.Animation.RemoveStoryboard>将操作应用到情节提要，使用情节<xref:System.Windows.Media.Animation.Storyboard.Remove%2A>提要的方法，或（直接使用时钟）调用<xref:System.Windows.Media.Animation.ClockController.Remove%2A?displayProperty=nameWithType>方法。  
+  
+ 尽管此事件处理程序似乎与时间线关联，但它实际上是使用为<xref:System.Windows.Media.Animation.Clock>此时间线创建的来注册的。  有关详细信息，请参阅[计时事件概述](~/docs/framework/wpf/graphics-multimedia/timing-events-overview.md)。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Windows.Media.Animation.RemoveStoryboard" />
+        <altmember cref="M:System.Windows.Media.Animation.Storyboard.Remove(System.Windows.FrameworkElement)" />
+        <altmember cref="M:System.Windows.Media.Animation.ClockController.Remove" />
+      </Docs>
+    </Member>
+    <Member MemberName="RepeatBehavior">
+      <MemberSignature Language="C#" Value="public System.Windows.Media.Animation.RepeatBehavior RepeatBehavior { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Windows.Media.Animation.RepeatBehavior RepeatBehavior" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Media.Animation.Timeline.RepeatBehavior" />
+      <MemberSignature Language="VB.NET" Value="Public Property RepeatBehavior As RepeatBehavior" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Windows::Media::Animation::RepeatBehavior RepeatBehavior { System::Windows::Media::Animation::RepeatBehavior get(); void set(System::Windows::Media::Animation::RepeatBehavior value); };" />
+      <MemberSignature Language="F#" Value="member this.RepeatBehavior : System.Windows.Media.Animation.RepeatBehavior with get, set" Usage="System.Windows.Media.Animation.Timeline.RepeatBehavior" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.Media.Animation.RepeatBehavior</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置此时间线的重复行为。</summary>
+        <value>一个迭代 <see cref="P:System.Windows.Media.Animation.RepeatBehavior.Count" />，指定时间线将要播放的次数；一个 <see cref="T:System.TimeSpan" /> 值，指定此时间线活动周期的总长度；或者特殊值 <see cref="P:System.Windows.Media.Animation.RepeatBehavior.Forever" />，指定时间线应该无限重复。 默认值为<see cref="T:System.Windows.Media.Animation.RepeatBehavior" /> <see cref="P:System.Windows.Media.Animation.RepeatBehavior.Count" /> ，其值为<c>1</c>，表示时间线播放一次。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果指定了<xref:System.Windows.Media.Animation.RepeatBehavior.Count%2A>迭代并且时间线的<xref:System.Windows.Media.Animation.Timeline.AutoReverse%2A>属性设置为`true`，则单个重复项由一个向前迭代和一个反向迭代组成。 如果将<xref:System.Windows.Media.Animation.RepeatBehavior.Count%2A>属性设置为 true，则迭代2将向前播放，然后向后播放，然后再次向后播放。 <xref:System.Windows.Media.Animation.Timeline.AutoReverse%2A>  
+  
+ 您还可以指定希望时间线播放的总时间长度，而不是指定时间线的播放次数。 要使时间线重复，此<xref:System.Windows.Media.Animation.RepeatBehavior.Duration%2A?displayProperty=nameWithType>值应大于时间线的。 <xref:System.Windows.Media.Animation.Timeline.Duration%2A> 例如，如果时间线<xref:System.Windows.Media.Animation.Timeline.Duration%2A>的时间为2秒，为<xref:System.Windows.Media.Animation.RepeatBehavior.Duration%2A?displayProperty=nameWithType> 4 秒，则播放两次。 如果小于时间线的<xref:System.Windows.Media.Animation.Timeline.Duration%2A>，则缩短时间线的活动期间。 <xref:System.Windows.Media.Animation.RepeatBehavior.Duration%2A?displayProperty=nameWithType>  
+  
+ 有关重复时间线的详细信息，请参阅[动画概述](~/docs/framework/wpf/graphics-multimedia/animation-overview.md)。  
+  
+<a name="dependencyPropertyInfo_RepeatBehavior"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Media.Animation.Timeline.RepeatBehaviorProperty>|  
+|元数据属性设置为`true`|None|  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Windows.Media.Animation.Timeline.AutoReverse" />
+      </Docs>
+    </Member>
+    <Member MemberName="RepeatBehaviorProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty RepeatBehaviorProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty RepeatBehaviorProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Media.Animation.Timeline.RepeatBehaviorProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly RepeatBehaviorProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ RepeatBehaviorProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable RepeatBehaviorProperty : System.Windows.DependencyProperty" Usage="System.Windows.Media.Animation.Timeline.RepeatBehaviorProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Media.Animation.Timeline.RepeatBehavior" /> 依赖项属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetDesiredFrameRate">
+      <MemberSignature Language="C#" Value="public static void SetDesiredFrameRate (System.Windows.Media.Animation.Timeline timeline, Nullable&lt;int&gt; desiredFrameRate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetDesiredFrameRate(class System.Windows.Media.Animation.Timeline timeline, valuetype System.Nullable`1&lt;int32&gt; desiredFrameRate) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.Media.Animation.Timeline.SetDesiredFrameRate(System.Windows.Media.Animation.Timeline,System.Nullable{System.Int32})" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void SetDesiredFrameRate(System::Windows::Media::Animation::Timeline ^ timeline, Nullable&lt;int&gt; desiredFrameRate);" />
+      <MemberSignature Language="F#" Value="static member SetDesiredFrameRate : System.Windows.Media.Animation.Timeline * Nullable&lt;int&gt; -&gt; unit" Usage="System.Windows.Media.Animation.Timeline.SetDesiredFrameRate (timeline, desiredFrameRate)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timeline" Type="System.Windows.Media.Animation.Timeline" />
+        <Parameter Name="desiredFrameRate" Type="System.Nullable&lt;System.Int32&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="timeline"><paramref name="desiredFrameRate" /> 分配到的 <see cref="T:System.Windows.Media.Animation.Timeline" />。</param>
+        <param name="desiredFrameRate">此时间线每秒应生成的最大帧数量；如果系统将控制帧的数量，则为 <see langword="null" />。</param>
+        <summary>设置指定 <see cref="T:System.Windows.Media.Animation.Timeline" /> 所需的帧速率。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法设置<xref:System.Windows.Media.Animation.Timeline.DesiredFrameRate%2A>附加属性。 有关详细信息，请参阅<xref:System.Windows.Media.Animation.Timeline.DesiredFrameRate%2A>页。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Windows.Media.Animation.Timeline.DesiredFrameRate" />
+      </Docs>
+    </Member>
+    <Member MemberName="SpeedRatio">
+      <MemberSignature Language="C#" Value="public double SpeedRatio { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance float64 SpeedRatio" />
+      <MemberSignature Language="DocId" Value="P:System.Windows.Media.Animation.Timeline.SpeedRatio" />
+      <MemberSignature Language="VB.NET" Value="Public Property SpeedRatio As Double" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property double SpeedRatio { double get(); void set(double value); };" />
+      <MemberSignature Language="F#" Value="member this.SpeedRatio : double with get, set" Usage="System.Windows.Media.Animation.Timeline.SpeedRatio" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(1)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Double</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置此 <see cref="T:System.Windows.Media.Animation.Timeline" /> 的时间相对于其父级的前进速率。</summary>
+        <value>一个大于 0 的有限值，表示此时间线的时间相对于其父级的前进速率；如果此时间线为根时间线，则为默认时间线速度。 默认值为 1。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 时间线的<xref:System.Windows.Media.Animation.Timeline.SpeedRatio%2A>设置对其<xref:System.Windows.Media.Animation.Timeline.BeginTime%2A>不起作用; 该时间是相对于时间线的父级的，或者，如果时间线为根时间线，则为时间线时钟的开始时间。  
+  
+ 如果<xref:System.Windows.Media.Animation.Timeline.AccelerationRatio%2A>指定<xref:System.Windows.Media.Animation.Timeline.DecelerationRatio%2A>了或，则<xref:System.Windows.Media.Animation.Timeline.SpeedRatio%2A>这是时间线自然长度的平均比率。  
+  
+<a name="dependencyPropertyInfo_SpeedRatio"></a>   
+## <a name="dependency-property-information"></a>依赖项属性信息  
+  
+|||  
+|-|-|  
+|标识符字段|<xref:System.Windows.Media.Animation.Timeline.SpeedRatioProperty>|  
+|元数据属性设置为`true`|None|  
+  
+   
+  
+## Examples  
+ 时间线的<xref:System.Windows.Media.Animation.Timeline.SpeedRatio%2A>属性可控制其相对于其父级的进度速率。 如果时间线是根，则其<xref:System.Windows.Media.MediaPlayer.SpeedRatio%2A>相对于默认时间线速度。 下面的示例显示了几个具有<xref:System.Windows.Media.Animation.Timeline.SpeedRatio%2A>不同设置的时间线。  
+  
+ [!code-xaml[timingbehaviors_snip#_graphicsmm_SpeedExampleWholePage](~/samples/snippets/csharp/VS_Snippets_Wpf/timingbehaviors_snip/CSharp/SpeedExample.xaml#_graphicsmm_speedexamplewholepage)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><see cref="P:System.Windows.Media.Animation.Timeline.SpeedRatio" /> 小于 0 或并非有限值。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SpeedRatioProperty">
+      <MemberSignature Language="C#" Value="public static readonly System.Windows.DependencyProperty SpeedRatioProperty;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Windows.DependencyProperty SpeedRatioProperty" />
+      <MemberSignature Language="DocId" Value="F:System.Windows.Media.Animation.Timeline.SpeedRatioProperty" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly SpeedRatioProperty As DependencyProperty " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Windows::DependencyProperty ^ SpeedRatioProperty;" />
+      <MemberSignature Language="F#" Value=" staticval mutable SpeedRatioProperty : System.Windows.DependencyProperty" Usage="System.Windows.Media.Animation.Timeline.SpeedRatioProperty" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>PresentationCore</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Windows.DependencyProperty</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>标识 <see cref="P:System.Windows.Media.Animation.Timeline.SpeedRatio" /> 依赖属性。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

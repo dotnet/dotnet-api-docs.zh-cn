@@ -1,0 +1,1245 @@
+<Type Name="SiteMapProvider" FullName="System.Web.SiteMapProvider">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="2186133d49fa475570255bffedfa4f83b045130f" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70505678" /></Metadata><TypeSignature Language="C#" Value="public abstract class SiteMapProvider : System.Configuration.Provider.ProviderBase" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SiteMapProvider extends System.Configuration.Provider.ProviderBase" />
+  <TypeSignature Language="DocId" Value="T:System.Web.SiteMapProvider" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class SiteMapProvider&#xA;Inherits ProviderBase" />
+  <TypeSignature Language="C++ CLI" Value="public ref class SiteMapProvider abstract : System::Configuration::Provider::ProviderBase" />
+  <TypeSignature Language="F#" Value="type SiteMapProvider = class&#xA;    inherit ProviderBase" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Configuration.Provider.ProviderBase</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>为所有站点地图数据提供程序提供公共基类，并为开发人员提供一条实现自定义站点地图数据提供程序的途径，这些提供程序可与 ASP.NET 站点地图基础结构一起用作 <see cref="T:System.Web.SiteMap" /> 对象的持久存储区。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 和类表示抽象 <xref:System.Web.SiteMapProvider> 类的默认实现。 <xref:System.Web.XmlSiteMapProvider> <xref:System.Web.StaticSiteMapProvider> <xref:System.Web.XmlSiteMapProvider>使用名为 web.sitemap 的 XML 文件来存储站点地图数据。 有关 web.sitemap 文件的详细信息，请参阅[ASP.NET 网站地图](https://msdn.microsoft.com/library/6b85a558-1df8-44cf-bea6-62e61bcc8d20)。  
+  
+ 类通过<xref:System.Web.SiteMapProvider.RootProvider%2A>声明和 <xref:System.Web.SiteMapProvider.ParentProvider%2A> 属性来支持站点地图提供程序层次结构的概念。 <xref:System.Web.SiteMapProvider> <xref:System.Web.SiteMapProvider>可以是另一个提供程序的子级或父级。 这可以实现以下方案：不同的开发组拥有或实现网站的不同内容区域，这些组维护自己的网站图和站点地图提供程序。  
+  
+ 所有<xref:System.Web.SiteMapProvider>对象均在 web.config 文件中配置。 在这些配置文件中声明的所有站点地图提供程序都将在运行时加载，并用于加载和处理站点导航数据。 对象，该对象跟踪通过其<xref:System.Web.SiteMap.Providers%2A>属性集合提供的所有提供程序，并提供对由提供程序管理的导航数据的编程访问。 <xref:System.Web.SiteMap> 下面的代码示例演示了用于声明 Web.config 文件中的站点地图提供程序的格式。  
+  
+```  
+<siteMap defaultProvider="<name>">  
+  <providers>  
+    <add  
+      name="<friendly name>"  
+      type="<fully qualified class name>, <assembly name (optional)>"   
+      siteMapFile = "<file name>" />  
+  </providers>  
+</siteMap>  
+```  
+  
+ 这些提供程序加载的站点导航数据由站点地图基础结构的其他组件（如<xref:System.Web.UI.WebControls.SiteMapPath>和<xref:System.Web.UI.WebControls.TreeView>控件）用于显示用户的站点地图信息。  
+  
+ 如果实现自己的站点地图提供程序，则可以将源文件放置在 ASP.NET 应用程序的 App_Code 目录中，然后将自动编译该程序集。 你还可以将自己的站点地图提供程序置于全局程序集缓存（GAC）中，并在 web.config 文件中提供对该提供程序的完全限定引用。 有关编译器服务的详细信息，请参阅使用[程序集和全局程序集缓存](~/docs/framework/app-domains/working-with-assemblies-and-the-gac.md)。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何编写实现抽象<xref:System.Web.SiteMapProvider>类的类。 此示例仅包含一个示例<xref:System.Web.SiteMapProvider>和一个与之一起使用的示例文本文件。 若要运行此示例，还需要在 web.config 文件和 .aspx 页中输入一个条目。 可以在<xref:System.Web.UI.WebControls.SiteMapDataSource.SiteMapProvider%2A?displayProperty=nameWithType>属性的文档中找到这些属性。  
+  
+ 该示例使用以逗号分隔的文件，该文件遵循预期结构来加载站点地图信息。 该文件的第一行表示站点地图的根节点，后续行是子节点。 每个子节点通过 URL 标识其父节点。 下面显示了符合这些条件的文件示例。  
+  
+```  
+default.aspx,Home,MyCompany Home Page,  
+sale.aspx,Now On Sale,Check Out These Great Deals!,default.aspx  
+catalog.aspx,Online Catalog,Browse Our Many Great Items!,default.aspx  
+```  
+  
+ `SimpleTextSiteMapProvider` 提供 <xref:System.Web.SiteMapProvider> 所有属性和方法的示例实现。  
+  
+ [!code-csharp[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#1](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/CS/simpletextsitemapprovider.cs#1)]
+ [!code-vb[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/VB/simpletextsitemapprovider.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <block subset="none" type="overrides"><para>从<see cref="T:System.Web.SiteMapProvider" />类继承时，必须重写以下成员： <see cref="M:System.Web.SiteMapProvider.GetRootNodeCore" />、 <see cref="M:System.Web.SiteMapProvider.FindSiteMapNode(System.String)" />、 <see cref="M:System.Web.SiteMapProvider.GetChildNodes(System.Web.SiteMapNode)" />和<see cref="M:System.Web.SiteMapProvider.GetParentNode(System.Web.SiteMapNode)" />。</para></block>
+    <altmember cref="T:System.Web.SiteMapProvider" />
+    <altmember cref="T:System.Web.XmlSiteMapProvider" />
+    <related type="Article" href="https://msdn.microsoft.com/library/23de8a05-cac3-4693-b508-39f1d4b7053d">ASP.NET 站点导航概述</related>
+    <related type="Article" href="https://msdn.microsoft.com/library/6b85a558-1df8-44cf-bea6-62e61bcc8d20">ASP.NET 网站地图</related>
+    <related type="Article" href="https://msdn.microsoft.com/library/4f3ce72a-4fa3-4c3a-94c8-3e2bc4a92d85">ASP.NET 站点导航提供程序</related>
+    <related type="Article" href="https://msdn.microsoft.com/library/1686b4cd-435a-42dc-b22d-713d7763f97d">保护 ASP.NET 站点导航</related>
+    <related type="Article" href="https://msdn.microsoft.com/library/8a18e5c2-d41d-49ef-abcb-7c27e2469433">使用程序集和全局程序集缓存</related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SiteMapProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; SiteMapProvider();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.Web.SiteMapProvider" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  该类<xref:System.Web.SiteMapProvider>不是直接实例化的。 构造函数是从<xref:System.Web.StaticSiteMapProvider>类派生的类的构造函数中调用的。 <xref:System.Web.SiteMapProvider.%23ctor%2A>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="AddNode">
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将一个 <see cref="T:System.Web.SiteMapNode" /> 对象添加到由站点地图提供程序维护的节点集合。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="AddNode">
+      <MemberSignature Language="C#" Value="protected virtual void AddNode (System.Web.SiteMapNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void AddNode(class System.Web.SiteMapNode node) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.AddNode(System.Web.SiteMapNode)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub AddNode (node As SiteMapNode)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void AddNode(System::Web::SiteMapNode ^ node);" />
+      <MemberSignature Language="F#" Value="abstract member AddNode : System.Web.SiteMapNode -&gt; unit&#xA;override this.AddNode : System.Web.SiteMapNode -&gt; unit" Usage="siteMapProvider.AddNode node" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+      </Parameters>
+      <Docs>
+        <param name="node">要添加到提供程序维护的节点集合的 <see cref="T:System.Web.SiteMapNode" />。</param>
+        <summary>将一个 <see cref="T:System.Web.SiteMapNode" /> 对象添加到由站点地图提供程序维护的节点集合。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Web.SiteMapProvider>类派生的类可以<xref:System.Web.SiteMapProvider.AddNode%2A>重写方法，并<xref:System.Web.SiteMapNode>提供逻辑以便将对象添加到由站点地图提供程序维护的节点集合。 <xref:System.Web.SiteMapProvider.AddNode%2A>方法的默认实现<xref:System.NotImplementedException>引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Web.SiteMapProvider.AddNode(System.Web.SiteMapNode,System.Web.SiteMapNode)" />
+        <altmember cref="T:System.Web.SiteMapNodeCollection" />
+        <altmember cref="T:System.Web.XmlSiteMapProvider" />
+      </Docs>
+    </Member>
+    <Member MemberName="AddNode">
+      <MemberSignature Language="C#" Value="protected internal virtual void AddNode (System.Web.SiteMapNode node, System.Web.SiteMapNode parentNode);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void AddNode(class System.Web.SiteMapNode node, class System.Web.SiteMapNode parentNode) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.AddNode(System.Web.SiteMapNode,System.Web.SiteMapNode)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Sub AddNode (node As SiteMapNode, parentNode As SiteMapNode)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void AddNode(System::Web::SiteMapNode ^ node, System::Web::SiteMapNode ^ parentNode);" />
+      <MemberSignature Language="F#" Value="abstract member AddNode : System.Web.SiteMapNode * System.Web.SiteMapNode -&gt; unit&#xA;override this.AddNode : System.Web.SiteMapNode * System.Web.SiteMapNode -&gt; unit" Usage="siteMapProvider.AddNode (node, parentNode)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+        <Parameter Name="parentNode" Type="System.Web.SiteMapNode" />
+      </Parameters>
+      <Docs>
+        <param name="node">要添加到提供程序维护的节点集合的 <see cref="T:System.Web.SiteMapNode" />。</param>
+        <param name="parentNode">作为 <paramref name="node" /> 的父节点的 <see cref="T:System.Web.SiteMapNode" />。</param>
+        <summary>将一个 <see cref="T:System.Web.SiteMapNode" /> 对象添加到由站点地图提供程序维护的节点集合并指定父 <see cref="T:System.Web.SiteMapNode" /> 对象。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Web.SiteMapProvider>类派生的类可以<xref:System.Web.SiteMapProvider.AddNode%2A>重写方法，并<xref:System.Web.SiteMapNode>提供逻辑，以便将具有指定父级的对象添加到由站点地图提供程序维护的节点集合。 例如， <xref:System.Web.XmlSiteMapProvider.AddNode%2A?displayProperty=nameWithType>方法会<xref:System.Web.SiteMapNode> <xref:System.Web.SiteMapNodeCollection> <xref:System.Web.SiteMapNode>将指定的`node`对象添加<xref:System.Web.XmlSiteMapProvider>到由对象维护的集合中，并创建一个由`node` 和 `parentNode` 指定的对象。 <xref:System.Web.SiteMapProvider.AddNode%2A>方法的默认实现<xref:System.NotImplementedException>引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.NotImplementedException">在所有情况下。</exception>
+        <altmember cref="M:System.Web.SiteMapProvider.AddNode(System.Web.SiteMapNode)" />
+        <altmember cref="T:System.Web.SiteMapNodeCollection" />
+        <altmember cref="T:System.Web.XmlSiteMapProvider" />
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentNode">
+      <MemberSignature Language="C#" Value="public virtual System.Web.SiteMapNode CurrentNode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.SiteMapNode CurrentNode" />
+      <MemberSignature Language="DocId" Value="P:System.Web.SiteMapProvider.CurrentNode" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable ReadOnly Property CurrentNode As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Web::SiteMapNode ^ CurrentNode { System::Web::SiteMapNode ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.CurrentNode : System.Web.SiteMapNode" Usage="System.Web.SiteMapProvider.CurrentNode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取表示当前请求页的 <see cref="T:System.Web.SiteMapNode" /> 对象。</summary>
+        <value>表示当前请求页的 <see cref="T:System.Web.SiteMapNode" />；否则，如果没有找到或不能为当前用户返回 <see cref="T:System.Web.SiteMapNode" />，则为 <see langword="null" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在<xref:System.Web.SiteMapProvider.SiteMapResolve>尝试<xref:System.Web.SiteMapNode>检索对象之前引发该事件，以便使事件订户能够<xref:System.Web.SiteMapNode>返回类的实例。 如果没有事件订阅服务器，则<xref:System.Web.SiteMapProvider>类将使用当前<xref:System.Web.SiteMapProvider.FindSiteMapNode%2A> <xref:System.Web.SiteMapNode> HTTP 上下文调用方法来检索表示当前请求的页的。  
+  
+ 如果当前请求的页不与<xref:System.Web.SiteMapNode>相对应的页， `null`则返回。 如果启用了安全修整且不允许用户访问<xref:System.Web.SiteMapNode>， `null`则返回。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何实现实现抽象<xref:System.Web.SiteMapProvider.CurrentNode%2A> <xref:System.Web.SiteMapProvider>类的类中的属性。  
+  
+ 此代码示例是为<xref:System.Web.SiteMapProvider>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#2](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/CS/simpletextsitemapprovider.cs#2)]
+ [!code-vb[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/VB/simpletextsitemapprovider.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Web.SiteMapProvider.RootNode" />
+        <altmember cref="P:System.Web.SiteMapProvider.SecurityTrimmingEnabled" />
+      </Docs>
+    </Member>
+    <Member MemberName="EnableLocalization">
+      <MemberSignature Language="C#" Value="public bool EnableLocalization { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool EnableLocalization" />
+      <MemberSignature Language="DocId" Value="P:System.Web.SiteMapProvider.EnableLocalization" />
+      <MemberSignature Language="VB.NET" Value="Public Property EnableLocalization As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool EnableLocalization { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.EnableLocalization : bool with get, set" Usage="System.Web.SiteMapProvider.EnableLocalization" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个布尔值，该值指示是否返回 <see cref="T:System.Web.SiteMapNode" /> 特性的本地化的值。</summary>
+        <value>如果返回 <see cref="T:System.Web.SiteMapNode" /> 特性的本地化的值，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.SiteMapNode.Title%2A> <xref:System.Web.SiteMapNode.Attributes%2A>属性用于<xref:System.Web.SiteMapNode>和属性的 get 访问器以及对象的其他属性。 <xref:System.Web.SiteMapNode.Description%2A>  <xref:System.Web.SiteMapProvider.EnableLocalization%2A>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Web.SiteMapNode.Title" />
+        <altmember cref="P:System.Web.SiteMapNode.Description" />
+        <altmember cref="P:System.Web.SiteMapNode.Attributes" />
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="FindSiteMapNode">
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>当在派生类中被重写时，将检索表示某个页的 <see cref="T:System.Web.SiteMapNode" /> 对象。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="FindSiteMapNode">
+      <MemberSignature Language="C#" Value="public abstract System.Web.SiteMapNode FindSiteMapNode (string rawUrl);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Web.SiteMapNode FindSiteMapNode(string rawUrl) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.FindSiteMapNode(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function FindSiteMapNode (rawUrl As String) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract System::Web::SiteMapNode ^ FindSiteMapNode(System::String ^ rawUrl);" />
+      <MemberSignature Language="F#" Value="abstract member FindSiteMapNode : string -&gt; System.Web.SiteMapNode" Usage="siteMapProvider.FindSiteMapNode rawUrl" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rawUrl" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="rawUrl">标识要为其检索 <see cref="T:System.Web.SiteMapNode" /> 的页的 URL。</param>
+        <summary>当在派生类中被重写时，将检索表示位于指定 URL 的页的 <see cref="T:System.Web.SiteMapNode" /> 对象。</summary>
+        <returns>表示由 <paramref name="rawURL" /> 标识的页的 <see cref="T:System.Web.SiteMapNode" />；如果未找到对应的 <see cref="T:System.Web.SiteMapNode" />，或者如果启用了安全修整并且不能为当前用户返回 <see cref="T:System.Web.SiteMapNode" />，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Web.SiteMapProvider>类派生的类必须实现抽象<xref:System.Web.SiteMapProvider.FindSiteMapNode%2A>方法。  
+  
+ 提供的 URL 可以是虚拟 URL 或绝对 URL。 它也可能是使用与`~/apprelativedirectory`应用程序相关的语法的 URL，例如。 确保<xref:System.Web.SiteMapProvider.FindSiteMapNode%2A>方法的任何实现都能正确分析和处理应用程序相关的语法。  
+  
+ 类是 ASP.NET 的默认站点地图提供程序，它使用<xref:System.Web.SiteMapNode>对象的 URL 作为类维护的各种集合中的键。 <xref:System.Web.XmlSiteMapProvider> 因此，如果<xref:System.Web.SiteMapNode>提供 URL，则它在站点地图提供程序的作用域内必须是唯一的。 如果未提供 URL，则会生成一个唯一标识符用于标识<xref:System.Web.SiteMapNode>。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何实现实现抽象<xref:System.Web.SiteMapProvider.FindSiteMapNode%2A> <xref:System.Web.SiteMapProvider>类的类中的方法。 使用名`FindUrl`为的帮助器方法从<xref:System.Web.HttpContext>对象获取当前显示的页的 URL。 `SimpleTextSiteMapProvider`  
+  
+ 此代码示例是为<xref:System.Web.SiteMapProvider>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#5](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/CS/simpletextsitemapprovider.cs#5)]
+ [!code-vb[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#5](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/VB/simpletextsitemapprovider.vb#5)]  
+  
+ [!code-csharp[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#8](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/CS/simpletextsitemapprovider.cs#8)]
+ [!code-vb[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#8](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/VB/simpletextsitemapprovider.vb#8)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>当在派生<see cref="M:System.Web.SiteMapProvider.FindSiteMapNode(System.String)" />类中重写方法时， <see cref="T:System.Web.SiteMapNode" />如果当前站点地图中的提供程序找不到与 URL 匹配的对象，并且提供程序支持子提供程序，则务必将搜索扩展到任何子提供程序。</para></block>
+        <altmember cref="P:System.Web.SiteMapProvider.CurrentNode" />
+        <altmember cref="M:System.Web.SiteMapProvider.FindSiteMapNode(System.Web.HttpContext)" />
+      </Docs>
+    </Member>
+    <Member MemberName="FindSiteMapNode">
+      <MemberSignature Language="C#" Value="public virtual System.Web.SiteMapNode FindSiteMapNode (System.Web.HttpContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Web.SiteMapNode FindSiteMapNode(class System.Web.HttpContext context) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.FindSiteMapNode(System.Web.HttpContext)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function FindSiteMapNode (context As HttpContext) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Web::SiteMapNode ^ FindSiteMapNode(System::Web::HttpContext ^ context);" />
+      <MemberSignature Language="F#" Value="abstract member FindSiteMapNode : System.Web.HttpContext -&gt; System.Web.SiteMapNode&#xA;override this.FindSiteMapNode : System.Web.HttpContext -&gt; System.Web.SiteMapNode" Usage="siteMapProvider.FindSiteMapNode context" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Web.HttpContext" />
+      </Parameters>
+      <Docs>
+        <param name="context">用于使节点信息与被请求页的 URL 匹配的 <see cref="T:System.Web.HttpContext" />。</param>
+        <summary>使用指定的 <see cref="T:System.Web.SiteMapNode" /> 对象检索表示当前请求页的 <see cref="T:System.Web.HttpContext" /> 对象。</summary>
+        <returns>表示当前请求页的 <see cref="T:System.Web.SiteMapNode" />；如果在 <see cref="T:System.Web.SiteMapNode" /> 中未找到对应的 <see cref="T:System.Web.SiteMapNode" />，或者页上下文为 <see langword="null" />，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法调用抽象<xref:System.Web.SiteMapProvider.FindSiteMapNode%2A>方法，以根据原始 URL <xref:System.Web.SiteMapNode>或请求的虚拟路径检索当前请求页的对象。 <xref:System.Web.SiteMapProvider.FindSiteMapNode%2A> 如果在<xref:System.Web.SiteMapNode> `null`中未找到相应的，则返回。 <xref:System.Web.SiteMap>  
+  
+ 默认<xref:System.Web.SiteMapProvider.FindSiteMapNode%2A>情况下，该方法不<xref:System.Web.SiteMapNode>检查用户是否可访问。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Web.SiteMapProvider.FindSiteMapNode(System.String)" />
+      </Docs>
+    </Member>
+    <Member MemberName="FindSiteMapNodeFromKey">
+      <MemberSignature Language="C#" Value="public virtual System.Web.SiteMapNode FindSiteMapNodeFromKey (string key);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Web.SiteMapNode FindSiteMapNodeFromKey(string key) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.FindSiteMapNodeFromKey(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function FindSiteMapNodeFromKey (key As String) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Web::SiteMapNode ^ FindSiteMapNodeFromKey(System::String ^ key);" />
+      <MemberSignature Language="F#" Value="abstract member FindSiteMapNodeFromKey : string -&gt; System.Web.SiteMapNode&#xA;override this.FindSiteMapNodeFromKey : string -&gt; System.Web.SiteMapNode" Usage="siteMapProvider.FindSiteMapNodeFromKey key" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="key">用于创建 <see cref="T:System.Web.SiteMapNode" /> 的查找键。</param>
+        <summary>根据指定的键检索 <see cref="T:System.Web.SiteMapNode" /> 对象。</summary>
+        <returns>表示由 <paramref name="key" /> 标识的页的 <see cref="T:System.Web.SiteMapNode" />；如果未找到对应的 <see cref="T:System.Web.SiteMapNode" />，或者如果启用了安全修整并且不能为当前用户返回 <see cref="T:System.Web.SiteMapNode" />，则为 <see langword="null" />。 默认值为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在<xref:System.Web.SiteMapProvider>所有情况`null`下，实现都将返回。 从<xref:System.Web.SiteMapProvider>类派生的类可以<xref:System.Web.SiteMapProvider.FindSiteMapNodeFromKey%2A>重写方法，以便基于唯一键提供查找功能（而不是由<xref:System.Web.SiteMapProvider.FindSiteMapNode%2A>方法使用的 URL）。 如果您的站点地图提供程序实现使用<xref:System.Web.SiteMapNode>对象的<xref:System.Web.SiteMapNode.Key%2A?displayProperty=nameWithType>属性作为站点地图结构中的主要标识符，则实现方法。 <xref:System.Web.SiteMapProvider.FindSiteMapNodeFromKey%2A>  
+  
+ <xref:System.Web.StaticSiteMapProvider>类提供一个实现，用于处理未定义 URL 的站点地图节点。  
+  
+ 类是 ASP.NET 的默认站点地图提供程序，它使用的 URL <xref:System.Web.SiteMapNode>作为类维护的各种集合中的键。 <xref:System.Web.XmlSiteMapProvider> 因此，如果某个节点提供 URL，则它在站点地图提供程序的作用域内必须是唯一的。 如果未提供 URL，则会生成一个唯一标识符用于标识<xref:System.Web.SiteMapNode>。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="Overload:System.Web.SiteMapProvider.FindSiteMapNode" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetChildNodes">
+      <MemberSignature Language="C#" Value="public abstract System.Web.SiteMapNodeCollection GetChildNodes (System.Web.SiteMapNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Web.SiteMapNodeCollection GetChildNodes(class System.Web.SiteMapNode node) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.GetChildNodes(System.Web.SiteMapNode)" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function GetChildNodes (node As SiteMapNode) As SiteMapNodeCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract System::Web::SiteMapNodeCollection ^ GetChildNodes(System::Web::SiteMapNode ^ node);" />
+      <MemberSignature Language="F#" Value="abstract member GetChildNodes : System.Web.SiteMapNode -&gt; System.Web.SiteMapNodeCollection" Usage="siteMapProvider.GetChildNodes node" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNodeCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+      </Parameters>
+      <Docs>
+        <param name="node">要检索其所有子节点的 <see cref="T:System.Web.SiteMapNode" />。</param>
+        <summary>当在派生类中被重写时，将检索特定 <see cref="T:System.Web.SiteMapNode" /> 的子节点。</summary>
+        <returns>包含指定 <see cref="T:System.Web.SiteMapNodeCollection" /> 的直接子节点的只读 <see cref="T:System.Web.SiteMapNode" />；如果不存在子节点，则为 <see langword="null" /> 或空集合。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Web.SiteMapProvider>类派生的类必须实现抽象<xref:System.Web.SiteMapProvider.GetChildNodes%2A>方法。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何实现实现抽象<xref:System.Web.SiteMapProvider.GetChildNodes%2A> <xref:System.Web.SiteMapProvider>类的类中的方法。 将`SimpleTextSiteMapProvider`层次结构父级/子级关系存储在一个<xref:System.Collections.Hashtable>对象和另<xref:System.Web.SiteMapNode>一个对象中的所有对象中。 方法使用两个<xref:System.Collections.ArrayList>对象执行反向查找。 <xref:System.Web.SiteMapProvider.GetChildNodes%2A>  
+  
+ 此代码示例是为<xref:System.Web.SiteMapProvider>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#6](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/CS/simpletextsitemapprovider.cs#6)]
+ [!code-vb[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#6](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/VB/simpletextsitemapprovider.vb#6)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>当在派生<see cref="M:System.Web.SiteMapProvider.GetChildNodes(System.Web.SiteMapNode)" />类中重写方法时，请确保对子节点执行安全修整，并确保返回的集合是只读的。 集合仅包含指定<paramref name="node" />的直接子级。</para></block>
+        <altmember cref="M:System.Web.SiteMapProvider.GetParentNode(System.Web.SiteMapNode)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetCurrentNodeAndHintAncestorNodes">
+      <MemberSignature Language="C#" Value="public virtual System.Web.SiteMapNode GetCurrentNodeAndHintAncestorNodes (int upLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Web.SiteMapNode GetCurrentNodeAndHintAncestorNodes(int32 upLevel) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.GetCurrentNodeAndHintAncestorNodes(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetCurrentNodeAndHintAncestorNodes (upLevel As Integer) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Web::SiteMapNode ^ GetCurrentNodeAndHintAncestorNodes(int upLevel);" />
+      <MemberSignature Language="F#" Value="abstract member GetCurrentNodeAndHintAncestorNodes : int -&gt; System.Web.SiteMapNode&#xA;override this.GetCurrentNodeAndHintAncestorNodes : int -&gt; System.Web.SiteMapNode" Usage="siteMapProvider.GetCurrentNodeAndHintAncestorNodes upLevel" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="upLevel" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="upLevel">要获取的祖先站点地图节点的代数。 值为 -1 指示提供程序可检索和缓存所有祖先节点。</param>
+        <summary>在站点地图提供程序检索当前请求页的节点并获取当前页的父和祖先站点地图节点时，为其提供经优化的查找方法。</summary>
+        <returns>表示当前请求页的 <see cref="T:System.Web.SiteMapNode" />；否则，如果没有找到或不能为当前用户返回 <see cref="T:System.Web.SiteMapNode" />，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.SiteMapProvider.GetCurrentNodeAndHintAncestorNodes%2A>方法的默认实现<xref:System.Web.SiteMapProvider.CurrentNode%2A>返回属性; 但是，站点地图提供程序可以重写<xref:System.Web.SiteMapProvider.GetCurrentNodeAndHintAncestorNodes%2A>方法，并提供一个使用自定义缓存机制来返回当前的优化实现<xref:System.Web.SiteMapNode>以及父节点的父节点和祖先节点。  
+  
+ `upLevel`参数用于指定要检索的父节点和祖先节点的级别数。 如果需要，可以使用<xref:System.Web.SiteMapNode> <xref:System.Web.SiteMapNode.ParentNode%2A>属性将父节点和祖先节点链接到该<xref:System.Web.SiteMapProvider.GetCurrentNodeAndHintAncestorNodes%2A>方法返回的对象。  
+  
+ 类是 ASP.NET 的默认站点地图提供程序，它将整个站点地图缓存到内存中，这会导致在<xref:System.Web.XmlSiteMapProvider>查询特定<xref:System.Web.SiteMapNode>对象的时不会产生很大的开销。 <xref:System.Web.XmlSiteMapProvider>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="upLevel" /> 小于 -1。</exception>
+        <altmember cref="M:System.Web.SiteMapProvider.GetCurrentNodeAndHintNeighborhoodNodes(System.Int32,System.Int32)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetCurrentNodeAndHintNeighborhoodNodes">
+      <MemberSignature Language="C#" Value="public virtual System.Web.SiteMapNode GetCurrentNodeAndHintNeighborhoodNodes (int upLevel, int downLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Web.SiteMapNode GetCurrentNodeAndHintNeighborhoodNodes(int32 upLevel, int32 downLevel) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.GetCurrentNodeAndHintNeighborhoodNodes(System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetCurrentNodeAndHintNeighborhoodNodes (upLevel As Integer, downLevel As Integer) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Web::SiteMapNode ^ GetCurrentNodeAndHintNeighborhoodNodes(int upLevel, int downLevel);" />
+      <MemberSignature Language="F#" Value="abstract member GetCurrentNodeAndHintNeighborhoodNodes : int * int -&gt; System.Web.SiteMapNode&#xA;override this.GetCurrentNodeAndHintNeighborhoodNodes : int * int -&gt; System.Web.SiteMapNode" Usage="siteMapProvider.GetCurrentNodeAndHintNeighborhoodNodes (upLevel, downLevel)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="upLevel" Type="System.Int32" />
+        <Parameter Name="downLevel" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="upLevel">要获取的祖先 <see cref="T:System.Web.SiteMapNode" /> 的代数。 0 指示不检索祖先节点，-1 指示提供程序可检索和缓存所有祖先节点。</param>
+        <param name="downLevel">要获取的子 <see cref="T:System.Web.SiteMapNode" /> 的代数。 0 指示不检索子代节点，-1 指示提供程序可检索和缓存所有子代节点。</param>
+        <summary>在站点地图提供程序检索当前请求页的节点并获取当前节点附近的站点地图节点时，为其提供经优化的查找方法。</summary>
+        <returns>表示当前请求页的 <see cref="T:System.Web.SiteMapNode" />；否则，如果没有找到或不能为当前用户返回 <see cref="T:System.Web.SiteMapNode" />，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.SiteMapProvider.GetCurrentNodeAndHintNeighborhoodNodes%2A>方法的默认实现<xref:System.Web.SiteMapProvider.CurrentNode%2A>返回属性; 但是，站点地图提供程序可以重写<xref:System.Web.SiteMapProvider.GetCurrentNodeAndHintNeighborhoodNodes%2A>方法，并提供一个使用自定义缓存机制来返回当前的优化实现对象以及当前 <xref:System.Web.SiteMapNode> 的接近的对象。 <xref:System.Web.SiteMapNode>  <xref:System.Web.SiteMapNode>  
+  
+ `upLevel`参数用于指定要检索和缓存的父节点和祖先节点的级别数，以及它们的直接子项。 参数用于指定当前<xref:System.Web.SiteMapNode>要检索的子代节点的级别数。 `downLevel` 如果需要，祖先节点和子代节点可以链接到<xref:System.Web.SiteMapNode>  
+  
+ <xref:System.Web.SiteMapProvider.GetCurrentNodeAndHintNeighborhoodNodes%2A>方法，使用<xref:System.Web.SiteMapNode.ParentNode%2A>和<xref:System.Web.SiteMapNode.ChildNodes%2A>属性。 如果祖先节点级别或子节点级别少于`upLevel`或`downLevel`指定的级别，则仅检索那些可用的节点级别。  
+  
+ 类是 ASP.NET 的默认站点地图提供程序，它将整个站点地图缓存到内存中，这会导致在<xref:System.Web.XmlSiteMapProvider>查询特定<xref:System.Web.SiteMapNode>对象的时不会产生很大的开销。 <xref:System.Web.XmlSiteMapProvider>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="upLevel" /> 或 <paramref name="downLevel" /> 小于 -1。</exception>
+        <altmember cref="M:System.Web.SiteMapProvider.GetCurrentNodeAndHintAncestorNodes(System.Int32)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetParentNode">
+      <MemberSignature Language="C#" Value="public abstract System.Web.SiteMapNode GetParentNode (System.Web.SiteMapNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Web.SiteMapNode GetParentNode(class System.Web.SiteMapNode node) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.GetParentNode(System.Web.SiteMapNode)" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function GetParentNode (node As SiteMapNode) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract System::Web::SiteMapNode ^ GetParentNode(System::Web::SiteMapNode ^ node);" />
+      <MemberSignature Language="F#" Value="abstract member GetParentNode : System.Web.SiteMapNode -&gt; System.Web.SiteMapNode" Usage="siteMapProvider.GetParentNode node" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+      </Parameters>
+      <Docs>
+        <param name="node">要为其检索父节点的 <see cref="T:System.Web.SiteMapNode" />。</param>
+        <summary>当在派生类中被重写时，将检索特定 <see cref="T:System.Web.SiteMapNode" /> 对象的父节点。</summary>
+        <returns>表示 <paramref name="node" /> 的父节点的 <see cref="T:System.Web.SiteMapNode" />；如果 <see cref="T:System.Web.SiteMapNode" /> 没有父节点或启用了安全修整且当前用户不能访问父节点，则为 <see langword="null" />。  
+  
+ <block subset="none" type="note"><para>如果父节点属于另一个提供者，<see cref="M:System.Web.SiteMapProvider.GetParentNode(System.Web.SiteMapNode)" /> 也可能返回 <see langword="null" />。 在这种情况下，应改用 <paramref name="node" /> 的 <see cref="P:System.Web.SiteMapNode.ParentNode" /> 属性。  
+  
+</para></block></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的代码示例演示如何实现实现抽象<xref:System.Web.SiteMapProvider.GetParentNode%2A> <xref:System.Web.SiteMapProvider>类的类中的方法。 在`SimpleTextSiteMapProvider` 接口 <xref:System.Collections.IList> 中的对象之间<xref:System.Web.SiteMapNode>存储层次结构的父/子关系，例如<xref:System.Collections.ArrayList>对象。  
+  
+ 此代码示例是为<xref:System.Web.SiteMapProvider>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#6](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/CS/simpletextsitemapprovider.cs#6)]
+ [!code-vb[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#6](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/VB/simpletextsitemapprovider.vb#6)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Web.SiteMapProvider.GetChildNodes(System.Web.SiteMapNode)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetParentNodeRelativeToCurrentNodeAndHintDownFromParent">
+      <MemberSignature Language="C#" Value="public virtual System.Web.SiteMapNode GetParentNodeRelativeToCurrentNodeAndHintDownFromParent (int walkupLevels, int relativeDepthFromWalkup);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Web.SiteMapNode GetParentNodeRelativeToCurrentNodeAndHintDownFromParent(int32 walkupLevels, int32 relativeDepthFromWalkup) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.GetParentNodeRelativeToCurrentNodeAndHintDownFromParent(System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetParentNodeRelativeToCurrentNodeAndHintDownFromParent (walkupLevels As Integer, relativeDepthFromWalkup As Integer) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Web::SiteMapNode ^ GetParentNodeRelativeToCurrentNodeAndHintDownFromParent(int walkupLevels, int relativeDepthFromWalkup);" />
+      <MemberSignature Language="F#" Value="abstract member GetParentNodeRelativeToCurrentNodeAndHintDownFromParent : int * int -&gt; System.Web.SiteMapNode&#xA;override this.GetParentNodeRelativeToCurrentNodeAndHintDownFromParent : int * int -&gt; System.Web.SiteMapNode" Usage="siteMapProvider.GetParentNodeRelativeToCurrentNodeAndHintDownFromParent (walkupLevels, relativeDepthFromWalkup)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="walkupLevels" Type="System.Int32" />
+        <Parameter Name="relativeDepthFromWalkup" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="walkupLevels">在检索请求的祖先节点时要遍历的祖先节点的层次数。</param>
+        <param name="relativeDepthFromWalkup">要从目标祖先节点检索的子代节点的层次数。</param>
+        <summary>在站点地图提供程序检索当前请求页的祖先节点并获取其子代节点时，为其提供经优化的查找方法。</summary>
+        <returns>表示当前请求页的祖先 <see cref="T:System.Web.SiteMapNode" /> 的 <see cref="T:System.Web.SiteMapNode" />；如果未找到或无法为当前用户返回当前或祖先 <see cref="T:System.Web.SiteMapNode" />，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.SiteMapProvider>类的默认实现提供<xref:System.Web.SiteMapProvider.GetParentNodeRelativeToCurrentNodeAndHintDownFromParent%2A>方法的非优化实现，调用<xref:System.Web.SiteMapProvider.GetCurrentNodeAndHintAncestorNodes%2A>和<xref:System.Web.SiteMapProvider.HintNeighborhoodNodes%2A>方法; 但是，站点地图提供程序可以重写<xref:System.Web.SiteMapProvider.GetParentNodeRelativeToCurrentNodeAndHintDownFromParent%2A>方法和提供一个优化的实现，该实现使用自定义缓存机制来返回祖先节点并对其他<xref:System.Web.SiteMapNode>对象执行优化查找。  
+  
+ `walkupLevels`参数用于指定在检索目标节点时要遍历多少级别的父节点和祖先节点。 如果存在比请求的级别更少`null`的级别，则返回。 `downLevel`参数用于指定要检索的目标祖先节点中有多少级别的子代节点。 如果需要， <xref:System.Web.SiteMapNode>可以使用<xref:System.Web.SiteMapNode.ParentNode%2A>和<xref:System.Web.SiteMapProvider.GetParentNodeRelativeToCurrentNodeAndHintDownFromParent%2A> <xref:System.Web.SiteMapNode.ChildNodes%2A>属性将祖先节点和子代节点链接到该方法返回的。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="walkupLevels" /> 或 <paramref name="relativeDepthFromWalkup" /> 小于 0。</exception>
+        <altmember cref="M:System.Web.SiteMapProvider.GetParentNodeRelativeToNodeAndHintDownFromParent(System.Web.SiteMapNode,System.Int32,System.Int32)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetParentNodeRelativeToNodeAndHintDownFromParent">
+      <MemberSignature Language="C#" Value="public virtual System.Web.SiteMapNode GetParentNodeRelativeToNodeAndHintDownFromParent (System.Web.SiteMapNode node, int walkupLevels, int relativeDepthFromWalkup);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Web.SiteMapNode GetParentNodeRelativeToNodeAndHintDownFromParent(class System.Web.SiteMapNode node, int32 walkupLevels, int32 relativeDepthFromWalkup) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.GetParentNodeRelativeToNodeAndHintDownFromParent(System.Web.SiteMapNode,System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetParentNodeRelativeToNodeAndHintDownFromParent (node As SiteMapNode, walkupLevels As Integer, relativeDepthFromWalkup As Integer) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::Web::SiteMapNode ^ GetParentNodeRelativeToNodeAndHintDownFromParent(System::Web::SiteMapNode ^ node, int walkupLevels, int relativeDepthFromWalkup);" />
+      <MemberSignature Language="F#" Value="abstract member GetParentNodeRelativeToNodeAndHintDownFromParent : System.Web.SiteMapNode * int * int -&gt; System.Web.SiteMapNode&#xA;override this.GetParentNodeRelativeToNodeAndHintDownFromParent : System.Web.SiteMapNode * int * int -&gt; System.Web.SiteMapNode" Usage="siteMapProvider.GetParentNodeRelativeToNodeAndHintDownFromParent (node, walkupLevels, relativeDepthFromWalkup)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+        <Parameter Name="walkupLevels" Type="System.Int32" />
+        <Parameter Name="relativeDepthFromWalkup" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="node"><see cref="T:System.Web.SiteMapNode" />，用作 <paramref name="walkupLevels" /> 和 <paramref name="relativeDepthFromWalkup" /> 的参考点。</param>
+        <param name="walkupLevels">在检索请求的祖先节点时要遍历的祖先节点的层次数。</param>
+        <param name="relativeDepthFromWalkup">要从目标祖先节点检索的子代节点的层次数。</param>
+        <summary>在站点地图提供程序检索指定 <see cref="T:System.Web.SiteMapNode" /> 对象的祖先节点并获取其子节点时，为其提供经优化的查找方法。</summary>
+        <returns>表示 <paramref name="node" /> 的祖先的 <see cref="T:System.Web.SiteMapNode" />；如果未找到或者无法为当前用户返回当前或祖先 <see cref="T:System.Web.SiteMapNode" />，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.SiteMapProvider>类的默认实现提供<xref:System.Web.SiteMapProvider.GetParentNodeRelativeToNodeAndHintDownFromParent%2A>方法的非优化实现，调用<xref:System.Web.SiteMapProvider.HintAncestorNodes%2A>和<xref:System.Web.SiteMapProvider.HintNeighborhoodNodes%2A>方法; 但是，站点地图提供程序可以重写<xref:System.Web.SiteMapProvider.GetParentNodeRelativeToNodeAndHintDownFromParent%2A>方法和提供一个优化的实现，该实现使用自定义缓存机制来返回祖先节点并对其他<xref:System.Web.SiteMapNode>对象执行优化查找。  方法非常类似<xref:System.Web.SiteMapProvider.GetParentNodeRelativeToCurrentNodeAndHintDownFromParent%2A>于方法。 <xref:System.Web.SiteMapProvider.GetParentNodeRelativeToNodeAndHintDownFromParent%2A>  
+  
+ `walkupLevels`参数用于指定在检索目标节点时要遍历多少级别的父节点和祖先节点。 如果存在比请求的级别更少`null`的级别，则返回。 `downLevel`参数用于指定要检索的目标祖先节点中有多少级别的子代节点。 如果需要， <xref:System.Web.SiteMapNode>可以使用<xref:System.Web.SiteMapNode.ParentNode%2A>和<xref:System.Web.SiteMapProvider.GetParentNodeRelativeToNodeAndHintDownFromParent%2A> <xref:System.Web.SiteMapNode.ChildNodes%2A>属性将祖先节点和子代节点链接到该方法返回的。 如果祖先节点级别少于`upLevel`参数指定的级别， `null`则返回。  由提供商的实施者决定如何处理可用子代节点级别数小于`downLevel`参数指定的值的情况如何处理。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">为 <paramref name="walkupLevels" /> 或 <paramref name="relativeDepthFromWalkup" /> 指定的值小于 0。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="node" /> 为 <see langword="null" />。</exception>
+        <altmember cref="M:System.Web.SiteMapProvider.GetParentNodeRelativeToCurrentNodeAndHintDownFromParent(System.Int32,System.Int32)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetRootNodeCore">
+      <MemberSignature Language="C#" Value="protected internal abstract System.Web.SiteMapNode GetRootNodeCore ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.Web.SiteMapNode GetRootNodeCore() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.GetRootNodeCore" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend MustOverride Function GetRootNodeCore () As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; abstract System::Web::SiteMapNode ^ GetRootNodeCore();" />
+      <MemberSignature Language="F#" Value="abstract member GetRootNodeCore : unit -&gt; System.Web.SiteMapNode" Usage="siteMapProvider.GetRootNodeCore " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>当在派生类中被重写时，将检索目前由当前提供者管理的所有节点的根节点。</summary>
+        <returns><see cref="T:System.Web.SiteMapNode" />，表示当前提供程序所管理的节点集的根节点。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法使提供程序层次结构中的父提供程序能够获取<xref:System.Web.SiteMapNode>一个对象，该对象充当构建提供程序层次结构的引用框架，较大的站点地图节点层次结构是每个<xref:System.Web.SiteMapProvider.GetRootNodeCore%2A>提供程序管理。  
+  
+   
+  
+## Examples  
+ [!code-csharp[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#3](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/CS/simpletextsitemapprovider.cs#3)]
+ [!code-vb[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#3](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/VB/simpletextsitemapprovider.vb#3)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Web.SiteMapProvider.GetRootNodeCoreFromProvider(System.Web.SiteMapProvider)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetRootNodeCoreFromProvider">
+      <MemberSignature Language="C#" Value="protected static System.Web.SiteMapNode GetRootNodeCoreFromProvider (System.Web.SiteMapProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method familystatic hidebysig class System.Web.SiteMapNode GetRootNodeCoreFromProvider(class System.Web.SiteMapProvider provider) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.GetRootNodeCoreFromProvider(System.Web.SiteMapProvider)" />
+      <MemberSignature Language="VB.NET" Value="Protected Shared Function GetRootNodeCoreFromProvider (provider As SiteMapProvider) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; static System::Web::SiteMapNode ^ GetRootNodeCoreFromProvider(System::Web::SiteMapProvider ^ provider);" />
+      <MemberSignature Language="F#" Value="static member GetRootNodeCoreFromProvider : System.Web.SiteMapProvider -&gt; System.Web.SiteMapNode" Usage="System.Web.SiteMapProvider.GetRootNodeCoreFromProvider provider" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="provider" Type="System.Web.SiteMapProvider" />
+      </Parameters>
+      <Docs>
+        <param name="provider">调用 <see cref="M:System.Web.SiteMapProvider.GetRootNodeCore" /> 的提供程序。</param>
+        <summary>检索当前由指定的站点地图提供程序管理的所有节点的根节点。</summary>
+        <returns><see cref="T:System.Web.SiteMapNode" />，表示 <paramref name="provider" /> 所管理的节点集的根节点。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认实现对指定<xref:System.Web.SiteMapProvider.GetRootNodeCore%2A> `provider`的调用抽象方法。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Web.SiteMapProvider.GetRootNodeCore" />
+      </Docs>
+    </Member>
+    <Member MemberName="HintAncestorNodes">
+      <MemberSignature Language="C#" Value="public virtual void HintAncestorNodes (System.Web.SiteMapNode node, int upLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void HintAncestorNodes(class System.Web.SiteMapNode node, int32 upLevel) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.HintAncestorNodes(System.Web.SiteMapNode,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Sub HintAncestorNodes (node As SiteMapNode, upLevel As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void HintAncestorNodes(System::Web::SiteMapNode ^ node, int upLevel);" />
+      <MemberSignature Language="F#" Value="abstract member HintAncestorNodes : System.Web.SiteMapNode * int -&gt; unit&#xA;override this.HintAncestorNodes : System.Web.SiteMapNode * int -&gt; unit" Usage="siteMapProvider.HintAncestorNodes (node, upLevel)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+        <Parameter Name="upLevel" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="node"><see cref="T:System.Web.SiteMapNode" />，用作 <paramref name="upLevel" /> 的参考点。</param>
+        <param name="upLevel">要获取的祖先 <see cref="T:System.Web.SiteMapNode" /> 的代数。 0 指示不检索祖先节点，-1 指示可检索和缓存所有祖先节点。</param>
+        <summary>提供一个方法，站点地图提供程序重写该方法来执行相对于指定 <see cref="T:System.Web.SiteMapNode" /> 对象的一个或多个层次的父和祖先节点的经优化的检索。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认<xref:System.Web.SiteMapProvider.HintAncestorNodes%2A>方法仅检查`upLevel`小于-1 的参数`null`和`node`参数。 由于类将站点地图信息缓存在内存中<xref:System.Web.SiteMapProvider.HintAncestorNodes%2A> ，因此不使用方法。 <xref:System.Web.XmlSiteMapProvider>  
+  
+ 站点地图提供程序可以重写<xref:System.Web.SiteMapProvider.HintAncestorNodes%2A>方法，以对指定<xref:System.Web.SiteMapNode>对象的父节点和祖先节点执行优化的检索。  
+  
+ 参数用于指定从指定<xref:System.Web.SiteMapNode>的中遍历多少级别的父节点和祖先节点。 `upLevel` 如果存在比请求的级别更少的级别，则在指定的绑定内返回所有可用的祖先节点。 如果需要，可以<xref:System.Web.SiteMapNode> <xref:System.Web.SiteMapNode.ParentNode%2A>使用属性将父节点链接到指定的。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="upLevel" /> 小于 -1。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="node" /> 为 <see langword="null" />。</exception>
+        <altmember cref="M:System.Web.SiteMapProvider.HintNeighborhoodNodes(System.Web.SiteMapNode,System.Int32,System.Int32)" />
+      </Docs>
+    </Member>
+    <Member MemberName="HintNeighborhoodNodes">
+      <MemberSignature Language="C#" Value="public virtual void HintNeighborhoodNodes (System.Web.SiteMapNode node, int upLevel, int downLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void HintNeighborhoodNodes(class System.Web.SiteMapNode node, int32 upLevel, int32 downLevel) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.HintNeighborhoodNodes(System.Web.SiteMapNode,System.Int32,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Sub HintNeighborhoodNodes (node As SiteMapNode, upLevel As Integer, downLevel As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void HintNeighborhoodNodes(System::Web::SiteMapNode ^ node, int upLevel, int downLevel);" />
+      <MemberSignature Language="F#" Value="abstract member HintNeighborhoodNodes : System.Web.SiteMapNode * int * int -&gt; unit&#xA;override this.HintNeighborhoodNodes : System.Web.SiteMapNode * int * int -&gt; unit" Usage="siteMapProvider.HintNeighborhoodNodes (node, upLevel, downLevel)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+        <Parameter Name="upLevel" Type="System.Int32" />
+        <Parameter Name="downLevel" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="node"><see cref="T:System.Web.SiteMapNode" />，用作 <paramref name="upLevel" /> 的参考点。</param>
+        <param name="upLevel">要获取的祖先 <see cref="T:System.Web.SiteMapNode" /> 的代数。 0 指示不检索祖先节点，-1 指示可检索和缓存所有祖先节点（及其到 <paramref name="node" /> 层次的子代节点）。</param>
+        <param name="downLevel">要获取的子代 <see cref="T:System.Web.SiteMapNode" /> 的代数。 0 指示不检索子代节点，-1 指示可检索和缓存所有子代节点。</param>
+        <summary>提供一个方法，站点地图提供程序可以重写该方法以执行在指定节点附近找到的节点的经优化的检索。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认<xref:System.Web.SiteMapProvider.HintNeighborhoodNodes%2A>方法仅检查`upLevel`小于-1 的`downLevel`和参数，以及`node`参数是否`null`为。 由于对象将站点地图信息缓存在内存中<xref:System.Web.SiteMapProvider.HintNeighborhoodNodes%2A> ，因此不使用方法。 <xref:System.Web.XmlSiteMapProvider>  
+  
+ 站点地图提供程序可以重写<xref:System.Web.SiteMapProvider.HintNeighborhoodNodes%2A>方法，以便在指定<xref:System.Web.SiteMapNode>的邻近性<xref:System.Web.SiteMapNode>中对对象执行优化的查找。 参数用于指定从指定<xref:System.Web.SiteMapNode>的中遍历多少级别的父节点和祖先节点。 `upLevel` `downLevel`参数用于指定要检索的当前节点中的子节点级别数。 如果需要， <xref:System.Web.SiteMapNode>可以使用<xref:System.Web.SiteMapNode.ParentNode%2A>和<xref:System.Web.SiteMapProvider.HintNeighborhoodNodes%2A> <xref:System.Web.SiteMapNode.ChildNodes%2A>属性将祖先节点和子代节点链接到该方法返回的。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="upLevel" /> 或 <paramref name="downLevel" /> 小于 -1。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="node" /> 为 <see langword="null" />。</exception>
+        <altmember cref="M:System.Web.SiteMapProvider.HintAncestorNodes(System.Web.SiteMapNode,System.Int32)" />
+      </Docs>
+    </Member>
+    <Member MemberName="Initialize">
+      <MemberSignature Language="C#" Value="public override void Initialize (string name, System.Collections.Specialized.NameValueCollection attributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Initialize(string name, class System.Collections.Specialized.NameValueCollection attributes) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.Initialize(System.String,System.Collections.Specialized.NameValueCollection)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Sub Initialize (name As String, attributes As NameValueCollection)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override void Initialize(System::String ^ name, System::Collections::Specialized::NameValueCollection ^ attributes);" />
+      <MemberSignature Language="F#" Value="override this.Initialize : string * System.Collections.Specialized.NameValueCollection -&gt; unit" Usage="siteMapProvider.Initialize (name, attributes)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="attributes" Type="System.Collections.Specialized.NameValueCollection" />
+      </Parameters>
+      <Docs>
+        <param name="name">要初始化的提供程序的 <see cref="P:System.Configuration.Provider.ProviderBase.Name" />。</param>
+        <param name="attributes"><see cref="T:System.Collections.Specialized.NameValueCollection" />，其中可以包含附加特性以帮助初始化提供程序。 从 Web.config 文件中的站点地图提供程序配置读取这些特性。</param>
+        <summary>初始化 <see cref="T:System.Web.SiteMapProvider" /> 实现（包括从持久性存储区加载站点地图数据所需的任何资源）。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此<xref:System.Web.SiteMapProvider.Initialize%2A>方法并不实际生成站点地图，它只准备<xref:System.Web.SiteMapProvider>对象的状态来实现此目的。 默认实现从站点导航配置<xref:System.Web.SiteMapProvider.SecurityTrimmingEnabled%2A>中初始化网站地图提供程序的属性。  
+  
+ 从派生的<xref:System.Web.SiteMapProvider>类可以<xref:System.Web.SiteMapProvider.Initialize%2A>重写方法，以初始化从持久存储区加载站点地图数据所需的任何状态和资源。 例如，如果您的派生类使用文件来存储站点地图数据，则<xref:System.Web.SiteMapProvider.Initialize%2A>可以在方法中执行任何文件初始化。 如果派生类使用某种其他类型的数据存储区，如关系数据库，则可能会执行初始化数据库连接。  
+  
+ 其他属性（如文件名或连接字符串）由 ASP.NET 配置系统读取，并使用其<xref:System.Web.SiteMapProvider.Initialize%2A> <xref:System.Collections.Specialized.NameValueCollection>参数传递给方法。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何重写<xref:System.Web.SiteMapProvider.Initialize%2A>方法以准备 Microsoft Access 数据库连接。  
+  
+ 在方法的<xref:System.Data.OleDb.OleDbConnection> <xref:System.Web.SiteMapProvider.Initialize%2A>参数中传递对象的连接字符串。 <xref:System.Collections.Specialized.NameValueCollection> 在这种情况下，连接字符串由 Web.config 文件中特定于提供程序的部分提供。 在此`accessSiteMapConnectionString` ，包含一个连接字符串，用于承载站点地图数据的 Microsoft Access 数据库。  
+  
+```  
+<siteMap defaultProvider="AccessSiteMapProvider">  
+  <providers>  
+     <add  
+       name="AccessSiteMapProvider"  
+       type="Samples.AspNet.AccessSiteMapProvider,Samples.AspNet"  
+       accessSiteMapConnectionString="PROVIDER=MICROSOFT.JET.OLEDB.4.0;DATA SOURCE=\\SomeUNCShare\\sitemap.mdb"/>  
+  </providers>   
+ </siteMap>  
+```  
+  
+ 此代码示例是为<xref:System.Web.SiteMapProvider>类提供的更大示例的一部分。  
+  
+ [!code-cpp[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#2](~/samples/snippets/cpp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/CPP/accesssitemapprovider.cpp#2)]
+ [!code-csharp[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#2](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/CS/accesssitemapprovider.cs#2)]
+ [!code-vb[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/VB/accesssitemapprovider.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>在派生类<see cref="M:System.Web.SiteMapProvider.Initialize(System.String,System.Collections.Specialized.NameValueCollection)" />中重写方法时，请确保先调用基类的<see cref="M:System.Web.SiteMapProvider.Initialize(System.String,System.Collections.Specialized.NameValueCollection)" />方法，然后再执行自己的初始化。</para></block>
+        <altmember cref="T:System.Configuration.Provider.ProviderBase" />
+        <altmember cref="M:System.Web.StaticSiteMapProvider.BuildSiteMap" />
+        <altmember cref="M:System.Web.StaticSiteMapProvider.Clear" />
+      </Docs>
+    </Member>
+    <Member MemberName="IsAccessibleToUser">
+      <MemberSignature Language="C#" Value="public virtual bool IsAccessibleToUser (System.Web.HttpContext context, System.Web.SiteMapNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsAccessibleToUser(class System.Web.HttpContext context, class System.Web.SiteMapNode node) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.IsAccessibleToUser(System.Web.HttpContext,System.Web.SiteMapNode)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function IsAccessibleToUser (context As HttpContext, node As SiteMapNode) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual bool IsAccessibleToUser(System::Web::HttpContext ^ context, System::Web::SiteMapNode ^ node);" />
+      <MemberSignature Language="F#" Value="abstract member IsAccessibleToUser : System.Web.HttpContext * System.Web.SiteMapNode -&gt; bool&#xA;override this.IsAccessibleToUser : System.Web.HttpContext * System.Web.SiteMapNode -&gt; bool" Usage="siteMapProvider.IsAccessibleToUser (context, node)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Web.HttpContext" />
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+      </Parameters>
+      <Docs>
+        <param name="context">包含用户信息的 <see cref="T:System.Web.HttpContext" />。</param>
+        <param name="node">用户请求的 <see cref="T:System.Web.SiteMapNode" />。</param>
+        <summary>检索一个布尔值，该值指示指定的 <see cref="T:System.Web.SiteMapNode" /> 对象是否可由用户在指定的上下文中查看。</summary>
+        <returns>如果启用了安全修整并且 <paramref name="node" /> 可由用户查看，或者未启用安全修整，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 启用安全修整时的默认行为是下表所述。  
+  
+|条件|返回值|  
+|---------------|------------------|  
+|在<xref:System.Web.SiteMapNode.Roles%2A> 上 `node` 存在，并且当前用户至少位于一个指定的角色中。<br /><br /> - 或 -<br /><br /> 当前线程具有一个关联`WindowsIdentity`的，它对所请求的 URL 具有文件访问权限，并且该 url 位于应用程序的目录结构内。<br /><br /> - 或 -<br /><br /> 当前用户是专门为当前应用程序的`authorization`元素中请求的 URL 授权的，而 URL 位于应用程序的目录结构内。|`true`|  
+|未满足上述条件。|`false`|  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="context" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="node" /> 为 <see langword="null" />。</exception>
+        <altmember cref="P:System.Web.SiteMapProvider.SecurityTrimmingEnabled" />
+      </Docs>
+    </Member>
+    <Member MemberName="ParentProvider">
+      <MemberSignature Language="C#" Value="public virtual System.Web.SiteMapProvider ParentProvider { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.SiteMapProvider ParentProvider" />
+      <MemberSignature Language="DocId" Value="P:System.Web.SiteMapProvider.ParentProvider" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Property ParentProvider As SiteMapProvider" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Web::SiteMapProvider ^ ParentProvider { System::Web::SiteMapProvider ^ get(); void set(System::Web::SiteMapProvider ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.ParentProvider : System.Web.SiteMapProvider with get, set" Usage="System.Web.SiteMapProvider.ParentProvider" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapProvider</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置当前提供程序的父 <see cref="T:System.Web.SiteMapProvider" /> 对象。</summary>
+        <value>当前 <see cref="T:System.Web.SiteMapProvider" /> 的父提供程序。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 所有实现抽象<xref:System.Web.SiteMapProvider>类的类都可以支持站点地图提供程序层次结构的概念。 提供程序之间的任何分层关系均由提供程序自身<xref:System.Web.SiteMapProviderCollection>在集合范围之外进行维护。 有关功能提供程序层次结构的示例，请<xref:System.Web.XmlSiteMapProvider>参阅。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何实现实现抽象<xref:System.Web.SiteMapProvider.ParentProvider%2A> <xref:System.Web.SiteMapProvider>类的类中的属性。  
+  
+ 此代码示例是为<xref:System.Web.SiteMapProvider>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#4](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/CS/simpletextsitemapprovider.cs#4)]
+ [!code-vb[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#4](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/VB/simpletextsitemapprovider.vb#4)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Web.SiteMapProvider.RootProvider" />
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveNode">
+      <MemberSignature Language="C#" Value="protected internal virtual void RemoveNode (System.Web.SiteMapNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void RemoveNode(class System.Web.SiteMapNode node) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.RemoveNode(System.Web.SiteMapNode)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Sub RemoveNode (node As SiteMapNode)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void RemoveNode(System::Web::SiteMapNode ^ node);" />
+      <MemberSignature Language="F#" Value="abstract member RemoveNode : System.Web.SiteMapNode -&gt; unit&#xA;override this.RemoveNode : System.Web.SiteMapNode -&gt; unit" Usage="siteMapProvider.RemoveNode node" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+      </Parameters>
+      <Docs>
+        <param name="node">要从提供程序维护的节点集合中移除的 <see cref="T:System.Web.SiteMapNode" />。</param>
+        <summary>从由站点地图提供程序维护的节点集合移除指定的 <see cref="T:System.Web.SiteMapNode" /> 对象。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Web.SiteMapProvider>类派生的类可以<xref:System.Web.SiteMapProvider.RemoveNode%2A>重写方法，并提供用于从<xref:System.Web.SiteMapNode>由站点地图提供程序维护的节点集合中删除对象的逻辑。 <xref:System.Web.SiteMapProvider.RemoveNode%2A>方法的默认实现<xref:System.NotImplementedException>引发异常。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.NotImplementedException">在所有情况下。</exception>
+        <altmember cref="Overload:System.Web.SiteMapProvider.AddNode" />
+      </Docs>
+    </Member>
+    <Member MemberName="ResolveSiteMapNode">
+      <MemberSignature Language="C#" Value="protected System.Web.SiteMapNode ResolveSiteMapNode (System.Web.HttpContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance class System.Web.SiteMapNode ResolveSiteMapNode(class System.Web.HttpContext context) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.SiteMapProvider.ResolveSiteMapNode(System.Web.HttpContext)" />
+      <MemberSignature Language="VB.NET" Value="Protected Function ResolveSiteMapNode (context As HttpContext) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; System::Web::SiteMapNode ^ ResolveSiteMapNode(System::Web::HttpContext ^ context);" />
+      <MemberSignature Language="F#" Value="member this.ResolveSiteMapNode : System.Web.HttpContext -&gt; System.Web.SiteMapNode" Usage="siteMapProvider.ResolveSiteMapNode context" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Web.HttpContext" />
+      </Parameters>
+      <Docs>
+        <param name="context">站点地图当前存在于其中的 <see cref="T:System.Web.HttpContext" />。</param>
+        <summary>引发 <see cref="E:System.Web.SiteMapProvider.SiteMapResolve" /> 事件。</summary>
+        <returns>由注册用于处理事件的事件处理程序委托提供的 <see cref="T:System.Web.SiteMapNode" />；如果注册了多个委托来处理该事件，则为委托链中的最后一个委托的返回值；否则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 调用方法的参数和 <xref:System.Web.SiteMapResolveEventArgs> 对提供程序的引用将传递给任何关联对象的构造函数。 `context` <xref:System.Web.SiteMapProvider.ResolveSiteMapNode%2A>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="E:System.Web.SiteMapProvider.SiteMapResolve" />
+        <altmember cref="T:System.Web.SiteMapResolveEventArgs" />
+        <altmember cref="T:System.Web.SiteMapResolveEventHandler" />
+      </Docs>
+    </Member>
+    <Member MemberName="ResourceKey">
+      <MemberSignature Language="C#" Value="public string ResourceKey { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ResourceKey" />
+      <MemberSignature Language="DocId" Value="P:System.Web.SiteMapProvider.ResourceKey" />
+      <MemberSignature Language="VB.NET" Value="Public Property ResourceKey As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ ResourceKey { System::String ^ get(); void set(System::String ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.ResourceKey : string with get, set" Usage="System.Web.SiteMapProvider.ResourceKey" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置用于本地化 <see cref="T:System.Web.SiteMapNode" /> 特性的资源键。</summary>
+        <value>一个包含资源键名称的字符串。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 属性与类 <xref:System.Web.SiteMapNode> 的方法一起使用。 <xref:System.Web.SiteMapNode.GetImplicitResourceString%2A> <xref:System.Web.SiteMapProvider.ResourceKey%2A> <xref:System.Web.SiteMapNode.Attributes%2A> <xref:System.Web.SiteMapNode.GetImplicitResourceString%2A> <xref:System.Web.SiteMapNode.GetExplicitResourceString%2A>对于和属性 <xref:System.Web.SiteMapNode.Description%2A> 以及在对象的集合中定义的任何其他属性，该方法优先于 <xref:System.Web.SiteMapNode>  <xref:System.Web.SiteMapNode.Title%2A>启用本地化，并<xref:System.Web.SiteMapProvider.EnableLocalization%2A>将属性设置为。 `true`  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="P:System.Web.SiteMapNode.Title" />
+        <altmember cref="P:System.Web.SiteMapNode.Description" />
+        <altmember cref="P:System.Web.SiteMapNode.Attributes" />
+        <altmember cref="M:System.Web.SiteMapNode.GetImplicitResourceString(System.String)" />
+        <altmember cref="M:System.Web.SiteMapNode.GetExplicitResourceString(System.String,System.String,System.Boolean)" />
+      </Docs>
+    </Member>
+    <Member MemberName="RootNode">
+      <MemberSignature Language="C#" Value="public virtual System.Web.SiteMapNode RootNode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.SiteMapNode RootNode" />
+      <MemberSignature Language="DocId" Value="P:System.Web.SiteMapProvider.RootNode" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable ReadOnly Property RootNode As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Web::SiteMapNode ^ RootNode { System::Web::SiteMapNode ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.RootNode : System.Web.SiteMapNode" Usage="System.Web.SiteMapProvider.RootNode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取当前提供程序表示的站点地图数据的根 <see cref="T:System.Web.SiteMapNode" /> 对象。</summary>
+        <value>当前站点地图数据提供程序的根 <see cref="T:System.Web.SiteMapNode" />。 默认的实现在被返回的节点上执行安全修整。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认实现将调用抽象<xref:System.Web.SiteMapProvider.GetRootNodeCore%2A>方法。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何实现实现抽象<xref:System.Web.SiteMapProvider.RootNode%2A> <xref:System.Web.SiteMapProvider>类的类中的属性。  
+  
+ 此代码示例是为<xref:System.Web.SiteMapProvider>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#2](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/CS/simpletextsitemapprovider.cs#2)]
+ [!code-vb[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/VB/simpletextsitemapprovider.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>当在派生<see cref="P:System.Web.SiteMapProvider.RootNode" />类中重写属性时，请确保实现不导航提供程序层次结构（如果存在）以查找站点的绝对根节点。</para></block>
+        <altmember cref="M:System.Web.SiteMapProvider.GetRootNodeCore" />
+        <altmember cref="P:System.Web.SiteMapProvider.CurrentNode" />
+      </Docs>
+    </Member>
+    <Member MemberName="RootProvider">
+      <MemberSignature Language="C#" Value="public virtual System.Web.SiteMapProvider RootProvider { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.SiteMapProvider RootProvider" />
+      <MemberSignature Language="DocId" Value="P:System.Web.SiteMapProvider.RootProvider" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable ReadOnly Property RootProvider As SiteMapProvider" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Web::SiteMapProvider ^ RootProvider { System::Web::SiteMapProvider ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.RootProvider : System.Web.SiteMapProvider" Usage="System.Web.SiteMapProvider.RootProvider" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapProvider</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取当前提供程序层次结构中的根 <see cref="T:System.Web.SiteMapProvider" /> 对象。</summary>
+        <value>一个 <see cref="T:System.Web.SiteMapProvider" />，表示当前提供程序所属的提供程序层次结构中的顶级站点地图提供程序。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 实现<xref:System.Web.SiteMapProvider>类的所有类都可以支持站点地图提供程序层次结构的概念。 提供程序之间的任何分层关系均由提供程序自身<xref:System.Web.SiteMapProviderCollection>在集合范围之外进行维护。 有关功能提供程序层次结构的示例，请<xref:System.Web.XmlSiteMapProvider>参阅。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何实现实现抽象<xref:System.Web.SiteMapProvider.RootProvider%2A> <xref:System.Web.SiteMapProvider>类的类中的属性。 `SimpleTextSiteMapProvider`使用简单逻辑来确定当前提供程序是否为提供程序层次结构的一部分。 如果提供程序是层次结构的一部分，则它会<xref:System.Web.SiteMapProvider.RootProvider%2A>使用父提供程序的属性作为其自身。 如果提供程序不是层次结构的一部分，则提供程序是其自身的根提供程序。  
+  
+ 此代码示例是为<xref:System.Web.SiteMapProvider>类提供的更大示例的一部分。  
+  
+ [!code-csharp[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#4](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/CS/simpletextsitemapprovider.cs#4)]
+ [!code-vb[Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1#4](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.SimpleTextSiteMapProvider_1/VB/simpletextsitemapprovider.vb#4)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Configuration.Provider.ProviderException">存在一个对当前站点地图提供程序的循环引用。</exception>
+        <altmember cref="P:System.Web.SiteMapProvider.ParentProvider" />
+      </Docs>
+    </Member>
+    <Member MemberName="SecurityTrimmingEnabled">
+      <MemberSignature Language="C#" Value="public bool SecurityTrimmingEnabled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SecurityTrimmingEnabled" />
+      <MemberSignature Language="DocId" Value="P:System.Web.SiteMapProvider.SecurityTrimmingEnabled" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property SecurityTrimmingEnabled As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool SecurityTrimmingEnabled { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.SecurityTrimmingEnabled : bool" Usage="System.Web.SiteMapProvider.SecurityTrimmingEnabled" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个布尔值，该值指示站点地图提供程序是否根据用户的角色筛选站点地图节点。</summary>
+        <value>如果提供程序被配置为根据角色筛选节点，则为 <see langword="true" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 不能以编程方式设置安全修整-它是在提供程序的配置中设置的。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Web.SiteMapProvider.IsAccessibleToUser(System.Web.HttpContext,System.Web.SiteMapNode)" />
+        <related type="Article" href="https://msdn.microsoft.com/library/4028528f-e01c-4ae3-bd8d-bb161718fe61">ASP.NET 站点映射安全修整</related>
+      </Docs>
+    </Member>
+    <Member MemberName="SiteMapResolve">
+      <MemberSignature Language="C#" Value="public event System.Web.SiteMapResolveEventHandler SiteMapResolve;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Web.SiteMapResolveEventHandler SiteMapResolve" />
+      <MemberSignature Language="DocId" Value="E:System.Web.SiteMapProvider.SiteMapResolve" />
+      <MemberSignature Language="VB.NET" Value="Public Event SiteMapResolve As SiteMapResolveEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event System::Web::SiteMapResolveEventHandler ^ SiteMapResolve;" />
+      <MemberSignature Language="F#" Value="member this.SiteMapResolve : System.Web.SiteMapResolveEventHandler " Usage="member this.SiteMapResolve : System.Web.SiteMapResolveEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapResolveEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当调用 <see cref="P:System.Web.SiteMapProvider.CurrentNode" /> 属性时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 通过订阅<xref:System.Web.SiteMapNode> <xref:System.Web.SiteMapProvider.SiteMapResolve>事件，可以创建当前请求页的表示形式，而无需实现自定义站点地图提供程序。 当调用<xref:System.Web.SiteMapResolveEventHandler> <xref:System.Web.SiteMapNode> <xref:System.Web.SiteMapProvider.CurrentNode%2A>属性时，订阅服务器附加一个对象来接收通知，并且可以返回自定义对象，而不是由属性返回的默认对象。 <xref:System.Web.SiteMapProvider.CurrentNode%2A>  
+  
+ 有关如何处理事件的详细信息，请参阅[处理和引发事件](~/docs/standard/events/index.md)。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="E:System.Web.SiteMap.SiteMapResolve" />
+        <altmember cref="T:System.Web.SiteMapResolveEventHandler" />
+        <altmember cref="T:System.Web.SiteMapResolveEventArgs" />
+      </Docs>
+    </Member>
+  </Members>
+</Type>

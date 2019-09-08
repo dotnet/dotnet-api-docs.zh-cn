@@ -1,0 +1,192 @@
+<Type Name="ClaimsPrincipalPermissionAttribute" FullName="System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="c6857b0241c051efe9b3a64cc495e1102811ddd6" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70684379" /></Metadata><TypeSignature Language="C#" Value="public sealed class ClaimsPrincipalPermissionAttribute : System.Security.Permissions.CodeAccessSecurityAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ClaimsPrincipalPermissionAttribute extends System.Security.Permissions.CodeAccessSecurityAttribute" />
+  <TypeSignature Language="DocId" Value="T:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute" />
+  <TypeSignature Language="VB.NET" Value="Public NotInheritable Class ClaimsPrincipalPermissionAttribute&#xA;Inherits CodeAccessSecurityAttribute" />
+  <TypeSignature Language="C++ CLI" Value="public ref class ClaimsPrincipalPermissionAttribute sealed : System::Security::Permissions::CodeAccessSecurityAttribute" />
+  <TypeSignature Language="F#" Value="type ClaimsPrincipalPermissionAttribute = class&#xA;    inherit CodeAccessSecurityAttribute" />
+  <AssemblyInfo>
+    <AssemblyName>System.IdentityModel.Services</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Security.Permissions.CodeAccessSecurityAttribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Method | System.AttributeTargets.Property, AllowMultiple=true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>表示安全属性，其用于声明性分配访问检查，依据是当前应用程序上下文中的 <see cref="T:System.Security.Claims.ClaimsAuthorizationManager" /> 实例提供的逻辑。 此类不能被继承。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 用于使用配置<xref:System.Security.Claims.ClaimsAuthorizationManager>的以声明方式请求访问检查。 <xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute>  
+  
+ 你<xref:System.Security.Permissions.SecurityAction>必须在`Resource` 声明 <xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute> 中指定一个值、一个和`Operation`一个。 和属性指定当前主体（<xref:System.Threading.Thread.CurrentPrincipal%2A?displayProperty=nameWithType>）必须获得权限才能继续执行的资源和操作。 `Operation` `Resource` 如果当前主体无权对指定的资源执行指定的<xref:System.Security.SecurityException>操作（操作），则会引发。  
+  
+> [!IMPORTANT]
+>  类使用配置的声明授权管理器<xref:System.IdentityModel.Configuration.IdentityConfiguration> <xref:System.IdentityModel.Services.FederatedAuthentication.FederationConfiguration%2A?displayProperty=nameWithType> ，该管理器由在属性下设置的进行。 <xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute> 即使在不使用 WS-FEDERATION 的情况下，也是如此，例如，活动（WCF） Web 应用程序和控制台应用程序。 可以在配置中或以编程方式指定声明授权管理器。 若要在配置文件中指定声明授权管理器，请在[ &lt;identityConfiguration&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/identityconfiguration.md)元素下设置[ &lt;claimsAuthorizationManager&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/claimsauthorizationmanager.md)元素，并确保标识配置由运行时加载[ &lt;的&gt; federationConfiguration](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/federationconfiguration.md)元素引用`identityConfigurationName` （例如，通过设置特性）。 若要以编程方式设置声明授权管理器，请为<xref:System.IdentityModel.Services.FederatedAuthentication.FederationConfigurationCreated?displayProperty=nameWithType>事件提供处理程序。  
+  
+   
+  
+## Examples  
+ 下面的示例演示如何通过使用<xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute>特性修饰方法来保护方法。 特性通过利用应用程序上下文中的<xref:System.Security.Claims.ClaimsAuthorizationManager>实例提供的逻辑来评估是否应向当前主体授予访问权限。 如果未对指定资源的指定操作授权当前主体， <xref:System.Security.SecurityException>则将引发; 否则，执行将继续。  
+  
+ [!code-csharp[WifCppWithCam#4](~/samples/snippets/csharp/VS_Snippets_Misc/wifcppwithcam/cs/wifcppwithcam/program.cs#4)]  
+  
+ 下面的 XML 演示将自定义声明授权管理器与<xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute>类结合使用所需的最低配置。 至少必须在`system.identityModel` `<configSection>`元素中同时声明`system.identityModel.services`和部分，然后在 " [ &lt;claimsAuthorizationManager&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/claimsauthorizationmanager.md) " 元素中指定授权管理器默认标识配置。 这将确保从默认的联合身份验证配置引用授权管理器。 或者，你可以指定在`identityConfigurationName` [ &lt;federationConfiguration&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/federationconfiguration.md)元素的属性中指定了授权管理器的标识配置的名称。  
+  
+```xml  
+<?xml version="1.0" encoding="utf-8" ?>  
+<configuration>  
+  <configSections>  
+    <!-- WIF configuration sections -->  
+    <section name="system.identityModel" type="System.IdentityModel.Configuration.SystemIdentityModelSection, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089"/>  
+    <section name="system.identityModel.services" type="System.IdentityModel.Services.Configuration.SystemIdentityModelServicesSection, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=B77A5C561934E089"/>  
+  </configSections>  
+  
+  <startup>  
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5" />  
+  </startup>  
+  
+  <system.identityModel>  
+    <identityConfiguration>  
+      <claimsAuthorizationManager type ="MyClaimsAuthorizationManager.MyClaimsAuthorizationManager, MyClaimsAuthorizationManager"/>  
+    </identityConfiguration>  
+  </system.identityModel>  
+  
+</configuration>  
+```  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.IdentityModel.Services.ClaimsPrincipalPermission" />
+    <altmember cref="P:System.IdentityModel.Services.FederatedAuthentication.FederationConfiguration" />
+    <altmember cref="T:System.Security.Claims.ClaimsAuthorizationManager" />
+    <related type="Article" href="https://msdn.microsoft.com/library/8b14054c-6d07-46ab-ab58-03f14beac0f2">&lt;federationConfiguration&gt;</related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ClaimsPrincipalPermissionAttribute (System.Security.Permissions.SecurityAction action);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Security.Permissions.SecurityAction action) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.#ctor(System.Security.Permissions.SecurityAction)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (action As SecurityAction)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; ClaimsPrincipalPermissionAttribute(System::Security::Permissions::SecurityAction action);" />
+      <MemberSignature Language="F#" Value="new System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute : System.Security.Permissions.SecurityAction -&gt; System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute" Usage="new System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute action" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="action" Type="System.Security.Permissions.SecurityAction" />
+      </Parameters>
+      <Docs>
+        <param name="action">指定可在使用声明安全性时执行的安全操作的值之一。</param>
+        <summary>初始化 <see cref="T:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 还必须在`Operation` <xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute>声明中指定`Resource`和属性， <xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.CreatePermission%2A>否则在调用方法创建权限时将引发异常。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreatePermission">
+      <MemberSignature Language="C#" Value="public override System.Security.IPermission CreatePermission ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.IPermission CreatePermission() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.CreatePermission" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function CreatePermission () As IPermission" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Security::IPermission ^ CreatePermission();" />
+      <MemberSignature Language="F#" Value="override this.CreatePermission : unit -&gt; System.Security.IPermission" Usage="claimsPrincipalPermissionAttribute.CreatePermission " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity", Justification="It is expected that the runtime’s behavior would rely on changing data")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Security.IPermission</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>创建基于当前实例 <see cref="T:System.IdentityModel.Services.ClaimsPrincipalPermission" /> 类的新实例。</summary>
+        <returns>具有与此实例关联的操作和资源的 <see cref="T:System.IdentityModel.Services.ClaimsPrincipalPermission" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 对象是通过使用<xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.Operation%2A>属性和<xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.Resource%2A>属性的值创建的。 <xref:System.IdentityModel.Services.ClaimsPrincipalPermission> 必须在`Operation` 声明中 <xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute> 指定和属性， `Resource` <xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.CreatePermission%2A>否则在调用方法创建权限时将引发异常。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Operation">
+      <MemberSignature Language="C#" Value="public string Operation { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Operation" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.Operation" />
+      <MemberSignature Language="VB.NET" Value="Public Property Operation As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ Operation { System::String ^ get(); void set(System::String ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.Operation : string with get, set" Usage="System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.Operation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置其中应对当前主体授予对指定资源的权限的操作。</summary>
+        <value>应为其授权当前主体的操作。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 操作是在指定资源上为其授权当前主体的操作。 必须`Operation` <xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.CreatePermission%2A>在声明中设置属性，否则在调用方法创建权限时将引发异常。 <xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resource">
+      <MemberSignature Language="C#" Value="public string Resource { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Resource" />
+      <MemberSignature Language="DocId" Value="P:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.Resource" />
+      <MemberSignature Language="VB.NET" Value="Public Property Resource As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ Resource { System::String ^ get(); void set(System::String ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.Resource : string with get, set" Usage="System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.Resource" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel.Services</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置其上应对主体授予权限以执行指定操作的资源。</summary>
+        <value>当前主体应该被授权的资源。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 应为其授权当前主体执行指定操作的资源。 必须`Resource` <xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute.CreatePermission%2A>在声明中设置属性，否则在调用方法创建权限时将引发异常。 <xref:System.IdentityModel.Services.ClaimsPrincipalPermissionAttribute>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

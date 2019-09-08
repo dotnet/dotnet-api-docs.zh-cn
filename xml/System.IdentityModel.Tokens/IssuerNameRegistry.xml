@@ -1,0 +1,245 @@
+<Type Name="IssuerNameRegistry" FullName="System.IdentityModel.Tokens.IssuerNameRegistry">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="65a0bf0b90e5e9241ee97581d3e2f5917939d093" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70723182" /></Metadata><TypeSignature Language="C#" Value="public abstract class IssuerNameRegistry : System.IdentityModel.Configuration.ICustomIdentityConfiguration" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit IssuerNameRegistry extends System.Object implements class System.IdentityModel.Configuration.ICustomIdentityConfiguration" />
+  <TypeSignature Language="DocId" Value="T:System.IdentityModel.Tokens.IssuerNameRegistry" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class IssuerNameRegistry&#xA;Implements ICustomIdentityConfiguration" />
+  <TypeSignature Language="C++ CLI" Value="public ref class IssuerNameRegistry abstract : System::IdentityModel::Configuration::ICustomIdentityConfiguration" />
+  <TypeSignature Language="F#" Value="type IssuerNameRegistry = class&#xA;    interface ICustomIdentityConfiguration" />
+  <AssemblyInfo>
+    <AssemblyName>System.IdentityModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IdentityModel.Configuration.ICustomIdentityConfiguration</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>发布者名称注册表的抽象基类。 发行人名称注册表用于加密材料的关联助记名称，需要验证由相应发行人生成的标志签名。 颁布者名称注册表维护了一个受依赖一方 （RP） 应用程序信赖的颁布者列表。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 颁发者名称注册表用于将助记键名称关联到所需的加密材料，以验证相应颁发者生成的令牌签名。 然后，将使用此名称来设置<xref:System.Security.Claims.Claim.Issuer%2A>声明的<xref:System.Security.Claims.Claim.OriginalIssuer%2A>或属性。 <xref:System.IdentityModel.Tokens.IssuerNameRegistry>类公开的方法由正在处理令牌的安全令牌处理程序从管道调用。 由未被颁发者名称注册表映射的材料签署的令牌将被丢弃为不受信任。 颁发者名称注册表返回的名称在 RP 应用程序的上下文中应该是唯一的。  
+  
+ 在代码中，可以通过设置<xref:System.IdentityModel.Tokens.SecurityTokenHandlerConfiguration.IssuerNameRegistry%2A?displayProperty=nameWithType>属性来指定要使用的颁发者名称注册表。 在配置文件中，可以通过在[ &lt;securityTokenHandlerConfiguration&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/securitytokenhandlerconfiguration.md)元素下指定[ &lt;issuerNameRegistry&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/issuernameregistry.md)元素来指定颁发者名称注册表。  
+  
+ Windows Identity Foundation （WIF）提供<xref:System.IdentityModel.Tokens.IssuerNameRegistry>类的实现类<xref:System.IdentityModel.Tokens.ConfigurationBasedIssuerNameRegistry> ：类。 使用此实现时，你可以在[ &lt;s&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/trustedissuers.md)元素下的 RP 应用程序的配置文件中指定受信任的颁发者列表，该元素是一个`<issuerNameRegistry>`元素的子元素，。类在该元素的`type`属性中引用。 <xref:System.IdentityModel.Tokens.ConfigurationBasedIssuerNameRegistry> `<trustedIssuers>`在元素下，每个颁发者名称将映射到应用于验证其签名的 x.509 证书。  
+  
+ 若要创建自定义颁发者名称注册表，必须重<xref:System.IdentityModel.Tokens.IssuerNameRegistry.GetIssuerName%28System.IdentityModel.Tokens.SecurityToken%29?displayProperty=nameWithType>写方法。 此方法返回指定安全令牌的颁发者名称。 如果要为不同于<xref:System.IdentityModel.Tokens.IssuerNameRegistry.GetIssuerName%28System.IdentityModel.Tokens.SecurityToken%2CSystem.String%29?displayProperty=nameWithType> <xref:System.Security.Claims.ClaimsIdentity.DefaultIssuer>的 Windows 令牌提供颁发者名称<xref:System.IdentityModel.Tokens.IssuerNameRegistry.GetWindowsIssuerName%2A> ，则可以选择重写方法，以便在检索颁发者名称和方法时提供提示机制。 重写<xref:System.IdentityModel.Tokens.IssuerNameRegistry.LoadCustomConfiguration%2A>方法以使颁发者名称注册表可以从配置文件中进行初始化。  
+  
+   
+  
+## Examples  
+ 下面的代码演示<xref:System.IdentityModel.Tokens.IssuerNameRegistry>类的实现，该实现仅接受使用主题为 "CN = localhost" 的证书的颁发者。  
+  
+> [!WARNING]
+>  下面的代码仅用于说明目的。 验证基于使用者名称的证书不是一种好的做法。 不应在生产中使用此代码。  
+  
+ [!code-csharp[WifIssuerNameRegistry#1](~/samples/snippets/csharp/VS_Snippets_Misc/wifissuernameregistry/cs/mvcwepapp/trustedissuernameregistry.cs#1)]  
+  
+ 下面显示了使用可信颁发者名称注册表配置应用程序所需的 XML。  
+  
+```xml  
+<system.identityModel>  
+  <identityConfiguration>  
+    <issuerNameRegistry type="System.IdentityModel.Samples.TrustedIssuerNameRegistry, MyApp" />  
+  </identityConfiguration>  
+</system.identityModel>  
+```  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.IdentityModel.Tokens.ConfigurationBasedIssuerNameRegistry" />
+    <altmember cref="T:System.IdentityModel.Tokens.SecurityTokenHandler" />
+    <related type="Article" href="https://msdn.microsoft.com/library/58b39d12-c953-40c4-88af-d7eb3343ca28">&lt;issuerNameRegistry&gt;</related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected IssuerNameRegistry ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.IssuerNameRegistry.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; IssuerNameRegistry();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.IdentityModel.Tokens.IssuerNameRegistry" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="GetIssuerName">
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>当在派生类中重写时，返回指定安全令牌的颁发者名称。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 由正在处理令牌的安全令牌处理程序从处理管道中调用。 方法应在 RP 应用程序的上下文中返回颁发者的唯一名称。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="GetIssuerName">
+      <MemberSignature Language="C#" Value="public abstract string GetIssuerName (System.IdentityModel.Tokens.SecurityToken securityToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetIssuerName(class System.IdentityModel.Tokens.SecurityToken securityToken) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.IssuerNameRegistry.GetIssuerName(System.IdentityModel.Tokens.SecurityToken)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract System::String ^ GetIssuerName(System::IdentityModel::Tokens::SecurityToken ^ securityToken);" />
+      <MemberSignature Language="F#" Value="abstract member GetIssuerName : System.IdentityModel.Tokens.SecurityToken -&gt; string" Usage="issuerNameRegistry.GetIssuerName securityToken" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="securityToken" Type="System.IdentityModel.Tokens.SecurityToken" />
+      </Parameters>
+      <Docs>
+        <param name="securityToken">返回颁布者名称的安全令牌。</param>
+        <summary>当在派生类中重写时，返回指定安全令牌的颁发者名称。</summary>
+        <returns>发行人名称。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 实现应返回一个非 null 和非空字符串来标识已识别的颁发者，或返回一个 null 字符串来标识无法识别的颁发者。  
+  
+ 由正在处理令牌的安全令牌处理程序从处理管道中调用。 方法应在 RP 应用程序的上下文中返回颁发者的唯一名称。  
+  
+   
+  
+## Examples  
+ 下面的代码演示颁发<xref:System.IdentityModel.Tokens.IssuerNameRegistry.GetIssuerName%2A>者名称注册表的方法。 完整示例位于<xref:System.IdentityModel.Tokens.IssuerNameRegistry>类概述主题中。  
+  
+> [!WARNING]
+>  下面的代码仅用于说明目的。 验证基于使用者名称的证书不是一种好的做法。 不应在生产中使用此代码。  
+  
+ [!code-csharp[WifIssuerNameRegistry#2](~/samples/snippets/csharp/VS_Snippets_Misc/wifissuernameregistry/cs/mvcwepapp/trustedissuernameregistry.cs#2)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.IdentityModel.Tokens.SecurityTokenHandler" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetIssuerName">
+      <MemberSignature Language="C#" Value="public virtual string GetIssuerName (System.IdentityModel.Tokens.SecurityToken securityToken, string requestedIssuerName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetIssuerName(class System.IdentityModel.Tokens.SecurityToken securityToken, string requestedIssuerName) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.IssuerNameRegistry.GetIssuerName(System.IdentityModel.Tokens.SecurityToken,System.String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::String ^ GetIssuerName(System::IdentityModel::Tokens::SecurityToken ^ securityToken, System::String ^ requestedIssuerName);" />
+      <MemberSignature Language="F#" Value="abstract member GetIssuerName : System.IdentityModel.Tokens.SecurityToken * string -&gt; string&#xA;override this.GetIssuerName : System.IdentityModel.Tokens.SecurityToken * string -&gt; string" Usage="issuerNameRegistry.GetIssuerName (securityToken, requestedIssuerName)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="securityToken" Type="System.IdentityModel.Tokens.SecurityToken" />
+        <Parameter Name="requestedIssuerName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="securityToken">返回颁布者名称的安全令牌。</param>
+        <param name="requestedIssuerName">要考虑请求的发行人名称。</param>
+        <summary>当在派生类中重写时，返回指定安全令牌的颁发者名称。 在确定要返回的颁布者名称中要考虑的指定的颁布者名称。</summary>
+        <returns>发行人名称。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认实现将忽略`requestedIssuerName`参数，并只<xref:System.IdentityModel.Tokens.IssuerNameRegistry.GetIssuerName%28System.IdentityModel.Tokens.SecurityToken%29?displayProperty=nameWithType>调用方法。  
+  
+ 由正在处理令牌的安全令牌处理程序从处理管道中调用。 方法应在 RP 应用程序的上下文中返回颁发者的唯一名称。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.IdentityModel.Tokens.SecurityTokenHandler" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetWindowsIssuerName">
+      <MemberSignature Language="C#" Value="public virtual string GetWindowsIssuerName ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetWindowsIssuerName() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.IssuerNameRegistry.GetWindowsIssuerName" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetWindowsIssuerName () As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::String ^ GetWindowsIssuerName();" />
+      <MemberSignature Language="F#" Value="abstract member GetWindowsIssuerName : unit -&gt; string&#xA;override this.GetWindowsIssuerName : unit -&gt; string" Usage="issuerNameRegistry.GetWindowsIssuerName " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>返回用于 Windows 声明的默认颁发者名称。</summary>
+        <returns>Windows 声明的默认颁发者名称。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 默认实现返回 <xref:System.Security.Claims.ClaimsIdentity.DefaultIssuer>。  
+  
+ 由正在处理令牌的安全令牌处理程序从处理管道中调用。 方法应在 RP 应用程序的上下文中返回颁发者的唯一名称。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.IdentityModel.Tokens.SecurityTokenHandler" />
+      </Docs>
+    </Member>
+    <Member MemberName="LoadCustomConfiguration">
+      <MemberSignature Language="C#" Value="public virtual void LoadCustomConfiguration (System.Xml.XmlNodeList nodelist);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void LoadCustomConfiguration(class System.Xml.XmlNodeList nodelist) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.IdentityModel.Tokens.IssuerNameRegistry.LoadCustomConfiguration(System.Xml.XmlNodeList)" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Sub LoadCustomConfiguration (nodelist As XmlNodeList)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void LoadCustomConfiguration(System::Xml::XmlNodeList ^ nodelist);" />
+      <MemberSignature Language="F#" Value="abstract member LoadCustomConfiguration : System.Xml.XmlNodeList -&gt; unit&#xA;override this.LoadCustomConfiguration : System.Xml.XmlNodeList -&gt; unit" Usage="issuerNameRegistry.LoadCustomConfiguration nodelist" />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IdentityModel.Configuration.ICustomIdentityConfiguration.LoadCustomConfiguration(System.Xml.XmlNodeList)</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.IdentityModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nodelist" Type="System.Xml.XmlNodeList" />
+      </Parameters>
+      <Docs>
+        <param name="nodelist">配置 XML 元素。 列表中的每个节点都属于 <see cref="T:System.Xml.XmlElement" /> 类型。</param>
+        <summary>在派生类中重写时，将从 XML 中加载自定义配置。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此<xref:System.IdentityModel.Tokens.IssuerNameRegistry.LoadCustomConfiguration%2A>方法由配置基础结构调用。 调用此方法时， `nodelist`将包含配置文件中的[ &lt;issuerNameRegistry&gt; ](~/docs/framework/configure-apps/file-schema/windows-identity-foundation/issuernameregistry.md)元素的顶级子元素。 其中每个反过来可能包含特性或子元素，具体取决于为派生类定义的配置架构。  
+  
+ 默认实现引发<xref:System.NotImplementedException>。 在派生类中重写此方法可以从配置文件中初始化颁发者名称注册表。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://msdn.microsoft.com/library/58b39d12-c953-40c4-88af-d7eb3343ca28">&lt;issuerNameRegistry&gt;</related>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
