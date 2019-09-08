@@ -1,0 +1,350 @@
+<Type Name="ExpressionServices" FullName="System.Activities.Expressions.ExpressionServices">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="27bc1be7122345ea6d5ff67cf9a41e0624511115" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70594428" /></Metadata><TypeSignature Language="C#" Value="public static class ExpressionServices" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit ExpressionServices extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Activities.Expressions.ExpressionServices" />
+  <TypeSignature Language="VB.NET" Value="Public Class ExpressionServices" />
+  <TypeSignature Language="C++ CLI" Value="public ref class ExpressionServices abstract sealed" />
+  <TypeSignature Language="F#" Value="type ExpressionServices = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Activities</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary><span data-ttu-id="384ab-101">用于将环境感知表达式转换为活动树的转换 API。</span><span class="sxs-lookup"><span data-stu-id="384ab-101">A transformation API used to convert environment aware expressions to an activity tree.</span></span></summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="384ab-102">此类中的转换方法将可能包含多个子表达式的指定 lambda 表达式转换为由活动层次结构组成的活动树。</span><span class="sxs-lookup"><span data-stu-id="384ab-102">The conversion methods in this class transform the specified lambda expressions, which can contain multiple sub-expressions, into activity trees composed of a hierarchy of activities.</span></span> <span data-ttu-id="384ab-103">强烈建议使用这些转换方法，而不是直接实例化表达式活动，原因是这些方法提供了更高的抽象级别，并使您能够更直观地实现工作流。</span><span class="sxs-lookup"><span data-stu-id="384ab-103">It is strongly recommended to use these conversion methods instead of instantiating expression activities directly because they provide a higher level of abstraction and enable you to implement your workflow more intuitively.</span></span> <span data-ttu-id="384ab-104">有关更多信息，请参见示例。</span><span class="sxs-lookup"><span data-stu-id="384ab-104">See the examples for more information.</span></span>  
+  
+ <span data-ttu-id="384ab-105"><xref:System.Activities.Expressions.ExpressionServices> 中的转换方法设计为可以使用在工作流内部定义以及通过参数传入工作流的变量和常量。</span><span class="sxs-lookup"><span data-stu-id="384ab-105">The conversion methods in <xref:System.Activities.Expressions.ExpressionServices> are designed to work with variables and constants defined inside the workflow, or passed into the workflow via arguments.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="384ab-106">下面的代码示例调用 <xref:System.Activities.Expressions.ExpressionServices.Convert%2A> 来计算位于索引 0 处的数组元素和位于索引 1 处的数组元素的和。</span><span class="sxs-lookup"><span data-stu-id="384ab-106">The following code example calls <xref:System.Activities.Expressions.ExpressionServices.Convert%2A> to compute the sum of the array element at index 0 and the array element at index 1.</span></span> <span data-ttu-id="384ab-107">接着，将生成的和赋给变量并打印到控制台。</span><span class="sxs-lookup"><span data-stu-id="384ab-107">Next, the resulting sum is assigned to a variable and is printed to the console.</span></span>  
+  
+```csharp  
+  
+public static void ComputeSumWithConvert()  
+{  
+    var arrayvar = new Variable<int[]>("arrayvar", new int[] { 1, 2 });  
+    var intvar = new Variable<int>("intvar");              
+  
+    // Use ExpressionServices.Convert() to convert the composite lambda expression  
+    // that represents the sum of array elements at index 0 and 1.  
+    Activity<int> activity1 = ExpressionServices.Convert<int>(ctx => arrayvar.Get(ctx)[0] + arrayvar.Get(ctx)[1]);  
+  
+    Activity seq = new Sequence  
+    {  
+        Variables = { arrayvar, intvar },  
+        Activities =  
+        {                      
+            // Get the sum value.  
+            new Assign<int>  
+            {  
+                To = intvar,  
+                Value = activity1,  
+            },  
+            // Print the sum value of 3 to the console.  
+            new WriteLine  
+            {                          
+                Text = new InArgument<string>(ctx => intvar.Get(ctx).ToString()),  
+            },  
+        }  
+    };  
+  
+    WorkflowInvoker.Invoke(seq);  
+  
+}  
+  
+```  
+  
+ <span data-ttu-id="384ab-108">下面的代码示例为进行比较而提供。</span><span class="sxs-lookup"><span data-stu-id="384ab-108">The following code example is provided for comparison purposes.</span></span> <span data-ttu-id="384ab-109">此第二个示例演示如何通过实例化 <xref:System.Activities.Expressions.Add%603> 表达式活动来计算和。</span><span class="sxs-lookup"><span data-stu-id="384ab-109">This second example shows how to compute the sum by instantiating the <xref:System.Activities.Expressions.Add%603> expression activity.</span></span> <span data-ttu-id="384ab-110">这两个示例的功能相当，但正如您所看到的，第二种方法涉及到更多编码，并且不如调用 <xref:System.Activities.Expressions.ExpressionServices.Convert%2A> 简单。</span><span class="sxs-lookup"><span data-stu-id="384ab-110">The two examples are functionally equivalent but as you can see the second approach involves more coding and is not as straightforward as calling <xref:System.Activities.Expressions.ExpressionServices.Convert%2A>.</span></span> <span data-ttu-id="384ab-111">因此，建议采用第一个示例。</span><span class="sxs-lookup"><span data-stu-id="384ab-111">Therefore the first example is recommended.</span></span>  
+  
+```csharp  
+  
+public static void ComputeSumWithExpressionActivity()  
+{  
+    var arrayvar = new Variable<int[]>("arrayvar", new int[] { 1, 2 });  
+    var intvar = new Variable<int>("intvar");  
+  
+    // Create an Add activity to compute the sum of array elements at index 0 and 1.  
+    Activity<int> activity1 = new Add<int, int, int>  
+    {  
+        Left = new ArrayItemValue<int>  
+        {  
+            Array = arrayvar,  
+            Index = 0,  
+        },  
+        Right = new ArrayItemValue<int>  
+        {  
+            Array = arrayvar,  
+            Index = 1,  
+        }  
+    };              
+  
+    Activity seq = new Sequence  
+    {  
+        Variables = { arrayvar, intvar },  
+        Activities =  
+        {  
+            // Get the sum value.  
+            new Assign<int>  
+            {  
+                To = intvar,  
+                Value = activity1,  
+            },  
+            // Print the sum value of 3 to the console.   
+            new WriteLine  
+            {                          
+                Text = new InArgument<string>(ctx => intvar.Get(ctx).ToString()),  
+            },                      
+        }  
+    };  
+  
+    WorkflowInvoker.Invoke(seq);  
+  
+}  
+  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Convert&lt;TResult&gt;">
+      <MemberSignature Language="C#" Value="public static System.Activities.Activity&lt;TResult&gt; Convert&lt;TResult&gt; (System.Linq.Expressions.Expression&lt;Func&lt;System.Activities.ActivityContext,TResult&gt;&gt; expression);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Activities.Activity`1&lt;!!TResult&gt; Convert&lt;TResult&gt;(class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;class System.Activities.ActivityContext, !!TResult&gt;&gt; expression) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Expressions.ExpressionServices.Convert``1(System.Linq.Expressions.Expression{System.Func{System.Activities.ActivityContext,``0}})" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function Convert(Of TResult) (expression As Expression(Of Func(Of ActivityContext, TResult))) As Activity(Of TResult)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename TResult&gt;&#xA; static System::Activities::Activity&lt;TResult&gt; ^ Convert(System::Linq::Expressions::Expression&lt;Func&lt;System::Activities::ActivityContext ^, TResult&gt; ^&gt; ^ expression);" />
+      <MemberSignature Language="F#" Value="static member Convert : System.Linq.Expressions.Expression&lt;Func&lt;System.Activities.ActivityContext, 'Result&gt;&gt; -&gt; System.Activities.Activity&lt;'Result&gt;" Usage="System.Activities.Expressions.ExpressionServices.Convert expression" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Activities.Activity&lt;TResult&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="expression" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;System.Activities.ActivityContext,TResult&gt;&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TResult"><span data-ttu-id="384ab-112">所转换为的表达式的类型。</span><span class="sxs-lookup"><span data-stu-id="384ab-112">The type the expression is being converted to.</span></span></typeparam>
+        <param name="expression"><span data-ttu-id="384ab-113">所转换的表达式。</span><span class="sxs-lookup"><span data-stu-id="384ab-113">The expression being converted.</span></span></param>
+        <summary><span data-ttu-id="384ab-114">将工作流环境感知表达式转换为活动树。</span><span class="sxs-lookup"><span data-stu-id="384ab-114">Converts a workflow environment-aware expression to an activity tree.</span></span></summary>
+        <returns><span data-ttu-id="384ab-115">转换后的表达式。</span><span class="sxs-lookup"><span data-stu-id="384ab-115">The converted expression.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="384ab-116">有关 <xref:System.Activities.Expressions.ExpressionServices.Convert%2A> 的代码示例，请参见 <xref:System.Activities.Expressions.ExpressionServices.ConvertReference%2A>。</span><span class="sxs-lookup"><span data-stu-id="384ab-116">For a code example of <xref:System.Activities.Expressions.ExpressionServices.Convert%2A>, see <xref:System.Activities.Expressions.ExpressionServices.ConvertReference%2A>.</span></span>  
+  
+ <span data-ttu-id="384ab-117"><xref:System.Activities.Expressions.ExpressionServices> 中的转换方法设计为可以使用在工作流内部定义以及通过参数传入工作流的变量和常量。</span><span class="sxs-lookup"><span data-stu-id="384ab-117">The conversion methods in <xref:System.Activities.Expressions.ExpressionServices> are designed to work with variables and constants defined inside the workflow, or passed into the workflow via arguments.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConvertReference&lt;TResult&gt;">
+      <MemberSignature Language="C#" Value="public static System.Activities.Activity&lt;System.Activities.Location&lt;TResult&gt;&gt; ConvertReference&lt;TResult&gt; (System.Linq.Expressions.Expression&lt;Func&lt;System.Activities.ActivityContext,TResult&gt;&gt; expression);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Activities.Activity`1&lt;class System.Activities.Location`1&lt;!!TResult&gt;&gt; ConvertReference&lt;TResult&gt;(class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;class System.Activities.ActivityContext, !!TResult&gt;&gt; expression) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Expressions.ExpressionServices.ConvertReference``1(System.Linq.Expressions.Expression{System.Func{System.Activities.ActivityContext,``0}})" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function ConvertReference(Of TResult) (expression As Expression(Of Func(Of ActivityContext, TResult))) As Activity(Of Location(Of TResult))" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename TResult&gt;&#xA; static System::Activities::Activity&lt;System::Activities::Location&lt;TResult&gt; ^&gt; ^ ConvertReference(System::Linq::Expressions::Expression&lt;Func&lt;System::Activities::ActivityContext ^, TResult&gt; ^&gt; ^ expression);" />
+      <MemberSignature Language="F#" Value="static member ConvertReference : System.Linq.Expressions.Expression&lt;Func&lt;System.Activities.ActivityContext, 'Result&gt;&gt; -&gt; System.Activities.Activity&lt;System.Activities.Location&lt;'Result&gt;&gt;" Usage="System.Activities.Expressions.ExpressionServices.ConvertReference expression" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Activities.Activity&lt;System.Activities.Location&lt;TResult&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="expression" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;System.Activities.ActivityContext,TResult&gt;&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TResult"><span data-ttu-id="384ab-118">所转换为的表达式的类型。</span><span class="sxs-lookup"><span data-stu-id="384ab-118">The type the expression is being converted to.</span></span></typeparam>
+        <param name="expression"><span data-ttu-id="384ab-119">所转换的表达式。</span><span class="sxs-lookup"><span data-stu-id="384ab-119">The expression being converted.</span></span></param>
+        <summary><span data-ttu-id="384ab-120">将对工作流环境感知表达式的引用转换为活动树。</span><span class="sxs-lookup"><span data-stu-id="384ab-120">Converts a reference to a workflow environment-aware expression to an activity tree.</span></span></summary>
+        <returns><span data-ttu-id="384ab-121">转换后的表达式。</span><span class="sxs-lookup"><span data-stu-id="384ab-121">The converted expression.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="384ab-122"><xref:System.Activities.Expressions.ExpressionServices> 中的转换方法设计为可以使用在工作流内部定义以及通过参数传入工作流的变量和常量。</span><span class="sxs-lookup"><span data-stu-id="384ab-122">The conversion methods in <xref:System.Activities.Expressions.ExpressionServices> are designed to work with variables and constants defined inside the workflow, or passed into the workflow via arguments.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="384ab-123">下面的两个代码示例阐释 <xref:System.Activities.Expressions.ExpressionServices.ConvertReference%2A> 和 <xref:System.Activities.Expressions.ExpressionServices.Convert%2A> 的使用。</span><span class="sxs-lookup"><span data-stu-id="384ab-123">The following two code examples illustrate the use of <xref:System.Activities.Expressions.ExpressionServices.ConvertReference%2A> and <xref:System.Activities.Expressions.ExpressionServices.Convert%2A>.</span></span> <span data-ttu-id="384ab-124">第一个代码示例将在 <xref:System.Activities.Expressions.ExpressionServices.ConvertReference%2A> 活动中使用 `Assign` 将 lambda 表达式转换为分配了值的字符串属性。</span><span class="sxs-lookup"><span data-stu-id="384ab-124">The first code example uses <xref:System.Activities.Expressions.ExpressionServices.ConvertReference%2A> in an `Assign` activity to convert a lambda expression into a string property that is assigned a value.</span></span> <span data-ttu-id="384ab-125">接着，调用 <xref:System.Activities.Expressions.ExpressionServices.Convert%2A> 将 lambda 表达式转换为在 `WriteLine` 活动中打印到控制台的字符串属性值。</span><span class="sxs-lookup"><span data-stu-id="384ab-125">Next, <xref:System.Activities.Expressions.ExpressionServices.Convert%2A> is called to convert a lambda expression into a string property value that is printed to the console in the `WriteLine` activity.</span></span>  
+  
+```csharp  
+  
+// Define a struct with a property named AProperty.  
+struct StructWithProperty  
+{  
+    public string AProperty { get; set; }  
+}  
+  
+public static void ConvertReferenceForValueTypePropertyReferenceSample()  
+{              
+    // Create a variable of type StructWithProperty to store the property.  
+    var swpvar = new Variable<StructWithProperty>("swpvar", new StructWithProperty());  
+  
+    Activity myActivity = new Sequence  
+    {  
+        Variables = { swpvar },  
+        Activities =   
+        {                      
+            // Create an Assign activity to assign a value to the AProperty property.  
+            new Assign<string>  
+            {  
+                To = ExpressionServices.ConvertReference<string>(ctx => swpvar.Get(ctx).AProperty),  
+                // Assign a string literal to AProperty.  
+                Value = "Hello",  
+            },  
+            // Print the new property value to the console.  
+            new WriteLine()  
+            {  
+                Text = ExpressionServices.Convert<string>(ctx => swpvar.Get(ctx).AProperty),  
+            }  
+        }  
+    };  
+  
+    // Invoke the Sequence activity.  
+    WorkflowInvoker.Invoke(myActivity);  
+}  
+  
+```  
+  
+ <span data-ttu-id="384ab-126">下面的代码示例类似于前一个示例，但要转换的表达式是对多维数组中某个项的引用。</span><span class="sxs-lookup"><span data-stu-id="384ab-126">The following code example is like the previous one except that the expression to convert is a reference to an item in a multidimensional array.</span></span>  
+  
+```csharp  
+  
+public static void ConvertReferenceForMultidimensionalArrayItemReferenceSample()  
+{  
+    // Create a variable to store a multidimensional array.  
+    var arrayvar = new Variable<int[,]>("arrayvar", new int[4, 5]);  
+  
+    Activity myActivity = new Sequence  
+    {  
+        Variables = { arrayvar },  
+        Activities =   
+        {                      
+            // Create an Assign activity to assign a value to the array item at index [1,2].  
+            new Assign<int>  
+            {  
+                To = ExpressionServices.ConvertReference<int>(ctx => arrayvar.Get(ctx)[1, 2]),  
+                // Assign an integer value to the array item at row 1 column 2.  
+                Value = 1,  
+            },  
+            // Print the array item value to the console.  
+            new WriteLine()  
+            {  
+                Text = ExpressionServices.Convert<string>(ctx => arrayvar.Get(ctx)[1, 2].ToString()),  
+            }  
+        }  
+    };  
+  
+    // Invoke the Sequence activity.  
+    WorkflowInvoker.Invoke(myActivity);  
+}  
+  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryConvert&lt;TResult&gt;">
+      <MemberSignature Language="C#" Value="public static bool TryConvert&lt;TResult&gt; (System.Linq.Expressions.Expression&lt;Func&lt;System.Activities.ActivityContext,TResult&gt;&gt; expression, out System.Activities.Activity&lt;TResult&gt; result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryConvert&lt;TResult&gt;(class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;class System.Activities.ActivityContext, !!TResult&gt;&gt; expression, [out] class System.Activities.Activity`1&lt;!!TResult&gt;&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Expressions.ExpressionServices.TryConvert``1(System.Linq.Expressions.Expression{System.Func{System.Activities.ActivityContext,``0}},System.Activities.Activity{``0}@)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function TryConvert(Of TResult) (expression As Expression(Of Func(Of ActivityContext, TResult)), ByRef result As Activity(Of TResult)) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename TResult&gt;&#xA; static bool TryConvert(System::Linq::Expressions::Expression&lt;Func&lt;System::Activities::ActivityContext ^, TResult&gt; ^&gt; ^ expression, [Runtime::InteropServices::Out] System::Activities::Activity&lt;TResult&gt; ^ % result);" />
+      <MemberSignature Language="F#" Value="static member TryConvert : System.Linq.Expressions.Expression&lt;Func&lt;System.Activities.ActivityContext, 'Result&gt;&gt; *  -&gt; bool" Usage="System.Activities.Expressions.ExpressionServices.TryConvert (expression, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="expression" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;System.Activities.ActivityContext,TResult&gt;&gt;" />
+        <Parameter Name="result" Type="System.Activities.Activity&lt;TResult&gt;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TResult"><span data-ttu-id="384ab-127">所转换为的表达式的类型。</span><span class="sxs-lookup"><span data-stu-id="384ab-127">The type the expression is being converted to.</span></span></typeparam>
+        <param name="expression"><span data-ttu-id="384ab-128">所转换的表达式。</span><span class="sxs-lookup"><span data-stu-id="384ab-128">The expression being converted.</span></span></param>
+        <param name="result"><span data-ttu-id="384ab-129">转换后的表达式。</span><span class="sxs-lookup"><span data-stu-id="384ab-129">The converted expression.</span></span></param>
+        <summary><span data-ttu-id="384ab-130">将工作流环境感知表达式转换为活动树。</span><span class="sxs-lookup"><span data-stu-id="384ab-130">Converts a workflow environment-aware expression to an activity tree.</span></span></summary>
+        <returns><span data-ttu-id="384ab-131">如果表达式可被转换，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="384ab-131"><see langword="true" /> if the expression can be converted; otherwise, <see langword="false" />.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="384ab-132"><xref:System.Activities.Expressions.ExpressionServices> 中的转换方法设计为可以使用在工作流内部定义以及通过参数传入工作流的变量和常量。</span><span class="sxs-lookup"><span data-stu-id="384ab-132">The conversion methods in <xref:System.Activities.Expressions.ExpressionServices> are designed to work with variables and constants defined inside the workflow, or passed into the workflow via arguments.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryConvertReference&lt;TResult&gt;">
+      <MemberSignature Language="C#" Value="public static bool TryConvertReference&lt;TResult&gt; (System.Linq.Expressions.Expression&lt;Func&lt;System.Activities.ActivityContext,TResult&gt;&gt; expression, out System.Activities.Activity&lt;System.Activities.Location&lt;TResult&gt;&gt; result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryConvertReference&lt;TResult&gt;(class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;class System.Activities.ActivityContext, !!TResult&gt;&gt; expression, [out] class System.Activities.Activity`1&lt;class System.Activities.Location`1&lt;!!TResult&gt;&gt;&amp; result) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Activities.Expressions.ExpressionServices.TryConvertReference``1(System.Linq.Expressions.Expression{System.Func{System.Activities.ActivityContext,``0}},System.Activities.Activity{System.Activities.Location{``0}}@)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function TryConvertReference(Of TResult) (expression As Expression(Of Func(Of ActivityContext, TResult)), ByRef result As Activity(Of Location(Of TResult))) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename TResult&gt;&#xA; static bool TryConvertReference(System::Linq::Expressions::Expression&lt;Func&lt;System::Activities::ActivityContext ^, TResult&gt; ^&gt; ^ expression, [Runtime::InteropServices::Out] System::Activities::Activity&lt;System::Activities::Location&lt;TResult&gt; ^&gt; ^ % result);" />
+      <MemberSignature Language="F#" Value="static member TryConvertReference : System.Linq.Expressions.Expression&lt;Func&lt;System.Activities.ActivityContext, 'Result&gt;&gt; *  -&gt; bool" Usage="System.Activities.Expressions.ExpressionServices.TryConvertReference (expression, result)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Activities</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="expression" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;System.Activities.ActivityContext,TResult&gt;&gt;" />
+        <Parameter Name="result" Type="System.Activities.Activity&lt;System.Activities.Location&lt;TResult&gt;&gt;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TResult"><span data-ttu-id="384ab-133">所转换为的表达式的类型。</span><span class="sxs-lookup"><span data-stu-id="384ab-133">The type the expression is being converted to.</span></span></typeparam>
+        <param name="expression"><span data-ttu-id="384ab-134">所转换的表达式。</span><span class="sxs-lookup"><span data-stu-id="384ab-134">The expression being converted.</span></span></param>
+        <param name="result"><span data-ttu-id="384ab-135">转换后的表达式。</span><span class="sxs-lookup"><span data-stu-id="384ab-135">The converted expression.</span></span></param>
+        <summary><span data-ttu-id="384ab-136">将对工作流环境感知表达式的引用转换为活动树。</span><span class="sxs-lookup"><span data-stu-id="384ab-136">Converts a reference to a workflow environment-aware expression to an activity tree.</span></span></summary>
+        <returns><span data-ttu-id="384ab-137">如果表达式可被转换，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="384ab-137"><see langword="true" /> if the expression can be converted; otherwise, <see langword="false" />.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="384ab-138"><xref:System.Activities.Expressions.ExpressionServices> 中的转换方法设计为可以使用在工作流内部定义以及通过参数传入工作流的变量和常量。</span><span class="sxs-lookup"><span data-stu-id="384ab-138">The conversion methods in <xref:System.Activities.Expressions.ExpressionServices> are designed to work with variables and constants defined inside the workflow, or passed into the workflow via arguments.</span></span>  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
