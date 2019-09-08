@@ -1,0 +1,970 @@
+<Type Name="RegistrySecurity" FullName="System.Security.AccessControl.RegistrySecurity">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="a1e573054d899d9ece24be60d9cd1af96043f0b2" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70661619" /></Metadata><TypeSignature Language="C#" Value="public sealed class RegistrySecurity : System.Security.AccessControl.NativeObjectSecurity" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit RegistrySecurity extends System.Security.AccessControl.NativeObjectSecurity" />
+  <TypeSignature Language="DocId" Value="T:System.Security.AccessControl.RegistrySecurity" />
+  <TypeSignature Language="VB.NET" Value="Public NotInheritable Class RegistrySecurity&#xA;Inherits NativeObjectSecurity" />
+  <TypeSignature Language="C++ CLI" Value="public ref class RegistrySecurity sealed : System::Security::AccessControl::NativeObjectSecurity" />
+  <TypeSignature Language="F#" Value="type RegistrySecurity = class&#xA;    inherit NativeObjectSecurity" />
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.1.0</AssemblyVersion>
+    <AssemblyVersion>4.1.2.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Security.AccessControl.NativeObjectSecurity</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1">
+      <AttributeName>System.Security.SecurityCritical</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>表示注册表项的 Windows 访问控制安全性。 此类不能被继承。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Security.AccessControl.RegistrySecurity>对象指定对注册表项的访问权限，还指定如何审核访问尝试。 注册表项的访问权限表示为规则，每个访问规则都由一个<xref:System.Security.AccessControl.RegistryAccessRule>对象表示。 每个审核规则都由一个<xref:System.Security.AccessControl.RegistryAuditRule>对象表示。  
+  
+ 这会镜像底层 Windows 安全系统，其中每个安全对象最多具有一个控制对受保护对象的访问的随机访问控制列表（DACL），最多有一个指定访问权限的系统访问控制列表（SACL）审核尝试。 DACL 和 SACL 是访问控制项（ACE）的有序列表，它们指定了用户和组的访问权限和审核。 <xref:System.Security.AccessControl.RegistryAccessRule> 或 <xref:System.Security.AccessControl.RegistryAuditRule> 对象可能表示多个 ACE。  
+  
+> [!NOTE]
+>  Windows 访问控制安全性只能应用于注册表项。 它不能应用于存储在键中的各个键/值对。  
+  
+ <xref:System.Security.AccessControl.RegistrySecurity>、和类 <xref:System.Security.AccessControl.RegistryAuditRule> 隐藏 acl 和 ace 的实现细节。 <xref:System.Security.AccessControl.RegistryAccessRule> 它们允许你忽略17个不同的 ACE 类型以及正确保留访问权限的继承和传播的复杂性。 这些对象还旨在防止出现以下常见的访问控制错误：  
+  
+-   使用 null DACL 创建安全说明符。 对 DACL 的空引用允许任何用户向对象添加访问规则，这可能会造成拒绝服务攻击。 新<xref:System.Security.AccessControl.RegistrySecurity>对象始终以空的 DACL 开头，这会拒绝所有用户的所有访问。  
+  
+-   违反了 Ace 的规范排序。 如果 DACL 中的 ACE 列表不是以规范顺序保存的，则可能会无意中向用户授予对受保护对象的访问权限。 例如，拒绝的访问权限必须始终出现在允许的访问权限之前。 <xref:System.Security.AccessControl.RegistrySecurity>对象在内部保持正确的顺序。  
+  
+-   操作安全描述符标志，这些标志应仅限 resource manager 控件。  
+  
+-   创建 ACE 标志的无效组合。  
+  
+-   操作继承的 Ace。 继承和传播由资源管理器处理，以响应对访问和审核规则所做的更改。  
+  
+-   向 Acl 中插入无意义的 Ace。  
+  
+ .NET 安全对象不支持的唯一功能是应由大多数应用程序开发人员避免的危险活动，如下所示：  
+  
+-   通常由资源管理器执行的低级别任务。  
+  
+-   以不维护规范排序的方式添加或移除访问控制项。  
+  
+ 若要修改注册表项的 Windows 访问控制安全性，请使用<xref:Microsoft.Win32.RegistryKey.GetAccessControl%2A?displayProperty=nameWithType>方法来<xref:System.Security.AccessControl.RegistrySecurity>获取对象。 通过添加和删除规则修改安全对象，然后使用<xref:Microsoft.Win32.RegistryKey.SetAccessControl%2A?displayProperty=nameWithType>方法将其重新附加。  
+  
+> [!IMPORTANT]
+>  对对象所做的更改不会影响注册表项的访问级别，直到<xref:Microsoft.Win32.RegistryKey.SetAccessControl%2A?displayProperty=nameWithType>调用方法将已更改的安全对象分配给注册表项。 <xref:System.Security.AccessControl.RegistrySecurity>  
+  
+ 若要将访问控制安全性从一个注册表项复制到另一个<xref:Microsoft.Win32.RegistryKey.GetAccessControl%2A?displayProperty=nameWithType>注册表项，请<xref:System.Security.AccessControl.RegistrySecurity>使用方法获取表示第一个注册表项的访问和审核规则的对象<xref:Microsoft.Win32.RegistryKey.SetAccessControl%2A?displayProperty=nameWithType> ，然后使用方法将这些规则分配给第二个注册表项。 你还可以使用具有<xref:Microsoft.Win32.RegistryKey.OpenSubKey%2A?displayProperty=nameWithType> <xref:System.Security.AccessControl.RegistrySecurity>对象参数的或<xref:Microsoft.Win32.RegistryKey.CreateSubKey%2A?displayProperty=nameWithType>方法将规则分配给第二个注册表项。  
+  
+ 投资于安全描述符定义语言（SDDL）的用户可以使用<xref:System.Security.AccessControl.ObjectSecurity.SetSecurityDescriptorSddlForm%2A>方法来设置注册表项的访问规则， <xref:System.Security.AccessControl.ObjectSecurity.GetSecurityDescriptorSddlForm%2A>并使用方法来获取表示采用 SDDL 格式的访问规则的字符串。 这不建议用于新的开发。  
+  
+   
+  
+## Examples  
+ 本部分包含两个代码示例。 第一个示例演示如何在添加和删除兼容规则后进行合并，第二个示例演示继承和传播标志如何影响规则的添加和删除。  
+  
+ 示例 1  
+  
+ 下面的代码示例演示如何<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRule%2A>从兼容规则中删除权限，以及该方法如何将<xref:System.Security.AccessControl.RegistrySecurity.AddAccessRule%2A>权限与兼容的规则合并。  
+  
+ 该示例创建一个<xref:System.Security.AccessControl.RegistrySecurity>对象并添加允许当前用户<xref:System.Security.AccessControl.RegistryRights.ReadKey?displayProperty=nameWithType>权限的规则。 然后，该示例创建一个规则，该规则<xref:System.Security.AccessControl.RegistryRights.SetValue?displayProperty=nameWithType>向用户授予与第一条规则相同的继承和传播权限，并<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRule%2A>使用方法从<xref:System.Security.AccessControl.RegistrySecurity>对象中删除此新规则。 <xref:System.Security.AccessControl.RegistryRights.SetValue>是的<xref:System.Security.AccessControl.RegistryRights.ReadKey>组成部分，因此它将从兼容规则中删除。 将显示<xref:System.Security.AccessControl.RegistrySecurity>对象中的规则，并显示的其余<xref:System.Security.AccessControl.RegistryRights.ReadKey>组成部分。  
+  
+ 然后，示例代码调用<xref:System.Security.AccessControl.RegistrySecurity.AddAccessRule%2A>方法，将<xref:System.Security.AccessControl.RegistryRights.SetValue>权限合并回<xref:System.Security.AccessControl.RegistrySecurity>对象中的规则。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:Microsoft.Win32.RegistryKey>对象。 本部分中的第二个示例附加一个安全对象，并在和<xref:Microsoft.Win32.RegistryKey.GetAccessControl%2A?displayProperty=nameWithType> <xref:Microsoft.Win32.RegistryKey.SetAccessControl%2A?displayProperty=nameWithType>中执行示例。  
+  
+ [!code-csharp[System.Security.AccessControl.RegistrySecurity.RemoveAccessRule#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.RemoveAccessRule/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.RegistrySecurity.RemoveAccessRule#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.RemoveAccessRule/VB/source.vb#1)]  
+  
+ 示例 2  
+  
+ 下面的代码示例演示使用继承和传播的访问规则。 该示例创建一个<xref:System.Security.AccessControl.RegistrySecurity>对象，然后创建并添加两个<xref:System.Security.AccessControl.InheritanceFlags.ContainerInherit>具有标志的规则。 第一个规则没有传播标志，而第二条具有<xref:System.Security.AccessControl.PropagationFlags.NoPropagateInherit>和<xref:System.Security.AccessControl.PropagationFlags.InheritOnly>。  
+  
+ 该程序将在<xref:System.Security.AccessControl.RegistrySecurity>对象中显示规则，然后<xref:System.Security.AccessControl.RegistrySecurity>使用对象创建子项。 该程序创建一个子子项和一个孙级子项，并显示每个子项的安全性。 最后，程序删除测试密钥。  
+  
+ [!code-csharp[System.Security.AccessControl.RegistryAccessRule.ctor2#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.RegistryAccessRule.ctor2/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.RegistryAccessRule.ctor2#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.RegistryAccessRule.ctor2/VB/source.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public RegistrySecurity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; RegistrySecurity();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>使用默认值初始化 <see cref="T:System.Security.AccessControl.RegistrySecurity" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 新<xref:System.Security.AccessControl.RegistrySecurity>对象始终以空的自由访问列表（DACL）开头，此列表拒绝所有用户的所有访问。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AccessRightType">
+      <MemberSignature Language="C#" Value="public override Type AccessRightType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type AccessRightType" />
+      <MemberSignature Language="DocId" Value="P:System.Security.AccessControl.RegistrySecurity.AccessRightType" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property AccessRightType As Type" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property Type ^ AccessRightType { Type ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.AccessRightType : Type" Usage="System.Security.AccessControl.RegistrySecurity.AccessRightType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 <see cref="T:System.Security.AccessControl.RegistrySecurity" /> 类用于表示访问权限的枚举类型。</summary>
+        <value>一个 <see cref="T:System.Type" /> 对象，表示 <see cref="T:System.Security.AccessControl.RegistryRights" /> 枚举。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 派生自<xref:System.Security.AccessControl.ObjectSecurity>类的类将<xref:System.Security.AccessControl.ObjectSecurity.AccessRightType%2A>重写属性，并返回它们用来表示访问权限的类型。 当使用包含多个类型的安全对象的数组或集合时，请使用此属性来确定要用于每个安全对象的正确枚举类型。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AccessRuleFactory">
+      <MemberSignature Language="C#" Value="public override System.Security.AccessControl.AccessRule AccessRuleFactory (System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.AccessControl.AccessRule AccessRuleFactory(class System.Security.Principal.IdentityReference identityReference, int32 accessMask, bool isInherited, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.AccessControlType type) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.AccessRuleFactory(System.Security.Principal.IdentityReference,System.Int32,System.Boolean,System.Security.AccessControl.InheritanceFlags,System.Security.AccessControl.PropagationFlags,System.Security.AccessControl.AccessControlType)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Security::AccessControl::AccessRule ^ AccessRuleFactory(System::Security::Principal::IdentityReference ^ identityReference, int accessMask, bool isInherited, System::Security::AccessControl::InheritanceFlags inheritanceFlags, System::Security::AccessControl::PropagationFlags propagationFlags, System::Security::AccessControl::AccessControlType type);" />
+      <MemberSignature Language="F#" Value="override this.AccessRuleFactory : System.Security.Principal.IdentityReference * int * bool * System.Security.AccessControl.InheritanceFlags * System.Security.AccessControl.PropagationFlags * System.Security.AccessControl.AccessControlType -&gt; System.Security.AccessControl.AccessRule" Usage="registrySecurity.AccessRuleFactory (identityReference, accessMask, isInherited, inheritanceFlags, propagationFlags, type)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AccessRule</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="identityReference" Type="System.Security.Principal.IdentityReference" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="isInherited" Type="System.Boolean" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+        <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
+      </Parameters>
+      <Docs>
+        <param name="identityReference">一个 <see cref="T:System.Security.Principal.IdentityReference" />，用于标识此规则应用到的用户或组。</param>
+        <param name="accessMask"><see cref="T:System.Security.AccessControl.RegistryRights" /> 值的按位组合，用于指定允许或拒绝的访问权限，该组合将被强制转换为整数。</param>
+        <param name="isInherited">一个布尔值，指定规则是否为继承的规则。</param>
+        <param name="inheritanceFlags"><see cref="T:System.Security.AccessControl.InheritanceFlags" /> 值的按位组合，指定子项如何继承规则。</param>
+        <param name="propagationFlags"><see cref="T:System.Security.AccessControl.PropagationFlags" /> 值的按位组合，用于修改子项继承规则的方式。 如果 <paramref name="inheritanceFlags" /> 的值为 <see cref="F:System.Security.AccessControl.InheritanceFlags.None" />，则它没有意义。</param>
+        <param name="type"><see cref="T:System.Security.AccessControl.AccessControlType" /> 值之一，用于指定是允许还是拒绝相应权限。</param>
+        <summary>使用指定的访问权限、访问控制和标志为指定用户创建新的访问控制规则。</summary>
+        <returns>一个 <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> 对象，表示指定用户的指定权限。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 创建访问控制规则的建议方法是使用<xref:System.Security.AccessControl.RegistryAccessRule>类的构造函数。  
+  
+> [!NOTE]
+>  尽管可以指定<xref:System.Security.AccessControl.InheritanceFlags.ObjectInherit?displayProperty=nameWithType>标志，但没有任何一点要这样做。 出于访问控制的目的，子项中的名称/值对不是单独的对象。 对名称/值对的访问权限由子项的权限控制。 此外，由于所有子项均为容器（也就是说，它们可以包含其他子项），因此它们不会受到<xref:System.Security.AccessControl.InheritanceFlags.ObjectInherit>标志的影响。 最后，指定<xref:System.Security.AccessControl.InheritanceFlags.ObjectInherit>标志不必要地使规则维护复杂化，因为这会影响兼容规则的正常组合。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="accessMask" />、<paramref name="inheritanceFlags" />、<paramref name="propagationFlags" /> 或 <paramref name="type" /> 指定了一个无效值。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="identityReference" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="accessMask" /> 为零。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="identityReference" /> 既不属于类型 <see cref="T:System.Security.Principal.SecurityIdentifier" />，也不属于可以转换为 <see cref="T:System.Security.Principal.NTAccount" /> 类型的类型（如 <see cref="T:System.Security.Principal.SecurityIdentifier" />）。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AccessRuleType">
+      <MemberSignature Language="C#" Value="public override Type AccessRuleType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type AccessRuleType" />
+      <MemberSignature Language="DocId" Value="P:System.Security.AccessControl.RegistrySecurity.AccessRuleType" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property AccessRuleType As Type" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property Type ^ AccessRuleType { Type ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.AccessRuleType : Type" Usage="System.Security.AccessControl.RegistrySecurity.AccessRuleType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 <see cref="T:System.Security.AccessControl.RegistrySecurity" /> 类用于表示访问规则的类型。</summary>
+        <value>一个表示 <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> 类的 <see cref="T:System.Type" /> 对象。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 派生自<xref:System.Security.AccessControl.ObjectSecurity>类的类将<xref:System.Security.AccessControl.ObjectSecurity.AccessRuleType%2A>重写属性，并返回用于表示访问规则的类型。 当使用包含多个类型的安全对象的数组或集合时，请使用此属性来确定要用于每个安全对象的正确访问规则类型。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddAccessRule">
+      <MemberSignature Language="C#" Value="public void AddAccessRule (System.Security.AccessControl.RegistryAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAccessRule(class System.Security.AccessControl.RegistryAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.AddAccessRule(System.Security.AccessControl.RegistryAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub AddAccessRule (rule As RegistryAccessRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void AddAccessRule(System::Security::AccessControl::RegistryAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.AddAccessRule : System.Security.AccessControl.RegistryAccessRule -&gt; unit" Usage="registrySecurity.AddAccessRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.RegistryAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要添加的访问控制规则。</param>
+        <summary>搜索匹配的访问控制，新规则将与之进行合并。 如果未找到符合条件的规则，则添加新规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法搜索具有相同用户或组以及与`rule`相同<xref:System.Security.AccessControl.AccessControlType>的规则。 <xref:System.Security.AccessControl.RegistrySecurity.AddAccessRule%2A> 如果未找到， `rule`则添加。 如果找到匹配规则，则中`rule`的权限将与现有规则合并。  
+  
+ 如果规则具有不同的继承标志，则无法合并规则。 例如，如果允许用户使用没有继承标志的读取访问权限，并且<xref:System.Security.AccessControl.RegistrySecurity.AddAccessRule%2A>用于添加一个规则，为用户提供对子项（<xref:System.Security.AccessControl.InheritanceFlags.ContainerInherit?displayProperty=nameWithType>）的继承的写入访问权限，则这两个规则将无法合并。  
+  
+ 不会合并<xref:System.Security.AccessControl.AccessControlType>具有不同值的规则。  
+  
+ 规则以最经济的方式表示权限。 例如，如果<xref:System.Security.AccessControl.RegistryRights.QueryValues>用户具有<xref:System.Security.AccessControl.RegistryRights.Notify>和<xref:System.Security.AccessControl.RegistryRights.ReadPermissions>权限，并且你添加了允许<xref:System.Security.AccessControl.RegistryRights.EnumerateSubKeys>权限的规则，则该用户将拥有<xref:System.Security.AccessControl.RegistryRights.ReadKey>权限的所有组成部分。 如果查询用户的权限，将看到包含<xref:System.Security.AccessControl.RegistryRights.ReadKey>权限的规则。 同样，如果您删除<xref:System.Security.AccessControl.RegistryRights.EnumerateSubKeys>权限，其他权利的<xref:System.Security.AccessControl.RegistryRights.ReadKey>其他组成部分将再次出现。  
+  
+   
+  
+## Examples  
+ 下面的代码示例创建了注册表访问规则并将其添加<xref:System.Security.AccessControl.RegistrySecurity>到了一个对象中，其中显示了允许和拒绝权限的规则如何保持独立，同时合并了相同类型的兼容规则。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:Microsoft.Win32.RegistryKey>对象。 可在和<xref:Microsoft.Win32.RegistryKey.GetAccessControl%2A?displayProperty=nameWithType> <xref:Microsoft.Win32.RegistryKey.SetAccessControl%2A?displayProperty=nameWithType>中找到附加安全对象的示例。  
+  
+ 演示继承和传播标志的代码示例可在<xref:System.Security.AccessControl.RegistryAccessRule>类中找到。  
+  
+ [!code-csharp[System.Security.AccessControl.RegistrySecurity.AddAccessRule#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.AddAccessRule/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.RegistrySecurity.AddAccessRule#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.AddAccessRule/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AddAuditRule">
+      <MemberSignature Language="C#" Value="public void AddAuditRule (System.Security.AccessControl.RegistryAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddAuditRule(class System.Security.AccessControl.RegistryAuditRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.AddAuditRule(System.Security.AccessControl.RegistryAuditRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub AddAuditRule (rule As RegistryAuditRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void AddAuditRule(System::Security::AccessControl::RegistryAuditRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.AddAuditRule : System.Security.AccessControl.RegistryAuditRule -&gt; unit" Usage="registrySecurity.AddAuditRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.RegistryAuditRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要添加的审核规则。 由此规则指定的用户来确定搜索。</param>
+        <summary>搜索可以将新规则与之合并的审核规则。 如果未找到符合条件的规则，则添加新规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法搜索与相同用户或`rule`组的规则。 <xref:System.Security.AccessControl.RegistrySecurity.AddAuditRule%2A> 如果未找到， `rule`则添加。 如果找到匹配规则，则中`rule`的标志将合并到现有规则。  
+  
+ 如果规则具有不同的继承标志，则无法合并规则。 例如，如果对特定用户（没有继承标志）审核尝试写入密钥的失败，并<xref:System.Security.AccessControl.RegistrySecurity.AddAuditRule%2A>使用来添加一个规则，该规则指定对同一用户审核失败的更改权限尝试，但使用继承子项（<xref:System.Security.AccessControl.InheritanceFlags.ContainerInherit?displayProperty=nameWithType>），这两个规则不能合并。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AuditRuleFactory">
+      <MemberSignature Language="C#" Value="public override System.Security.AccessControl.AuditRule AuditRuleFactory (System.Security.Principal.IdentityReference identityReference, int accessMask, bool isInherited, System.Security.AccessControl.InheritanceFlags inheritanceFlags, System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AuditFlags flags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Security.AccessControl.AuditRule AuditRuleFactory(class System.Security.Principal.IdentityReference identityReference, int32 accessMask, bool isInherited, valuetype System.Security.AccessControl.InheritanceFlags inheritanceFlags, valuetype System.Security.AccessControl.PropagationFlags propagationFlags, valuetype System.Security.AccessControl.AuditFlags flags) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.AuditRuleFactory(System.Security.Principal.IdentityReference,System.Int32,System.Boolean,System.Security.AccessControl.InheritanceFlags,System.Security.AccessControl.PropagationFlags,System.Security.AccessControl.AuditFlags)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Security::AccessControl::AuditRule ^ AuditRuleFactory(System::Security::Principal::IdentityReference ^ identityReference, int accessMask, bool isInherited, System::Security::AccessControl::InheritanceFlags inheritanceFlags, System::Security::AccessControl::PropagationFlags propagationFlags, System::Security::AccessControl::AuditFlags flags);" />
+      <MemberSignature Language="F#" Value="override this.AuditRuleFactory : System.Security.Principal.IdentityReference * int * bool * System.Security.AccessControl.InheritanceFlags * System.Security.AccessControl.PropagationFlags * System.Security.AccessControl.AuditFlags -&gt; System.Security.AccessControl.AuditRule" Usage="registrySecurity.AuditRuleFactory (identityReference, accessMask, isInherited, inheritanceFlags, propagationFlags, flags)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.AccessControl.AuditRule</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="identityReference" Type="System.Security.Principal.IdentityReference" />
+        <Parameter Name="accessMask" Type="System.Int32" />
+        <Parameter Name="isInherited" Type="System.Boolean" />
+        <Parameter Name="inheritanceFlags" Type="System.Security.AccessControl.InheritanceFlags" />
+        <Parameter Name="propagationFlags" Type="System.Security.AccessControl.PropagationFlags" />
+        <Parameter Name="flags" Type="System.Security.AccessControl.AuditFlags" />
+      </Parameters>
+      <Docs>
+        <param name="identityReference">一个 <see cref="T:System.Security.Principal.IdentityReference" />，用于标识此规则应用到的用户或组。</param>
+        <param name="accessMask"><see cref="T:System.Security.AccessControl.RegistryRights" /> 值的按位组合，用于指定要审核的访问权限，该组合将被强制转换为整数。</param>
+        <param name="isInherited">一个布尔值，指定规则是否为继承的规则。</param>
+        <param name="inheritanceFlags"><see cref="T:System.Security.AccessControl.InheritanceFlags" /> 值的按位组合，指定子项如何继承规则。</param>
+        <param name="propagationFlags"><see cref="T:System.Security.AccessControl.PropagationFlags" /> 值的按位组合，用于修改子项继承规则的方式。 如果 <paramref name="inheritanceFlags" /> 的值为 <see cref="F:System.Security.AccessControl.InheritanceFlags.None" />，则它没有意义。</param>
+        <param name="flags"><see cref="T:System.Security.AccessControl.AuditFlags" /> 值的按位组合，它指定是审核成功的访问、失败的访问还是对这两种情况都进行审核。</param>
+        <summary>新建审核规则，指定此规则应用到的用户、要审核的访问权限、规则的继承和传播以及触发此规则的结果。</summary>
+        <returns>一个 <see cref="T:System.Security.AccessControl.RegistryAuditRule" /> 对象，表示指定用户的指定审核规则，带有指定标志。 该方法的返回类型是基类 <see cref="T:System.Security.AccessControl.AuditRule" />，但可以安全地将返回值强制转换为派生类。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 创建审核规则的建议方法是使用<xref:System.Security.AccessControl.RegistryAuditRule>类的构造函数。  
+  
+> [!NOTE]
+>  尽管可以指定<xref:System.Security.AccessControl.InheritanceFlags.ObjectInherit?displayProperty=nameWithType>标志，但没有任何一点要这样做。 出于审核控制的目的，子项中的名称/值对不是单独的对象。 对名称/值对的审核权限由子项的权限控制。 此外，由于所有子项均为容器（也就是说，它们可以包含其他子项），因此它们不会受到<xref:System.Security.AccessControl.InheritanceFlags.ObjectInherit>标志的影响。 最后，指定<xref:System.Security.AccessControl.InheritanceFlags.ObjectInherit>标志不必要地使规则维护复杂化，因为这会影响兼容规则的正常组合。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="accessMask" />、<paramref name="inheritanceFlags" />、<paramref name="propagationFlags" /> 或 <paramref name="flags" /> 指定了一个无效值。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="identityReference" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="accessMask" /> 为零。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="identityReference" /> 既不属于类型 <see cref="T:System.Security.Principal.SecurityIdentifier" />，也不属于可以转换为 <see cref="T:System.Security.Principal.NTAccount" /> 类型的类型（如 <see cref="T:System.Security.Principal.SecurityIdentifier" />）。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AuditRuleType">
+      <MemberSignature Language="C#" Value="public override Type AuditRuleType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type AuditRuleType" />
+      <MemberSignature Language="DocId" Value="P:System.Security.AccessControl.RegistrySecurity.AuditRuleType" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides ReadOnly Property AuditRuleType As Type" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property Type ^ AuditRuleType { Type ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.AuditRuleType : Type" Usage="System.Security.AccessControl.RegistrySecurity.AuditRuleType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 <see cref="T:System.Security.AccessControl.RegistrySecurity" /> 类用于表示审核规则的类型。</summary>
+        <value>一个表示 <see cref="T:System.Security.AccessControl.RegistryAuditRule" /> 类的 <see cref="T:System.Type" /> 对象。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 派生自<xref:System.Security.AccessControl.ObjectSecurity>类的类将<xref:System.Security.AccessControl.ObjectSecurity.AuditRuleType%2A>重写属性，并返回用于表示审核权限的类型。 当使用包含多个类型的安全对象的数组或集合时，请使用此属性来确定要用于每个安全对象的正确审核规则类型。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAccessRule">
+      <MemberSignature Language="C#" Value="public bool RemoveAccessRule (System.Security.AccessControl.RegistryAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveAccessRule(class System.Security.AccessControl.RegistryAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.RemoveAccessRule(System.Security.AccessControl.RegistryAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Function RemoveAccessRule (rule As RegistryAccessRule) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool RemoveAccessRule(System::Security::AccessControl::RegistryAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAccessRule : System.Security.AccessControl.RegistryAccessRule -&gt; bool" Usage="registrySecurity.RemoveAccessRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.RegistryAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">指定要搜索的用户和 <see cref="T:System.Security.AccessControl.RegistryAccessRule" /> 的 <see cref="T:System.Security.AccessControl.AccessControlType" />，以及匹配规则（如果找到）必须兼容的一组继承和传播标志。 指定要从兼容规则移除的权限（如果找到）。</param>
+        <summary>搜索如下的访问控制规则：与指定的访问规则具有相同的用户和 <see cref="T:System.Security.AccessControl.AccessControlType" />（允许或拒绝），并具有兼容的继承和传播标志；如果找到，则从中移除指定访问规则中包含的权限。</summary>
+        <returns>如果找到一个兼容规则，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 将搜索<xref:System.Security.AccessControl.RegistrySecurity>当前的规则，该规则具有相同的用户和与相同<xref:System.Security.AccessControl.AccessControlType>的值`rule`。 如果未找到此类规则，则不执行任何操作，并且该方法`false`将返回。 如果找到匹配规则，则检查其继承和兼容性标志是否与中`rule`指定的标志兼容。 如果未找到兼容的规则，则不执行任何操作，并且该方法`false`将返回。 如果找到具有兼容标志的规则，则中`rule`指定的权限将从兼容规则中删除，并且该方法将返回。 `true` 如果`rule`指定的权限不包含在兼容规则中，则不会对这些权限采取任何措施。 如果从兼容规则中删除所有权限，则将从当前<xref:System.Security.AccessControl.RegistrySecurity>对象中删除整个规则。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRule%2A>从兼容规则中删除权限，以及该方法如何将<xref:System.Security.AccessControl.RegistrySecurity.AddAccessRule%2A>权限与兼容的规则合并。  
+  
+ 该示例创建一个<xref:System.Security.AccessControl.RegistrySecurity>对象并添加允许当前用户<xref:System.Security.AccessControl.RegistryRights.ReadKey?displayProperty=nameWithType>权限的规则。 然后，该示例创建一个规则，该规则<xref:System.Security.AccessControl.RegistryRights.SetValue?displayProperty=nameWithType>向用户授予与第一条规则相同的继承和传播权限，并<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRule%2A>使用方法从<xref:System.Security.AccessControl.RegistrySecurity>对象中删除此新规则。 <xref:System.Security.AccessControl.RegistryRights.SetValue>是的<xref:System.Security.AccessControl.RegistryRights.ReadKey>组成部分，因此它将从兼容规则中删除。 将显示<xref:System.Security.AccessControl.RegistrySecurity>对象中的规则，并显示的其余<xref:System.Security.AccessControl.RegistryRights.ReadKey>组成部分。  
+  
+ 然后，示例代码调用<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRule%2A>方法，将<xref:System.Security.AccessControl.RegistryRights.SetValue>权限合并回<xref:System.Security.AccessControl.RegistrySecurity>对象中的规则。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:Microsoft.Win32.RegistryKey>对象。 本部分中的第二个示例附加一个安全对象，并在中<xref:Microsoft.Win32.RegistryKey.GetAccessControl%2A?displayProperty=nameWithType> <xref:Microsoft.Win32.RegistryKey.SetAccessControl%2A?displayProperty=nameWithType>执行示例。  
+  
+ [!code-csharp[System.Security.AccessControl.RegistrySecurity.RemoveAccessRule#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.RemoveAccessRule/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.RegistrySecurity.RemoveAccessRule#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.RemoveAccessRule/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAccessRuleAll">
+      <MemberSignature Language="C#" Value="public void RemoveAccessRuleAll (System.Security.AccessControl.RegistryAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAccessRuleAll(class System.Security.AccessControl.RegistryAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleAll(System.Security.AccessControl.RegistryAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub RemoveAccessRuleAll (rule As RegistryAccessRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void RemoveAccessRuleAll(System::Security::AccessControl::RegistryAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAccessRuleAll : System.Security.AccessControl.RegistryAccessRule -&gt; unit" Usage="registrySecurity.RemoveAccessRuleAll rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.RegistryAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">一个 <see cref="T:System.Security.AccessControl.RegistryAccessRule" />，指定要搜索的用户和 <see cref="T:System.Security.AccessControl.AccessControlType" />。 忽略此规则指定的任何权限、继承标志或传播标志。</param>
+        <summary>搜索与指定的规则具有相同用户和 <see cref="T:System.Security.AccessControl.AccessControlType" />（允许或拒绝）的所有访问控制规则，如果找到则将其移除。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当前<xref:System.Security.AccessControl.RegistrySecurity>将搜索具有相同用户和<xref:System.Security.AccessControl.AccessControlType>值`rule`的规则。 执行此搜索时，将忽略指定的`rule`任何权限、继承标志或传播标志。 如果未找到匹配规则，则不执行任何操作。  
+  
+ 例如，如果用户具有多个规则，这些规则允许各种权限具有不同的继承和传播标志，则可以通过创建一个<xref:System.Security.AccessControl.RegistryAccessRule>指定用户的对象并<xref:System.Security.AccessControl.AccessControlType.Allow?displayProperty=nameWithType>使用任意权限和标志，来删除所有这些规则。并将该规则传递给<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleAll%2A>方法。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示方法将<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleAll%2A>删除所有匹配用户和的规则， <xref:System.Security.AccessControl.AccessControlType>同时忽略权限和标志。  
+  
+ 该示例创建一个<xref:System.Security.AccessControl.RegistrySecurity>对象，并使用不同的继承和传播标志，为当前用户添加允许和拒绝各种权限的规则。 然后，该示例创建一个新规则，该规则允许当前用户获取所有权，并将此规则传递<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleAll%2A>给方法以删除允许访问的两个规则。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:Microsoft.Win32.RegistryKey>对象。 请参见<xref:Microsoft.Win32.RegistryKey.SetAccessControl%2A?displayProperty=nameWithType>方法和方法。 <xref:Microsoft.Win32.RegistryKey.GetAccessControl%2A?displayProperty=nameWithType>  
+  
+ [!code-csharp[System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleAll#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.RemoveAccessRuleAll/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleAll#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.RemoveAccessRuleAll/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAccessRuleSpecific">
+      <MemberSignature Language="C#" Value="public void RemoveAccessRuleSpecific (System.Security.AccessControl.RegistryAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAccessRuleSpecific(class System.Security.AccessControl.RegistryAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleSpecific(System.Security.AccessControl.RegistryAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub RemoveAccessRuleSpecific (rule As RegistryAccessRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void RemoveAccessRuleSpecific(System::Security::AccessControl::RegistryAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAccessRuleSpecific : System.Security.AccessControl.RegistryAccessRule -&gt; unit" Usage="registrySecurity.RemoveAccessRuleSpecific rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.RegistryAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要移除的 <see cref="T:System.Security.AccessControl.RegistryAccessRule" />。</param>
+        <summary>搜索与指定的规则完全匹配的访问控制规则，如果找到则将其移除。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 只有在所有详细信息（包括标志） `rule`中完全匹配时，才会删除规则。 具有相同用户和<xref:System.Security.AccessControl.AccessControlType>的其他规则不受影响。  
+  
+> [!IMPORTANT]
+>  规则表示一个或多个基础访问控制项（ACE），在修改用户的访问安全规则时，将根据需要拆分或合并这些项。 因此，在添加规则时，该规则可能不再存在于其所在的特定窗体中，在这种<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleSpecific%2A>情况下，该方法将无法删除它。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleSpecific%2A>方法仅当规则完全匹配时才删除规则。  
+  
+ 该示例创建两个允许不同权限的规则。 规则具有兼容的继承和传播标志，因此，在添加第二个规则时，它将与第一个规则合并。 该示例调用<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleSpecific%2A>方法，并指定第一条规则，但由于规则已合并，因此没有匹配的规则。 然后，该示例调用<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRule%2A>方法以从合并规则中删除第二个规则，最后<xref:System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleSpecific%2A>调用方法以删除第一个规则。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:Microsoft.Win32.RegistryKey>对象。 请参见<xref:Microsoft.Win32.RegistryKey.SetAccessControl%2A?displayProperty=nameWithType>方法和方法。 <xref:Microsoft.Win32.RegistryKey.GetAccessControl%2A?displayProperty=nameWithType>  
+  
+ [!code-csharp[System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleSpecific#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.RemoveAccessRuleSpecific/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.RegistrySecurity.RemoveAccessRuleSpecific#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.RemoveAccessRuleSpecific/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAuditRule">
+      <MemberSignature Language="C#" Value="public bool RemoveAuditRule (System.Security.AccessControl.RegistryAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveAuditRule(class System.Security.AccessControl.RegistryAuditRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.RemoveAuditRule(System.Security.AccessControl.RegistryAuditRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Function RemoveAuditRule (rule As RegistryAuditRule) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool RemoveAuditRule(System::Security::AccessControl::RegistryAuditRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAuditRule : System.Security.AccessControl.RegistryAuditRule -&gt; bool" Usage="registrySecurity.RemoveAuditRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.RegistryAuditRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">一个 <see cref="T:System.Security.AccessControl.RegistryAuditRule" />，指定要搜索的用户以及匹配规则（如果找到）必须兼容的一组继承和传播标志。 指定要从兼容规则移除的权限（如果找到）。</param>
+        <summary>搜索以下的审核控制规则：与指定的规则具有相同的用户，并具有兼容的继承和传播标志；如果找到兼容规则，则从中移除指定的规则中包含的权限。</summary>
+        <returns>如果找到一个兼容规则，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 搜索当前<xref:System.Security.AccessControl.RegistrySecurity>的，其中包含与相同的`rule`用户的审核规则。 如果未找到此类规则，则不执行任何操作，并且该方法`false`将返回。 如果找到匹配规则，则检查其继承和兼容性标志是否与中`rule`指定的标志兼容。 如果未找到兼容的规则，则不执行任何操作，并且该方法`false`将返回。 如果找到具有兼容标志的规则，则中`rule`指定的权限将从兼容规则中删除，并且该方法将返回。 `true` 如果`rule`指定的权限不包含在兼容规则中，则不会对这些权限采取任何措施。 如果从兼容规则中删除所有权限，则将从当前<xref:System.Security.AccessControl.RegistrySecurity>对象中删除整个规则。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAuditRuleAll">
+      <MemberSignature Language="C#" Value="public void RemoveAuditRuleAll (System.Security.AccessControl.RegistryAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAuditRuleAll(class System.Security.AccessControl.RegistryAuditRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.RemoveAuditRuleAll(System.Security.AccessControl.RegistryAuditRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub RemoveAuditRuleAll (rule As RegistryAuditRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void RemoveAuditRuleAll(System::Security::AccessControl::RegistryAuditRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAuditRuleAll : System.Security.AccessControl.RegistryAuditRule -&gt; unit" Usage="registrySecurity.RemoveAuditRuleAll rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.RegistryAuditRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">指定要搜索的用户的 <see cref="T:System.Security.AccessControl.RegistryAuditRule" />。 忽略此规则指定的任何权限、继承标志或传播标志。</param>
+        <summary>搜索所有使用相同用户作为指定规则的审核规则，如果找到符合条件的规则，则移除它们。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当前<xref:System.Security.AccessControl.RegistrySecurity>将搜索与具有相同`rule`用户的审核规则。 执行此搜索时，将忽略指定的`rule`任何权限、继承标志或传播标志。 如果未找到匹配规则，则不执行任何操作。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAuditRuleSpecific">
+      <MemberSignature Language="C#" Value="public void RemoveAuditRuleSpecific (System.Security.AccessControl.RegistryAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveAuditRuleSpecific(class System.Security.AccessControl.RegistryAuditRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.RemoveAuditRuleSpecific(System.Security.AccessControl.RegistryAuditRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub RemoveAuditRuleSpecific (rule As RegistryAuditRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void RemoveAuditRuleSpecific(System::Security::AccessControl::RegistryAuditRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.RemoveAuditRuleSpecific : System.Security.AccessControl.RegistryAuditRule -&gt; unit" Usage="registrySecurity.RemoveAuditRuleSpecific rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.RegistryAuditRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要移除的 <see cref="T:System.Security.AccessControl.RegistryAuditRule" />。</param>
+        <summary>搜索与指定的规则完全匹配的审核规则；如果找到，则移除这些规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 只有在所有详细信息（包括标志） `rule`中完全匹配时，才会删除规则。 同一用户的其他审核规则不受影响。  
+  
+> [!IMPORTANT]
+>  规则表示一个或多个基础访问控制项（ACE），在修改用户的审核安全规则时，将根据需要拆分或合并这些项。 因此，在添加规则时，该规则可能不再存在于其所在的特定窗体中，在这种<xref:System.Security.AccessControl.RegistrySecurity.RemoveAuditRuleSpecific%2A>情况下，该方法将无法删除它。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ResetAccessRule">
+      <MemberSignature Language="C#" Value="public void ResetAccessRule (System.Security.AccessControl.RegistryAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ResetAccessRule(class System.Security.AccessControl.RegistryAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.ResetAccessRule(System.Security.AccessControl.RegistryAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub ResetAccessRule (rule As RegistryAccessRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void ResetAccessRule(System::Security::AccessControl::RegistryAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.ResetAccessRule : System.Security.AccessControl.RegistryAccessRule -&gt; unit" Usage="registrySecurity.ResetAccessRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.RegistryAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要添加的 <see cref="T:System.Security.AccessControl.RegistryAccessRule" />。 由此规则指定的用户确定在添加此规则之前要移除的规则。</param>
+        <summary>不论 <see cref="T:System.Security.AccessControl.AccessControlType" /> 如何，移除与指定的规则具有相同用户的所有访问控制规则，然后添加指定的规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果没有用户与指定规则匹配的访问规则， `rule`则会添加。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何将<xref:System.Security.AccessControl.RegistrySecurity.ResetAccessRule%2A>匹配用户的所有规则替换为为匹配指定的规则。  
+  
+ 该示例创建一个<xref:System.Security.AccessControl.RegistrySecurity>对象，并使用不同的继承和传播标志，为当前用户添加允许和拒绝各种权限的规则。 然后，该示例创建一个新规则，该规则允许当前用户只读取密钥，并使用<xref:System.Security.AccessControl.RegistrySecurity.ResetAccessRule%2A>方法删除用户的所有规则并将其替换为新规则。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:Microsoft.Win32.RegistryKey>对象。 请参见<xref:Microsoft.Win32.RegistryKey.SetAccessControl%2A?displayProperty=nameWithType>方法和方法。 <xref:Microsoft.Win32.RegistryKey.GetAccessControl%2A?displayProperty=nameWithType>  
+  
+ [!code-csharp[System.Security.AccessControl.RegistrySecurity.ResetAccessRule#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.ResetAccessRule/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.RegistrySecurity.ResetAccessRule#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.ResetAccessRule/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAccessRule">
+      <MemberSignature Language="C#" Value="public void SetAccessRule (System.Security.AccessControl.RegistryAccessRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAccessRule(class System.Security.AccessControl.RegistryAccessRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.SetAccessRule(System.Security.AccessControl.RegistryAccessRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub SetAccessRule (rule As RegistryAccessRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void SetAccessRule(System::Security::AccessControl::RegistryAccessRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.SetAccessRule : System.Security.AccessControl.RegistryAccessRule -&gt; unit" Usage="registrySecurity.SetAccessRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.RegistryAccessRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要添加的 <see cref="T:System.Security.AccessControl.RegistryAccessRule" />。 由此规则的用户和 <see cref="T:System.Security.AccessControl.AccessControlType" /> 确定在添加此规则之前要移除的规则。</param>
+        <summary>移除与指定的规则具有相同用户和 <see cref="T:System.Security.AccessControl.AccessControlType" />（允许或拒绝）的所有控制规则，然后添加指定的规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果指定的规则具有<xref:System.Security.AccessControl.AccessControlType.Allow>，则此方法的作用是移除指定用户<xref:System.Security.AccessControl.AccessControlType.Allow>的所有规则，并将其替换为指定的规则。 如果指定的规则具有<xref:System.Security.AccessControl.AccessControlType.Deny>，则<xref:System.Security.AccessControl.AccessControlType.Deny>指定用户的所有规则都将替换为指定的规则。  
+  
+ 如果没有规则的用户和<xref:System.Security.AccessControl.AccessControlType>匹配指定的规则， `rule`则添加。  
+  
+   
+  
+## Examples  
+ 下面的代码示例显示方法删除<xref:System.Security.AccessControl.RegistrySecurity.SetAccessRule%2A>与用户<xref:System.Security.AccessControl.AccessControlType>和的`rule`规则，同时忽略权限和标志，并将其替换为`rule`。  
+  
+ 该示例创建一个<xref:System.Security.AccessControl.RegistrySecurity>对象，并使用不同的继承和传播标志，为当前用户添加允许和拒绝各种权限的规则。 然后，该示例创建一个新规则，该规则允许当前用户只读取密钥，并使用<xref:System.Security.AccessControl.RegistrySecurity.SetAccessRule%2A>方法删除允许访问的两个规则，并将其替换为新规则。 拒绝访问的规则不受影响。  
+  
+> [!NOTE]
+>  此示例不会将安全对象附加到<xref:Microsoft.Win32.RegistryKey>对象。 请参见<xref:Microsoft.Win32.RegistryKey.SetAccessControl%2A?displayProperty=nameWithType>方法和方法。 <xref:Microsoft.Win32.RegistryKey.GetAccessControl%2A?displayProperty=nameWithType>  
+  
+ [!code-csharp[System.Security.AccessControl.RegistrySecurity.SetAccessRule#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.SetAccessRule/CS/source.cs#1)]
+ [!code-vb[System.Security.AccessControl.RegistrySecurity.SetAccessRule#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Security.AccessControl.RegistrySecurity.SetAccessRule/VB/source.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAuditRule">
+      <MemberSignature Language="C#" Value="public void SetAuditRule (System.Security.AccessControl.RegistryAuditRule rule);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAuditRule(class System.Security.AccessControl.RegistryAuditRule rule) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Security.AccessControl.RegistrySecurity.SetAuditRule(System.Security.AccessControl.RegistryAuditRule)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub SetAuditRule (rule As RegistryAuditRule)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void SetAuditRule(System::Security::AccessControl::RegistryAuditRule ^ rule);" />
+      <MemberSignature Language="F#" Value="override this.SetAuditRule : System.Security.AccessControl.RegistryAuditRule -&gt; unit" Usage="registrySecurity.SetAuditRule rule" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry.AccessControl</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.Registry</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rule" Type="System.Security.AccessControl.RegistryAuditRule" />
+      </Parameters>
+      <Docs>
+        <param name="rule">要添加的 <see cref="T:System.Security.AccessControl.RegistryAuditRule" />。 由此规则指定的用户确定在添加此规则之前要移除的规则。</param>
+        <summary>不论 <see cref="T:System.Security.AccessControl.AuditFlags" /> 的值如何，移除与指定的规则具有相同用户的所有审核规则，然后添加指定的规则。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果没有与指定规则匹配的审核规则， `rule`则会添加。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rule" /> 为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
