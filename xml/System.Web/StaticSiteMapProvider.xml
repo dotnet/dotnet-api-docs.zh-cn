@@ -1,0 +1,446 @@
+<Type Name="StaticSiteMapProvider" FullName="System.Web.StaticSiteMapProvider">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="24e8f91292a8774b0e64333231fd6d9ebd84efcd" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70452163" /></Metadata><TypeSignature Language="C#" Value="public abstract class StaticSiteMapProvider : System.Web.SiteMapProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit StaticSiteMapProvider extends System.Web.SiteMapProvider" />
+  <TypeSignature Language="DocId" Value="T:System.Web.StaticSiteMapProvider" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class StaticSiteMapProvider&#xA;Inherits SiteMapProvider" />
+  <TypeSignature Language="C++ CLI" Value="public ref class StaticSiteMapProvider abstract : System::Web::SiteMapProvider" />
+  <TypeSignature Language="F#" Value="type StaticSiteMapProvider = class&#xA;    inherit SiteMapProvider" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Web.SiteMapProvider</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>作为 <see cref="T:System.Web.SiteMapProvider" /> 抽象类的部分实现和 <see cref="T:System.Web.XmlSiteMapProvider" /> 类（它是 ASP.NET 中的默认站点地图提供程序）的基类。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A> <xref:System.Web.StaticSiteMapProvider.RemoveNode%2A> <xref:System.Web.StaticSiteMapProvider.AddNode%2A> <xref:System.Web.StaticSiteMapProvider.Clear%2A>类是抽象<xref:System.Web.SiteMapProvider>类的部分实现，提供两个附加方法：和，以及抽象方法和受保护的方法。 <xref:System.Web.StaticSiteMapProvider>  
+  
+ 类支持编写站点地图提供程序（例如<xref:System.Web.XmlSiteMapProvider>），将存储在持久性存储中的站点映射转换为存储在内存中的站点。 <xref:System.Web.StaticSiteMapProvider> 类提供用于存储和检索<xref:System.Web.SiteMapNode>对象的基本实现。 <xref:System.Web.StaticSiteMapProvider>  
+  
+ <xref:System.Web.SiteMapProvider> 和 <xref:System.Web.StaticSiteMapProvider> 类支持站点地图提供程序层次结构的概念，其中站点地图提供程序可与其他站点地图提供程序建立层次关系。 此模式是通过<xref:System.Web.SiteMapProvider.RootProvider%2A>和<xref:System.Web.SiteMapProvider.ParentProvider%2A>属性实现的。  
+  
+ 类<xref:System.Web.StaticSiteMapProvider>将其<xref:System.Web.SiteMapNode>对象存储在哈希表中，并<xref:System.Web.SiteMapNode.Url%2A?displayProperty=nameWithType>在内部使用页的属性（由站点地图节点表示）作为键。 （如果站点地图节点未指定 URL，则使用自动生成的唯一键跟踪该 URL。）因此，您不能具有站点地图节点，在此节点上，具有相同 URL 的网站地图节点会被多次使用。 例如，尝试加载下面的代码示例<xref:System.Web.XmlSiteMapProvider>中所示的站点地图节点，该类是默认的 ASP.NET 站点地图提供程序，或者任何派生<xref:System.Web.StaticSiteMapProvider>自类的站点地图提供程序都不起作用，因为多次使用 AboutUs 页。  
+  
+```  
+<sitemap>  
+  <sitemapnode title="Home" description="Home" url="default.aspx" >  
+    <sitemapnode title="Catalog" description="Our catalog" url="catalog.aspx"/>  
+    <sitemapnode title="About Us" description="All about our company" url="aboutus.aspx"/>  
+    <sitemapnode title="Driving Directions" description="Directions to our store" url="aboutus.aspx"/>  
+  </sitemapnode>  
+</sitemap>  
+```  
+  
+ 如果要扩展<xref:System.Web.StaticSiteMapProvider>类，这三个最重要的方法<xref:System.Web.SiteMapProvider.GetRootNodeCore%2A>是、 <xref:System.Configuration.Provider.ProviderBase.Initialize%2A>和<xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A>方法。 <xref:System.Web.StaticSiteMapProvider.Clear%2A> 和 <xref:System.Web.StaticSiteMapProvider.FindSiteMapNode%2A> 方法具有可满足大多数自定义站点地图提供程序实现的默认实现。  
+  
+ 调用<xref:System.Configuration.Provider.ProviderBase.Initialize%2A>方法以初始化派生的站点地图提供程序，包括加载站点地图数据所需的任何资源，但它确实尝试在内存中生成网站地图节点。 如果派生类使用文件来存储站点地图数据，则可以在此处执行任何文件初始化。 如果站点地图节点使用某种其他类型的数据存储（例如关系数据库），则可能会在此处执行初始化连接。 其他属性（如文件名）或放置在配置中的站点地图提供程序元素上的连接字符串由 ASP.NET 配置系统处理，并通过<xref:System.Configuration.Provider.ProviderBase.Initialize%2A> `attributes`参数传递给方法。  
+  
+ 必须由派生<xref:System.Web.StaticSiteMapProvider>自类的所有类重写方法，并调用以从持久性存储区加载站点地图节点并将其转换为内部表示形式。 <xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A> 方法在<xref:System.Web.StaticSiteMapProvider> 和 <xref:System.Web.XmlSiteMapProvider> 类的许多默认成员实现中进行内部调用。 <xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A> 如果实现自己的站点地图提供程序，请确保站点映射数据处理发生一次，并且对方法的<xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A>后续调用会立即返回，前提是已加载了站点地图信息。 实现<xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A>方法时，请确保它是线程安全的，因为多个并发页请求可能会在多个调用中间接导致加载站点地图信息。 站点地图基础结构支持基于用户的角色显示站点映射信息。 根据单个 <xref:System.Web.SiteMapNode> 对象支持的属性，不同的用户可能存在不同的导航结构。 <xref:System.Web.SiteMapNode.Roles%2A> 站点地图节点的默认实现检索<xref:System.Web.StaticSiteMapProvider>类的成员通过<xref:System.Web.SiteMapProvider.IsAccessibleToUser%2A>调用方法自动执行安全修整。  
+  
+ <xref:System.Web.StaticSiteMapProvider.AddNode%2A>、和方法 <xref:System.Web.StaticSiteMapProvider.RemoveNode%2A> 操作用于以线程安全方式跟踪站点地图节点的内部集合。 <xref:System.Web.StaticSiteMapProvider.Clear%2A>  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何将<xref:System.Web.StaticSiteMapProvider>类扩展为使用 Microsoft Access 作为站点地图提供程序。 `AccessSiteMapProvider`类是一个站点地图提供程序，仅支持一个简单的一级层次结构。 存储站点地图数据的表具有以下结构：  
+  
+```  
+NODEID URL            NAME       PARENTNODEID  
+ ---------------------------------------------  
+ 1      default.aspx   Default    <NULL>  
+ 2      catalog.aspx   Catalog    1  
+ 3      aboutus.aspx   Contact Us 1  
+...  
+```  
+  
+ 类从类派生，并使用<xref:System.Data.OleDb.OleDbCommand>基本的 SQL 查询和和<xref:System.Data.OleDb.OleDbDataReader>对象从 Microsoft Access 数据库中检索信息。 <xref:System.Web.StaticSiteMapProvider> `AccessSiteMapProvider`  
+  
+ [!code-cpp[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#1](~/samples/snippets/cpp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/CPP/accesssitemapprovider.cpp#1)]
+ [!code-csharp[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#1](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/CS/accesssitemapprovider.cs#1)]
+ [!code-vb[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/VB/accesssitemapprovider.vb#1)]  
+  
+ 最后， `AccessSiteMapProvider`将配置为以下 web.config 文件中的默认提供程序。  
+  
+```  
+<configuration>  
+  <system.web>  
+    <siteMap defaultProvider="AccessSiteMapProvider">  
+     <providers>  
+       <add   
+         name="AccessSiteMapProvider"  
+         type="Samples.AspNet.AccessSiteMapProvider,Samples.AspNet "  
+         accessSiteMapConnectionString="PROVIDER=MICROSOFT.JET.OLEDB.4.0;DATA SOURCE=sitemap.mdb "/>  
+     </providers>   
+    </siteMap>  
+  </system.web>  
+</configuration>  
+```  
+  
+ ]]></format>
+    </remarks>
+    <block subset="none" type="overrides"><para>从<see cref="T:System.Web.StaticSiteMapProvider" />类继承时，必须重写以下成员： <see cref="M:System.Web.StaticSiteMapProvider.BuildSiteMap" />。</para></block>
+    <altmember cref="T:System.Web.SiteMapProvider" />
+    <altmember cref="T:System.Web.XmlSiteMapProvider" />
+    <altmember cref="T:System.Web.SiteMapNode" />
+    <altmember cref="T:System.Web.SiteMap" />
+    <related type="Article" href="https://msdn.microsoft.com/library/23de8a05-cac3-4693-b508-39f1d4b7053d">ASP.NET 站点导航概述</related>
+    <related type="Article" href="https://msdn.microsoft.com/library/6b85a558-1df8-44cf-bea6-62e61bcc8d20">ASP.NET 网站地图</related>
+    <related type="Article" href="https://msdn.microsoft.com/library/4f3ce72a-4fa3-4c3a-94c8-3e2bc4a92d85">ASP.NET 站点导航提供程序</related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected StaticSiteMapProvider ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.StaticSiteMapProvider.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; StaticSiteMapProvider();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.Web.StaticSiteMapProvider" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ **注意**此类不是直接实例化的。 此构造函数是从<xref:System.Web.StaticSiteMapProvider>类派生的类的构造函数中调用的。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddNode">
+      <MemberSignature Language="C#" Value="protected internal override void AddNode (System.Web.SiteMapNode node, System.Web.SiteMapNode parentNode);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance void AddNode(class System.Web.SiteMapNode node, class System.Web.SiteMapNode parentNode) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.StaticSiteMapProvider.AddNode(System.Web.SiteMapNode,System.Web.SiteMapNode)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overrides Sub AddNode (node As SiteMapNode, parentNode As SiteMapNode)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; override void AddNode(System::Web::SiteMapNode ^ node, System::Web::SiteMapNode ^ parentNode);" />
+      <MemberSignature Language="F#" Value="override this.AddNode : System.Web.SiteMapNode * System.Web.SiteMapNode -&gt; unit" Usage="staticSiteMapProvider.AddNode (node, parentNode)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+        <Parameter Name="parentNode" Type="System.Web.SiteMapNode" />
+      </Parameters>
+      <Docs>
+        <param name="node">要添加到站点地图提供程序的 <see cref="T:System.Web.SiteMapNode" />。</param>
+        <param name="parentNode"><see cref="T:System.Web.SiteMapNode" />，将在它的下面添加 <paramref name="node" />。</param>
+        <summary>向站点地图提供程序维护的集合添加一个 <see cref="T:System.Web.SiteMapNode" />，并建立 <see cref="T:System.Web.SiteMapNode" /> 对象之间的父/子关系。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 由`node`参数标识的站点地图节点将添加到内部集合中，并在它与`parentNode`参数标识的站点地图节点之间创建父子关系。  
+  
+ 将站点地图节点添加到内部集合时，该 URL 可能会被解释。 应用程序相对 url 和相对 url 扩展到应用程序绝对虚拟路径，这些路径随后用于存储和访问<xref:System.Web.SiteMapNode>类的各个实例。 其他 Url （如物理路径、包含协议的路径和 UNC 路径）不会被解释。  
+  
+ 类派生<xref:System.Web.SiteMapNode.Url%2A>自类，并且是 ASP.NET 的默认站点地图提供程序，默认情况下，在其内部集合中<xref:System.Web.SiteMapNode>使用对象的属性作为查找键。 <xref:System.Web.StaticSiteMapProvider> <xref:System.Web.XmlSiteMapProvider> 如果设置了的<xref:System.Web.SiteMapNode> 属性，则它在站点地图提供程序的作用域内必须是唯一的。 <xref:System.Web.SiteMapNode.Url%2A> 方法尝试基于其<xref:System.Web.SiteMapNode.Url%2A>属性检索站点地图节点。 <xref:System.Web.StaticSiteMapProvider.FindSiteMapNode%2A> 否则，可以使用<xref:System.Web.SiteMapNode.Key%2A>属性和相应<xref:System.Web.StaticSiteMapProvider.FindSiteMapNodeFromKey%2A>的方法来检索站点地图节点。 如果未<xref:System.Web.SiteMapNode.Url%2A>指定<xref:System.Web.SiteMapNode.Key%2A>或，则站点地图提供程序将自动生成<xref:System.Web.SiteMapNode.Key%2A>以跟踪站点地图节点。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="node" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.InvalidOperationException"><see cref="P:System.Web.SiteMapNode.Url" /> 或 <see cref="P:System.Web.SiteMapNode.Key" /> 已经注册到 <see cref="T:System.Web.StaticSiteMapProvider" />。 站点地图节点必须由具有唯一 URL 或键的页构成。</exception>
+        <block subset="none" type="overrides"><para>重写<see cref="M:System.Web.StaticSiteMapProvider.AddNode(System.Web.SiteMapNode,System.Web.SiteMapNode)" />方法时，请确保<see cref="P:System.Web.SiteMapNode.Key" />在使用<see cref="Overload:System.Web.StaticSiteMapProvider.AddNode" />方法添加站点地图节点时，将属性设置为唯一值。</para></block>
+        <altmember cref="M:System.Web.StaticSiteMapProvider.RemoveNode(System.Web.SiteMapNode)" />
+      </Docs>
+    </Member>
+    <Member MemberName="BuildSiteMap">
+      <MemberSignature Language="C#" Value="public abstract System.Web.SiteMapNode BuildSiteMap ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Web.SiteMapNode BuildSiteMap() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.StaticSiteMapProvider.BuildSiteMap" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function BuildSiteMap () As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract System::Web::SiteMapNode ^ BuildSiteMap();" />
+      <MemberSignature Language="F#" Value="abstract member BuildSiteMap : unit -&gt; System.Web.SiteMapNode" Usage="staticSiteMapProvider.BuildSiteMap " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>在派生类中被重写时，从持久性存储区加载站点地图信息，并在内存中构建它。</summary>
+        <returns>站点地图导航结构的根 <see cref="T:System.Web.SiteMapNode" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法是<xref:System.Web.StaticSiteMapProvider>类的一个抽象成员。 <xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A> 调用<xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A>方法以从持久性存储区加载和生成站点地图节点。 实现<xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A>方法时，请确保它是线程安全的，因为多个并发页面请求可能会在多个调用中间接导致加载站点地图信息。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何实现<xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A>方法，以便从 Microsoft Access 数据库中检索数据，并生成<xref:System.Web.SiteMapNode>添加到<xref:System.Web.SiteMapNode.ChildNodes%2A>根站点地图节点的集合中的对象。 最后，将<xref:System.Web.SiteMapProvider.RootNode%2A>属性返回到调用方。  
+  
+ 此代码示例是为<xref:System.Web.StaticSiteMapProvider>类提供的更大示例的一部分。  
+  
+ [!code-cpp[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#4](~/samples/snippets/cpp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/CPP/accesssitemapprovider.cpp#4)]
+ [!code-csharp[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#4](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/CS/accesssitemapprovider.cs#4)]
+ [!code-vb[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#4](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/VB/accesssitemapprovider.vb#4)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>当在派生<see cref="M:System.Web.StaticSiteMapProvider.BuildSiteMap" />类中重写方法时，请确保规范化添加到站点地图<see cref="T:System.Web.SiteMapNode" />提供程序的对象的 url，以便该<see cref="M:System.Web.StaticSiteMapProvider.FindSiteMapNode(System.String)" />方法可以检索站点地图节点，而不管站点地图的 URL 是否将节点作为绝对虚拟路径或应用程序相对路径提供。 使用方法的<see cref="Overload:System.Web.StaticSiteMapProvider.AddNode" />站点地图提供程序实现者应该在代表站点地图提供<see cref="T:System.Web.SiteMapNode" />程序将对象存储到内部哈希表中之前规范化所有 url。  
+  
+安全修整行为包括在<see cref="T:System.Web.SiteMapProvider" />和<see cref="T:System.Web.StaticSiteMapProvider" />类实现中。 但是，若要使安全修整在派生类中正常工作，必须<see cref="P:System.Web.SiteMapNode.Roles" />在重写<see cref="T:System.Web.SiteMapNode" /> <see cref="M:System.Web.StaticSiteMapProvider.BuildSiteMap" />方法时，设置在生成站点地图提供程序时创建的任何对象的属性。</para></block>
+        <altmember cref="P:System.Web.SiteMapProvider.RootNode" />
+        <altmember cref="M:System.Configuration.Provider.ProviderBase.Initialize(System.String,System.Collections.Specialized.NameValueCollection)" />
+        <altmember cref="M:System.Web.StaticSiteMapProvider.Clear" />
+      </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="protected virtual void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Clear() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.StaticSiteMapProvider.Clear" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub Clear ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void Clear();" />
+      <MemberSignature Language="F#" Value="abstract member Clear : unit -&gt; unit&#xA;override this.Clear : unit -&gt; unit" Usage="staticSiteMapProvider.Clear " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>移除 <see cref="T:System.Web.StaticSiteMapProvider" /> 作为其状态的一部分来跟踪的父和子站点地图节点的集合中的所有元素。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从<xref:System.Web.StaticSiteMapProvider>类派生的类可以<xref:System.Web.StaticSiteMapProvider.Clear%2A>重写方法，以执行其他清理操作，具体取决于派生类维护的状态。  
+  
+ 方法不会重置在<xref:System.Configuration.Provider.ProviderBase.Initialize%2A>方法过程中初始化的状态-它仅重置在<xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A>方法中初始化的状态。 <xref:System.Web.StaticSiteMapProvider.Clear%2A>  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何重写<xref:System.Web.StaticSiteMapProvider.Clear%2A>方法以执行由类维护的状态的其他清理。  
+  
+ 此代码示例是为<xref:System.Web.StaticSiteMapProvider>类提供的更大示例的一部分。  
+  
+ [!code-cpp[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#3](~/samples/snippets/cpp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/CPP/accesssitemapprovider.cpp#3)]
+ [!code-csharp[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#3](~/samples/snippets/csharp/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/CS/accesssitemapprovider.cs#3)]
+ [!code-vb[Urtue.Samples.Alexkr.AccessSiteMapProvider_1#3](~/samples/snippets/visualbasic/VS_Snippets_WebNet/Urtue.Samples.Alexkr.AccessSiteMapProvider_1/VB/accesssitemapprovider.vb#3)]  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Configuration.Provider.ProviderBase.Initialize(System.String,System.Collections.Specialized.NameValueCollection)" />
+        <altmember cref="M:System.Web.StaticSiteMapProvider.BuildSiteMap" />
+      </Docs>
+    </Member>
+    <Member MemberName="FindSiteMapNode">
+      <MemberSignature Language="C#" Value="public override System.Web.SiteMapNode FindSiteMapNode (string rawUrl);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Web.SiteMapNode FindSiteMapNode(string rawUrl) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.StaticSiteMapProvider.FindSiteMapNode(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function FindSiteMapNode (rawUrl As String) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Web::SiteMapNode ^ FindSiteMapNode(System::String ^ rawUrl);" />
+      <MemberSignature Language="F#" Value="override this.FindSiteMapNode : string -&gt; System.Web.SiteMapNode" Usage="staticSiteMapProvider.FindSiteMapNode rawUrl" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rawUrl" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="rawUrl">标识要为其检索 <see cref="T:System.Web.SiteMapNode" /> 的页的 URL。</param>
+        <summary>检索表示位于指定 URL 处的页的 <see cref="T:System.Web.SiteMapNode" /> 对象。</summary>
+        <returns>表示 <paramref name="rawURL" /> 所标识的页的 <see cref="T:System.Web.SiteMapNode" />；如果没有找到对应的站点地图节点，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 提供的 URL 通常是虚拟 URL 或绝对 URL。 它还可以是使用 ASP.NET 的应用程序相对语法的 URL，例如`"~/apprelativedirectory"`。 <xref:System.Web.StaticSiteMapProvider>类会自动将应用程序相关的原始 url 规范化为绝对虚拟路径。  
+  
+ 从派生的<xref:System.Web.StaticSiteMapProvider> <xref:System.Web.SiteMapNode.Url%2A> <xref:System.Web.SiteMapNode>对象是 ASP.NET 的默认站点地图提供程序，默认情况下，它使用对象的属性作为其内部集合中的查找键。 <xref:System.Web.XmlSiteMapProvider> 如果设置了的<xref:System.Web.SiteMapNode> 属性，则它在站点地图提供程序的作用域内必须是唯一的。 <xref:System.Web.SiteMapNode.Url%2A> 方法尝试基于其<xref:System.Web.SiteMapNode.Url%2A>检索站点地图节点。 <xref:System.Web.StaticSiteMapProvider.FindSiteMapNode%2A> 否则，可以使用<xref:System.Web.SiteMapNode.Key%2A>属性和相应<xref:System.Web.StaticSiteMapProvider.FindSiteMapNodeFromKey%2A>的方法来检索站点地图节点。 如果未<xref:System.Web.SiteMapNode.Url%2A>指定<xref:System.Web.SiteMapNode.Key%2A>或，则站点地图提供程序将自动生成一个<xref:System.Web.SiteMapNode.Key%2A>用于跟踪站点地图节点的属性。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="rawURL" /> 为 <see langword="null" />。</exception>
+        <block subset="none" type="overrides"><para>当在派生<see cref="M:System.Web.StaticSiteMapProvider.FindSiteMapNode(System.String)" />类中重写方法时，请确保将您添加到站点地图<see cref="T:System.Web.SiteMapNode" />提供程序的对象的 url 规范化，以便该<see cref="M:System.Web.StaticSiteMapProvider.FindSiteMapNode(System.String)" />方法可以检索站点地图节点，而不管站点地图的 URL 是什么将节点作为绝对虚拟路径或应用程序相对路径提供。  
+  
+安全修整行为包括在<see cref="T:System.Web.SiteMapProvider" />和<see cref="T:System.Web.StaticSiteMapProvider" />类实现中。 但是，若要使安全修整在派生类中正常工作，必须<see cref="P:System.Web.SiteMapNode.Roles" />在重写<see cref="T:System.Web.SiteMapNode" /> <see cref="M:System.Web.StaticSiteMapProvider.BuildSiteMap" />方法时，设置在生成站点地图提供程序时创建的任何对象的属性。</para></block>
+        <altmember cref="M:System.Web.StaticSiteMapProvider.BuildSiteMap" />
+        <altmember cref="M:System.Web.StaticSiteMapProvider.FindSiteMapNodeFromKey(System.String)" />
+      </Docs>
+    </Member>
+    <Member MemberName="FindSiteMapNodeFromKey">
+      <MemberSignature Language="C#" Value="public override System.Web.SiteMapNode FindSiteMapNodeFromKey (string key);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Web.SiteMapNode FindSiteMapNodeFromKey(string key) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.StaticSiteMapProvider.FindSiteMapNodeFromKey(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function FindSiteMapNodeFromKey (key As String) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Web::SiteMapNode ^ FindSiteMapNodeFromKey(System::String ^ key);" />
+      <MemberSignature Language="F#" Value="override this.FindSiteMapNodeFromKey : string -&gt; System.Web.SiteMapNode" Usage="staticSiteMapProvider.FindSiteMapNodeFromKey key" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="key">用于创建 <see cref="T:System.Web.SiteMapNode" /> 的查找键。</param>
+        <summary>根据指定的键检索 <see cref="T:System.Web.SiteMapNode" /> 对象。</summary>
+        <returns>表示 <paramref name="key" /> 所标识的页的 <see cref="T:System.Web.SiteMapNode" />；如果启用了安全修整而不能向当前用户显示该站点地图节点，或者未在站点地图节点集合中按 <paramref name="key" /> 找到该站点地图节点，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法从内部<xref:System.Collections.Hashtable>对象检索基于`key`的站点地图节点。 <xref:System.Web.StaticSiteMapProvider.FindSiteMapNodeFromKey%2A>  
+  
+ 默认情况下， <xref:System.Web.StaticSiteMapProvider>从类派生的<xref:System.Web.SiteMapNode.Url%2A> <xref:System.Web.SiteMapNode> 对象是 ASP.NET 的默认站点地图提供程序，默认情况下，在其内部集合中使用对象的属性 <xref:System.Web.XmlSiteMapProvider> 作为查找键。 如果设置了的<xref:System.Web.SiteMapNode> 属性，则它在站点地图提供程序的作用域内必须是唯一的。 <xref:System.Web.SiteMapNode.Url%2A> 方法尝试基于其<xref:System.Web.SiteMapNode.Url%2A>检索站点地图节点。 <xref:System.Web.StaticSiteMapProvider.FindSiteMapNode%2A> 否则，可以使用<xref:System.Web.SiteMapNode.Key%2A>属性和相应<xref:System.Web.StaticSiteMapProvider.FindSiteMapNodeFromKey%2A>的方法来检索站点地图节点。  
+  
+ 具有一个默认实现，该实现基于`key`参数查找<xref:System.Web.SiteMapNode>类的实例。 <xref:System.Web.StaticSiteMapProvider> 如果站点地图提供程序实施者使用了<xref:System.Web.StaticSiteMapProvider.AddNode%2A>方法，则<xref:System.Web.StaticSiteMapProvider>已根据<xref:System.Web.SiteMapNode.Key%2A?displayProperty=nameWithType>属性的值将引用存储<xref:System.Web.SiteMapNode>到每个。 默认情况下， <xref:System.Web.XmlSiteMapProvider>为不<xref:System.Web.SiteMapNode.Url%2A?displayProperty=nameWithType>具有属性值的<xref:System.Web.SiteMapNode>类的实例生成 guid。  自定义站点地图提供程序实现者必须提供自己的机制，以便在<xref:System.Web.SiteMapNode.Key%2A?displayProperty=nameWithType> <xref:System.Web.SiteMapNode>类的实例不<xref:System.Web.SiteMapNode.Url%2A?displayProperty=nameWithType>具有属性值的事件中生成属性的唯一值。  
+  
+ 和类是 ASP.NET 的默认站点地图提供程序实现，它<xref:System.Web.SiteMapNode>使用对象的 URL 作为类维护的各种集合中的键。 <xref:System.Web.XmlSiteMapProvider> <xref:System.Web.SiteMapProvider>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="Overload:System.Web.StaticSiteMapProvider.FindSiteMapNode" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetChildNodes">
+      <MemberSignature Language="C#" Value="public override System.Web.SiteMapNodeCollection GetChildNodes (System.Web.SiteMapNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Web.SiteMapNodeCollection GetChildNodes(class System.Web.SiteMapNode node) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.StaticSiteMapProvider.GetChildNodes(System.Web.SiteMapNode)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetChildNodes (node As SiteMapNode) As SiteMapNodeCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Web::SiteMapNodeCollection ^ GetChildNodes(System::Web::SiteMapNode ^ node);" />
+      <MemberSignature Language="F#" Value="override this.GetChildNodes : System.Web.SiteMapNode -&gt; System.Web.SiteMapNodeCollection" Usage="staticSiteMapProvider.GetChildNodes node" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNodeCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+      </Parameters>
+      <Docs>
+        <param name="node">要检索其全部子站点地图节点的 <see cref="T:System.Web.SiteMapNode" />。</param>
+        <summary>检索特定 <see cref="T:System.Web.SiteMapNode" /> 对象的子站点地图节点。</summary>
+        <returns>包含 <paramref name="node" /> 的子站点地图节点的只读 <see cref="T:System.Web.SiteMapNodeCollection" />。 如果启用了安全修整，则该集合仅包含允许用户查看的站点地图节点。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.SiteMapNode>对象委托给站点地图提供程序，以跟踪其子和父站点地图节点。 因此，实现分层站点地图结构的站点地图提供程序的类（如<xref:System.Web.StaticSiteMapProvider>）和使用<xref:System.Web.SiteMapNode>对象来表示站点地图节点，必须跟踪所有站点地图节点的层次结构关系，才能导航整个层次结构树。  
+  
+ 方法在内部<xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A>调用方法<xref:System.Web.SiteMapNodeCollection>以检索相对于指定站点地图节点并与当前用户相关的网站地图节点的只读集合。 <xref:System.Web.StaticSiteMapProvider.GetChildNodes%2A>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="node" /> 为 <see langword="null" />。</exception>
+        <altmember cref="M:System.Web.SiteMapProvider.IsAccessibleToUser(System.Web.HttpContext,System.Web.SiteMapNode)" />
+      </Docs>
+    </Member>
+    <Member MemberName="GetParentNode">
+      <MemberSignature Language="C#" Value="public override System.Web.SiteMapNode GetParentNode (System.Web.SiteMapNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Web.SiteMapNode GetParentNode(class System.Web.SiteMapNode node) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.StaticSiteMapProvider.GetParentNode(System.Web.SiteMapNode)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function GetParentNode (node As SiteMapNode) As SiteMapNode" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Web::SiteMapNode ^ GetParentNode(System::Web::SiteMapNode ^ node);" />
+      <MemberSignature Language="F#" Value="override this.GetParentNode : System.Web.SiteMapNode -&gt; System.Web.SiteMapNode" Usage="staticSiteMapProvider.GetParentNode node" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.SiteMapNode</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+      </Parameters>
+      <Docs>
+        <param name="node">要检索其父站点地图节点的 <see cref="T:System.Web.SiteMapNode" />。</param>
+        <summary>检索特定 <see cref="T:System.Web.SiteMapNode" /> 对象的父站点地图节点。</summary>
+        <returns>表示指定 <see cref="T:System.Web.SiteMapNode" /> 的父级的 <see cref="T:System.Web.SiteMapNode" />；如果不存在父站点地图节点，或者不允许用户查看父站点地图节点，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Web.SiteMapNode>对象委托给站点地图提供程序，以跟踪其子和父站点地图节点。 因此，实现层次结构站点地图结构的站点地图提供程序的类（如<xref:System.Web.StaticSiteMapProvider>类）和使用<xref:System.Web.SiteMapNode>对象来表示站点地图节点，必须跟踪所有站点地图节点的层次结构关系，才能能够导航整个层次结构树。  
+  
+ 如果找不到<xref:System.Web.StaticSiteMapProvider> <xref:System.Web.SiteMapProvider.ParentProvider%2A>属性，类将检测当前站点地图提供程序是否具有属性。 <xref:System.Web.SiteMapNode.ParentNode%2A> 如果是这样，则站点地图提供程序将<xref:System.Web.StaticSiteMapProvider.GetParentNode%2A>调用父站点地图提供程序的属性。 这样就可以实现以下方案：站点地图节点的父站点地图节点由不同的站点地图提供程序维护。  
+  
+ 方法在内部<xref:System.Web.StaticSiteMapProvider.BuildSiteMap%2A> 调用 <xref:System.Web.SiteMapNode> 方法以检索表示指定站点地图节点的父节点的。 <xref:System.Web.StaticSiteMapProvider.GetParentNode%2A> 如果启用了安全修整，则仅当允许用户查看该节点时，才返回该站点地图节点。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="node" /> 为 <see langword="null" />。</exception>
+        <altmember cref="M:System.Web.SiteMapProvider.IsAccessibleToUser(System.Web.HttpContext,System.Web.SiteMapNode)" />
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveNode">
+      <MemberSignature Language="C#" Value="protected internal override void RemoveNode (System.Web.SiteMapNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance void RemoveNode(class System.Web.SiteMapNode node) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.StaticSiteMapProvider.RemoveNode(System.Web.SiteMapNode)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overrides Sub RemoveNode (node As SiteMapNode)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; override void RemoveNode(System::Web::SiteMapNode ^ node);" />
+      <MemberSignature Language="F#" Value="override this.RemoveNode : System.Web.SiteMapNode -&gt; unit" Usage="staticSiteMapProvider.RemoveNode node" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="node" Type="System.Web.SiteMapNode" />
+      </Parameters>
+      <Docs>
+        <param name="node">要从站点地图节点集合中移除的站点地图节点。</param>
+        <summary>从站点地图提供程序跟踪的所有站点地图节点集合中移除指定的 <see cref="T:System.Web.SiteMapNode" /> 对象。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="node" /> 为 <see langword="null" />。</exception>
+        <altmember cref="Overload:System.Web.StaticSiteMapProvider.AddNode" />
+      </Docs>
+    </Member>
+  </Members>
+</Type>

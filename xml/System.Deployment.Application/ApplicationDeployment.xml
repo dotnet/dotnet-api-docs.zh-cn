@@ -1,0 +1,1287 @@
+<Type Name="ApplicationDeployment" FullName="System.Deployment.Application.ApplicationDeployment">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="8379c73e9a877ea2f6ccf2cdb8d66be6232d250e" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70552588" /></Metadata><TypeSignature Language="C#" Value="public sealed class ApplicationDeployment" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ApplicationDeployment extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Deployment.Application.ApplicationDeployment" />
+  <TypeSignature Language="VB.NET" Value="Public NotInheritable Class ApplicationDeployment" />
+  <TypeSignature Language="C++ CLI" Value="public ref class ApplicationDeployment sealed" />
+  <TypeSignature Language="F#" Value="type ApplicationDeployment = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Deployment</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>支持以编程方式更新当前部署，以及处理文件的按需下载。 此类不能被继承。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 你可以将[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]应用程序配置为检查更新，并`subscription`通过部署清单的元素自动安装更新。 但是，某些应用程序需要更好地控制其更新。 你可能想要以编程方式安装所需的更新，并在方便时提示用户安装可选更新。 通过关闭部署清单中的订阅更新，可以完全控制应用程序的更新策略。 或者，你可以将自动订阅与<xref:System.Deployment.Application.ApplicationDeployment>结合使用，后者允许[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]定期更新<xref:System.Deployment.Application.ApplicationDeployment>应用程序，但会在发布重要更新后立即下载这些更新。  
+  
+ 您可以使用<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdate%2A> <xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync%2A>或方法测试您的部署是否具有可用的更新; 后一种方法会在成功完成<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted>时引发事件。 <xref:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate%2A>返回有关更新的重要信息，例如更新的版本号以及当前用户是否需要更新。 如果有可用的更新，则可以使用<xref:System.Deployment.Application.ApplicationDeployment.Update%2A>或<xref:System.Deployment.Application.ApplicationDeployment.UpdateAsync%2A>安装它; 后一种方法会在<xref:System.Deployment.Application.ApplicationDeployment.UpdateCompleted>更新安装完成后引发事件。 对于较大的更新，可以通过<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateProgressChanged>和<xref:System.Deployment.Application.ApplicationDeployment.UpdateProgressChanged>事件接收进度通知，并使用中<xref:System.ComponentModel.ProgressChangedEventArgs>的信息通知用户下载状态。  
+  
+ 你还可以使用<xref:System.Deployment.Application.ApplicationDeployment>按需下载大型文件和程序集。 必须在部署的应用程序清单中将这些文件标记为 "可选"，以便在安装过程中不会下载这些文件。 可以通过使用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup%2A> <xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync%2A>或方法在应用程序持续时间内随时下载文件。 通过为<xref:System.AppDomain.AssemblyResolve> <xref:System.AppDomain>类的事件提供事件处理程序，可以在将程序集加载到内存中之前下载程序集。 有关详细信息，请参阅[演练：在设计器中使用 ClickOnce 部署 API 按需下载程序集](https://msdn.microsoft.com/library/59a0dd5f-1cab-4f2f-b780-0ab7399905d5)。  
+  
+> [!NOTE]
+>  如果在应用程序[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]运行时更新应用程序，则在<xref:System.Windows.Forms.Application.Restart%2A>调用的方法<xref:System.Windows.Forms.Application>之前，用户将看不到更新，这会关闭当前正在运行的应用程序实例并立即重新启动以便.  
+  
+ <xref:System.Deployment.Application.ApplicationDeployment>没有公共构造函数;您可以[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] <xref:System.Deployment.Application.ApplicationDeployment.CurrentDeployment%2A>通过属性获取应用程序中的类的实例。 使用<xref:System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed%2A>属性来验证当前应用程序[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]是否是应用程序。  
+  
+ <xref:System.Deployment.Application.ApplicationDeployment>支持通过使用新的[基于事件的异步模式概述](~/docs/standard/asynchronous-programming-patterns/event-based-asynchronous-pattern-overview.md)（公开完成回调作为类事件），以异步方式检查更新和下载更新文件。 <xref:System.Deployment.Application.ApplicationDeployment>启动并管理线程，并向正确的 UI 线程返回应用程序。 通过此类，可以在不锁定应用程序的情况下进行更新，以便用户可以在更新安装过程中继续工作。 如果用户必须在发生更新时停止所有工作，请考虑改用同步方法。  
+  
+> [!NOTE]
+>  执行异步更新要求你的<xref:System.Deployment.Application>应用程序同时导入和<xref:System.ComponentModel>命名空间。  
+  
+   
+  
+## Examples  
+ 下面的代码示例在应用程序加载时确定是否有新的更新可用;如果有必需的更新，则代码示例会以异步方式安装更新。 应将此代码添加到包含<xref:System.Windows.Forms.TextBox>已命名`downloadStatus`的的窗体中。  
+  
+ [!code-cpp[ClickOnceAPI#1](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#1)]
+ [!code-csharp[ClickOnceAPI#1](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#1)]
+ [!code-vb[ClickOnceAPI#1](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <related type="Article" href="https://msdn.microsoft.com/library/59a0dd5f-1cab-4f2f-b780-0ab7399905d5">演练：在设计器中使用 ClickOnce 部署 API 按需下载程序集</related>
+  </Docs>
+  <Members>
+    <Member MemberName="ActivationUri">
+      <MemberSignature Language="C#" Value="public Uri ActivationUri { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri ActivationUri" />
+      <MemberSignature Language="DocId" Value="P:System.Deployment.Application.ApplicationDeployment.ActivationUri" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property ActivationUri As Uri" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property Uri ^ ActivationUri { Uri ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.ActivationUri : Uri" Usage="System.Deployment.Application.ApplicationDeployment.ActivationUri" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取用于启动应用程序的部署清单的 URL。</summary>
+        <value>如果部署清单中的<c>TrustUrlParameters</c>属性为<see langword="false" />，则为零长度字符串; 或者，如果用户已提供 UNC 来打开部署或已在本地打开它，则为零长度字符串。 否则，返回值为用于启动应用程序的完整 URL（包含所有参数）。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性可在完全信任和部分信任的应用程序中使用。  
+  
+   
+  
+## Examples  
+ 下面的代码演示如何使用<xref:System.Deployment.Application.ApplicationDeployment.ActivationUri%2A>检索 URL 参数，以及如何<xref:System.Web.HttpUtility>使用类来安全地分析查询字符串。 在返回<xref:System.Collections.Specialized.NameValueCollection>的的一项中合并了同一查询字符串变量的多个匹配项。  
+  
+ [!code-csharp[ClickOnceQueryString#1](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceQueryString/CS/Form1.cs#1)]
+ [!code-vb[ClickOnceQueryString#1](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceQueryString/VB/Form1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="CheckForDetailedUpdate">
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>执行与 <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate" /> 相同的操作，但返回有关可用更新的扩展信息。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="CheckForDetailedUpdate">
+      <MemberSignature Language="C#" Value="public System.Deployment.Application.UpdateCheckInfo CheckForDetailedUpdate ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Deployment.Application.UpdateCheckInfo CheckForDetailedUpdate() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate" />
+      <MemberSignature Language="VB.NET" Value="Public Function CheckForDetailedUpdate () As UpdateCheckInfo" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Deployment::Application::UpdateCheckInfo ^ CheckForDetailedUpdate();" />
+      <MemberSignature Language="F#" Value="member this.CheckForDetailedUpdate : unit -&gt; System.Deployment.Application.UpdateCheckInfo" Usage="applicationDeployment.CheckForDetailedUpdate " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Deployment.Application.UpdateCheckInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>执行与 <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate" /> 相同的操作，但返回有关可用更新的扩展信息。</summary>
+        <returns>可用更新的 <see cref="T:System.Deployment.Application.UpdateCheckInfo" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用方法，同步调用方可以获取异步调用方使用类获取的相同扩展信息。 <xref:System.Deployment.Application.CheckForUpdateCompletedEventArgs>  <xref:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate%2A>  
+  
+   
+  
+## Examples  
+ 下面的代码示例使用<xref:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate%2A>检索有关最新更新的信息。 如果更新存在，则它仅在需要更新时才会自动安装;否则，系统将提示用户。  
+  
+ [!code-cpp[ClickOnceAPI#7](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#7)]
+ [!code-csharp[ClickOnceAPI#7](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#7)]
+ [!code-vb[ClickOnceAPI#7](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#7)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前应用程序未被配置为支持更新，或是已存在另一个已在进行中的更新检查操作。</exception>
+        <exception cref="T:System.Deployment.Application.DeploymentDownloadException">无法下载部署清单。 此异常将显示在 <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> 事件的 <see cref="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted" /> 属性中。</exception>
+        <exception cref="T:System.Deployment.Application.InvalidDeploymentException">部署清单已损坏。 在尝试为用户部署此应用程序前，请重新生成应用程序的清单。 此异常将显示在 <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> 事件的 <see cref="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted" /> 属性中。</exception>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联枚举：<see cref="T:System.Security.Permissions.PermissionState" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="CheckForDetailedUpdate">
+      <MemberSignature Language="C#" Value="public System.Deployment.Application.UpdateCheckInfo CheckForDetailedUpdate (bool persistUpdateCheckResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Deployment.Application.UpdateCheckInfo CheckForDetailedUpdate(bool persistUpdateCheckResult) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Function CheckForDetailedUpdate (persistUpdateCheckResult As Boolean) As UpdateCheckInfo" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Deployment::Application::UpdateCheckInfo ^ CheckForDetailedUpdate(bool persistUpdateCheckResult);" />
+      <MemberSignature Language="F#" Value="member this.CheckForDetailedUpdate : bool -&gt; System.Deployment.Application.UpdateCheckInfo" Usage="applicationDeployment.CheckForDetailedUpdate persistUpdateCheckResult" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Deployment.Application.UpdateCheckInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="persistUpdateCheckResult" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="persistUpdateCheckResult">如果为 <see langword="false" />，将以静默方式应用该更新，且不会显示任何对话框。</param>
+        <summary>执行与 <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate" /> 相同的操作，但返回有关可用更新的扩展信息。</summary>
+        <returns>可用更新的 <see cref="T:System.Deployment.Application.UpdateCheckInfo" />。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="CheckForUpdate">
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>检查 <see cref="P:System.Deployment.Application.ApplicationDeployment.UpdateLocation" /> 以确定是否有新的更新可用。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="CheckForUpdate">
+      <MemberSignature Language="C#" Value="public bool CheckForUpdate ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CheckForUpdate() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate" />
+      <MemberSignature Language="VB.NET" Value="Public Function CheckForUpdate () As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool CheckForUpdate();" />
+      <MemberSignature Language="F#" Value="member this.CheckForUpdate : unit -&gt; bool" Usage="applicationDeployment.CheckForUpdate " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>检查 <see cref="P:System.Deployment.Application.ApplicationDeployment.UpdateLocation" /> 以确定是否有新的更新可用。</summary>
+        <returns>如果有新的更新可用，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法将当前安装的部署版本与在中<xref:System.Deployment.Application.ApplicationDeployment.UpdateLocation%2A>找到的部署清单中指定的版本进行比较。 <xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdate%2A> 如果服务器上的版本不同于已安装的版本，它将返回`true`。  
+  
+ 此方法将被阻止，直到完成检查。 若要以异步方式检查更新，请<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync%2A>改用方法。  
+  
+> [!NOTE]
+>  如果<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdate%2A>发现更新可用且用户选择不安装， [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]则在下次运行应用程序时，将提示用户提供更新。 无法禁用此提示。 （如果应用程序是必需的更新， [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]则会在不提示的情况下安装它。）  
+  
+   
+  
+## Examples  
+ 下面的代码示例检查应用程序更新;如果有一个可用，则它会同步安装。  
+  
+ [!code-cpp[ClickOnceAPI#5](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#5)]
+ [!code-csharp[ClickOnceAPI#5](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#5)]
+ [!code-vb[ClickOnceAPI#5](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#5)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">如果更新已在进行中，而这时又调用 <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate" /> 方法，那么 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 会立即引发此异常。</exception>
+        <exception cref="T:System.Deployment.Application.DeploymentDownloadException">无法下载部署清单。</exception>
+        <exception cref="T:System.Deployment.Application.InvalidDeploymentException">部署清单已损坏。 您可能需要重新部署应用程序才能修复此问题。</exception>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联枚举：<see cref="T:System.Security.Permissions.PermissionState" />。</permission>
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync" />
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate" />
+      </Docs>
+    </Member>
+    <Member MemberName="CheckForUpdate">
+      <MemberSignature Language="C#" Value="public bool CheckForUpdate (bool persistUpdateCheckResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool CheckForUpdate(bool persistUpdateCheckResult) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Function CheckForUpdate (persistUpdateCheckResult As Boolean) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool CheckForUpdate(bool persistUpdateCheckResult);" />
+      <MemberSignature Language="F#" Value="member this.CheckForUpdate : bool -&gt; bool" Usage="applicationDeployment.CheckForUpdate persistUpdateCheckResult" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="persistUpdateCheckResult" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="persistUpdateCheckResult">如果为 <see langword="false" />，将以静默方式应用该更新，且不会显示任何对话框。</param>
+        <summary>检查 <see cref="P:System.Deployment.Application.ApplicationDeployment.UpdateLocation" /> 以确定是否有新的更新可用。</summary>
+        <returns>如果有新的更新可用，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CheckForUpdateAsync">
+      <MemberSignature Language="C#" Value="public void CheckForUpdateAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CheckForUpdateAsync() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync" />
+      <MemberSignature Language="VB.NET" Value="Public Sub CheckForUpdateAsync ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void CheckForUpdateAsync();" />
+      <MemberSignature Language="F#" Value="member this.CheckForUpdateAsync : unit -&gt; unit" Usage="applicationDeployment.CheckForUpdateAsync " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>异步检查 <see cref="P:System.Deployment.Application.ApplicationDeployment.UpdateLocation" /> 以确定是否有新的更新可用。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync%2A>立即返回并启动一个单独的线程，用于下载更新后的应用程序。 当方法完成或取消时，它会引发<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted>事件。 您可以在<xref:System.ComponentModel.AsyncCompletedEventArgs>此事件处理程序中使用来确定操作是否已取消，或者是否在更新过程中引发了异常。  
+  
+ 可以通过调用<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsyncCancel%2A>取消异步更新。  
+  
+> [!NOTE]
+>  如果<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdate%2A>发现更新可用且用户选择不安装， [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]则在下次运行应用程序时，将提示用户提供更新。 无法禁用此提示。 （如果应用程序是必需的更新， [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]则会在不提示的情况下安装它。）  
+  
+   
+  
+## Examples  
+ 下面的示例以异步方式检查更新，并安装更新（如果存在）。  
+  
+ [!code-cpp[ClickOnceAPI#1](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#1)]
+ [!code-csharp[ClickOnceAPI#1](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#1)]
+ [!code-vb[ClickOnceAPI#1](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">如果更新已在进行中，而这时又调用 <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync" /> 方法，那么 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 会立即引发此异常。</exception>
+        <exception cref="T:System.Deployment.Application.DeploymentDownloadException">无法下载部署清单。 此异常出现在 <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> 事件的 <see cref="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted" /> 属性中。</exception>
+        <exception cref="T:System.Deployment.Application.InvalidDeploymentException">部署清单已损坏。 您可能需要重新部署应用程序才能修复此问题。 此异常出现在 <see cref="P:System.ComponentModel.AsyncCompletedEventArgs.Error" /> 事件的 <see cref="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted" /> 属性中。</exception>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联枚举：<see cref="T:System.Security.Permissions.PermissionState" />。</permission>
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate" />
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate" />
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsyncCancel" />
+      </Docs>
+    </Member>
+    <Member MemberName="CheckForUpdateAsyncCancel">
+      <MemberSignature Language="C#" Value="public void CheckForUpdateAsyncCancel ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CheckForUpdateAsyncCancel() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsyncCancel" />
+      <MemberSignature Language="VB.NET" Value="Public Sub CheckForUpdateAsyncCancel ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void CheckForUpdateAsyncCancel();" />
+      <MemberSignature Language="F#" Value="member this.CheckForUpdateAsyncCancel : unit -&gt; unit" Usage="applicationDeployment.CheckForUpdateAsyncCancel " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>取消异步更新检查。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用此方法可取消使用<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync%2A>方法启动的更新检查。  
+  
+ 此方法不会取消任何可能正在进行的后台更新，如作为订阅的一部分启动的更新。 有关订阅的详细信息，请参阅[选择 ClickOnce 更新策略](https://msdn.microsoft.com/library/d8b6e7bb-4ea0-47f3-91cd-48580bdceccc)。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CheckForUpdateCompleted">
+      <MemberSignature Language="C#" Value="public event System.Deployment.Application.CheckForUpdateCompletedEventHandler CheckForUpdateCompleted;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Deployment.Application.CheckForUpdateCompletedEventHandler CheckForUpdateCompleted" />
+      <MemberSignature Language="DocId" Value="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event CheckForUpdateCompleted As CheckForUpdateCompletedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event System::Deployment::Application::CheckForUpdateCompletedEventHandler ^ CheckForUpdateCompleted;" />
+      <MemberSignature Language="F#" Value="member this.CheckForUpdateCompleted : System.Deployment.Application.CheckForUpdateCompletedEventHandler " Usage="member this.CheckForUpdateCompleted : System.Deployment.Application.CheckForUpdateCompletedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Deployment.Application.CheckForUpdateCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>在 <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync" /> 完成时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Deployment.Application.CheckForUpdateCompletedEventArgs>类将告诉你，更新的版本、更新的大小以及可用更新是必需的还是可选的。  
+  
+   
+  
+## Examples  
+ 下面的代码示例使用<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted>来确定是否要求用户安装可用的应用程序更新。 如果更新是必需升级，则<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateCompleted>事件处理程序不会提示用户。 该示例要求你部署一个包含<xref:System.Windows.Forms.StatusStrip>控件的 Windows 窗体应用程序，并且此控件包含一个<xref:System.Windows.Forms.ToolStripStatusLabel>名为`downloadStatus`的控件。  
+  
+ [!code-cpp[ClickOnceAPI#1](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#1)]
+ [!code-csharp[ClickOnceAPI#1](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#1)]
+ [!code-vb[ClickOnceAPI#1](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CheckForUpdateProgressChanged">
+      <MemberSignature Language="C#" Value="public event System.Deployment.Application.DeploymentProgressChangedEventHandler CheckForUpdateProgressChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Deployment.Application.DeploymentProgressChangedEventHandler CheckForUpdateProgressChanged" />
+      <MemberSignature Language="DocId" Value="E:System.Deployment.Application.ApplicationDeployment.CheckForUpdateProgressChanged" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event CheckForUpdateProgressChanged As DeploymentProgressChangedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event System::Deployment::Application::DeploymentProgressChangedEventHandler ^ CheckForUpdateProgressChanged;" />
+      <MemberSignature Language="F#" Value="member this.CheckForUpdateProgressChanged : System.Deployment.Application.DeploymentProgressChangedEventHandler " Usage="member this.CheckForUpdateProgressChanged : System.Deployment.Application.DeploymentProgressChangedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Deployment.Application.DeploymentProgressChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>在调用 <see cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync" /> 时存在可用的进度更新的情况下发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateProgressChanged>报告应用程序的部署清单的下载状态。 对于在慢速网络连接上下载部署的用户而言，这可能是一项重要的信息。  
+  
+   
+  
+## Examples  
+ 下面的代码示例使用<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateProgressChanged>事件来通知用户要下载多少部署清单。 该示例要求你部署一个包含<xref:System.Windows.Forms.StatusStrip>控件的 Windows 窗体应用程序，并且此控件包含一个<xref:System.Windows.Forms.ToolStripStatusLabel>名为`downloadStatus`的控件。 
+  
+ [!code-cpp[ClickOnceAPI#1](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#1)]
+ [!code-csharp[ClickOnceAPI#1](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#1)]
+ [!code-vb[ClickOnceAPI#1](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentDeployment">
+      <MemberSignature Language="C#" Value="public static System.Deployment.Application.ApplicationDeployment CurrentDeployment { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Deployment.Application.ApplicationDeployment CurrentDeployment" />
+      <MemberSignature Language="DocId" Value="P:System.Deployment.Application.ApplicationDeployment.CurrentDeployment" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly Property CurrentDeployment As ApplicationDeployment" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property System::Deployment::Application::ApplicationDeployment ^ CurrentDeployment { System::Deployment::Application::ApplicationDeployment ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.CurrentDeployment : System.Deployment.Application.ApplicationDeployment" Usage="System.Deployment.Application.ApplicationDeployment.CurrentDeployment" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Deployment.Application.ApplicationDeployment</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>返回此部署的当前 <see cref="T:System.Deployment.Application.ApplicationDeployment" />。</summary>
+        <value>当前部署。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 你不能直接在<xref:System.Deployment.Application.ApplicationDeployment>应用程序中创建的实例; 你必须<xref:System.Deployment.Application.ApplicationDeployment.CurrentDeployment%2A>通过属性检索有效的实例。  
+  
+ 静态属性只能从使用[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]部署的应用程序内部有效。 <xref:System.Deployment.Application.ApplicationDeployment.CurrentDeployment%2A> 尝试从非[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]应用程序调用此属性将引发异常。 如果你正在开发的应用程序可能使用或不使用[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]进行部署，请<xref:System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed%2A>使用属性来测试当前程序是否是[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]应用程序。  
+  
+   
+  
+## Examples  
+ 下面的代码示例检索<xref:System.Deployment.Application.ApplicationDeployment.CurrentDeployment%2A>并检查以确定是否已在过去三天内更新应用程序。  
+  
+ [!code-cpp[ClickOnceAPI#3](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#3)]
+ [!code-csharp[ClickOnceAPI#3](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#3)]
+ [!code-vb[ClickOnceAPI#3](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#3)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Deployment.Application.InvalidDeploymentException">尝试从非 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 应用程序调用此静态属性。</exception>
+        <altmember cref="P:System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed" />
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentVersion">
+      <MemberSignature Language="C#" Value="public Version CurrentVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Version CurrentVersion" />
+      <MemberSignature Language="DocId" Value="P:System.Deployment.Application.ApplicationDeployment.CurrentVersion" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property CurrentVersion As Version" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property Version ^ CurrentVersion { Version ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.CurrentVersion : Version" Usage="System.Deployment.Application.ApplicationDeployment.CurrentVersion" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Version</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取当前正在运行的应用程序实例的部署版本。</summary>
+        <value>当前的部署版本。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Deployment.Application.ApplicationDeployment.CurrentVersion%2A><xref:System.Deployment.Application.ApplicationDeployment.UpdatedVersion%2A>如果已安装新的更新，但尚未调用<xref:System.Windows.Forms.Application.Restart%2A>，则与不同。 如果将部署清单配置为执行自动更新，可以比较这两个值，以确定是否应重新启动应用程序。  
+  
+   
+  
+## Examples  
+ 下面的代码示例定义了一个方法，该[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]方法确定是否已更新了应用程序。  
+  
+ [!code-cpp[ClickOnceAPI#3](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#3)]
+ [!code-csharp[ClickOnceAPI#3](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#3)]
+ [!code-vb[ClickOnceAPI#3](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#3)]  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联枚举：<see cref="T:System.Security.Permissions.PermissionState" />。</permission>
+        <altmember cref="P:System.Deployment.Application.ApplicationDeployment.UpdatedVersion" />
+      </Docs>
+    </Member>
+    <Member MemberName="DataDirectory">
+      <MemberSignature Language="C#" Value="public string DataDirectory { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DataDirectory" />
+      <MemberSignature Language="DocId" Value="P:System.Deployment.Application.ApplicationDeployment.DataDirectory" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property DataDirectory As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ DataDirectory { System::String ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.DataDirectory : string" Usage="System.Deployment.Application.ApplicationDeployment.DataDirectory" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 数据目录的路径。</summary>
+        <value>一个字符串，它包含应用程序的数据目录在本地磁盘上的路径。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadFileGroup">
+      <MemberSignature Language="C#" Value="public void DownloadFileGroup (string groupName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DownloadFileGroup(string groupName) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub DownloadFileGroup (groupName As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void DownloadFileGroup(System::String ^ groupName);" />
+      <MemberSignature Language="F#" Value="member this.DownloadFileGroup : string -&gt; unit" Usage="applicationDeployment.DownloadFileGroup groupName" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="groupName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="groupName">要下载的已命名文件组。 在 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 应用程序中，标记为“可选”的所有文件均需具备组名称。</param>
+        <summary>根据需要下载一组可选文件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]在应用程序中，应用程序清单中标记为 "可选" 的文件在初始化或更新过程中不会下载。 你可以使用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup%2A>方法来按需下载属于命名组的所有文件，以便在你确定用户需要它们之前，不会消耗网络资源和磁盘空间。 例如，某些用户可能需要每天使用您的应用程序中包含的数据分析包，而其他用户则可能永远不会调用它。  
+  
+ 若要使用已下载的<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup%2A>程序集，请将事件侦听器附加到上<xref:System.AppDomain.AssemblyResolve> <xref:System.AppDomain.CurrentDomain%2A>的事件。 有关示例，请参阅 "[演练：使用设计器使用 ClickOnce 部署 API 按需下载程序集](https://msdn.microsoft.com/library/59a0dd5f-1cab-4f2f-b780-0ab7399905d5)"。  
+  
+ 所有文件都下载到[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]应用程序缓存中，因此与当前版本的应用程序隔离。 假设应用程序下载文件组后，用户会安装新版本的应用程序，但稍后会恢复到应用程序的以前版本。 在这种情况下，先前版本仍将具有它最初下载的文件的副本。 有关访问数据文件的详细信息，请参阅[在 ClickOnce 应用程序中访问本地数据和远程数据](https://msdn.microsoft.com/library/be5cbe12-6cb6-49c9-aa59-a1624e1eef3d)。  
+  
+ <xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup%2A>在部分受信任的应用程序中工作，即[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] ，在运行具有受限权限的应用程序中。 但是，如果您尝试动态加载程序集，则您的应用程序将需要完全信任。  
+  
+ 当前不支持按需下载数据文件。  
+  
+ 在<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup%2A>方法返回之前，应用程序将不会响应用户输入。 如果需要在不中断用户工作流的情况下下载文件，请<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync%2A>改用方法。  
+  
+ 不能单独按文件名下载单个文件。 若要下载单个文件，请在[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]部署中为其分配一个组名称，并使用此方法下载组。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何通过侦听<xref:System.AppDomain.AssemblyResolve>事件，按需加载程序集。  
+  
+ [!code-csharp[ClickOnceOnDemandCmdLine#2](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceOnDemandCmdLine/CS/Form1.cs#2)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="groupName" /> 参数为 null 或零长度。</exception>
+        <altmember cref="Overload:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync" />
+        <related type="Article" href="https://msdn.microsoft.com/library/fdaa553f-a27e-44eb-a4e2-08c122105a87">演练：使用 ClickOnce 部署 API 按需下载附属程序集</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/29570cec-4e53-4660-a850-abc4fa150243">ndptecclick</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/be5cbe12-6cb6-49c9-aa59-a1624e1eef3d">在 ClickOnce 应用程序中访问本地数据和远程数据</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/89ee46ef-bc8c-4ab0-a2ac-1220f9da06fc">How to: Include a Data File in a ClickOnce Application</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/e379921e-9ef1-4326-bbf3-53ba67925526">ClickOnce 缓存的体系结构</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="DownloadFileGroupAsync">
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>根据需要在后台下载一组可选文件。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="DownloadFileGroupAsync">
+      <MemberSignature Language="C#" Value="public void DownloadFileGroupAsync (string groupName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DownloadFileGroupAsync(string groupName) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub DownloadFileGroupAsync (groupName As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void DownloadFileGroupAsync(System::String ^ groupName);" />
+      <MemberSignature Language="F#" Value="member this.DownloadFileGroupAsync : string -&gt; unit" Usage="applicationDeployment.DownloadFileGroupAsync groupName" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="groupName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="groupName">要下载的已命名文件组。 在 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 应用程序中，标记为“可选”的所有文件均需具备组名称。</param>
+        <summary>根据需要在后台下载一组可选文件。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]在应用程序中，应用程序清单中标记为 "可选" 的文件在初始化或更新过程中不会下载。 你可以使用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync%2A>方法来按需下载属于命名组的所有文件，以便在你确定用户需要它们之前，不会消耗网络资源和磁盘空间。 此方法不仅可用于静态文件，还可用于应用程序可能需要或不需要的程序集。 例如，某些用户可能需要每天使用您的应用程序中包含的数据分析包，而其他用户则可能永远不会调用它。  
+  
+ 若要按需下载程序集，请将事件侦听器<xref:System.AppDomain.AssemblyResolve>附加到<xref:System.AppDomain.CurrentDomain%2A>上的事件。 有关示例，请参阅[演练：使用 ClickOnce 部署 API 按需下载程序集](https://msdn.microsoft.com/library/d20e2789-8621-4806-b5b7-841122da1456)。  
+  
+ 所有程序集都下载到[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]应用程序缓存。  
+  
+ 所有静态文件都下载到[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]应用程序的数据目录中，因此与当前版本的应用程序隔离。 假设应用程序下载文件组后，用户会安装新版本的应用程序，但稍后会恢复到应用程序的以前版本。 在这种情况下，先前版本仍将具有它最初下载的文件的副本。 有关访问静态文件的详细信息，请参阅[在 ClickOnce 应用程序中访问本地数据和远程数据](https://msdn.microsoft.com/library/be5cbe12-6cb6-49c9-aa59-a1624e1eef3d)。  
+  
+ 您可以使用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync%2A>同时下载多个文件组。 可以通过使用<xref:System.Deployment.Application.DeploymentProgressChangedEventArgs.Group%2A>传递给<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupProgressChanged>事件的<xref:System.Deployment.Application.DeploymentProgressChangedEventArgs>类的属性来区分它们。 如果需要传递更复杂的状态，可以使用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync%2A>传入`state`对象。  
+  
+ <xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup%2A>在部分受信任的应用程序中工作，即[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] ，在运行具有受限权限的应用程序中。 但是，如果你试图动态加载程序集，则你的应用程序将需要完全信任。  
+  
+ 当前不支持按需下载数据文件。  
+  
+ 不能单独按文件名下载单个文件。 若要下载单个文件，请在[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]部署中为其分配一个组名称，并使用此方法下载组。  
+  
+ 若要取消异步下载，请调用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsyncCancel%2A>方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="groupName" /> 参数为 null 或零长度。</exception>
+        <exception cref="T:System.InvalidOperationException">一次不能启动多个 <paramref name="groupName" /> 下载。</exception>
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup(System.String)" />
+        <related type="Article" href="https://msdn.microsoft.com/library/fdaa553f-a27e-44eb-a4e2-08c122105a87">演练：使用 ClickOnce 部署 API 按需下载附属程序集</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/29570cec-4e53-4660-a850-abc4fa150243">ndptecclick</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/be5cbe12-6cb6-49c9-aa59-a1624e1eef3d">在 ClickOnce 应用程序中访问本地数据和远程数据</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/89ee46ef-bc8c-4ab0-a2ac-1220f9da06fc">How to: Include a Data File in a ClickOnce Application</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/e379921e-9ef1-4326-bbf3-53ba67925526">ClickOnce 缓存的体系结构</related>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadFileGroupAsync">
+      <MemberSignature Language="C#" Value="public void DownloadFileGroupAsync (string groupName, object userState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DownloadFileGroupAsync(string groupName, object userState) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync(System.String,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub DownloadFileGroupAsync (groupName As String, userState As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void DownloadFileGroupAsync(System::String ^ groupName, System::Object ^ userState);" />
+      <MemberSignature Language="F#" Value="member this.DownloadFileGroupAsync : string * obj -&gt; unit" Usage="applicationDeployment.DownloadFileGroupAsync (groupName, userState)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="groupName" Type="System.String" />
+        <Parameter Name="userState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="groupName">要下载的已命名文件组。 在 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 应用程序中，标记为“可选”的所有文件均需具备组名称。</param>
+        <param name="userState">包含异步操作状态信息的任意对象。</param>
+        <summary>根据需要在后台下载一组可选文件，并向事件回调传递一种应用程序状态。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]在应用程序中，应用程序清单中标记为 "可选" 的文件在初始化或更新过程中不会下载。 你可以使用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync%2A>方法来按需下载属于命名组的所有文件，以便在你确定用户需要它们之前，不会消耗网络资源和磁盘空间。 此方法不仅可用于静态文件，还可用于应用程序可能需要或不需要的程序集。 例如，某些用户可能需要每天使用您的应用程序中包含的数据分析包，而其他用户则可能永远不会调用它。 若要按需下载程序集，请将事件侦听器<xref:System.AppDomain.AssemblyResolve>附加到<xref:System.AppDomain.CurrentDomain%2A>上的事件。  
+  
+ 您可以使用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync%2A>方法同时下载多个文件组。 可以通过使用<xref:System.Deployment.Application.DeploymentProgressChangedEventArgs.Group%2A>传递给<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupProgressChanged>事件的<xref:System.Deployment.Application.DeploymentProgressChangedEventArgs>类的属性来区分它们。 如果需要传递更复杂的状态，可以使用  
+  
+ <xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync%2A>传递`state`对象。  
+  
+ 所有静态文件都下载到[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]应用程序的数据目录中，因此与当前版本的应用程序隔离。 有关访问静态文件的详细信息，请参阅[在 ClickOnce 应用程序中访问本地数据和远程数据](https://msdn.microsoft.com/library/be5cbe12-6cb6-49c9-aa59-a1624e1eef3d)。 。 假设应用程序下载文件组后，用户会安装新版本的应用程序，但以后用户会恢复到应用程序的以前版本。 在这种情况下，先前版本仍将具有它最初下载的文件的副本。  
+  
+ <xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup%2A>在部分受信任的应用程序中工作，即[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] ，在运行具有受限权限的应用程序中。 但是，如果你试图动态加载程序集，则你的应用程序将需要完全信任。  
+  
+ 当前不支持按需下载数据文件。  
+  
+ 若要取消异步下载，请调用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsyncCancel%2A>方法。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="groupName" /> 参数为 null 或零长度。</exception>
+        <exception cref="T:System.InvalidOperationException">一次不能启动多个 <paramref name="groupName" /> 下载。</exception>
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup(System.String)" />
+        <related type="Article" href="https://msdn.microsoft.com/library/fdaa553f-a27e-44eb-a4e2-08c122105a87">演练：使用 ClickOnce 部署 API 按需下载附属程序集</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/29570cec-4e53-4660-a850-abc4fa150243">ndptecclick</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/be5cbe12-6cb6-49c9-aa59-a1624e1eef3d">在 ClickOnce 应用程序中访问本地数据和远程数据</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/89ee46ef-bc8c-4ab0-a2ac-1220f9da06fc">How to: Include a Data File in a ClickOnce Application</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/e379921e-9ef1-4326-bbf3-53ba67925526">ClickOnce 缓存的体系结构</related>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadFileGroupAsyncCancel">
+      <MemberSignature Language="C#" Value="public void DownloadFileGroupAsyncCancel (string groupName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DownloadFileGroupAsyncCancel(string groupName) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsyncCancel(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub DownloadFileGroupAsyncCancel (groupName As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void DownloadFileGroupAsyncCancel(System::String ^ groupName);" />
+      <MemberSignature Language="F#" Value="member this.DownloadFileGroupAsyncCancel : string -&gt; unit" Usage="applicationDeployment.DownloadFileGroupAsyncCancel groupName" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="groupName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="groupName">要下载的已命名文件组。 在 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 应用程序中，标记为“可选”的所有文件均需具备组名称。</param>
+        <summary>取消异步文件下载。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="groupName" /> 不能为 <see langword="null" />。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadFileGroupCompleted">
+      <MemberSignature Language="C#" Value="public event System.Deployment.Application.DownloadFileGroupCompletedEventHandler DownloadFileGroupCompleted;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Deployment.Application.DownloadFileGroupCompletedEventHandler DownloadFileGroupCompleted" />
+      <MemberSignature Language="DocId" Value="E:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupCompleted" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event DownloadFileGroupCompleted As DownloadFileGroupCompletedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event System::Deployment::Application::DownloadFileGroupCompletedEventHandler ^ DownloadFileGroupCompleted;" />
+      <MemberSignature Language="F#" Value="member this.DownloadFileGroupCompleted : System.Deployment.Application.DownloadFileGroupCompletedEventHandler " Usage="member this.DownloadFileGroupCompleted : System.Deployment.Application.DownloadFileGroupCompletedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Deployment.Application.DownloadFileGroupCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>完成一个文件下载时在主应用程序线程中发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在主应用程序线程上调用事件。 <xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupCompleted> 在此回调中直接调用应用程序的 Windows 窗体控件是线程安全的。  
+  
+ 检查提供给此回调<xref:System.ComponentModel.AsyncCompletedEventArgs>的的属性。 <xref:System.ComponentModel.AsyncCompletedEventArgs.Error%2A> 如果此属性为`null`，则下载成功; 如果不`null`是，则安装未成功，你可以通过<xref:System.ComponentModel.AsyncCompletedEventArgs.Error%2A>属性找到有关安装失败的详细信息。  
+  
+   
+  
+## Examples  
+ 下面的代码示例在后台下载一组帮助文件。 该示例要求你部署一个包含<xref:System.Windows.Forms.StatusStrip>控件的 Windows 窗体应用程序，并且此控件包含一个<xref:System.Windows.Forms.ToolStripStatusLabel>名为`downloadStatus`的控件。 
+  
+ [!code-cpp[ClickOnceAPI#8](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#8)]
+ [!code-csharp[ClickOnceAPI#8](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#8)]
+ [!code-vb[ClickOnceAPI#8](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#8)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DownloadFileGroupProgressChanged">
+      <MemberSignature Language="C#" Value="public event System.Deployment.Application.DeploymentProgressChangedEventHandler DownloadFileGroupProgressChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Deployment.Application.DeploymentProgressChangedEventHandler DownloadFileGroupProgressChanged" />
+      <MemberSignature Language="DocId" Value="E:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupProgressChanged" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event DownloadFileGroupProgressChanged As DeploymentProgressChangedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event System::Deployment::Application::DeploymentProgressChangedEventHandler ^ DownloadFileGroupProgressChanged;" />
+      <MemberSignature Language="F#" Value="member this.DownloadFileGroupProgressChanged : System.Deployment.Application.DeploymentProgressChangedEventHandler " Usage="member this.DownloadFileGroupProgressChanged : System.Deployment.Application.DeploymentProgressChangedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Deployment.Application.DeploymentProgressChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当由 <see cref="Overload:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync" /> 调用启动的文件下载操作存在可用的状态信息时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在主应用程序线程上调用事件。 <xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupProgressChanged> 在此回调中直接调用应用程序的 Windows 窗体控件是线程安全的。  
+  
+ 使用中<xref:System.Deployment.Application.DeploymentProgressChangedEventArgs>提供的信息将进度信息传递给用户。  
+  
+   
+  
+## Examples  
+ 下面的代码示例在后台下载一组帮助文件。 该示例要求你部署一个包含<xref:System.Windows.Forms.StatusStrip>控件的 Windows 窗体应用程序，并且此控件包含一个<xref:System.Windows.Forms.ToolStripStatusLabel>名为`downloadStatus`的控件。  
+  
+ [!code-cpp[ClickOnceAPI#8](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#8)]
+ [!code-csharp[ClickOnceAPI#8](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#8)]
+ [!code-vb[ClickOnceAPI#8](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#8)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsFileGroupDownloaded">
+      <MemberSignature Language="C#" Value="public bool IsFileGroupDownloaded (string groupName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsFileGroupDownloaded(string groupName) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.IsFileGroupDownloaded(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Function IsFileGroupDownloaded (groupName As String) As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool IsFileGroupDownloaded(System::String ^ groupName);" />
+      <MemberSignature Language="F#" Value="member this.IsFileGroupDownloaded : string -&gt; bool" Usage="applicationDeployment.IsFileGroupDownloaded groupName" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="groupName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="groupName">要下载的已命名文件组。 在 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 应用程序中，标记为“可选”的所有文件均需具备组名称。</param>
+        <summary>检查已命名的文件组是否已下载到客户端计算机中。</summary>
+        <returns>如果已为此应用程序的当前版本下载了该文件组，则为 <see langword="true" />；否则为 <see langword="false" />。 如果已安装了新版本的应用程序，而且新版本的应用程序未对文件组中的文件做任何添加、移除或更改，则 <see cref="M:System.Deployment.Application.ApplicationDeployment.IsFileGroupDownloaded(System.String)" /> 返回 <see langword="true" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Deployment.Application.ApplicationDeployment.IsFileGroupDownloaded%2A>在部分信任的应用程序中工作，无需任何安全要求。  
+  
+ 更新应用程序时， [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]会将任何按需数据文件从以前的版本复制到新版本的数据目录中。 如果下载这些文件的新版本，应从旧版本中删除任何要保留的数据，并将其移到新版本中。  
+  
+   
+  
+## Examples  
+ 下面的代码示例将`HelpFiles`组中的所有文件下载到磁盘。  
+  
+ [!code-cpp[ClickOnceAPI#8](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#8)]
+ [!code-csharp[ClickOnceAPI#8](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#8)]
+ [!code-vb[ClickOnceAPI#8](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#8)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Deployment.Application.InvalidDeploymentException"><paramref name="groupName" /> 不是应用程序清单中定义的文件组。</exception>
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup(System.String)" />
+        <altmember cref="Overload:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync" />
+      </Docs>
+    </Member>
+    <Member MemberName="IsFirstRun">
+      <MemberSignature Language="C#" Value="public bool IsFirstRun { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsFirstRun" />
+      <MemberSignature Language="DocId" Value="P:System.Deployment.Application.ApplicationDeployment.IsFirstRun" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property IsFirstRun As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IsFirstRun { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsFirstRun : bool" Usage="System.Deployment.Application.ApplicationDeployment.IsFirstRun" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个值，该值指示此应用程序是否是第一次在客户端计算机上运行。</summary>
+        <value>如果此版本的应用程序此前未在客户端计算机上运行过，则为 <see langword="true" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用<xref:System.Deployment.Application.ApplicationDeployment.IsFirstRun%2A>确定是否需要在首次运行应用程序时执行任何一次性的初始化操作。  
+  
+ 不要假设<xref:System.Deployment.Application.ApplicationDeployment.IsFirstRun%2A> `true`设置为指示应用程序的这一实例是向用户显示其用户界面的第一个实例。 由于系统计划进程的方式，应用程序的一个实例可能会将其<xref:System.Deployment.Application.ApplicationDeployment.IsFirstRun%2A>属性设置为`true`，而另一个实例可能是第一个在屏幕上呈现的实例。 每当用户从一个版本升级到下一个版本时，此属性的值就会重置。 如果只想在运行应用程序的任何版本时执行操作，则需要执行其他测试，如检查是否存在首次创建的文件，或使用**应用程序设置**存储标志。  
+  
+   
+  
+## Examples  
+ 下面的代码示例使用<xref:System.Deployment.Application.ApplicationDeployment.IsFirstRun%2A>来确定是否检查文件组`HelpFiles`的更新。 如果一个或多个文件已更新，则它将调用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup%2A>以获取新版本。  
+  
+ [!code-csharp[ClickOnceAPI#9](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#9)]
+ [!code-vb[ClickOnceAPI#9](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#9)]  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联枚举：<see cref="T:System.Security.Permissions.PermissionState" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="IsNetworkDeployed">
+      <MemberSignature Language="C#" Value="public static bool IsNetworkDeployed { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool IsNetworkDeployed" />
+      <MemberSignature Language="DocId" Value="P:System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly Property IsNetworkDeployed As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property bool IsNetworkDeployed { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsNetworkDeployed : bool" Usage="System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个值，该值指示当前应用程序是否为 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 应用程序。</summary>
+        <value>如果该应用程序是 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 应用程序，则为 <see langword="true" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果你希望应用程序在[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]部署内部和外部运行（例如，如果你需要在部署之前在本地计算机上调试应用程序），请在访问<xref:System.Deployment.Application.ApplicationDeployment.CurrentDeployment%2A>属性之前进行<xref:System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed%2A>测试。  
+  
+ <xref:System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed%2A>无论应用`true`程序是联机安装还是托管，无论该应用程序是从网站、文件共享还是 cd-rom 安装，都将返回。  
+  
+   
+  
+## Examples  
+ 下面的代码示例首先<xref:System.Deployment.Application.ApplicationDeployment.CurrentDeployment%2A>使用<xref:System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed%2A>检索，以确保引用不`null`是。  
+  
+ [!code-cpp[ClickOnceAPI#2](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#2)]
+ [!code-csharp[ClickOnceAPI#2](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#2)]  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联枚举：<see cref="T:System.Security.Permissions.PermissionState" />。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="TimeOfLastUpdateCheck">
+      <MemberSignature Language="C#" Value="public DateTime TimeOfLastUpdateCheck { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTime TimeOfLastUpdateCheck" />
+      <MemberSignature Language="DocId" Value="P:System.Deployment.Application.ApplicationDeployment.TimeOfLastUpdateCheck" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property TimeOfLastUpdateCheck As DateTime" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property DateTime TimeOfLastUpdateCheck { DateTime get(); };" />
+      <MemberSignature Language="F#" Value="member this.TimeOfLastUpdateCheck : DateTime" Usage="System.Deployment.Application.ApplicationDeployment.TimeOfLastUpdateCheck" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTime</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 上次检查应用程序更新时的日期和时间。</summary>
+        <value>上次更新检查的 <see cref="T:System.DateTime" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]应用程序可以配置订阅更新。 在此方案中[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] ，将按部署清单中定义的时间间隔自动轮询应用程序的部署位置，并确定是否有可用的更新。 <xref:System.Deployment.Application.ApplicationDeployment.TimeOfLastUpdateCheck%2A>返回上次更新检查的时间<xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdate%2A>，不管是由订阅启动还是通过使用、 <xref:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync%2A>、 <xref:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate%2A>、 <xref:System.Deployment.Application.ApplicationDeployment.Update%2A>或<xref:System.Deployment.Application.ApplicationDeployment.UpdateAsync%2A>方法的显式检查来启动。  
+  
+ 如果自安装应用程序后未执行任何更新检查， <xref:System.Deployment.Application.ApplicationDeployment.TimeOfLastUpdateCheck%2A>则返回安装时间。  
+  
+   
+  
+## Examples  
+ 下面的代码示例检查过去三[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]天是否已检查应用程序的可用更新。  
+  
+ [!code-cpp[ClickOnceAPI#3](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#3)]
+ [!code-csharp[ClickOnceAPI#3](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#3)]
+ [!code-vb[ClickOnceAPI#3](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#3)]  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联的枚举<see cref="T:System.Security.Permissions.PermissionState" />：。</permission>
+        <related type="Article" href="https://msdn.microsoft.com/library/d8b6e7bb-4ea0-47f3-91cd-48580bdceccc">选择 ClickOnce 更新策略</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="public bool Update ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Update() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.Update" />
+      <MemberSignature Language="VB.NET" Value="Public Function Update () As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; bool Update();" />
+      <MemberSignature Language="F#" Value="member this.Update : unit -&gt; bool" Usage="applicationDeployment.Update " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>开始同步下载和安装此应用程序的最新版本。</summary>
+        <returns>如果应用程序已更新，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当你将新版本的应用程序发布到指定<xref:System.Deployment.Application.ApplicationDeployment.UpdateLocation%2A>的位置，并且应用程序的部署清单中的版本号大于当前应用程序的版本号时，应用程序将被视为已更新安装在用户的计算机上。  
+  
+ 此调用将被阻止，直到更新已下载到客户端计算机并安装[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]到缓存中; 在此期间，该应用程序将不会响应用户。 <xref:System.Deployment.Application.ApplicationDeployment.Update%2A> 如果要在下载过程中保持应用程序响应或显示进度报告，请<xref:System.Deployment.Application.ApplicationDeployment.UpdateAsync%2A>改用方法。  
+  
+ <xref:System.Deployment.Application.ApplicationDeployment.Update%2A>下载应用程序清单中未标记为 "可选" 的所有文件。 您可以通过使用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup%2A> <xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync%2A>或方法，按需下载可选文件。  
+  
+ [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]在调用<xref:System.Deployment.Application.ApplicationDeployment.Update%2A>方法时可能已自动更新应用程序; 如果发生这种情况，则调用此方法将<xref:System.InvalidOperationException>引发。  
+  
+ 如果已在部署中更新了一个或多个文件，但尚未刷新应用程序清单，则会收到<xref:System.Deployment.Application.InvalidDeploymentException>。 大多数情况下，重新部署[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]应用程序就能解决此问题。 如果部署清单或应用程序清单上的公钥签名无效或缺失，您也会收到此异常。  
+  
+ 更新可能会在本地计算机上请求比应用程序的以前版本更高的信任级别。 如果应用程序使用受信任的应用程序部署，则公共语言运行时（CLR）信任关系管理器将检查部署清单，以确定它是否包含有效的信任许可证。 如果部署清单不包含有效的信任许可证， [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]则将停止安装并<xref:System.Deployment.Application.TrustNotGrantedException>引发。 该<xref:System.Deployment.Application.ApplicationDeployment.Update%2A>方法将不会显示询问用户是否要授予应用程序运行权限的提示。  
+  
+   
+  
+## Examples  
+ 下面的代码示例检查应用程序更新;如果更新可用，则它会同步安装。  
+  
+ [!code-cpp[ClickOnceAPI#6](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#6)]
+ [!code-csharp[ClickOnceAPI#6](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#6)]
+ [!code-vb[ClickOnceAPI#6](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#6)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Deployment.Application.TrustNotGrantedException">本地计算机未授予该应用程序执行其请求的操作所需的权限级别。</exception>
+        <exception cref="T:System.Deployment.Application.InvalidDeploymentException">[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 部署已损坏。 有关如何诊断和更正问题的提示，请参阅 [ClickOnce 部署疑难解答](https://msdn.microsoft.com/library/58e90012-f68b-4852-8ae9-58e361cbcc32)。</exception>
+        <exception cref="T:System.Deployment.Application.DeploymentDownloadException">未能从其网络位置下载新部署。</exception>
+        <exception cref="T:System.InvalidOperationException">当前应用程序正在更新。</exception>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联枚举：<see cref="T:System.Security.Permissions.PermissionState" />。</permission>
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.UpdateAsync" />
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdateAsync" />
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.CheckForUpdate" />
+        <altmember cref="M:System.Deployment.Application.ApplicationDeployment.CheckForDetailedUpdate" />
+        <related type="Article" href="https://msdn.microsoft.com/library/d8b6e7bb-4ea0-47f3-91cd-48580bdceccc">选择 ClickOnce 更新策略</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/a05b5f2f-d1f2-471a-8096-8b11f7554265">ClickOnce 部署和安全</related>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateAsync">
+      <MemberSignature Language="C#" Value="public void UpdateAsync ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void UpdateAsync() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.UpdateAsync" />
+      <MemberSignature Language="VB.NET" Value="Public Sub UpdateAsync ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void UpdateAsync();" />
+      <MemberSignature Language="F#" Value="member this.UpdateAsync : unit -&gt; unit" Usage="applicationDeployment.UpdateAsync " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>开始异步下载和安装此应用程序的最新版本。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 当你将新版本的应用程序发布到指定<xref:System.Deployment.Application.ApplicationDeployment.UpdateLocation%2A>的位置，并且应用程序的部署清单中的版本号大于当前应用程序的版本号时，应用程序将被视为已更新安装在用户的计算机上。  
+  
+ 在下载更新时， [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]将在主<xref:System.Deployment.Application.ApplicationDeployment.UpdateProgressChanged>应用程序线程上引发事件处理程序，通知您下载的状态。 在异步更新完成或遇到异常时， [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]将在主应用程序线程上<xref:System.Deployment.Application.ApplicationDeployment.UpdateCompleted>引发事件。 检查提供<xref:System.ComponentModel.AsyncCompletedEventArgs>给此事件的，以确定更新是否成功。  
+  
+ 如果<xref:System.Deployment.Application.ApplicationDeployment.UpdateAsync%2A>引发异常， [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]则调用<xref:System.Deployment.Application.ApplicationDeployment.UpdateCompleted>并将的<xref:System.ComponentModel.AsyncCompletedEventArgs.Error%2A> <xref:System.ComponentModel.AsyncCompletedEventArgs>属性设置为引发的异常。  
+  
+ <xref:System.Deployment.Application.ApplicationDeployment.UpdateAsync%2A>将下载部署中的所有文件，这些文件在应用程序清单中未标记为 "可选"。 您可以通过使用<xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroup%2A> <xref:System.Deployment.Application.ApplicationDeployment.DownloadFileGroupAsync%2A>或方法，按需下载可选文件。  
+  
+ [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]在调用<xref:System.Deployment.Application.ApplicationDeployment.UpdateAsync%2A>方法时可能已自动更新应用程序; 如果发生这种情况，则调用此方法将<xref:System.InvalidOperationException>引发。  
+  
+ 如果已在部署中更新了一个或多个文件，但尚未刷新应用程序清单，则会收到<xref:System.Deployment.Application.InvalidDeploymentException>。 大多数情况下，重新生成应用程序清单会解决此问题。 如果部署清单或应用程序清单上的公钥签名无效或缺失，您也会收到此异常。  
+  
+ 更新可能会在本地计算机上请求比应用程序的以前版本更高的信任级别。 如果应用程序使用受信任的应用程序部署，则公共语言运行时（CLR）信任关系管理器将检查部署清单，以确定它是否包含有效的信任许可证。 如果部署清单不包含有效的信任许可证， [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]则将停止安装并<xref:System.Deployment.Application.TrustNotGrantedException>引发。 <xref:System.Deployment.Application.ApplicationDeployment.UpdateAsync%2A>将不会显示询问用户是否要授予应用程序运行权限的提示。  
+  
+   
+  
+## Examples  
+ 下面的代码示例确定新的更新在应用程序加载时是否可用;如果有必需的更新，则它会以异步方式安装更新。 该示例要求你部署一个包含<xref:System.Windows.Forms.StatusStrip>控件的 Windows 窗体应用程序，并且此控件包含一个<xref:System.Windows.Forms.ToolStripStatusLabel>名为`downloadStatus`的控件。  
+  
+ [!code-cpp[ClickOnceAPI#1](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#1)]
+ [!code-csharp[ClickOnceAPI#1](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#1)]
+ [!code-vb[ClickOnceAPI#1](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.Deployment.Application.TrustNotGrantedException">本地计算机未授予此应用程序执行其请求的操作所需的权限级别。</exception>
+        <exception cref="T:System.Deployment.Application.InvalidDeploymentException">[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 部署已损坏。 有关如何诊断和更正问题的提示，请参阅 [ClickOnce 部署疑难解答](https://msdn.microsoft.com/library/58e90012-f68b-4852-8ae9-58e361cbcc32)。</exception>
+        <exception cref="T:System.Deployment.Application.DeploymentDownloadException">未能从其网络位置下载新部署。</exception>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联的枚举<see cref="T:System.Security.Permissions.PermissionState" />：。</permission>
+        <altmember cref="E:System.Deployment.Application.ApplicationDeployment.UpdateCompleted" />
+        <related type="Article" href="https://msdn.microsoft.com/library/d8b6e7bb-4ea0-47f3-91cd-48580bdceccc">选择 ClickOnce 更新策略</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/a05b5f2f-d1f2-471a-8096-8b11f7554265">ClickOnce 部署和安全</related>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateAsyncCancel">
+      <MemberSignature Language="C#" Value="public void UpdateAsyncCancel ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void UpdateAsyncCancel() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Deployment.Application.ApplicationDeployment.UpdateAsyncCancel" />
+      <MemberSignature Language="VB.NET" Value="Public Sub UpdateAsyncCancel ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void UpdateAsyncCancel();" />
+      <MemberSignature Language="F#" Value="member this.UpdateAsyncCancel : unit -&gt; unit" Usage="applicationDeployment.UpdateAsyncCancel " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>取消由 <see cref="M:System.Deployment.Application.ApplicationDeployment.UpdateAsync" /> 启动的异步更新。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Deployment.Application.ApplicationDeployment.UpdateAsyncCancel%2A>仅取消通过调用<xref:System.Deployment.Application.ApplicationDeployment.UpdateAsync%2A>启动的更新; 它不会取消作为订阅的一部分启动的更新。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联枚举：<see cref="T:System.Security.Permissions.PermissionState" />。</permission>
+        <related type="Article" href="https://msdn.microsoft.com/library/d8b6e7bb-4ea0-47f3-91cd-48580bdceccc">选择 ClickOnce 更新策略</related>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateCompleted">
+      <MemberSignature Language="C#" Value="public event System.ComponentModel.AsyncCompletedEventHandler UpdateCompleted;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ComponentModel.AsyncCompletedEventHandler UpdateCompleted" />
+      <MemberSignature Language="DocId" Value="E:System.Deployment.Application.ApplicationDeployment.UpdateCompleted" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event UpdateCompleted As AsyncCompletedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event System::ComponentModel::AsyncCompletedEventHandler ^ UpdateCompleted;" />
+      <MemberSignature Language="F#" Value="member this.UpdateCompleted : System.ComponentModel.AsyncCompletedEventHandler " Usage="member this.UpdateCompleted : System.ComponentModel.AsyncCompletedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ComponentModel.AsyncCompletedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 通过调用 <see cref="M:System.Deployment.Application.ApplicationDeployment.UpdateAsync" /> 完成了应用程序升级时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在主应用程序线程上调用事件。 <xref:System.Deployment.Application.ApplicationDeployment.UpdateCompleted> 你可以直接在此回调内调用应用程序的 Windows 窗体控件，而不会触发异常。  
+  
+ 检查提供给此回调<xref:System.ComponentModel.AsyncCompletedEventArgs>的的属性。 <xref:System.ComponentModel.AsyncCompletedEventArgs.Error%2A> 如果此属性为`null`，则安装成功; 如果不`null`是，则安装未成功，你可以通过属性找到有关此安装失败的<xref:System.ComponentModel.AsyncCompletedEventArgs.Error%2A>详细信息。 下载更新后，你将需要对调用<xref:System.Windows.Forms.Application.Restart%2A>方法<xref:System.Windows.Forms.Application>以使用应用程序的较新版本。  
+  
+ 如果通过调用<xref:System.Deployment.Application.ApplicationDeployment.UpdateAsyncCancel%2A>取消了更新的安装， <xref:System.ComponentModel.AsyncCompletedEventArgs>则类的<xref:System.ComponentModel.AsyncCompletedEventArgs.Cancelled%2A>属性将为`true`。  
+  
+ 若要使用此事件处理程序，你的<xref:System.Deployment.Application>应用程序必须同时导入和<xref:System.ComponentModel>命名空间。  
+  
+   
+  
+## Examples  
+ 下面的代码示例在应用程序加载时确定是否有新的更新可用;如果有必需的更新，则它会以异步方式安装更新。 该示例要求你部署一个包含<xref:System.Windows.Forms.StatusStrip>控件的 Windows 窗体应用程序，并且此控件包含一个<xref:System.Windows.Forms.ToolStripStatusLabel>名为`downloadStatus`的控件。  
+  
+ [!code-cpp[ClickOnceAPI#1](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#1)]
+ [!code-csharp[ClickOnceAPI#1](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#1)]
+ [!code-vb[ClickOnceAPI#1](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdatedApplicationFullName">
+      <MemberSignature Language="C#" Value="public string UpdatedApplicationFullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string UpdatedApplicationFullName" />
+      <MemberSignature Language="DocId" Value="P:System.Deployment.Application.ApplicationDeployment.UpdatedApplicationFullName" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property UpdatedApplicationFullName As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ UpdatedApplicationFullName { System::String ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.UpdatedApplicationFullName : string" Usage="System.Deployment.Application.ApplicationDeployment.UpdatedApplicationFullName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取应用程序更新后的全名。</summary>
+        <value>一个包含应用程序的全名的 <see cref="T:System.String" />。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdatedVersion">
+      <MemberSignature Language="C#" Value="public Version UpdatedVersion { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Version UpdatedVersion" />
+      <MemberSignature Language="DocId" Value="P:System.Deployment.Application.ApplicationDeployment.UpdatedVersion" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property UpdatedVersion As Version" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property Version ^ UpdatedVersion { Version ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.UpdatedVersion : Version" Usage="System.Deployment.Application.ApplicationDeployment.UpdatedVersion" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Version</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取最近下载的更新版本。</summary>
+        <value>描述更新版本的 <see cref="T:System.Version" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Deployment.Application.ApplicationDeployment.UpdatedVersion%2A>如果已安装新的更新，但尚未在上<xref:System.Windows.Forms.Application>调用<xref:System.Windows.Forms.Application.Restart%2A> ，则与不同。 <xref:System.Deployment.Application.ApplicationDeployment.CurrentVersion%2A> 如果将应用程序的部署清单配置为执行自动更新，可以比较这两个值，以确定是否应重新启动应用程序。  
+  
+ 如果应用程序尚未更新， <xref:System.Deployment.Application.ApplicationDeployment.UpdatedVersion%2A>则返回与相同的<xref:System.Deployment.Application.ApplicationDeployment.CurrentVersion%2A>值。  
+  
+   
+  
+## Examples  
+ 下面的代码示例定义了一个方法，该[!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)]方法确定是否已更新了应用程序。  
+  
+ [!code-cpp[ClickOnceAPI#4](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#4)]
+ [!code-csharp[ClickOnceAPI#4](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#4)]
+ [!code-vb[ClickOnceAPI#4](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#4)]  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联的枚举：<see cref="T:System.Security.Permissions.PermissionState" /></permission>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateLocation">
+      <MemberSignature Language="C#" Value="public Uri UpdateLocation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Uri UpdateLocation" />
+      <MemberSignature Language="DocId" Value="P:System.Deployment.Application.ApplicationDeployment.UpdateLocation" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property UpdateLocation As Uri" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property Uri ^ UpdateLocation { Uri ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.UpdateLocation : Uri" Usage="System.Deployment.Application.ApplicationDeployment.UpdateLocation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取此应用程序从中更新自身的网站或文件共享。</summary>
+        <value>以 HTTP、HTTPS 或文件 URL 表示的更新路径；或以 Windows 网络文件路径 (UNC) 表示的更新路径。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Deployment.Application.ApplicationDeployment.UpdateLocation%2A>如果应用程序的部署配置为使用更新重定向，则在最初用于下载应用程序的网站上可能会有所不同。  
+  
+ 只能在应用程序的部署清单中更改此值。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.PermissionSet">对本地计算机具有完全访问权限。 关联枚举：<see cref="T:System.Security.Permissions.PermissionState" />。</permission>
+        <related type="Article" href="https://msdn.microsoft.com/library/7faacd35-2638-492d-80f6-6b57e5f820de">如何：指定部署更新的其他位置</related>
+      </Docs>
+    </Member>
+    <Member MemberName="UpdateProgressChanged">
+      <MemberSignature Language="C#" Value="public event System.Deployment.Application.DeploymentProgressChangedEventHandler UpdateProgressChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Deployment.Application.DeploymentProgressChangedEventHandler UpdateProgressChanged" />
+      <MemberSignature Language="DocId" Value="E:System.Deployment.Application.ApplicationDeployment.UpdateProgressChanged" />
+      <MemberSignature Language="VB.NET" Value="Public Custom Event UpdateProgressChanged As DeploymentProgressChangedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; event System::Deployment::Application::DeploymentProgressChangedEventHandler ^ UpdateProgressChanged;" />
+      <MemberSignature Language="F#" Value="member this.UpdateProgressChanged : System.Deployment.Application.DeploymentProgressChangedEventHandler " Usage="member this.UpdateProgressChanged : System.Deployment.Application.DeploymentProgressChangedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Deployment</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Deployment.Application.DeploymentProgressChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>对于通过调用 <see cref="M:System.Deployment.Application.ApplicationDeployment.UpdateAsync" /> 方法启动的更新操作，当 [!INCLUDE[ndptecclick](~/includes/ndptecclick-md.md)] 存在关于此更新操作的新的状态信息时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在主应用程序线程上调用事件。 <xref:System.Deployment.Application.ApplicationDeployment.UpdateProgressChanged> 你可以直接在此回调内调用应用程序的 Windows 窗体控件，而不会触发异常。  
+  
+   
+  
+## Examples  
+ 下面的代码示例在应用程序加载时确定是否有新的更新可用;如果有必需的更新，则它会以异步方式安装更新。  
+  
+ [!code-cpp[ClickOnceAPI#1](~/samples/snippets/cpp/VS_Snippets_Winforms/ClickOnceAPI/cpp/form1.cpp#1)]
+ [!code-csharp[ClickOnceAPI#1](~/samples/snippets/csharp/VS_Snippets_Winforms/ClickOnceAPI/CS/Form1.cs#1)]
+ [!code-vb[ClickOnceAPI#1](~/samples/snippets/visualbasic/VS_Snippets_Winforms/ClickOnceAPI/VB/Form1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
