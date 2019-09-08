@@ -1,0 +1,1174 @@
+<Type Name="TraceSource" FullName="System.Diagnostics.TraceSource">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="ef7cea92fac30ff5b18e766889b1d3938d0a1eff" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70681519" /></Metadata><TypeSignature Language="C#" Value="public class TraceSource" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TraceSource extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Diagnostics.TraceSource" />
+  <TypeSignature Language="VB.NET" Value="Public Class TraceSource" />
+  <TypeSignature Language="C++ CLI" Value="public ref class TraceSource" />
+  <TypeSignature Language="F#" Value="type TraceSource = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>提供一组方法和属性，利用这些方法和属性，应用程序可以跟踪代码的执行并将跟踪消息和它们的源关联起来。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Diagnostics.TraceSource> 类由应用程序用来生成可与应用程序相关联的跟踪。 <xref:System.Diagnostics.TraceSource> 提供了一些跟踪方法，利用这些跟踪方法，你可以方便地跟踪事件，跟踪数据和发出信息跟踪。 可以通过配置<xref:System.Diagnostics.TraceSource>文件设置来控制的跟踪输出。 配置文件位于具有应用程序可执行文件的文件夹中，并具有添加了 .config 文件扩展名的应用程序的名称。 例如，"TraceSourceSample" 的配置文件的名称为 "TraceSourceSample"。配置文件可用于确定要将跟踪信息发送到的位置以及要跟踪的活动级别。 下面的示例显示示例应用程序配置文件的内容。  
+  
+```xml  
+<configuration>  
+  <system.diagnostics>  
+    <sources>  
+      <source name="TraceTest" switchName="SourceSwitch"   
+        switchType="System.Diagnostics.SourceSwitch" >  
+        <listeners>  
+          <add name="console" />  
+          <remove name ="Default" />  
+        </listeners>  
+      </source>  
+    </sources>  
+    <switches>  
+      <!-- You can set the level at which tracing is to occur -->  
+      <add name="SourceSwitch" value="Warning" />  
+        <!-- You can turn tracing off -->  
+        <!--add name="SourceSwitch" value="Off" -->  
+    </switches>  
+    <sharedListeners>  
+      <add name="console"   
+        type="System.Diagnostics.ConsoleTraceListener"   
+        initializeData="false"/>  
+    </sharedListeners>  
+    <trace autoflush="true" indentsize="4">  
+      <listeners>  
+        <add name="console" />  
+      </listeners>  
+    </trace>  
+  </system.diagnostics>  
+</configuration>  
+```  
+  
+ <xref:System.Diagnostics.TraceSource>类由源的名称标识，通常为应用程序的名称。  来自特定组件的跟踪消息可以由特定跟踪源启动，从而可以轻松地识别来自该组件的所有消息。  
+  
+ <xref:System.Diagnostics.TraceSource>定义跟踪方法，但实际上并不提供用于生成和存储跟踪数据的任何特定机制。 跟踪数据由跟踪侦听器生成，跟踪侦听器是可以通过跟踪源加载的插件。  
+  
+> [!NOTE]
+>  不应在终止过程中调用跟踪方法。 这样做可能导致<xref:System.ObjectDisposedException>引发。  
+  
+ 您可以通过在<xref:System.Diagnostics.TraceListener> <xref:System.Diagnostics.TraceSource.Listeners%2A?displayProperty=nameWithType>存储在属性中的集合中添加或删除实例来自定义跟踪输出的目标。 默认情况下，使用<xref:System.Diagnostics.DefaultTraceListener>类的实例生成跟踪输出。 前面的配置文件示例演示如何删除<xref:System.Diagnostics.DefaultTraceListener>并<xref:System.Diagnostics.ConsoleTraceListener>添加以生成跟踪源的跟踪输出。 有关详细信息，请[ &lt;参阅&gt;侦听器](~/docs/framework/configure-apps/file-schema/trace-debug/listeners-element-for-source.md)和[ &lt;sharedListeners&gt;](~/docs/framework/configure-apps/file-schema/trace-debug/sharedlisteners-element.md)。  
+  
+> [!NOTE]
+>  如果跟踪侦听器使用的资源<xref:System.Diagnostics.TraceSource.Listeners%2A>不可用，则在跟踪时将跟踪侦听器添加到集合可能导致引发异常。 条件和引发的异常依赖于跟踪侦听器，在本主题中无法枚举。 在<xref:System.Diagnostics.TraceSource>块中`try` 调用方法以 `catch` 检测和处理跟踪侦听器中的任何异常可能会很有用。 /  
+  
+ <xref:System.Diagnostics.SourceSwitch>类提供动态控制跟踪输出的方法。 前面的配置文件示例演示了如何从跟踪源关闭跟踪并控制跟踪发生的级别。  您可以修改源开关的值，而无需重新编译应用程序。 有关使用配置文件设置开关的信息，请参阅<xref:System.Diagnostics.Switch>和[如何：创建、初始化和配置跟踪开关](~/docs/framework/debug-trace-profile/how-to-create-initialize-and-configure-trace-switches.md)。  
+  
+> [!NOTE]
+>  如果在应用程序执行时修改配置文件，则必须停止并重新启动应用程序，或者<xref:System.Diagnostics.Trace.Refresh%2A>必须先调用方法，然后新设置才会生效。  
+  
+ <xref:System.Diagnostics.TraceEventType>枚举用于定义跟踪消息的事件类型。 跟踪筛选器使用<xref:System.Diagnostics.TraceEventType>来确定跟踪侦听器是否应生成跟踪消息。  
+  
+ 跟踪侦听器可以选择通过跟踪筛选器额外进行筛选。  如果跟踪侦听器具有关联的筛选器，则侦听器会对<xref:System.Diagnostics.TraceFilter.ShouldTrace%2A>该筛选器调用方法，以确定是否生成跟踪信息。  
+  
+ 跟踪侦听器使用<xref:System.Diagnostics.Trace>类属性<xref:System.Diagnostics.Trace.Indent%2A>、 <xref:System.Diagnostics.Trace.IndentSize%2A>和<xref:System.Diagnostics.Trace.AutoFlush%2A>的值来设置跟踪输出的格式。 您可以使用配置文件特性来设置<xref:System.Diagnostics.Trace.Indent%2A>、 <xref:System.Diagnostics.Trace.IndentSize%2A>和<xref:System.Diagnostics.Trace.AutoFlush%2A>属性。 下面的示例将<xref:System.Diagnostics.Trace.AutoFlush%2A>属性设置为`false` ，并<xref:System.Diagnostics.Trace.IndentSize%2A>将属性设置为3。  
+  
+```xml  
+<configuration>  
+  <system.diagnostics>  
+    <trace autoflush="false" indentsize="3" />  
+  </system.diagnostics>  
+</configuration>  
+```  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用<xref:System.Diagnostics.TraceSource>类将跟踪转发到侦听器。  该示例还演示了开关和筛选器的用法。  
+  
+ [!code-cpp[System.Diagnostics.TraceSource2#1](~/samples/snippets/cpp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/CPP/tracesource2.cpp#1)]
+ [!code-csharp[System.Diagnostics.TraceSource2#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/CS/program.cs#1)]
+ [!code-vb[System.Diagnostics.TraceSource2#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/VB/program.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <threadsafe>此类型是线程安全的。</threadsafe>
+    <related type="Article" href="~/docs/framework/configure-apps/file-schema/trace-debug/index.md">跟踪和调试设置架构</related>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Diagnostics.TraceSource" /> 类的新实例。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public TraceSource (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.#ctor(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (name As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; TraceSource(System::String ^ name);" />
+      <MemberSignature Language="F#" Value="new System.Diagnostics.TraceSource : string -&gt; System.Diagnostics.TraceSource" Usage="new System.Diagnostics.TraceSource name" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="name">源的名称，（通常为应用程序的名称）。</param>
+        <summary>使用指定的源名称初始化 <see cref="T:System.Diagnostics.TraceSource" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 源名称用于标识跟踪。 使用<xref:System.Diagnostics.SourceFilter>它来确定跟踪侦听器是否应生成跟踪。 建议的做法是使用应用程序的名称作为源名称。  
+  
+> [!NOTE]
+>  不需要为每个跟踪请求创建<xref:System.Diagnostics.TraceSource>新的实例。 创建一个<xref:System.Diagnostics.TraceSource>实例，并将其用于应用程序的所有跟踪请求。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用<xref:System.Diagnostics.TraceSource.%23ctor%2A>构造函数创建新<xref:System.Diagnostics.TraceSource>的对象。 此代码示例是为<xref:System.Diagnostics.TraceSource>类提供的更大示例的一部分。  
+  
+ [!code-csharp[System.Diagnostics.TraceSource2#9](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/CS/program.cs#9)]
+ [!code-vb[System.Diagnostics.TraceSource2#9](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/VB/program.vb#9)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 为空字符串 ("")。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public TraceSource (string name, System.Diagnostics.SourceLevels defaultLevel);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string name, valuetype System.Diagnostics.SourceLevels defaultLevel) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.#ctor(System.String,System.Diagnostics.SourceLevels)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (name As String, defaultLevel As SourceLevels)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; TraceSource(System::String ^ name, System::Diagnostics::SourceLevels defaultLevel);" />
+      <MemberSignature Language="F#" Value="new System.Diagnostics.TraceSource : string * System.Diagnostics.SourceLevels -&gt; System.Diagnostics.TraceSource" Usage="new System.Diagnostics.TraceSource (name, defaultLevel)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="defaultLevel" Type="System.Diagnostics.SourceLevels" />
+      </Parameters>
+      <Docs>
+        <param name="name">源的名称，通常为应用程序的名称。</param>
+        <param name="defaultLevel">枚举的按位组合，指定要跟踪的默认源级别。</param>
+        <summary>使用源的指定名称和执行跟踪的默认源级别初始化 <see cref="T:System.Diagnostics.TraceSource" /> 类的新实例。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 源名称用于标识跟踪。 可以使用它<xref:System.Diagnostics.SourceSwitch>来确定是否发生跟踪，并<xref:System.Diagnostics.SourceFilter>使用来确定是否生成跟踪。 使用默认源级别<xref:System.Diagnostics.EventTypeFilter>来确定是否基于要跟踪的消息的源级别进行跟踪。  
+  
+> [!NOTE]
+>  不需要为每个跟踪请求创建<xref:System.Diagnostics.TraceSource>新的实例。 创建一个<xref:System.Diagnostics.TraceSource>实例，并将其用于应用程序的所有跟踪请求。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 为空字符串 ("")。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Attributes">
+      <MemberSignature Language="C#" Value="public System.Collections.Specialized.StringDictionary Attributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Specialized.StringDictionary Attributes" />
+      <MemberSignature Language="DocId" Value="P:System.Diagnostics.TraceSource.Attributes" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Attributes As StringDictionary" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Collections::Specialized::StringDictionary ^ Attributes { System::Collections::Specialized::StringDictionary ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Attributes : System.Collections.Specialized.StringDictionary" Usage="System.Diagnostics.TraceSource.Attributes" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Specialized.StringDictionary</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取在应用程序配置文件中定义的自定义开关特性。</summary>
+        <value>包含跟踪开关的自定义特性的 <see cref="T:System.Collections.Specialized.StringDictionary" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Diagnostics.TraceSource.Attributes%2A>属性标识应用程序的配置文件中引用的自定义属性。 未引用的自定义特性不会被枚举。 从<xref:System.Diagnostics.TraceSource>类继承的类可以通过<xref:System.Diagnostics.Switch.GetSupportedAttributes%2A?displayProperty=nameWithType>重写方法并返回自定义属性名称的字符串数组，来添加自定义特性。  
+  
+ 下面是一个指定自定义属性`SecondTraceSourceAttribute`的 trace source 元素的示例：  
+  
+```xml  
+<sources>  
+  <source name="TraceTest" switchName="TestSourceSwitch"   
+    switchType="Testing.MySourceSwitch, TraceSample"   
+    SecondTraceSourceAttribute="two">  
+  </source>  
+</sources>  
+```  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何显示的自定义特性<xref:System.Diagnostics.TraceSource>。  此代码示例是为<xref:System.Diagnostics.TraceSource>类提供的更大示例的一部分。  
+  
+ [!code-csharp[System.Diagnostics.TraceSource2#14](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/CS/program.cs#14)]
+ [!code-vb[System.Diagnostics.TraceSource2#14](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/VB/program.vb#14)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Close">
+      <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Close() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.Close" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Close ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Close();" />
+      <MemberSignature Language="F#" Value="member this.Close : unit -&gt; unit" Usage="traceSource.Close " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>关闭跟踪侦听器集合中的所有跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法调用集合 <xref:System.Diagnostics.TraceSource.Listeners%2A> 中每个跟踪侦听器的方法。 <xref:System.Diagnostics.TraceListener.Close%2A> <xref:System.Diagnostics.TraceSource.Close%2A>  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用<xref:System.Diagnostics.TraceSource.Close%2A>方法关闭集合中的所有侦听器。 此代码示例是为<xref:System.Diagnostics.TraceSource>类提供的更大示例的一部分。  
+  
+ [!code-csharp[System.Diagnostics.TraceSource2#33](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/CS/program.cs#33)]
+ [!code-vb[System.Diagnostics.TraceSource2#33](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/VB/program.vb#33)]  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于处理非托管代码。 要求值： <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />;关联的枚举<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />：。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="Flush">
+      <MemberSignature Language="C#" Value="public void Flush ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Flush() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.Flush" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Flush ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Flush();" />
+      <MemberSignature Language="F#" Value="member this.Flush : unit -&gt; unit" Usage="traceSource.Flush " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>刷新跟踪侦听器集合中的所有跟踪侦听器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法调用集合 <xref:System.Diagnostics.TraceSource.Listeners%2A> 中每个跟踪侦听器的方法。 <xref:System.Diagnostics.TraceListener.Flush%2A> <xref:System.Diagnostics.TraceSource.Flush%2A>  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用<xref:System.Diagnostics.TraceSource.Flush%2A>方法来刷新集合中的所有侦听器。 此代码示例是为<xref:System.Diagnostics.TraceSource>类提供的更大示例的一部分。  
+  
+ [!code-csharp[System.Diagnostics.TraceSource2#33](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/CS/program.cs#33)]
+ [!code-vb[System.Diagnostics.TraceSource2#33](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/VB/program.vb#33)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">终止期间尝试跟踪事件。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetSupportedAttributes">
+      <MemberSignature Language="C#" Value="protected internal virtual string[] GetSupportedAttributes ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance string[] GetSupportedAttributes() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.GetSupportedAttributes" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Function GetSupportedAttributes () As String()" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual cli::array &lt;System::String ^&gt; ^ GetSupportedAttributes();" />
+      <MemberSignature Language="F#" Value="abstract member GetSupportedAttributes : unit -&gt; string[]&#xA;override this.GetSupportedAttributes : unit -&gt; string[]" Usage="traceSource.GetSupportedAttributes " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>获取跟踪源所支持的自定义特性。</summary>
+        <returns>对跟踪源支持的自定义特性进行命名的字符串数组；如果不存在自定义特性，则为 <see langword="null" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 的默认实现<xref:System.Diagnostics.TraceSource.GetSupportedAttributes%2A>返回`null`。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何重写<xref:System.Diagnostics.TraceSource.GetSupportedAttributes%2A>方法以标识`MyTraceSource`类的自定义特性。  
+  
+ [!code-csharp[System.Diagnostics.TraceSource#33](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource/CS/program.cs#33)]
+ [!code-vb[System.Diagnostics.TraceSource#33](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.TraceSource/VB/program.vb#33)]  
+  
+ ]]></format>
+        </remarks>
+        <block subset="none" type="overrides"><para>从<see cref="T:System.Diagnostics.TraceSource" />类或派生类继承时，可以<see cref="M:System.Diagnostics.TraceSource.GetSupportedAttributes" />重写方法以为类提供自定义特性。</para></block>
+      </Docs>
+    </Member>
+    <Member MemberName="Listeners">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.TraceListenerCollection Listeners { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Diagnostics.TraceListenerCollection Listeners" />
+      <MemberSignature Language="DocId" Value="P:System.Diagnostics.TraceSource.Listeners" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Listeners As TraceListenerCollection" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Diagnostics::TraceListenerCollection ^ Listeners { System::Diagnostics::TraceListenerCollection ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Listeners : System.Diagnostics.TraceListenerCollection" Usage="System.Diagnostics.TraceSource.Listeners" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.TraceListenerCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取跟踪源的跟踪侦听器集合。</summary>
+        <value>包含与源关联的活动跟踪侦听器的 <see cref="T:System.Diagnostics.TraceListenerCollection" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 使用此属性可以访问跟踪侦听器并对其执行操作。  
+  
+ ]]></format>
+        </remarks>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于处理非托管代码。 要求值： <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />;关联的枚举<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />：。</permission>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberSignature Language="DocId" Value="P:System.Diagnostics.TraceSource.Name" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Name As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::String ^ Name { System::String ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.Name : string" Usage="System.Diagnostics.TraceSource.Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取跟踪源的名称。</summary>
+        <value>跟踪源的名称。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 该名称由`name`传递给构造函数的参数设置。 您可以使用配置文件中的`name`属性引用跟踪源。  
+  
+ 下面的 XML 元素显示了如何引用配置文件中的跟踪源。  
+  
+```xml  
+<configuration>  
+  <system.diagnostics>  
+    <sources>  
+      <source name="TraceTest">  
+      </source>  
+    </sources>  
+  </system.diagnostics>  
+</configuration>  
+```  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何在构造函数调用中命名跟踪源。  此代码示例是为<xref:System.Diagnostics.TraceSource>类提供的更大示例的一部分。  
+  
+ [!code-csharp[System.Diagnostics.TraceSource2#9](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/CS/program.cs#9)]
+ [!code-vb[System.Diagnostics.TraceSource2#9](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/VB/program.vb#9)]  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Switch">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SourceSwitch Switch { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Diagnostics.SourceSwitch Switch" />
+      <MemberSignature Language="DocId" Value="P:System.Diagnostics.TraceSource.Switch" />
+      <MemberSignature Language="VB.NET" Value="Public Property Switch As SourceSwitch" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Diagnostics::SourceSwitch ^ Switch { System::Diagnostics::SourceSwitch ^ get(); void set(System::Diagnostics::SourceSwitch ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.Switch : System.Diagnostics.SourceSwitch with get, set" Usage="System.Diagnostics.TraceSource.Switch" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.SourceSwitch</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置源开关的值。</summary>
+        <value>表示源开关值的 <see cref="T:System.Diagnostics.SourceSwitch" /> 对象。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Diagnostics.TraceSource.Switch%2A>属性允许在跟踪源调用侦听器之前筛选消息。  
+  
+ 开关用于检查是否应生成或忽略跟踪调用。 每个跟踪方法调用<xref:System.Diagnostics.SourceSwitch.ShouldTrace%2A>的方法<xref:System.Diagnostics.SourceSwitch>来确定是否继续跟踪。 如果调用返回`true`，则调用侦听器。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">将 <see cref="P:System.Diagnostics.TraceSource.Switch" /> 设置为 <see langword="null" />。</exception>
+        <permission cref="T:System.Security.Permissions.SecurityPermission">用于处理非托管代码。 要求值： <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />;关联的枚举<see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" />：。</permission>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="TraceData">
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将跟踪数据写入 <see cref="P:System.Diagnostics.TraceSource.Listeners" /> 集合中的跟踪侦听器中。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="TraceData">
+      <MemberSignature Language="C#" Value="public void TraceData (System.Diagnostics.TraceEventType eventType, int id, object data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceData(valuetype System.Diagnostics.TraceEventType eventType, int32 id, object data) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.TraceData(System.Diagnostics.TraceEventType,System.Int32,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub TraceData (eventType As TraceEventType, id As Integer, data As Object)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void TraceData(System::Diagnostics::TraceEventType eventType, int id, System::Object ^ data);" />
+      <MemberSignature Language="F#" Value="member this.TraceData : System.Diagnostics.TraceEventType * int * obj -&gt; unit" Usage="traceSource.TraceData (eventType, id, data)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventType" Type="System.Diagnostics.TraceEventType" />
+        <Parameter Name="id" Type="System.Int32" />
+        <Parameter Name="data" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="eventType">指定跟踪数据的事件类型的其中一个枚举值。</param>
+        <param name="id">事件的数值标识符。</param>
+        <param name="data">跟踪数据。</param>
+        <summary>使用指定的事件类型、事件标识符和跟踪数据，将跟踪数据写入 <see cref="P:System.Diagnostics.TraceSource.Listeners" /> 集合中的跟踪侦听器中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Diagnostics.TraceSource.TraceData%2A> 方法 <xref:System.Diagnostics.TraceSource.TraceEvent%2A> 与方法类似，用于自动工具，但它还允许将其他对象（如异常实例）附加到跟踪。  
+  
+ <xref:System.Diagnostics.SourceSwitch>方法调用由 <xref:System.Diagnostics.TraceSource.Switch%2A> 属性返回的对象的方法。 <xref:System.Diagnostics.SourceSwitch.ShouldTrace%2A?displayProperty=nameWithType>  <xref:System.Diagnostics.TraceSource.TraceData%2A> 如果<xref:System.Diagnostics.SourceSwitch.ShouldTrace%2A>返回`true` <xref:System.Diagnostics.TraceListener.TraceData%2A> ，则在所有侦听器上调用 <xref:System.Diagnostics.TraceSource.TraceData%2A> 相应的方法。 否则， <xref:System.Diagnostics.TraceSource.TraceData%2A>将返回，而不调用侦听器的方法。  
+  
+> [!NOTE]
+>  对象的最大`id`值限制为65535。 <xref:System.Diagnostics.EventLogTraceListener> 如果指定`id`的值大于65535，该对象将<xref:System.Diagnostics.EventLogTraceListener>使用65535。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用<xref:System.Diagnostics.TraceSource.TraceData%28System.Diagnostics.TraceEventType%2CSystem.Int32%2CSystem.Object%29>方法来筛选跟踪消息并将其转发到侦听器。 此代码示例是为<xref:System.Diagnostics.TraceSource>类提供的更大示例的一部分。  
+  
+ [!code-csharp[System.Diagnostics.TraceSource2#28](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/CS/program.cs#28)]
+ [!code-vb[System.Diagnostics.TraceSource2#28](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/VB/program.vb#28)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">终止期间尝试跟踪事件。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="TraceData">
+      <MemberSignature Language="C#" Value="public void TraceData (System.Diagnostics.TraceEventType eventType, int id, params object[] data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceData(valuetype System.Diagnostics.TraceEventType eventType, int32 id, object[] data) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.TraceData(System.Diagnostics.TraceEventType,System.Int32,System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Public Sub TraceData (eventType As TraceEventType, id As Integer, ParamArray data As Object())" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void TraceData(System::Diagnostics::TraceEventType eventType, int id, ... cli::array &lt;System::Object ^&gt; ^ data);" />
+      <MemberSignature Language="F#" Value="member this.TraceData : System.Diagnostics.TraceEventType * int * obj[] -&gt; unit" Usage="traceSource.TraceData (eventType, id, data)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventType" Type="System.Diagnostics.TraceEventType" />
+        <Parameter Name="id" Type="System.Int32" />
+        <Parameter Name="data" Type="System.Object[]">
+          <Attributes>
+            <Attribute FrameworkAlternate="netcore-1.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="eventType">指定跟踪数据的事件类型的其中一个枚举值。</param>
+        <param name="id">事件的数值标识符。</param>
+        <param name="data">包含跟踪数据的对象数组。</param>
+        <summary>使用指定的事件类型、事件标识符和跟踪数据数组，将跟踪数据写入 <see cref="P:System.Diagnostics.TraceSource.Listeners" /> 集合中的跟踪侦听器中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Diagnostics.TraceSource.TraceData%2A> 方法 <xref:System.Diagnostics.TraceSource.TraceEvent%2A> 与方法类似，用于自动工具，但它还允许将其他对象（如异常实例和堆栈跟踪）附加到跟踪。  
+  
+ <xref:System.Diagnostics.SourceSwitch>方法调用由 <xref:System.Diagnostics.TraceSource.Switch%2A> 属性返回的对象的方法。 <xref:System.Diagnostics.SourceSwitch.ShouldTrace%2A>  <xref:System.Diagnostics.TraceSource.TraceData%2A> 如果<xref:System.Diagnostics.SourceSwitch.ShouldTrace%2A>返回`true` <xref:System.Diagnostics.TraceListener.TraceData%2A> ，则在所有侦听器上调用 <xref:System.Diagnostics.TraceSource.TraceData%2A> 相应的方法。 否则， <xref:System.Diagnostics.TraceSource.TraceData%2A>将返回，而不调用侦听器的方法。  
+  
+> [!NOTE]
+>  对象的最大`id`值限制为65535。 <xref:System.Diagnostics.EventLogTraceListener> 如果指定`id`的值大于65535，该对象将<xref:System.Diagnostics.EventLogTraceListener>使用65535。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">终止期间尝试跟踪事件。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="TraceEvent">
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将跟踪事件消息写入 <see cref="P:System.Diagnostics.TraceSource.Listeners" /> 集合中的跟踪侦听器中。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="TraceEvent">
+      <MemberSignature Language="C#" Value="public void TraceEvent (System.Diagnostics.TraceEventType eventType, int id);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceEvent(valuetype System.Diagnostics.TraceEventType eventType, int32 id) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub TraceEvent (eventType As TraceEventType, id As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void TraceEvent(System::Diagnostics::TraceEventType eventType, int id);" />
+      <MemberSignature Language="F#" Value="member this.TraceEvent : System.Diagnostics.TraceEventType * int -&gt; unit" Usage="traceSource.TraceEvent (eventType, id)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventType" Type="System.Diagnostics.TraceEventType" />
+        <Parameter Name="id" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="eventType">指定跟踪数据的事件类型的其中一个枚举值。</param>
+        <param name="id">事件的数值标识符。</param>
+        <summary>使用指定的事件类型和事件标识符，将跟踪事件消息写入 <see cref="P:System.Diagnostics.TraceSource.Listeners" /> 集合中的跟踪侦听器中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Diagnostics.TraceSource.TraceEvent%2A>方法旨在跟踪可以由工具自动处理的事件。 例如，如果特定的事件由特定的源跟踪，监视工具可以通知管理员。  
+  
+ <xref:System.Diagnostics.SourceSwitch>方法调用由 <xref:System.Diagnostics.TraceSource.Switch%2A> 属性返回的对象的方法。 <xref:System.Diagnostics.SourceSwitch.ShouldTrace%2A>  <xref:System.Diagnostics.TraceSource.TraceEvent%2A> 如果<xref:System.Diagnostics.SourceSwitch.ShouldTrace%2A>返回`true` <xref:System.Diagnostics.TraceListener.TraceEvent%2A> ，则调用每个侦听器 <xref:System.Diagnostics.TraceSource.TraceEvent%2A> 的相应方法。 否则， <xref:System.Diagnostics.TraceSource.TraceEvent%2A>将返回，而不调用侦听器的方法。  
+  
+ 跟踪内容是侦听器特定的。 如果侦听器实现未重写此方法，则默认输出为跟踪源的名称、其数值标识和事件类型。  其他跟踪内容依赖于侦听器的<xref:System.Diagnostics.TraceListener.TraceOutputOptions%2A>属性值。  
+  
+> [!NOTE]
+>  对象的最大`id`值限制为65535。 <xref:System.Diagnostics.EventLogTraceListener> 如果指定`id`的值大于65535，则将<xref:System.Diagnostics.EventLogTraceListener>使用65535。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用<xref:System.Diagnostics.TraceSource.TraceEvent%28System.Diagnostics.TraceEventType%2CSystem.Int32%29>方法将跟踪事件传递给侦听器。 此代码示例是为<xref:System.Diagnostics.TraceSource>类提供的更大示例的一部分。  
+  
+ [!code-csharp[System.Diagnostics.TraceSource2#17](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/CS/program.cs#17)]
+ [!code-vb[System.Diagnostics.TraceSource2#17](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/VB/program.vb#17)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">终止期间尝试跟踪事件。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="TraceEvent">
+      <MemberSignature Language="C#" Value="public void TraceEvent (System.Diagnostics.TraceEventType eventType, int id, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceEvent(valuetype System.Diagnostics.TraceEventType eventType, int32 id, string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub TraceEvent (eventType As TraceEventType, id As Integer, message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void TraceEvent(System::Diagnostics::TraceEventType eventType, int id, System::String ^ message);" />
+      <MemberSignature Language="F#" Value="member this.TraceEvent : System.Diagnostics.TraceEventType * int * string -&gt; unit" Usage="traceSource.TraceEvent (eventType, id, message)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventType" Type="System.Diagnostics.TraceEventType" />
+        <Parameter Name="id" Type="System.Int32" />
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="eventType">指定跟踪数据的事件类型的其中一个枚举值。</param>
+        <param name="id">事件的数值标识符。</param>
+        <param name="message">要写入的跟踪消息。</param>
+        <summary>使用指定的事件类型、事件标识符和消息，将跟踪事件消息写入 <see cref="P:System.Diagnostics.TraceSource.Listeners" /> 集合中的跟踪侦听器中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:System.Diagnostics.TraceSource.TraceEvent%2A>方法旨在跟踪可以由工具自动处理的事件。 例如，如果特定的事件由特定的源跟踪，监视工具可以通知管理员。  
+  
+ <xref:System.Diagnostics.SourceSwitch>方法调用由 <xref:System.Diagnostics.TraceSource.Switch%2A> 属性返回的对象的方法。 <xref:System.Diagnostics.SourceSwitch.ShouldTrace%2A>  <xref:System.Diagnostics.TraceSource.TraceEvent%2A> 如果<xref:System.Diagnostics.SourceSwitch.ShouldTrace%2A>返回`true` <xref:System.Diagnostics.TraceListener.TraceEvent%2A> ，则调用每个侦听器 <xref:System.Diagnostics.TraceSource.TraceEvent%2A> 的相应方法。 否则， <xref:System.Diagnostics.TraceSource.TraceEvent%2A>将返回，而不调用侦听器的方法。  
+  
+ 跟踪内容是侦听器特定的。 如果侦听器实现未重写此方法，则默认输出为跟踪源的名称、其数字标识、事件类型和消息。  其他跟踪内容依赖于侦听器的<xref:System.Diagnostics.TraceListener.TraceOutputOptions%2A>属性值。  
+  
+> [!NOTE]
+>  对象的最大`id`值限制为65535。 <xref:System.Diagnostics.EventLogTraceListener> 如果指定`id`的值大于65535，该对象将<xref:System.Diagnostics.EventLogTraceListener>使用65535。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用<xref:System.Diagnostics.TraceSource.TraceEvent%28System.Diagnostics.TraceEventType%2CSystem.Int32%29>方法将跟踪事件传递给侦听器。 此代码示例是为<xref:System.Diagnostics.TraceSource>类提供的更大示例的一部分。  
+  
+ [!code-csharp[System.Diagnostics.TraceSource2#18](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/CS/program.cs#18)]
+ [!code-vb[System.Diagnostics.TraceSource2#18](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/VB/program.vb#18)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">终止期间尝试跟踪事件。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="TraceEvent">
+      <MemberSignature Language="C#" Value="public void TraceEvent (System.Diagnostics.TraceEventType eventType, int id, string format, params object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceEvent(valuetype System.Diagnostics.TraceEventType eventType, int32 id, string format, object[] args) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.TraceEvent(System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Public Sub TraceEvent (eventType As TraceEventType, id As Integer, format As String, ParamArray args As Object())" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void TraceEvent(System::Diagnostics::TraceEventType eventType, int id, System::String ^ format, ... cli::array &lt;System::Object ^&gt; ^ args);" />
+      <MemberSignature Language="F#" Value="member this.TraceEvent : System.Diagnostics.TraceEventType * int * string * obj[] -&gt; unit" Usage="traceSource.TraceEvent (eventType, id, format, args)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eventType" Type="System.Diagnostics.TraceEventType" />
+        <Parameter Name="id" Type="System.Int32" />
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute FrameworkAlternate="netcore-1.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="eventType">指定跟踪数据的事件类型的其中一个枚举值。</param>
+        <param name="id">事件的数值标识符。</param>
+        <param name="format">包含与零个或多个格式项混合的文本的一个复合格式字符串，与 <paramref name="args" /> 数组中的对象相对应。</param>
+        <param name="args">包含零个或多个要格式化的对象的 <see langword="object" /> 数组。</param>
+        <summary>使用指定的事件类型、事件标识符以及参数数组和格式，将跟踪事件写入 <see cref="P:System.Diagnostics.TraceSource.Listeners" /> 集合中的跟踪侦听器中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 有关`format`参数的详细信息，请参阅[复合格式设置](~/docs/standard/base-types/composite-formatting.md)。  
+  
+ <xref:System.Diagnostics.TraceSource.TraceEvent%2A>方法旨在跟踪可以由工具自动处理的事件。 例如，如果特定的事件由特定的源跟踪，监视工具可以通知管理员。  
+  
+ <xref:System.Diagnostics.SourceSwitch>方法调用由 <xref:System.Diagnostics.TraceSource.Switch%2A> 属性返回的对象的方法。 <xref:System.Diagnostics.SourceSwitch.ShouldTrace%2A>  <xref:System.Diagnostics.TraceSource.TraceEvent%2A> 如果<xref:System.Diagnostics.SourceSwitch.ShouldTrace%2A>返回`true` <xref:System.Diagnostics.TraceListener.TraceEvent%2A> ，则调用每个侦听器 <xref:System.Diagnostics.TraceSource.TraceEvent%2A> 的相应方法。 否则， <xref:System.Diagnostics.TraceSource.TraceEvent%2A>将返回，而不调用侦听器的方法。  
+  
+ 跟踪内容是侦听器特定的。 默认<xref:System.Diagnostics.TraceListener.TraceEvent%28System.Diagnostics.TraceEventCache%2CSystem.String%2CSystem.Diagnostics.TraceEventType%2CSystem.Int32%2CSystem.String%2CSystem.Object%5B%5D%29>方法在跟踪标头中写入源名称、事件类型和数字标识，然后<xref:System.String.Format%28System.IFormatProvider%2CSystem.String%2CSystem.Object%5B%5D%29?displayProperty=nameWithType>调用方法，传递`format`字符串和`args`数组，并使用<xref:System.Globalization.CultureInfo.InvariantCulture?displayProperty=nameWithType>属性设置作为消息输出的字符串。  
+  
+> [!NOTE]
+>  对象的最大`id`值限制为65535。 <xref:System.Diagnostics.EventLogTraceListener> 如果指定`id`的值大于65535，该对象将<xref:System.Diagnostics.EventLogTraceListener>使用65535。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何使用<xref:System.Diagnostics.TraceSource.TraceEvent%28System.Diagnostics.TraceEventType%2CSystem.Int32%29>方法将跟踪事件传递给侦听器。 此代码示例是为<xref:System.Diagnostics.TraceSource>类提供的更大示例的一部分。  
+  
+ [!code-csharp[System.Diagnostics.TraceSource2#24](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/CS/program.cs#24)]
+ [!code-vb[System.Diagnostics.TraceSource2#24](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Diagnostics.TraceSource2/VB/program.vb#24)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="format" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.FormatException"><paramref name="format" /> 无效。  
+  
+- 或 - 
+表示要设置格式的参数的数字小于零，或者大于等于要设置格式的指定对象的数目。</exception>
+        <exception cref="T:System.ObjectDisposedException">终止期间尝试跟踪事件。</exception>
+        <related type="Article" href="~/docs/standard/base-types/composite-formatting.md">复合格式设置</related>
+        <related type="Article" href="~/docs/standard/base-types/standard-numeric-format-strings.md">标准数字格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/custom-numeric-format-strings.md">自定义数字格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/standard-date-and-time-format-strings.md">标准 DateTime 格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/custom-date-and-time-format-strings.md">自定义日期时间格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/enumeration-format-strings.md">枚举格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/formatting-types.md">设置 .NET 中类型的格式</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="TraceInformation">
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将信息性消息写入 <see cref="P:System.Diagnostics.TraceSource.Listeners" /> 集合中的跟踪侦听器中。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="TraceInformation">
+      <MemberSignature Language="C#" Value="public void TraceInformation (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceInformation(string message) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.TraceInformation(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub TraceInformation (message As String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void TraceInformation(System::String ^ message);" />
+      <MemberSignature Language="F#" Value="member this.TraceInformation : string -&gt; unit" Usage="traceSource.TraceInformation message" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">要写入的信息性消息。</param>
+        <summary>使用指定消息，将信息性消息写入 <see cref="P:System.Diagnostics.TraceSource.Listeners" /> 集合中的跟踪侦听器中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法<xref:System.Diagnostics.TraceSource.TraceInformation%2A>提供了一条信息性消息，该消息应由用户读取，而不是由工具读取。  
+  
+ <xref:System.Diagnostics.TraceSource.TraceInformation%28System.String%29>调用方法，设置`eventType`为<xref:System.Diagnostics.TraceEventType.Information?displayProperty=nameWithType> ，并将信息性消息作为消息字符串传递。 <xref:System.Diagnostics.TraceSource.TraceEvent%28System.Diagnostics.TraceEventType%2CSystem.Int32%2CSystem.String%29> 方法又调用每个跟踪侦听器的方法。 <xref:System.Diagnostics.TraceListener.TraceEvent%28System.Diagnostics.TraceEventCache%2CSystem.String%2CSystem.Diagnostics.TraceEventType%2CSystem.Int32%2CSystem.String%29>  <xref:System.Diagnostics.TraceSource.TraceEvent%28System.Diagnostics.TraceEventType%2CSystem.Int32%2CSystem.String%29>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">终止期间尝试跟踪事件。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="TraceInformation">
+      <MemberSignature Language="C#" Value="public void TraceInformation (string format, params object[] args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceInformation(string format, object[] args) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.TraceInformation(System.String,System.Object[])" />
+      <MemberSignature Language="VB.NET" Value="Public Sub TraceInformation (format As String, ParamArray args As Object())" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void TraceInformation(System::String ^ format, ... cli::array &lt;System::Object ^&gt; ^ args);" />
+      <MemberSignature Language="F#" Value="member this.TraceInformation : string * obj[] -&gt; unit" Usage="traceSource.TraceInformation (format, args)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.2;netcore-3.0;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="format" Type="System.String" />
+        <Parameter Name="args" Type="System.Object[]">
+          <Attributes>
+            <Attribute FrameworkAlternate="netcore-1.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="format">包含与零个或多个格式项混合的文本的一个复合格式字符串，与 <paramref name="args" /> 数组中的对象相对应。</param>
+        <param name="args">包含零个或多个要格式化的对象的数组。</param>
+        <summary>使用指定的对象数组和格式化信息，将信息性消息写入 <see cref="P:System.Diagnostics.TraceSource.Listeners" /> 集合中的跟踪侦听器中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 有关`format`参数的详细信息，请参阅[复合格式设置](~/docs/standard/base-types/composite-formatting.md)。  
+  
+ 方法<xref:System.Diagnostics.TraceSource.TraceInformation%2A>提供了一条信息性消息，该消息应由用户读取，而不是由工具读取。  
+  
+ <xref:System.Diagnostics.TraceSource.TraceInformation%28System.String%2CSystem.Object%5B%5D%29>调用方法，将消息`eventType`内容<xref:System.Diagnostics.TraceEventType.Information?displayProperty=nameWithType>设置为，并将消息内容作为包含格式信息的对象数组传递。 <xref:System.Diagnostics.TraceSource.TraceEvent%28System.Diagnostics.TraceEventType%2CSystem.Int32%2CSystem.String%2CSystem.Object%5B%5D%29> 方法又调用每个跟踪侦听器的方法。 <xref:System.Diagnostics.TraceListener.TraceEvent%28System.Diagnostics.TraceEventCache%2CSystem.String%2CSystem.Diagnostics.TraceEventType%2CSystem.Int32%2CSystem.String%2CSystem.Object%5B%5D%29>  <xref:System.Diagnostics.TraceSource.TraceEvent%28System.Diagnostics.TraceEventType%2CSystem.Int32%2CSystem.String%2CSystem.Object%5B%5D%29>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="format" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.FormatException"><paramref name="format" /> 无效。  
+  
+或 
+表示要设置格式的参数的数字小于零，或者大于等于要设置格式的指定对象的数目。</exception>
+        <exception cref="T:System.ObjectDisposedException">终止期间尝试跟踪事件。</exception>
+        <related type="Article" href="~/docs/standard/base-types/composite-formatting.md">复合格式设置</related>
+        <related type="Article" href="~/docs/standard/base-types/standard-numeric-format-strings.md">标准数字格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/custom-numeric-format-strings.md">自定义数字格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/standard-date-and-time-format-strings.md">标准 DateTime 格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/custom-date-and-time-format-strings.md">自定义日期时间格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/enumeration-format-strings.md">枚举格式字符串</related>
+        <related type="Article" href="~/docs/standard/base-types/formatting-types.md">设置 .NET 中类型的格式</related>
+      </Docs>
+    </Member>
+    <Member MemberName="TraceTransfer">
+      <MemberSignature Language="C#" Value="public void TraceTransfer (int id, string message, Guid relatedActivityId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void TraceTransfer(int32 id, string message, valuetype System.Guid relatedActivityId) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.TraceSource.TraceTransfer(System.Int32,System.String,System.Guid)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub TraceTransfer (id As Integer, message As String, relatedActivityId As Guid)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void TraceTransfer(int id, System::String ^ message, Guid relatedActivityId);" />
+      <MemberSignature Language="F#" Value="member this.TraceTransfer : int * string * Guid -&gt; unit" Usage="traceSource.TraceTransfer (id, message, relatedActivityId)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.TraceSource</AssemblyName>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netstandard-2.1">
+          <AttributeName>System.Diagnostics.Conditional("TRACE")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="id" Type="System.Int32" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="message" Type="System.String" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="relatedActivityId" Type="System.Guid" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+      </Parameters>
+      <Docs>
+        <param name="id">事件的数值标识符。</param>
+        <param name="message">要写入的跟踪消息。</param>
+        <param name="relatedActivityId">标识相关活动的结构。</param>
+        <summary>使用指定的数字标识符、消息和相关活动标识符，将跟踪传输消息写入 <see cref="P:System.Diagnostics.TraceSource.Listeners" /> 集合的跟踪侦听器中。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 方法调用属性 <xref:System.Diagnostics.TraceSource.Listeners%2A> 中每个跟踪侦听器的方法来 <xref:System.Diagnostics.TraceListener.TraceTransfer%2A> 写入 <xref:System.Diagnostics.TraceSource.TraceTransfer%2A>跟踪信息。 基类<xref:System.Diagnostics.TraceListener.TraceTransfer%2A> <xref:System.Diagnostics.TraceListener.TraceEvent%28System.Diagnostics.TraceEventCache%2CSystem.String%2CSystem.Diagnostics.TraceEventType%2CSystem.Int32%2CSystem.String%29?displayProperty=nameWithType> `eventType` `message` `relatedActivityId` <xref:System.Diagnostics.TraceEventType.Transfer?displayProperty=nameWithType>中的默认方法调用方法来处理调用，设置为，并将 GUID 的字符串表示形式追加到。 <xref:System.Diagnostics.TraceListener>  
+  
+ <xref:System.Diagnostics.TraceSource.TraceTransfer%2A>旨在与的逻辑操作<xref:System.Diagnostics.CorrelationManager>一起使用。 参数与<xref:System.Diagnostics.CorrelationManager>对象的<xref:System.Diagnostics.CorrelationManager.ActivityId%2A>属性相关。 `relatedActivityId` 如果逻辑操作在一个活动中开始，并传输到另一个活动，则第二个活动通过<xref:System.Diagnostics.TraceSource.TraceTransfer%2A>调用方法记录传输。 此<xref:System.Diagnostics.TraceSource.TraceTransfer%2A>调用将新的活动标识与以前的标识相关联。 此功能的最可能使用者是跟踪查看器，它可以报告跨多个活动的逻辑操作。  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Diagnostics.XmlWriterTraceListener" />
+        <altmember cref="T:System.Diagnostics.EventSchemaTraceListener" />
+        <altmember cref="T:System.Diagnostics.DelimitedListTraceListener" />
+      </Docs>
+    </Member>
+  </Members>
+</Type>
