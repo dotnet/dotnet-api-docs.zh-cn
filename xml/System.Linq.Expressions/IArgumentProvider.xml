@@ -1,0 +1,124 @@
+<Type Name="IArgumentProvider" FullName="System.Linq.Expressions.IArgumentProvider">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="4abd0b0508fdc62e37d2117e5823a54dfc7dfdce" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70580558" /></Metadata><TypeSignature Language="C#" Value="public interface IArgumentProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IArgumentProvider" />
+  <TypeSignature Language="DocId" Value="T:System.Linq.Expressions.IArgumentProvider" />
+  <TypeSignature Language="VB.NET" Value="Public Interface IArgumentProvider" />
+  <TypeSignature Language="C++ CLI" Value="public interface class IArgumentProvider" />
+  <TypeSignature Language="F#" Value="type IArgumentProvider = interface" />
+  <AssemblyInfo>
+    <AssemblyName>System.Linq.Expressions</AssemblyName>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>提供用于访问多个树节点（DynamicExpression、ElementInit、MethodCallExpression、InvocationExpression、NewExpression 和 IndexExpression）的参数的内部接口。  此 API 仅供内部使用。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[
+      
+## Remarks
+
+不应使用此 API。  它仅由于程序集重构而成为公共的，并且仅用于内部性能优化。 它允许两种优化来减小树的大小：
+  
+1. 它使节点可以保存到<xref:System.Collections.Generic.IList%601>而不<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>是。  这节省了为每个节点分配只读集合的成本。
+  
+2. 它允许创建专门的子类，以容纳特定数量的自变量（例如`Block2` `Block2`，、、 `Block4`）。  因此，这些节点避免同时<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>分配和数组来存储其元素，从而为每个节点节省32字节。  此方法由各种节点使用，包括<xref:System.Linq.Expressions.BlockExpression>、 <xref:System.Linq.Expressions.InvocationExpression>和<xref:System.Linq.Expressions.MethodCallExpression>。
+            
+表达式树节点继续公开<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>对象的原始 LINQ 属性。 它们通过重复使用一个字段来存储数组或通常存储在数组中的元素来执行此操作。
+            
+对于数组用例，将集合类型化为<xref:System.Collections.Generic.IList%601> <xref:System.Collections.ObjectModel.ReadOnlyCollection%601>而不是。 最初构造节点时，该节点是数组。  此库中的编译器或实用工具通过此接口访问元素。 访问数组元素可将数组升级到<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>。
+            
+对于对象事例，第一个参数存储在类型为<xref:System.Object>的字段中。 最初构造节点时，此字段包含<xref:System.Linq.Expressions.Expression>第一个参数的。  当此库中的编译器和实用工具访问参数时，它们将再次使用此接口，第一个参数的访问器使用内部`Expression.ReturnObject<T>(System.Object)` helper 方法返回<xref:System.Linq.Expressions.Expression>处理或<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>大小写的对象。 当用户访问<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>时，对象字段将更新为直接<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>保存到。
+            
+属性总是返回相同<xref:System.Linq.Expressions.Expression> <xref:System.Collections.ObjectModel.ReadOnlyCollection%601>的，这一点非常重要。 否则，表达式访问者使用的重写程序树查看程序将中断。 这是从 LINQ v1 到不同于同一个<xref:System.Collections.ObjectModel.ReadOnlyCollection%601> <xref:System.Linq.Expressions.Expression>节点的返回不同的重大更改。 目前，用户可以依赖对象标识来判断节点是否已更改。  将<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>存储在重载字段中可减少内存使用量，并保持公共 API 的兼容性。
+
+      ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ArgumentCount">
+      <MemberSignature Language="C#" Value="public int ArgumentCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ArgumentCount" />
+      <MemberSignature Language="DocId" Value="P:System.Linq.Expressions.IArgumentProvider.ArgumentCount" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property ArgumentCount As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property int ArgumentCount { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.ArgumentCount : int" Usage="System.Linq.Expressions.IArgumentProvider.ArgumentCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>返回表达式树节点的参数数目。 此 API 仅供内部使用。</summary>
+        <value>作为 <see cref="T:System.Int32" /> 的表达式树节点的参数数目。</value>
+        <remarks>不应使用此 API。 由于程序集重构，它是公共的，并且在内部用于性能优化。</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetArgument">
+      <MemberSignature Language="C#" Value="public System.Linq.Expressions.Expression GetArgument (int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Linq.Expressions.Expression GetArgument(int32 index) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Linq.Expressions.IArgumentProvider.GetArgument(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetArgument (index As Integer) As Expression" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Linq::Expressions::Expression ^ GetArgument(int index);" />
+      <MemberSignature Language="F#" Value="abstract member GetArgument : int -&gt; System.Linq.Expressions.Expression" Usage="iArgumentProvider.GetArgument index" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Linq.Expressions</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Core</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.Expressions.Expression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">自变量的索引。</param>
+        <summary><paramref name="index" /> 时返回自变量，当 <paramref name="index" /> 超出界限时引发。 此 API 仅供内部使用。</summary>
+        <returns>索引时的自变量。</returns>
+        <remarks>不应使用此 API。  由于程序集重构，只能为公共的；并且在内部用于性能优化。</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
