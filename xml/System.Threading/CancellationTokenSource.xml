@@ -1,0 +1,751 @@
+<Type Name="CancellationTokenSource" FullName="System.Threading.CancellationTokenSource">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="2f931644632aee8098a42a234dd589783505b890" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70409193" /></Metadata><TypeSignature Language="C#" Value="public class CancellationTokenSource : IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CancellationTokenSource extends System.Object implements class System.IDisposable" />
+  <TypeSignature Language="DocId" Value="T:System.Threading.CancellationTokenSource" />
+  <TypeSignature Language="VB.NET" Value="Public Class CancellationTokenSource&#xA;Implements IDisposable" />
+  <TypeSignature Language="C++ CLI" Value="public ref class CancellationTokenSource : IDisposable" />
+  <TypeSignature Language="F#" Value="type CancellationTokenSource = class&#xA;    interface IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>System.Threading.Tasks</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.1.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
+      <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>通知 <see cref="T:System.Threading.CancellationToken" />，告知其应被取消。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 从开始，.NET Framework 使用统一的模型来协作取消涉及两个对象的异步操作或长时间运行的同步操作： [!INCLUDE[net_v40_long](~/includes/net-v40-long-md.md)]  
+  
+-   一个<xref:System.Threading.CancellationTokenSource>对象，该对象通过其<xref:System.Threading.CancellationTokenSource.Token%2A>属性提供取消标记，并通过调用其<xref:System.Threading.CancellationTokenSource.Cancel%2A>或<xref:System.Threading.CancellationTokenSource.CancelAfter%2A>方法发送取消消息。  
+  
+-   一个<xref:System.Threading.CancellationToken>对象，指示是否请求取消。  
+  
+ 用于实现协作取消模型的常规模式是：  
+  
+-   实例化 <xref:System.Threading.CancellationTokenSource> 对象，此对象管理取消通知并将其发送给单个取消标记。  
+  
+-   将 <xref:System.Threading.CancellationTokenSource.Token%2A?displayProperty=nameWithType> 属性返回的标记传递给每个侦听取消的任务或线程。  
+  
+-   从接收取消标记的操作中调用方法。 <xref:System.Threading.CancellationToken.IsCancellationRequested%2A?displayProperty=nameWithType> 为每个任务或线程提供响应取消请求的机制。 是否选择取消操作以及具体操作方式取决于应用程序逻辑。  
+  
+-   调用 <xref:System.Threading.CancellationTokenSource.Cancel%2A?displayProperty=nameWithType> 方法以提供取消通知。 这会将<xref:System.Threading.CancellationToken.IsCancellationRequested%2A?displayProperty=nameWithType>取消标记的每个副本上的属性`true`设置为。  
+  
+-   当你完成<xref:System.Threading.CancellationTokenSource>对象时，调用方法。 <xref:System.Threading.CancellationTokenSource.Dispose%2A>  
+  
+ 有关详细信息，请参阅[托管线程中的取消](~/docs/standard/threading/cancellation-in-managed-threads.md)。  
+  
+> [!IMPORTANT]
+>  此类型实现 <xref:System.IDisposable> 接口。 使用完该类型的实例后，应直接或间接释放该实例。 若要直接释放类型，请在 `try`/`catch` 块中调用其 <xref:System.IDisposable.Dispose%2A> 方法。 若要间接释放类型，请使用 `using`（在 C# 中）或 `Using`（在 Visual Basic 中）等语言构造。 有关详细信息，请参阅 <xref:System.IDisposable> 接口主题中的“使用实现 IDisposable 的对象”一节。  
+  
+   
+  
+## Examples  
+ 下面的示例使用随机数生成器来模拟数据收集应用程序，该应用程序从第11个不同乐器读取10个整数值。 如果值为零，则指示度量值对一个检测失败，在这种情况下，应取消该操作，而不应计算整体平均值。  
+  
+ 为了处理可能取消的操作，此示例实例化一个<xref:System.Threading.CancellationTokenSource>对象，该对象生成一个传递<xref:System.Threading.Tasks.TaskFactory>给对象的取消标记。 <xref:System.Threading.Tasks.TaskFactory>对象反过来将取消标记传递给负责收集特定检测的读取的每个任务。 调用<xref:System.Threading.Tasks.TaskFactory.ContinueWhenAll%60%602%28System.Threading.Tasks.Task%7B%60%600%7D%5B%5D%2CSystem.Func%7BSystem.Threading.Tasks.Task%7B%60%600%7D%5B%5D%2C%60%601%7D%2CSystem.Threading.CancellationToken%29?displayProperty=nameWithType>方法以确保仅在成功收集所有读数后计算平均值。 如果任务未被取消，则调用<xref:System.Threading.Tasks.TaskFactory.ContinueWhenAll%2A?displayProperty=nameWithType>方法将引发异常。  
+  
+ [!code-csharp[System.Threading.CancellationTokenSource.Class#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.threading.cancellationtokensource.class/cs/cancel1.cs#1)]
+ [!code-vb[System.Threading.CancellationTokenSource.Class#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.threading.cancellationtokensource.class/vb/cancel1.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <threadsafe>的所有公共和受保护<see cref="T:System.Threading.CancellationTokenSource" />的成员都是线程安全的，并且可以从多个线程并发使用， <see cref="M:System.Threading.CancellationTokenSource.Dispose" />但除外，只能在对象上的<see cref="T:System.Threading.CancellationTokenSource" />所有其他操作都完成时使用。</threadsafe>
+    <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+    <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+  </Docs>
+  <Members>
+    <MemberGroup MemberName=".ctor">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>初始化 <see cref="T:System.Threading.CancellationTokenSource" />。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CancellationTokenSource ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationTokenSource.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; CancellationTokenSource();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
+          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.Threading.CancellationTokenSource" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CancellationTokenSource (int millisecondsDelay);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 millisecondsDelay) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationTokenSource.#ctor(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (millisecondsDelay As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; CancellationTokenSource(int millisecondsDelay);" />
+      <MemberSignature Language="F#" Value="new System.Threading.CancellationTokenSource : int -&gt; System.Threading.CancellationTokenSource" Usage="new System.Threading.CancellationTokenSource millisecondsDelay" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="millisecondsDelay" Type="System.Int32" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="millisecondsDelay">取消此 <see cref="T:System.Threading.CancellationTokenSource" /> 前等待的时间间隔（以毫秒为单位）。</param>
+        <summary>初始化 <see cref="T:System.Threading.CancellationTokenSource" /> 类的新实例，在指定的延迟（以毫秒为单位）后将被取消。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在对构造函数`millisecondsDelay`的调用过程中开始的倒计时。  当过期时，将取消<xref:System.Threading.CancellationTokenSource>构造（如果尚未取消）。 `millisecondsDelay`  
+  
+ 如果尚未取消<xref:System.Threading.CancellationTokenSource.CancelAfter%2A> ，对的`millisecondsDelay`后续调用将<xref:System.Threading.CancellationTokenSource>重置构造的。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsDelay" /> 小于 -1。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CancellationTokenSource (TimeSpan delay);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.TimeSpan delay) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationTokenSource.#ctor(System.TimeSpan)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (delay As TimeSpan)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; CancellationTokenSource(TimeSpan delay);" />
+      <MemberSignature Language="F#" Value="new System.Threading.CancellationTokenSource : TimeSpan -&gt; System.Threading.CancellationTokenSource" Usage="new System.Threading.CancellationTokenSource delay" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="delay" Type="System.TimeSpan" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="delay">取消此 <see cref="T:System.Threading.CancellationTokenSource" /> 前等待的时间间隔。</param>
+        <summary>初始化 <see cref="T:System.Threading.CancellationTokenSource" /> 类的新实例，在指定的时间跨度后将被取消。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 对构造函数的调用过程中延迟的倒计时开始。 延迟过期后，如果尚未取消<xref:System.Threading.CancellationTokenSource>构造，则会取消构造。  
+  
+ 如果尚未取消<xref:System.Threading.CancellationTokenSource.CancelAfter%2A> ，对的后续调用将重<xref:System.Threading.CancellationTokenSource>置构造的延迟。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="delay" />.<see cref="P:System.TimeSpan.TotalMilliseconds" /> 小于 -1 或大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Cancel">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>传达取消请求。</summary>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Cancel">
+      <MemberSignature Language="C#" Value="public void Cancel ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Cancel() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationTokenSource.Cancel" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Cancel ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Cancel();" />
+      <MemberSignature Language="F#" Value="member this.Cancel : unit -&gt; unit" Usage="cancellationTokenSource.Cancel " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>传达取消请求。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 相关<xref:System.Threading.CancellationToken>的将会收到取消通知，并将转换为状态， <xref:System.Threading.CancellationToken.IsCancellationRequested%2A>返回 true。  
+  
+ 将执行向注册的<xref:System.Threading.CancellationToken>任何回调或可取消操作。  
+  
+ 建议向注册的<xref:System.Threading.CancellationToken>可取消操作和回调不会引发异常。 
+ 
+ 此 Cancel 重载将聚合引发到<xref:System.AggregateException>中的所有异常，以便引发异常的一个回调不会阻止执行其他已注册的回调。 
+   
+  
+## Examples  
+ 下面的示例使用随机数生成器来模拟数据收集应用程序，该应用程序从第11个不同乐器读取10个整数值。 如果值为零，则指示度量值对一个检测失败，在这种情况下，应取消该操作，而不应计算整体平均值。  
+  
+ 为了处理可能取消的操作，此示例实例化一个<xref:System.Threading.CancellationTokenSource>对象，该对象生成一个传递<xref:System.Threading.Tasks.TaskFactory>给对象的取消标记。 <xref:System.Threading.Tasks.TaskFactory>对象反过来将取消标记传递给负责收集特定检测的读取的每个任务。 调用<xref:System.Threading.Tasks.TaskFactory.ContinueWhenAll%60%602%28System.Threading.Tasks.Task%7B%60%600%7D%5B%5D%2CSystem.Func%7BSystem.Threading.Tasks.Task%7B%60%600%7D%5B%5D%2C%60%601%7D%2CSystem.Threading.CancellationToken%29?displayProperty=nameWithType>方法以确保仅在成功收集所有读数后计算平均值。 如果任务未被取消，则调用<xref:System.Threading.Tasks.TaskFactory.ContinueWhenAll%2A?displayProperty=nameWithType>方法将引发异常。  
+  
+ [!code-csharp[System.Threading.CancellationTokenSource.Class#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.threading.cancellationtokensource.class/cs/cancel1.cs#1)]
+ [!code-vb[System.Threading.CancellationTokenSource.Class#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.threading.cancellationtokensource.class/vb/cancel1.vb#1)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">此 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
+        <exception cref="T:System.AggregateException">聚合异常包含由相关联的 <see cref="T:System.Threading.CancellationToken" /> 上已注册的回调引发的所有异常。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Cancel">
+      <MemberSignature Language="C#" Value="public void Cancel (bool throwOnFirstException);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Cancel(bool throwOnFirstException) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationTokenSource.Cancel(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Cancel (throwOnFirstException As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void Cancel(bool throwOnFirstException);" />
+      <MemberSignature Language="F#" Value="member this.Cancel : bool -&gt; unit" Usage="cancellationTokenSource.Cancel throwOnFirstException" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="throwOnFirstException" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="throwOnFirstException">如果异常应立即传播，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
+        <summary>如果出现异常，传达取消请求，并指定是否应处理其余回调和可取消操作。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 相关<xref:System.Threading.CancellationToken>的将会收到取消通知，并将转换为<xref:System.Threading.CancellationToken.IsCancellationRequested%2A>返回`true`的状态。  
+  
+ 将执行向注册的<xref:System.Threading.CancellationToken>任何回调或可取消操作。 回调会按后进先出的顺序执行。 
+  
+ 建议向注册的<xref:System.Threading.CancellationToken>可取消操作和回调不会引发异常。 
+  
+ 如果`throwOnFirstException` <xref:System.Threading.CancellationTokenSource.Cancel%2A>为`true`，则异常将立即传播到对的调用，从而阻止处理其余回调和可取消操作。  
+  
+ 如果`throwOnFirstException` <xref:System.AggregateException>为`false`，则此重载将聚合引发的任何异常，以便引发异常的一个回调不会阻止执行其他已注册的回调。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">此 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
+        <exception cref="T:System.AggregateException">聚合异常包含由相关联的 <see cref="T:System.Threading.CancellationToken" /> 上已注册的回调引发的所有异常。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="CancelAfter">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>在此 <see cref="T:System.Threading.CancellationTokenSource" /> 上计划取消操作。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="CancelAfter">
+      <MemberSignature Language="C#" Value="public void CancelAfter (int millisecondsDelay);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CancelAfter(int32 millisecondsDelay) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationTokenSource.CancelAfter(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub CancelAfter (millisecondsDelay As Integer)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void CancelAfter(int millisecondsDelay);" />
+      <MemberSignature Language="F#" Value="member this.CancelAfter : int -&gt; unit" Usage="cancellationTokenSource.CancelAfter millisecondsDelay" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="millisecondsDelay" Type="System.Int32" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="millisecondsDelay">取消 <see cref="T:System.Threading.CancellationTokenSource" /> 前等待的时间范围。</param>
+        <summary>在指定的毫秒数后计划对此 <see cref="T:System.Threading.CancellationTokenSource" /> 的取消操作。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此调用期间`millisecondsDelay`开始的倒计时。 当过期时，如果<xref:System.Threading.CancellationTokenSource>尚未取消，则取消此操作。 `millisecondsDelay`  
+  
+ 对 CancelAfter 的`millisecondsDelay`后续调用将重置此<xref:System.Threading.CancellationTokenSource>的，如果尚未取消。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">当该 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放时引发的异常。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsDelay" /> 小于 -1 时引发的异常。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CancelAfter">
+      <MemberSignature Language="C#" Value="public void CancelAfter (TimeSpan delay);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CancelAfter(valuetype System.TimeSpan delay) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationTokenSource.CancelAfter(System.TimeSpan)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub CancelAfter (delay As TimeSpan)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void CancelAfter(TimeSpan delay);" />
+      <MemberSignature Language="F#" Value="member this.CancelAfter : TimeSpan -&gt; unit" Usage="cancellationTokenSource.CancelAfter delay" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="delay" Type="System.TimeSpan" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="delay">取消 <see cref="T:System.Threading.CancellationTokenSource" /> 前等待的时间范围。</param>
+        <summary>在指定的时间跨度后计划对此 <see cref="T:System.Threading.CancellationTokenSource" /> 的取消操作。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+            The countdown for the delay starts during this call.  When the delay expires, 
+            this <xref:System.Threading.CancellationTokenSource> is canceled, if it has
+            not been canceled already.
+            
+            Subsequent calls to `CancelAfter` will reset the delay for this <xref:System.Threading.CancellationTokenSource>, if it has not been canceled already.
+
+            ]]></format>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">当该 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放时引发的异常。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">当 <paramref name="delay" /> 小于 -1 或大比 Int32.MaxValue 引发的异常。</exception>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="CreateLinkedTokenSource">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>创建一个将在任何源标记处于取消状态时处于取消状态的 <see cref="T:System.Threading.CancellationTokenSource" />。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="CreateLinkedTokenSource">
+      <MemberSignature Language="C#" Value="public static System.Threading.CancellationTokenSource CreateLinkedTokenSource (params System.Threading.CancellationToken[] tokens);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.CancellationTokenSource CreateLinkedTokenSource(valuetype System.Threading.CancellationToken[] tokens) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationTokenSource.CreateLinkedTokenSource(System.Threading.CancellationToken[])" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function CreateLinkedTokenSource (ParamArray tokens As CancellationToken()) As CancellationTokenSource" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Threading::CancellationTokenSource ^ CreateLinkedTokenSource(... cli::array &lt;System::Threading::CancellationToken&gt; ^ tokens);" />
+      <MemberSignature Language="F#" Value="static member CreateLinkedTokenSource : System.Threading.CancellationToken[] -&gt; System.Threading.CancellationTokenSource" Usage="System.Threading.CancellationTokenSource.CreateLinkedTokenSource tokens" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.CancellationTokenSource</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="tokens" Type="System.Threading.CancellationToken[]">
+          <Attributes>
+            <Attribute FrameworkAlternate="dotnet-uwp-10.0">
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="tokens">包含要观察的取消标记实例的数组。</param>
+        <summary>创建一个将在在指定的数组中任何源标记处于取消状态时处于取消状态的 <see cref="T:System.Threading.CancellationTokenSource" />。</summary>
+        <returns>一个链接到源标记的 <see cref="T:System.Threading.CancellationTokenSource" />。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">与源标记之一关联的 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="tokens" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="tokens" /> 为空。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/6f4f3804-2ed7-41b4-a97a-6e32b93f6e05">如何：侦听多个取消请求</related>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateLinkedTokenSource">
+      <MemberSignature Language="C#" Value="public static System.Threading.CancellationTokenSource CreateLinkedTokenSource (System.Threading.CancellationToken token1, System.Threading.CancellationToken token2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.CancellationTokenSource CreateLinkedTokenSource(valuetype System.Threading.CancellationToken token1, valuetype System.Threading.CancellationToken token2) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationTokenSource.CreateLinkedTokenSource(System.Threading.CancellationToken,System.Threading.CancellationToken)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function CreateLinkedTokenSource (token1 As CancellationToken, token2 As CancellationToken) As CancellationTokenSource" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Threading::CancellationTokenSource ^ CreateLinkedTokenSource(System::Threading::CancellationToken token1, System::Threading::CancellationToken token2);" />
+      <MemberSignature Language="F#" Value="static member CreateLinkedTokenSource : System.Threading.CancellationToken * System.Threading.CancellationToken -&gt; System.Threading.CancellationTokenSource" Usage="System.Threading.CancellationTokenSource.CreateLinkedTokenSource (token1, token2)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.CancellationTokenSource</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token1" Type="System.Threading.CancellationToken" />
+        <Parameter Name="token2" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="token1">要观察的第一个取消标记。</param>
+        <param name="token2">要观察的第二个取消标记。</param>
+        <summary>创建一个将在任何源标记处于取消状态时处于取消状态的 <see cref="T:System.Threading.CancellationTokenSource" />。</summary>
+        <returns>一个链接到源标记的 <see cref="T:System.Threading.CancellationTokenSource" />。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">与源标记之一关联的 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/6f4f3804-2ed7-41b4-a97a-6e32b93f6e05">如何：侦听多个取消请求</related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="Dispose">
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>释放 <see cref="T:System.Threading.CancellationTokenSource" /> 类的当前实例所使用的所有资源。</summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationTokenSource.Dispose" />
+      <MemberSignature Language="VB.NET" Value="Public Sub Dispose ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void Dispose();" />
+      <MemberSignature Language="F#" Value="abstract member Dispose : unit -&gt; unit&#xA;override this.Dispose : unit -&gt; unit" Usage="cancellationTokenSource.Dispose " />
+      <MemberType>Method</MemberType>
+      <Implements>
+        <InterfaceMember>M:System.IDisposable.Dispose</InterfaceMember>
+      </Implements>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>释放 <see cref="T:System.Threading.CancellationTokenSource" /> 类的当前实例所使用的所有资源。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 在完成使用 `Dispose` 后，应调用 <xref:System.Threading.CancellationTokenSource>。 `Dispose` 方法使 <xref:System.Threading.CancellationTokenSource> 处于不可用状态。 调用`Dispose`后，必须释放对的<xref:System.Threading.CancellationTokenSource>所有引用，以便垃圾回收器能够<xref:System.Threading.CancellationTokenSource>回收占用的内存。  
+  
+ 有关详细信息，请参阅[清理非托管资源](~/docs/standard/garbage-collection/unmanaged.md)和[实现 Dispose 方法](~/docs/standard/garbage-collection/implementing-dispose.md)。  
+  
+> [!NOTE]
+>  每次释放对 `Dispose` 的最后一个引用前，均应调用 <xref:System.Threading.CancellationTokenSource>。 否则，在垃圾回收器调用 <xref:System.Threading.CancellationTokenSource> 对象的 `Finalize` 方法之前，该对象正在使用的资源不会被释放。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.CancellationTokenSource.Dispose(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub Dispose (disposing As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void Dispose(bool disposing);" />
+      <MemberSignature Language="F#" Value="abstract member Dispose : bool -&gt; unit&#xA;override this.Dispose : bool -&gt; unit" Usage="cancellationTokenSource.Dispose disposing" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      </Parameters>
+      <Docs>
+        <param name="disposing"><see langword="true" /> 表示释放托管资源和非托管资源；<see langword="false" /> 表示仅释放非托管资源。</param>
+        <summary>释放 <see cref="T:System.Threading.CancellationTokenSource" /> 类使用的非托管资源，并可以选择释放托管资源。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsCancellationRequested">
+      <MemberSignature Language="C#" Value="public bool IsCancellationRequested { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCancellationRequested" />
+      <MemberSignature Language="DocId" Value="P:System.Threading.CancellationTokenSource.IsCancellationRequested" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property IsCancellationRequested As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IsCancellationRequested { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsCancellationRequested : bool" Usage="System.Threading.CancellationTokenSource.IsCancellationRequested" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取是否已请求取消此 <see cref="T:System.Threading.CancellationTokenSource" />。</summary>
+        <value>如果已请求取消此 <see langword="true" />，则为 <see cref="T:System.Threading.CancellationTokenSource" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此属性指示是否已请求取消此标记源，例如，因为调用了其<xref:System.Threading.CancellationTokenSource.Cancel%2A>方法。  
+  
+ 如果此属性返回`true`，则只保证已请求取消。 它不保证使用相应令牌注册的每个处理程序都已完成执行，也不保证取消请求已完成传播到所有已注册的处理程序。 可能需要更多的同步，尤其是在同时取消相关对象的情况下。  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+    <Member MemberName="Token">
+      <MemberSignature Language="C#" Value="public System.Threading.CancellationToken Token { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Threading.CancellationToken Token" />
+      <MemberSignature Language="DocId" Value="P:System.Threading.CancellationTokenSource.Token" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Token As CancellationToken" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Threading::CancellationToken Token { System::Threading::CancellationToken get(); };" />
+      <MemberSignature Language="F#" Value="member this.Token : System.Threading.CancellationToken" Usage="System.Threading.CancellationTokenSource.Token" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Threading.Tasks</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+        <AssemblyVersion>4.1.0.0</AssemblyVersion>
+        <AssemblyVersion>4.1.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Threading.CancellationToken</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取与此 <see cref="T:System.Threading.CancellationToken" /> 关联的 <see cref="T:System.Threading.CancellationTokenSource" />。</summary>
+        <value>与此 <see cref="T:System.Threading.CancellationToken" /> 关联的 <see cref="T:System.Threading.CancellationTokenSource" />。</value>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">已释放标记源。</exception>
+        <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
+        <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
