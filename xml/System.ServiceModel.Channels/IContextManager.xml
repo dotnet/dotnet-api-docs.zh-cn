@@ -1,0 +1,184 @@
+<Type Name="IContextManager" FullName="System.ServiceModel.Channels.IContextManager">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="fd40311f073f441f3f8b4ab1e72b7d600d70e6d4" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70695439" /></Metadata><TypeSignature Language="C#" Value="public interface IContextManager" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IContextManager" />
+  <TypeSignature Language="DocId" Value="T:System.ServiceModel.Channels.IContextManager" />
+  <TypeSignature Language="VB.NET" Value="Public Interface IContextManager" />
+  <TypeSignature Language="C++ CLI" Value="public interface class IContextManager" />
+  <TypeSignature Language="F#" Value="type IContextManager = interface" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.WorkflowServices</AssemblyName>
+    <AssemblyVersion>3.5.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8">
+      <AttributeName>System.Runtime.CompilerServices.TypeForwardedFrom("System.WorkflowServices, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>定义一个允许在通道上获取和设置上下文的接口。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 如果通道使用的 <xref:System.ServiceModel.WSHttpContextBinding> 已设置 <xref:System.ServiceModel.SessionMode.NotAllowed> 值，则在客户端上使用 <xref:System.ServiceModel.Channels.IContextManager> 将不能检索上下文，因为每次调用 <xref:System.ServiceModel.Channels.IChannelFactory.GetProperty%2A> 以对通道强制执行 <xref:System.ServiceModel.SessionMode.NotAllowed> 语义时都会创建一个建立会话的新通道。 这意味着即使在上下文已经正确传播回客户端的情况下，也无法使用 <xref:System.ServiceModel.Channels.IContextManager> 进行检索。 但仍可以使用 <xref:System.ServiceModel.Channels.ContextMessageProperty> 进行检索，如下面的代码所示。  
+  
+```csharp  
+using (new OperationContextScope((IContextChannel)channel))  
+{  
+    channel.MyChannel("Test");  
+    ContextMessageProperty context;  
+    if (ContextMessageProperty.TryGet(OperationContext.Current.IncomingMessageProperties, out context))  
+    {  
+        Console.WriteLine(context.Count);  
+    }  
+}  
+  
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Enabled">
+      <MemberSignature Language="C#" Value="public bool Enabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Enabled" />
+      <MemberSignature Language="DocId" Value="P:System.ServiceModel.Channels.IContextManager.Enabled" />
+      <MemberSignature Language="VB.NET" Value="Public Property Enabled As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool Enabled { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.Enabled : bool with get, set" Usage="System.ServiceModel.Channels.IContextManager.Enabled" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.WorkflowServices</AssemblyName>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取或设置一个指示是否已启用上下文管理的值。</summary>
+        <value>如果启用了上下文，则为 <see langword="true" />；否则为 <see langword="false" />。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 启用上下文管理时，上下文通道将在其生存期内缓存上下文。 通过对通道调用 `IContextManager` 方法，可以通过通道属性 <xref:System.ServiceModel.Channels.IContextManager.GetContext%2A> 从通道检索上下文。 在通过对通道属性调用 <xref:System.ServiceModel.Channels.IContextManager.SetContext%2A> 方法以打开通道之前，还可以使用上下文来预先初始化通道。 在使用上下文初始化通道之后，将不能重置通道。  
+  
+ 以下是此模式下的固定行为：  
+  
+-   打开通道后，对 <xref:System.ServiceModel.Channels.IContextManager.SetContext%2A> 的任何调用都将引发一个 `InvalidOperationException`。  
+  
+-   任何试图通过在传出消息中使用 `ContextMessageProperty` 来发送上下文的操作都会引发 `InvalidOperationException`。  
+  
+-   在已使用上下文对通道进行初始化之后，如果使用上下文从服务器接收消息，则会引发 `ProtocolException`。 请注意，如果打开通道时没有显式设置上下文，则可以从服务器接收初始上下文。  
+  
+-   传入消息上的 `ContextMessageProperty` 始终为 `null`。  
+  
+ 未启用上下文管理时，上下文通道并不对上下文进行管理， 而是由应用程序负责通过 `ContextMessageProperty` 来检索、管理和应用上下文。 任何通过 <xref:System.ServiceModel.Channels.IContextManager.GetContext%2A> 通道属性来调用 <xref:System.ServiceModel.Channels.IContextManager.SetContext%2A> 或 `IContextManager` 的尝试都会导致 `InvalidOperationException`。  
+  
+ 除上下文 HTTP Cookie 以外，所有 HTTP Cookie 都在通道级进行处理。 上下文 HTTP Cookie 在应用程序级进行管理。 在共享通道以便与 <xref:System.ServiceModel.Channels.ContextMessageProperty> 所针对的不同实例对话时，这可能导致意外的结果。 下表显示将 <xref:System.ServiceModel.Channels.IContextManager.Enabled%2A> 设置为 `true` 或 `false` 时对 HTTP Cookie 的影响。  
+  
+|绑定|IContextManager.Enabled 值|上下文 HTTP Cookie 范围|其他 HTTP Cookie 范围|  
+|-------------|-----------------------------------|-------------------------------|------------------------------|  
+|BasicHttpBinding|n/a|ChannelFactory|ChannelFactory|  
+|BasicHttpContextBinding|true|通道|通道|  
+|BasicHttpContextBinding|False|对于每个消息（由应用程序显式管理）|通道|  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetContext">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IDictionary&lt;string,string&gt; GetContext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IDictionary`2&lt;string, string&gt; GetContext() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.ServiceModel.Channels.IContextManager.GetContext" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetContext () As IDictionary(Of String, String)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Collections::Generic::IDictionary&lt;System::String ^, System::String ^&gt; ^ GetContext();" />
+      <MemberSignature Language="F#" Value="abstract member GetContext : unit -&gt; System.Collections.Generic.IDictionary&lt;string, string&gt;" Usage="iContextManager.GetContext " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.WorkflowServices</AssemblyName>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>获取上下文。</summary>
+        <returns>键/值对的 <see cref="T:System.Collections.Generic.IDictionary`2" />，包含上下文的命名空间和名称。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的代码演示如何从客户端上的类型化代理实例获取上下文。  
+  
+```  
+IDictionary<string, string> context;  
+CalculatorProxy proxy;  
+IContextManager cm = proxy.InnerChannel.GetProperty<IContextManager>();  
+if (cm != null)  
+    context = cm.GetContext();  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetContext">
+      <MemberSignature Language="C#" Value="public void SetContext (System.Collections.Generic.IDictionary&lt;string,string&gt; context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetContext(class System.Collections.Generic.IDictionary`2&lt;string, string&gt; context) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.ServiceModel.Channels.IContextManager.SetContext(System.Collections.Generic.IDictionary{System.String,System.String})" />
+      <MemberSignature Language="VB.NET" Value="Public Sub SetContext (context As IDictionary(Of String, String))" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void SetContext(System::Collections::Generic::IDictionary&lt;System::String ^, System::String ^&gt; ^ context);" />
+      <MemberSignature Language="F#" Value="abstract member SetContext : System.Collections.Generic.IDictionary&lt;string, string&gt; -&gt; unit" Usage="iContextManager.SetContext context" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.ServiceModel</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.WorkflowServices</AssemblyName>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="context" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" Index="0" FrameworkAlternate="netframework-4.8" />
+      </Parameters>
+      <Docs>
+        <param name="context">键/值对的 <see cref="T:System.Collections.Generic.IDictionary`2" />，包含已设置的上下文命名空间和名称。</param>
+        <summary>设置上下文。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Examples  
+ 下面的代码演示如何在客户端上设置上下文。  
+  
+```  
+IDictionary<string, string> context;  
+CalculatorProxy proxy;  
+IContextManager cm = proxy.InnerChannel.GetProperty<IContextManager>();  
+if (cm != null)  
+    cm.SetContext(context);  
+```  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
