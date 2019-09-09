@@ -1,0 +1,275 @@
+<Type Name="TtsEngineAction" FullName="System.Speech.Synthesis.TtsEngine.TtsEngineAction">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="5d6ded8597b9515e689adf87fa98b724a0a26321" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70631879" /></Metadata><TypeSignature Language="C#" Value="public enum TtsEngineAction" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TtsEngineAction extends System.Enum" />
+  <TypeSignature Language="DocId" Value="T:System.Speech.Synthesis.TtsEngine.TtsEngineAction" />
+  <TypeSignature Language="VB.NET" Value="Public Enum TtsEngineAction" />
+  <TypeSignature Language="C++ CLI" Value="public enum class TtsEngineAction" />
+  <TypeSignature Language="F#" Value="type TtsEngineAction = " />
+  <AssemblyInfo>
+    <AssemblyName>System.Speech</AssemblyName>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>指定在呈现特定 <see langword="TextFragment" />将采用的语音合成标记语言(SSML)事件。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks
+
+`TtsEngineAction`表示为提供服务的<xref:System.Speech.Synthesis.TtsEngine.TextFragment>请求。 操作与 SSML 规范中的元素密切对应，并且是在<xref:System.Speech.Synthesis.TtsEngine.TextFragment.TextToSpeak%2A> <xref:System.Speech.Synthesis.TtsEngine.TextFragment>上的属性返回的文本上实现的。  
+  
+ 与关联的<xref:System.Speech.Synthesis.TtsEngine.TextFragment.State%2A>值由属性返回。 <xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction> <xref:System.Speech.Synthesis.TtsEngine.TextFragment>  
+  
+ 对属性返回<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml.Speak%2A>的值的处理由派生自<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml>的类上的方法的语音合成实现处理。 <xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction> <xref:System.Speech.Synthesis.TtsEngine.TextFragment.State%2A>  
+  
+   
+  
+## Examples  
+ 下面的示例是自定义语音合成实现的一部分<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml>，该<xref:System.Speech.Synthesis.TtsEngine.TextFragment>实现继承自，并使用、 <xref:System.Speech.Synthesis.TtsEngine.FragmentState>和<xref:System.Speech.Synthesis.TtsEngine.TtsEventId>  
+  
+ 的实现<xref:System.Speech.Synthesis.TtsEngine.TtsEngineSsml.Speak%2A>  
+  
+1.  接收实例的<xref:System.Speech.Synthesis.TtsEngine.TextFragment>数组，并创建`Speak`要在基础合成<xref:System.Speech.Synthesis.TtsEngine.TextFragment>引擎上传递给方法的新的实例数组。  
+  
+2.  <xref:System.Speech.Synthesis.TtsEngine.FragmentState.Action%2A> <xref:System.Speech.Synthesis.TtsEngine.FragmentState> <xref:System.Speech.Synthesis.TtsEngine.TextFragment.State%2A>如果通过在每个 <xref:System.Speech.Synthesis.TtsEngine.TextFragment> 实例的属性返回的属性中找到枚举值就会说出，则实现 <xref:System.Speech.Synthesis.TtsEngine.TtsEngineAction>  
+  
+    -   将 Americanism 转换为要口述的文本中的 Britishisms。  
+  
+    -   如果提供<xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite.EventInterest%2A> 给实现 <xref:System.Speech.Synthesis.TtsEngine.ITtsEngineSite> 的接口上的属性支持事件类型，则将创建一个用于驱动合成器进度计量的事件。 <xref:System.Speech.Synthesis.TtsEngine.TtsEventId.WordBoundary?displayProperty=nameWithType>  
+  
+3.  然后，将使用修改后<xref:System.Speech.Synthesis.TtsEngine.TextFragment>的数组调用语音呈现引擎。  
+  
+```csharp
+private const int WordBoundaryFlag = 1 << (int)TtsEventId.WordBoundary;
+private readonly char[] spaces = new char[] { ' ', '\t', '\r', '\n' };
+internal struct UsVsUk
+{
+    internal string UK;
+    internal string US;
+}
+ 
+override public void Speak (TextFragment [] frags, IntPtr wfx, ITtsEngineSite site)
+{
+    TextFragment [] newFrags=new TextFragment[frags.Length];  
+    
+    for (int i=0;i<frags.Length;i++)
+    {
+        newFrags[i].State=frags[i].State;
+        //truncate
+        newFrags[i].TextToSpeak = frags[i].TextToSpeak.Substring(frags[i].TextOffset,
+                                  frags[i].TextLength);
+        newFrags[i].TextLength = newFrags[i].TextToSpeak.Length;
+        newFrags[i].TextOffset = 0;
+        if (newFrags[i].State.Action == TtsEngineAction.Speak) 
+        {
+            //US to UK conversion
+            foreach (UsVsUk term in TransList)
+            {
+                newFrags[i].TextToSpeak.Replace(term.US, term.UK);
+            }
+            //Generate progress meter events if supported
+            if ((site.EventInterest & WordBoundaryFlag) != 0)
+            {
+                string[] subs = newFrags[i].TextToSpeak.Split(spaces);
+
+                foreach (string s in subs)
+                {
+                    int offset = newFrags[i].TextOffset;
+                    SpeechEventInfo spEvent = new SpeechEventInfo((Int16)TtsEventId.WordBoundary,
+                          (Int16)EventParameterType.Undefined,
+                          s.Length, new IntPtr(offset));
+                    offset += s.Length;
+                    if (s.Trim().Length > 0) 
+                    {
+                        SpeechEventInfo[] events = new SpeechEventInfo[1];
+                        events[0] = spEvent;
+                        site.AddEvents(events, 1);
+                    }
+                }
+            }
+        }
+    }
+
+    _baseSynthesize.Speak(newFrags, wfx, site);
+
+}
+```  
+  
+ ]]></format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Bookmark">
+      <MemberSignature Language="C#" Value="Bookmark" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Speech.Synthesis.TtsEngine.TtsEngineAction Bookmark = int32(3)" />
+      <MemberSignature Language="DocId" Value="F:System.Speech.Synthesis.TtsEngine.TtsEngineAction.Bookmark" />
+      <MemberSignature Language="VB.NET" Value="Bookmark" />
+      <MemberSignature Language="C++ CLI" Value="Bookmark" />
+      <MemberSignature Language="F#" Value="Bookmark = 3" Usage="System.Speech.Synthesis.TtsEngine.TtsEngineAction.Bookmark" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Speech.Synthesis.TtsEngine.TtsEngineAction</ReturnType>
+      </ReturnValue>
+      <MemberValue>3</MemberValue>
+      <Docs>
+        <summary>指示 <see cref="T:System.Speech.Synthesis.TtsEngine.TextFragment" /> 将用作书签的内容。 它对应于 SSML 规范中的 <c>&lt;mark&gt;</c> XML 标记。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ParseUnknownTag">
+      <MemberSignature Language="C#" Value="ParseUnknownTag" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Speech.Synthesis.TtsEngine.TtsEngineAction ParseUnknownTag = int32(7)" />
+      <MemberSignature Language="DocId" Value="F:System.Speech.Synthesis.TtsEngine.TtsEngineAction.ParseUnknownTag" />
+      <MemberSignature Language="VB.NET" Value="ParseUnknownTag" />
+      <MemberSignature Language="C++ CLI" Value="ParseUnknownTag" />
+      <MemberSignature Language="F#" Value="ParseUnknownTag = 7" Usage="System.Speech.Synthesis.TtsEngine.TtsEngineAction.ParseUnknownTag" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Speech.Synthesis.TtsEngine.TtsEngineAction</ReturnType>
+      </ReturnValue>
+      <MemberValue>7</MemberValue>
+      <Docs>
+        <summary>指示没有通过 SSML 输入确定的操作。 此输出可以由合成引擎自行解释或忽略。 关联的 <see cref="T:System.Speech.Synthesis.TtsEngine.TextFragment" /> 是未知的 XML 标记，不属于 SSML 标准。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Pronounce">
+      <MemberSignature Language="C#" Value="Pronounce" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Speech.Synthesis.TtsEngine.TtsEngineAction Pronounce = int32(2)" />
+      <MemberSignature Language="DocId" Value="F:System.Speech.Synthesis.TtsEngine.TtsEngineAction.Pronounce" />
+      <MemberSignature Language="VB.NET" Value="Pronounce" />
+      <MemberSignature Language="C++ CLI" Value="Pronounce" />
+      <MemberSignature Language="F#" Value="Pronounce = 2" Usage="System.Speech.Synthesis.TtsEngine.TtsEngineAction.Pronounce" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Speech.Synthesis.TtsEngine.TtsEngineAction</ReturnType>
+      </ReturnValue>
+      <MemberValue>2</MemberValue>
+      <Docs>
+        <summary>请求输入 <see cref="T:System.Speech.Synthesis.TtsEngine.TextFragment" /> 文本将被解释为音素。 准确的发音由 <see cref="T:System.Speech.Synthesis.TtsEngine.TextFragment" /> 实例上的 <see cref="P:System.Speech.Synthesis.TtsEngine.TextFragment.State" /> 属性返回的 <see cref="T:System.Speech.Synthesis.TtsEngine.FragmentState" /> 对象的 <see cref="P:System.Speech.Synthesis.TtsEngine.FragmentState.Phoneme" /> 成员指定。 对应于 SSML 规范中的 <c>&lt;phoneme&gt;</c> XML 标记。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Silence">
+      <MemberSignature Language="C#" Value="Silence" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Speech.Synthesis.TtsEngine.TtsEngineAction Silence = int32(1)" />
+      <MemberSignature Language="DocId" Value="F:System.Speech.Synthesis.TtsEngine.TtsEngineAction.Silence" />
+      <MemberSignature Language="VB.NET" Value="Silence" />
+      <MemberSignature Language="C++ CLI" Value="Silence" />
+      <MemberSignature Language="F#" Value="Silence = 1" Usage="System.Speech.Synthesis.TtsEngine.TtsEngineAction.Silence" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Speech.Synthesis.TtsEngine.TtsEngineAction</ReturnType>
+      </ReturnValue>
+      <MemberValue>1</MemberValue>
+      <Docs>
+        <summary>指示 <see cref="T:System.Speech.Synthesis.TtsEngine.TextFragment" /> 不包含要作为语音呈现的文本。 安静持续时间由 <see cref="P:System.Speech.Synthesis.TtsEngine.TextFragment.State" /> 属性在 <see cref="T:System.Speech.Synthesis.TtsEngine.TextFragment" /> 实例上返回的 <see cref="T:System.Speech.Synthesis.TtsEngine.FragmentState" /> 对象的 <see cref="P:System.Speech.Synthesis.TtsEngine.FragmentState.Duration" /> 属性指定。 对应于 SSML 规范中的 <c>&lt;Silence&gt;</c> XML 标记。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Speak">
+      <MemberSignature Language="C#" Value="Speak" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Speech.Synthesis.TtsEngine.TtsEngineAction Speak = int32(0)" />
+      <MemberSignature Language="DocId" Value="F:System.Speech.Synthesis.TtsEngine.TtsEngineAction.Speak" />
+      <MemberSignature Language="VB.NET" Value="Speak" />
+      <MemberSignature Language="C++ CLI" Value="Speak" />
+      <MemberSignature Language="F#" Value="Speak = 0" Usage="System.Speech.Synthesis.TtsEngine.TtsEngineAction.Speak" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Speech.Synthesis.TtsEngine.TtsEngineAction</ReturnType>
+      </ReturnValue>
+      <MemberValue>0</MemberValue>
+      <Docs>
+        <summary>请求应处理和通知的关联的 <see cref="T:System.Speech.Synthesis.TtsEngine.TextFragment" />。 这是 <see cref="T:System.Speech.Synthesis.TtsEngine.TextFragment" /> 的默认值。 它对应于 SSML 规范中的 <c>&lt;speak&gt;</c> XML 标记。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SpellOut">
+      <MemberSignature Language="C#" Value="SpellOut" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Speech.Synthesis.TtsEngine.TtsEngineAction SpellOut = int32(4)" />
+      <MemberSignature Language="DocId" Value="F:System.Speech.Synthesis.TtsEngine.TtsEngineAction.SpellOut" />
+      <MemberSignature Language="VB.NET" Value="SpellOut" />
+      <MemberSignature Language="C++ CLI" Value="SpellOut" />
+      <MemberSignature Language="F#" Value="SpellOut = 4" Usage="System.Speech.Synthesis.TtsEngine.TtsEngineAction.SpellOut" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Speech.Synthesis.TtsEngine.TtsEngineAction</ReturnType>
+      </ReturnValue>
+      <MemberValue>4</MemberValue>
+      <Docs>
+        <summary>指示由 <see cref="T:System.Speech.Synthesis.TtsEngine.TextFragment" /> 通过其 <see cref="P:System.Speech.Synthesis.TtsEngine.TextFragment.TextToSpeak" /> 属性提供的文本值将聚合为单独的字符。 此呈现包括除空格之外的标点符号以及字母数字文本。 例如，关联的文本片段“word!” 应合成“w o r d 感叹号”。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="StartParagraph">
+      <MemberSignature Language="C#" Value="StartParagraph" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Speech.Synthesis.TtsEngine.TtsEngineAction StartParagraph = int32(6)" />
+      <MemberSignature Language="DocId" Value="F:System.Speech.Synthesis.TtsEngine.TtsEngineAction.StartParagraph" />
+      <MemberSignature Language="VB.NET" Value="StartParagraph" />
+      <MemberSignature Language="C++ CLI" Value="StartParagraph" />
+      <MemberSignature Language="F#" Value="StartParagraph = 6" Usage="System.Speech.Synthesis.TtsEngine.TtsEngineAction.StartParagraph" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Speech.Synthesis.TtsEngine.TtsEngineAction</ReturnType>
+      </ReturnValue>
+      <MemberValue>6</MemberValue>
+      <Docs>
+        <summary>指示段落的状态。 对应于 SSML 规范中的 <c>&lt;p&gt;</c> XML 标记。</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="StartSentence">
+      <MemberSignature Language="C#" Value="StartSentence" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Speech.Synthesis.TtsEngine.TtsEngineAction StartSentence = int32(5)" />
+      <MemberSignature Language="DocId" Value="F:System.Speech.Synthesis.TtsEngine.TtsEngineAction.StartSentence" />
+      <MemberSignature Language="VB.NET" Value="StartSentence" />
+      <MemberSignature Language="C++ CLI" Value="StartSentence" />
+      <MemberSignature Language="F#" Value="StartSentence = 5" Usage="System.Speech.Synthesis.TtsEngine.TtsEngineAction.StartSentence" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Speech</AssemblyName>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Speech.Synthesis.TtsEngine.TtsEngineAction</ReturnType>
+      </ReturnValue>
+      <MemberValue>5</MemberValue>
+      <Docs>
+        <summary>指示句子开头。 对应于 SSML 规范中的 <c>&lt;s&gt;</c> XML 标记。</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

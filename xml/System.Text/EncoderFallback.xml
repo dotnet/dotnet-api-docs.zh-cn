@@ -1,0 +1,275 @@
+<Type Name="EncoderFallback" FullName="System.Text.EncoderFallback">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="e694bb6e74b76274afe163c73b121890a2814dca" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70695169" /></Metadata><TypeSignature Language="C#" Value="public abstract class EncoderFallback" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit EncoderFallback extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Text.EncoderFallback" />
+  <TypeSignature Language="VB.NET" Value="Public MustInherit Class EncoderFallback" />
+  <TypeSignature Language="C++ CLI" Value="public ref class EncoderFallback abstract" />
+  <TypeSignature Language="F#" Value="type EncoderFallback = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Text.Encoding</AssemblyName>
+    <AssemblyVersion>4.0.10.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.0.5.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>netstandard</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>System.Runtime</AssemblyName>
+    <AssemblyVersion>4.2.0.0</AssemblyVersion>
+    <AssemblyVersion>4.2.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
+      <AttributeName>System.Serializable</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>为不能转换为已编码输出字节序列的输入字符提供称为“回退”的失败处理机制。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 编码将 Unicode 字符映射到编码的字节序列。 特定的编码由派生自<xref:System.Text.Encoding>类的类型表示。 具体而言，通过调用编码类型的<xref:System.Text.Encoding.GetBytes%2A?displayProperty=nameWithType>方法将字符编码为字节序列，并通过<xref:System.Text.Encoding.GetChars%2A?displayProperty=nameWithType>调用或<xref:System.Text.Encoding.GetString%2A?displayProperty=nameWithType>方法将字节序列解码为字符数组或字符串。  
+  
+ 如果输入字符无法由编码表示，则编码操作可能会失败。 例如， <xref:System.Text.ASCIIEncoding>对象无法对其 Unicode 码位值不在 u + 0000 到 u + 007F 范围内的字符进行编码。  
+  
+ 当无法执行编码转换时，.NET Framework 提供称为 "回退" 的失败处理机制。 应用程序可以使用预定义的 .NET Framework 编码器回退，也可以创建派生自和<xref:System.Text.EncoderFallback> <xref:System.Text.EncoderFallbackBuffer>类的自定义编码器回退。  
+  
+ <xref:System.Text.EncoderFallback>和<xref:System.Text.EncoderFallbackBuffer>是 .NET Framework 中所有编码回退处理程序的基类。 它们支持以下三种类型的回退处理机制：  
+  
+-   最佳回退，可映射无法编码为近似等效项的有效 Unicode 字符。 例如， <xref:System.Text.ASCIIEncoding>类的最佳回退处理程序可能将Æ（u + 00C6）映射到 AE （u + 0041 + U + 0045）。 还可以实现最佳回退处理程序，以将一种字母表（如西里尔文）直译另一种（例如，拉丁语或罗马）。 .NET Framework 不提供任何公共最佳回退实现。  
+  
+-   替换回退：替换不能用预定义字符串编码的每个字符。 .NET Framework 提供预定义的替换回退处理程序。 <xref:System.Text.EncoderReplacementFallback>类将每个无法解码的字节序列替换为问号字符（"？" 或 u + 003F）或替换字符（u + FFFD）。 您可以通过在对<xref:System.Text.EncoderReplacementFallback.%23ctor%28System.String%29?displayProperty=nameWithType>构造函数的调用中指定替换来自定义替换字符串。 发出替换字符串后，编码操作继续转换输入的其余部分。  
+  
+-   异常回退，当无法对字符进行编码时，将引发异常。 .NET Framework 提供预定义的异常回退处理程序。 当遇到无效的字符，并且编码操作终止时，类将<xref:System.Text.EncoderExceptionFallback>引发。 <xref:System.Text.EncoderFallbackException>  
+  
+ 如果选择实现自定义解决方案，则必须重写<xref:System.Text.EncoderFallback>类的以下抽象成员：  
+  
+-   方法，它返回派生自<xref:System.Text.EncoderFallbackBuffer>的类实例。 <xref:System.Text.EncoderFallback.CreateFallbackBuffer%2A> 根据要开发的回退处理程序的类型， <xref:System.Text.EncoderFallbackBuffer>实现负责执行映射或替换，或引发异常。  
+  
+-   <xref:System.Text.EncoderFallback.MaxCharCount%2A>属性，该属性返回回退实现可返回的最大字符数。 对于异常回退处理程序，其值应为零。  
+  
+ 有关编码、解码和回退策略的详细信息，请参阅[.NET Framework 中的字符编码](~/docs/standard/base-types/character-encoding.md)。  
+  
+ ]]></format>
+    </remarks>
+    <altmember cref="T:System.Text.EncoderFallbackBuffer" />
+    <altmember cref="T:System.Text.EncoderReplacementFallback" />
+    <altmember cref="T:System.Text.EncoderExceptionFallback" />
+    <related type="Article" href="~/docs/standard/base-types/character-encoding.md">.NET Framework 中的字符编码</related>
+    <related type="ExternalDocumentation" href="https://code.msdn.microsoft.com/Cyrillic-to-Roman-f7e88b29">示例：西里尔文到罗马音译实用工具</related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected EncoderFallback ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Text.EncoderFallback.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub New ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; EncoderFallback();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>初始化 <see cref="T:System.Text.EncoderFallback" /> 类的新实例。</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateFallbackBuffer">
+      <MemberSignature Language="C#" Value="public abstract System.Text.EncoderFallbackBuffer CreateFallbackBuffer ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Text.EncoderFallbackBuffer CreateFallbackBuffer() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Text.EncoderFallback.CreateFallbackBuffer" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function CreateFallbackBuffer () As EncoderFallbackBuffer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract System::Text::EncoderFallbackBuffer ^ CreateFallbackBuffer();" />
+      <MemberSignature Language="F#" Value="abstract member CreateFallbackBuffer : unit -&gt; System.Text.EncoderFallbackBuffer" Usage="encoderFallback.CreateFallbackBuffer " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Text.EncoderFallbackBuffer</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>在派生类中重写时，将初始化 <see cref="T:System.Text.EncoderFallbackBuffer" /> 类的新实例。</summary>
+        <returns>提供编码器回退缓冲区的对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法返回派生自<xref:System.Text.EncoderFallbackBuffer>的对象，该对象负责执行回退操作。 例如，在 .NET Framework 中预<xref:System.Text.EncoderFallback>定义的实现，该<xref:System.Text.EncoderReplacementFallback.CreateFallbackBuffer%2A?displayProperty=nameWithType>方法返回一个<xref:System.Text.EncoderReplacementFallbackBuffer>对象，该<xref:System.Text.EncoderExceptionFallback.CreateFallbackBuffer%2A?displayProperty=nameWithType>方法返回一个<xref:System.Text.EncoderExceptionFallbackBuffer>对象。  
+  
+ 当遇到无法进行编码的第一个字符时，编码器将调用方法。 <xref:System.Text.EncoderFallback.CreateFallbackBuffer%2A> 此方法返回的对象提供回退实现，负责返回替换无法编码的字符的字节数组。 <xref:System.Text.EncoderFallbackBuffer>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Text.DecoderFallbackBuffer" />
+        <related type="Article" href="~/docs/standard/base-types/character-encoding.md">.NET Framework 中的字符编码</related>
+      </Docs>
+    </Member>
+    <Member MemberName="ExceptionFallback">
+      <MemberSignature Language="C#" Value="public static System.Text.EncoderFallback ExceptionFallback { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.EncoderFallback ExceptionFallback" />
+      <MemberSignature Language="DocId" Value="P:System.Text.EncoderFallback.ExceptionFallback" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly Property ExceptionFallback As EncoderFallback" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property System::Text::EncoderFallback ^ ExceptionFallback { System::Text::EncoderFallback ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.ExceptionFallback : System.Text.EncoderFallback" Usage="System.Text.EncoderFallback.ExceptionFallback" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Text.EncoderFallback</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个对象，在无法对输入字符进行编码时，该对象将引发异常。</summary>
+        <value>从 <see cref="T:System.Text.EncoderFallback" /> 类派生的类型。 默认值为 <see cref="T:System.Text.EncoderExceptionFallback" /> 对象。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxCharCount">
+      <MemberSignature Language="C#" Value="public abstract int MaxCharCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MaxCharCount" />
+      <MemberSignature Language="DocId" Value="P:System.Text.EncoderFallback.MaxCharCount" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride ReadOnly Property MaxCharCount As Integer" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract property int MaxCharCount { int get(); };" />
+      <MemberSignature Language="F#" Value="member this.MaxCharCount : int" Usage="System.Text.EncoderFallback.MaxCharCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当用派生类重写时，获取当前 <see cref="T:System.Text.EncoderFallback" /> 对象能返回的最大字符数。</summary>
+        <value>当前 <see cref="T:System.Text.EncoderFallback" /> 对象能返回的最大字符数。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 对于异常回退处理程序，此属性应返回零。  
+  
+ ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReplacementFallback">
+      <MemberSignature Language="C#" Value="public static System.Text.EncoderFallback ReplacementFallback { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.EncoderFallback ReplacementFallback" />
+      <MemberSignature Language="DocId" Value="P:System.Text.EncoderFallback.ReplacementFallback" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly Property ReplacementFallback As EncoderFallback" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static property System::Text::EncoderFallback ^ ReplacementFallback { System::Text::EncoderFallback ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.ReplacementFallback : System.Text.EncoderFallback" Usage="System.Text.EncoderFallback.ReplacementFallback" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Text.Encoding</AssemblyName>
+        <AssemblyVersion>4.0.10.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>mscorlib</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.0.5.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>2.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>System.Runtime</AssemblyName>
+        <AssemblyVersion>4.2.0.0</AssemblyVersion>
+        <AssemblyVersion>4.2.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Text.EncoderFallback</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>获取一个对象，该对象会输出一个替代字符串来代替无法编码的输入字符。</summary>
+        <value>从 <see cref="T:System.Text.EncoderFallback" /> 类派生的类型。 默认值是 <see cref="T:System.Text.EncoderReplacementFallback" /> 对象，该对象将未知输入字符替换为问号字符（“?”，U+003F）。</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
