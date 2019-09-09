@@ -1,0 +1,1429 @@
+<Type Name="WebPartPersonalization" FullName="System.Web.UI.WebControls.WebParts.WebPartPersonalization">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="4b83c75c7d80f3975538a253d5bfceed190a738c" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70688129" /></Metadata><TypeSignature Language="C#" Value="public class WebPartPersonalization" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit WebPartPersonalization extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+  <TypeSignature Language="VB.NET" Value="Public Class WebPartPersonalization" />
+  <TypeSignature Language="C++ CLI" Value="public ref class WebPartPersonalization" />
+  <TypeSignature Language="F#" Value="type WebPartPersonalization = class" />
+  <AssemblyInfo>
+    <AssemblyName>System.Web</AssemblyName>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ComponentModel.TypeConverter(typeof(System.Web.UI.WebControls.EmptyStringExpandableObjectConverter))</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary><span data-ttu-id="f6cb3-101">实现低级别个性化设置操作。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-101">Implements low-level personalization operations.</span></span></summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-102">此类实现执行更低级别的个性化设置操作所需的逻辑。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-102">This class implements the logic required to carry out lower-level personalization operations.</span></span> <span data-ttu-id="f6cb3-103">尽管类管理个性化的高级生命周期，但是它<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>是负责实际实现执行特定个性化操作所需的物理步骤的类。 <xref:System.Web.UI.WebControls.WebParts.WebPartManager></span><span class="sxs-lookup"><span data-stu-id="f6cb3-103">Although the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> class manages the high-level life cycle of personalization, it is the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> class that is responsible for actually implementing the physical steps necessary to carry out specific personalization actions.</span></span> <span data-ttu-id="f6cb3-104">类反过来依赖于的<xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider>实现来与基础数据存储区进行通信，以获取个性化信息。 <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization></span><span class="sxs-lookup"><span data-stu-id="f6cb3-104">The <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> class in turn relies on an implementation of <xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider> to communicate with the underlying data store for personalization information.</span></span>  
+  
+ <span data-ttu-id="f6cb3-105">如果你使用的<xref:System.Web.UI.WebControls.WebParts.WebPartManager>默认实现，则它将创建<xref:System.Web.UI.WebControls.WebParts.WebPartManager.Personalization%2A>可通过引用属性<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>使用的类的实例。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-105">If you use the default implementation of the <xref:System.Web.UI.WebControls.WebParts.WebPartManager>, it creates an instance of the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> class that you can use by referencing the <xref:System.Web.UI.WebControls.WebParts.WebPartManager.Personalization%2A> property.</span></span> <span data-ttu-id="f6cb3-106">例如，若要访问<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope%2A>属性，请指定。 `WebPartManager.Personalization.InitialScope`</span><span class="sxs-lookup"><span data-stu-id="f6cb3-106">For example, to access the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope%2A> property, you would specify `WebPartManager.Personalization.InitialScope`.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="f6cb3-107">下面的代码示例演示如何<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>使用类，并提供有关个性化设置范围如何影响个性化属性结果的示例。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-107">The following code example shows how the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> class is used, as well as providing an example of how personalization scope affects the results of personalized properties.</span></span> <span data-ttu-id="f6cb3-108">此示例包含五个文件：</span><span class="sxs-lookup"><span data-stu-id="f6cb3-108">This example has five files:</span></span>  
+  
+-   <span data-ttu-id="f6cb3-109">一个 .aspx 页面，它以声明方式创建两个 Web 部件区域，每个区域都有一个控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-109">An .aspx page that declaratively creates two Web Part zones, each with a control.</span></span>  
+  
+-   <span data-ttu-id="f6cb3-110">一个名`Color.ascx`为的用户控件，该控件允许用户更改一个个性化属性，该属性基于用户的授权权限修改状态信息和输入共享范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-110">A user control called `Color.ascx` that allows a user to change a personalized property that applies a text box background color based on the user's authorization rights to modify state information and to enter shared scope.</span></span>  
+  
+-   <span data-ttu-id="f6cb3-111">一个名`Persmode.ascx`为的用户控件，该控件指示当前页范围是什么，当前用户必须为哪些权限输入共享范围或修改数据; 它还提供两个按钮，一个用于更改范围，另一个用于重置当前用户个性化设置信息。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-111">A user control called `Persmode.ascx` that indicates what the current page scope is and what rights the current user has to enter shared scope or to modify data; it also provides two buttons; one to change scope and one to reset current user personalization information.</span></span>  
+  
+-   <span data-ttu-id="f6cb3-112">用于授权用户的登录控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-112">A login control that is used to authorize users.</span></span>  
+  
+-   <span data-ttu-id="f6cb3-113">一个 Web.config 文件，其中包含一个节，其中提供了一个示例，用于授权用户修改个性化设置状态并输入共享范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-113">A Web.config file with a section that provides an example of authorizing a user to modify personalization state and to enter shared scope.</span></span>  
+  
+ <span data-ttu-id="f6cb3-114">下面的代码创建一个<xref:System.Web.UI.WebControls.WebParts.WebPartManager>具有和两个 Web 部件区域的 aspx 页，并`Color.ascx`显示和`Persmode.ascx`控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-114">The following code creates an aspx page  with a <xref:System.Web.UI.WebControls.WebParts.WebPartManager> and two Web Part zones and displays the `Color.ascx` and `Persmode.ascx` controls.</span></span> <span data-ttu-id="f6cb3-115">页面加载用于获取当前用户信息的登录页。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-115">The page loads a login page that is used to get the current user information.</span></span> <span data-ttu-id="f6cb3-116">使用中[!INCLUDE[vsprvsext](~/includes/vsprvsext-md.md)]的 ASP.NET 网站管理工具来创建访问页面的用户。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-116">Use the ASP.NET Web Site Administration Tool in [!INCLUDE[vsprvsext](~/includes/vsprvsext-md.md)] to create users to access the page.</span></span> <span data-ttu-id="f6cb3-117">请参阅 Web.config 文件，以了解在配置文件中授予授权的用户的授权，以更改作用域和修改状态信息。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-117">See the Web.config file for an example of a user granted authorization in the configuration file to change scope and modify state information.</span></span>  
+  
+ [!code-aspx-csharp[WebParts_WebPartPersonalization#1](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_WebPartPersonalization/CS/Defaultcs.aspx#1)]
+ [!code-aspx-vb[WebParts_WebPartPersonalization#1](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_WebPartPersonalization/VB/Defaultvb.aspx#1)]  
+  
+ <span data-ttu-id="f6cb3-118">下面的示例代码创建一个登录页。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-118">The following example code creates a login page.</span></span> <span data-ttu-id="f6cb3-119">成功登录后，它将重定向到主 aspx 页面。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-119">After a successful login, it redirects to the main aspx page.</span></span>  
+  
+> [!IMPORTANT]
+>  <span data-ttu-id="f6cb3-120">此示例具有一个接受用户输入的文本框，这是一个潜在的安全威胁。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-120">This example has a text box that accepts user input, which is a potential security threat.</span></span> <span data-ttu-id="f6cb3-121">默认情况下，ASP.NET 网页验证用户输入是否不包含脚本或 HTML 元素。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-121">By default, ASP.NET Web pages validate that user input does not include script or HTML elements.</span></span> <span data-ttu-id="f6cb3-122">有关详细信息，请参阅[脚本侵入概述](https://msdn.microsoft.com/library/772c7312-211a-4eb3-8d6e-eec0aa1dcc07)。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-122">For more information, see [Script Exploits Overview](https://msdn.microsoft.com/library/772c7312-211a-4eb3-8d6e-eec0aa1dcc07).</span></span>  
+  
+ [!code-aspx-csharp[WebParts_WebPartPersonalization#5](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_WebPartPersonalization/CS/login.aspx#5)]
+ [!code-aspx-vb[WebParts_WebPartPersonalization#5](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_WebPartPersonalization/VB/login.aspx#5)]  
+  
+ <span data-ttu-id="f6cb3-123">下面的示例代码是此应用程序的 web.config 文件的一部分。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-123">The following example code is a portion of the Web.config file for this application.</span></span> <span data-ttu-id="f6cb3-124">本部分说明如何为用户（在本例中为 "用户 2"）设置授权，以输入共享的个性化设置范围以及修改个性化设置状态信息。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-124">This section shows how to set authorization for a user, in this case "user2", to enter shared personalization scope and to modify personalization state information.</span></span> <span data-ttu-id="f6cb3-125">它还显示了角色的示例，在此示例中为 "admin"，可用于允许 "管理员" 角色中的用户输入共享的个性化设置范围以及修改个性化设置状态信息。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-125">It also shows an example of a role, in this case "admin", that can be used to allow users in the "admin" role to enter shared personalization scope and to modify personalization state information.</span></span>  
+  
+ [!code-aspx-csharp[WebParts_WebPartPersonalization#2](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_WebPartPersonalization/CS/web.config#2)]
+ [!code-aspx-vb[WebParts_WebPartPersonalization#2](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_WebPartPersonalization/VB/web.config#2)]
+  
+ <span data-ttu-id="f6cb3-126">下面的代码示例创建一个名`Color.ascx`为的用户控件，该控件允许用户根据当前个性化设置范围和用户的授权权限，更改个性化属性（在本例中为两个文本框的背景色）.</span><span class="sxs-lookup"><span data-stu-id="f6cb3-126">The following example code creates a user control, called `Color.ascx`, that allows the user to change a personalized property, in this case the background color of two text boxes, based on the current personalization scope and the authorization rights of the user.</span></span>  
+  
+> [!IMPORTANT]
+>  <span data-ttu-id="f6cb3-127">此示例具有一个接受用户输入的文本框，这是一个潜在的安全威胁。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-127">This example has a text box that accepts user input, which is a potential security threat.</span></span> <span data-ttu-id="f6cb3-128">默认情况下，ASP.NET 网页验证用户输入是否不包含脚本或 HTML 元素。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-128">By default, ASP.NET Web pages validate that user input does not include script or HTML elements.</span></span> <span data-ttu-id="f6cb3-129">有关详细信息，请参阅[脚本侵入概述](https://msdn.microsoft.com/library/772c7312-211a-4eb3-8d6e-eec0aa1dcc07)。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-129">For more information, see [Script Exploits Overview](https://msdn.microsoft.com/library/772c7312-211a-4eb3-8d6e-eec0aa1dcc07).</span></span>  
+  
+ [!code-aspx-csharp[WebParts_WebPartPersonalization#3](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_WebPartPersonalization/CS/color.ascx#3)]
+ [!code-aspx-vb[WebParts_WebPartPersonalization#3](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_WebPartPersonalization/VB/color.ascx#3)]  
+  
+ <span data-ttu-id="f6cb3-130">下面的代码示例创建一个名`Persmode.ascx`为的用户控件，该控件显示当前个性化设置范围以及修改状态和进入共享作用域的用户权限。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-130">The following example code creates a user control, called `Persmode.ascx`, that shows the current personalization scope and the user rights to modify state and to enter shared scope.</span></span> <span data-ttu-id="f6cb3-131">它还具有用于重置当前个性化设置状态的重置按钮。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-131">It also has a reset button for resetting the current personalization state.</span></span>  
+  
+ [!code-aspx-csharp[WebParts_WebPartPersonalization#4](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_WebPartPersonalization/CS/persMode.ascx#4)]
+ [!code-aspx-vb[WebParts_WebPartPersonalization#4](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_WebPartPersonalization/VB/persMode.ascx#4)]  
+  
+ ]]></format>
+    </remarks>
+    <block subset="none" type="overrides"><para><span data-ttu-id="f6cb3-132"><see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 类 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 与控件和个性化设置基础结构的其余部分紧密协作。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-132">The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> class works closely with a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control and the rest of the personalization infrastructure.</span></span> <span data-ttu-id="f6cb3-133">个性化设置的默认实现是一个非常可靠的子系统，应满足个性化需求。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-133">The default implementation of personalization is a very robust subsystem that should meet your personalization needs.</span></span> <span data-ttu-id="f6cb3-134">在大多数情况下，如果要自定义个性化设置，则可以创建一个继承自<see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationProvider" />的类，从而创建一个用作个性化设置提供程序的数据提供程序。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-134">In most cases, if you want to customize personalization, you can create a data provider for use as a personalization provider by creating a class that inherits from <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationProvider" />.</span></span>  
+  
+<span data-ttu-id="f6cb3-135">如果你想<see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />要创建一个与<see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />和类提供的不同的个性化设置子系统，则应通过从<see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />派生并添加<see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />你自己的自定义实现来创建自定义实现编写.</span><span class="sxs-lookup"><span data-stu-id="f6cb3-135">If you want to create a personalization subsystem significantly different from that provided by the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> and the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> classes, you should create a custom <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> implementation by deriving from <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> and add your own custom logic.</span></span> <span data-ttu-id="f6cb3-136">然后，通过从<see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />中派生来创建自定义实现，添加你自己的自定义<see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.CreatePersonalization" />逻辑，并重写方法<see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />以返回自定义实现。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-136">Then create a custom <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> implementation by deriving from <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />, add your own custom logic, and override the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.CreatePersonalization" /> method to return your custom <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> implementation.</span></span> <span data-ttu-id="f6cb3-137">由于控件通过<see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />实例向个性化设置基础结构发出请求，因此该<see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />控件<see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationProvider" />不会直接与实现交互或保持对实现的引用。 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /></span><span class="sxs-lookup"><span data-stu-id="f6cb3-137">Because a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control makes requests to the personalization infrastructure by way of a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> instance, the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control does not directly interact with or hold references to <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationProvider" /> implementations.</span></span></para></block>
+    <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-138">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-138">ASP.NET Web Parts Controls</span></span></related>
+    <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-139">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-139">Web Parts Personalization Overview</span></span></related>
+    <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-140">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-140">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+    <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-141">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-141">Web Parts Personalization</span></span></related>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public WebPartPersonalization (System.Web.UI.WebControls.WebParts.WebPartManager owner);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Web.UI.WebControls.WebParts.WebPartManager owner) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.#ctor(System.Web.UI.WebControls.WebParts.WebPartManager)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (owner As WebPartManager)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; WebPartPersonalization(System::Web::UI::WebControls::WebParts::WebPartManager ^ owner);" />
+      <MemberSignature Language="F#" Value="new System.Web.UI.WebControls.WebParts.WebPartPersonalization : System.Web.UI.WebControls.WebParts.WebPartManager -&gt; System.Web.UI.WebControls.WebParts.WebPartPersonalization" Usage="new System.Web.UI.WebControls.WebParts.WebPartPersonalization owner" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="owner" Type="System.Web.UI.WebControls.WebParts.WebPartManager" />
+      </Parameters>
+      <Docs>
+        <param name="owner"><span data-ttu-id="f6cb3-142">用于管理个性化设置信息的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /></span><span class="sxs-lookup"><span data-stu-id="f6cb3-142">The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> used to manage the personalization information</span></span></param>
+        <summary><span data-ttu-id="f6cb3-143">初始化 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 类的新实例。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-143">Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> class.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-144">此构造函数初始化此类的一个实例，并将其<xref:System.Web.UI.WebControls.WebParts.WebPartManager>与该<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>实例将执行个性化设置操作的控件相关联。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-144">This constructor initializes an instance of this class and associates it with the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control on whose behalf the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> instance will carry out personalization operations.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><span data-ttu-id="f6cb3-145"><paramref name="owner" /> 为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-145"><paramref name="owner" /> is <see langword="null" />.</span></span></exception>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-146">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-146">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-147">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-147">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-148">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-148">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-149">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-149">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="ApplyPersonalizationState">
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-150">将个性化设置数据应用于与 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 实例关联的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 控件，或应用于特定 <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> 实例。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-150">Applies personalization data to either a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control associated with the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> instance, or to a specific <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> instance.</span></span></summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="ApplyPersonalizationState">
+      <MemberSignature Language="C#" Value="protected internal virtual void ApplyPersonalizationState ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void ApplyPersonalizationState() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ApplyPersonalizationState" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Sub ApplyPersonalizationState ()" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void ApplyPersonalizationState();" />
+      <MemberSignature Language="F#" Value="abstract member ApplyPersonalizationState : unit -&gt; unit&#xA;override this.ApplyPersonalizationState : unit -&gt; unit" Usage="webPartPersonalization.ApplyPersonalizationState " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-151">将个性化设置数据应用于父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-151">Applies personalization data to the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-152">如果将`true` <xref:System.Web.UI.WebControls.WebParts.PersonalizationState.ApplyWebPartPersonalization%2A>属性设置为，则此方法将对<xref:System.Web.UI.WebControls.WebParts.PersonalizationState>实例调用方法，以将个性化设置状态应用到提供的 Web 部件控件。 <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A></span><span class="sxs-lookup"><span data-stu-id="f6cb3-152">If the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A> property is set to `true`, this method calls the <xref:System.Web.UI.WebControls.WebParts.PersonalizationState.ApplyWebPartPersonalization%2A> method on the <xref:System.Web.UI.WebControls.WebParts.PersonalizationState> instance to apply personalization state to the supplied Web Parts control.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-153">在从基础数据存储区加载状态之前，进行了应用个性化设置状态的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-153">An attempt was made to apply personalization state prior to the state being loaded from the underlying data store.</span></span>  
+  
+<span data-ttu-id="f6cb3-154">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-154">-or-</span></span> 
+<span data-ttu-id="f6cb3-155">从数据存储区返回的个性化设置状态为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-155">The personalization state returned from the data store was <see langword="null" />.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-156">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-156">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-157">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-157">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-158">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-158">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-159">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-159">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="ApplyPersonalizationState">
+      <MemberSignature Language="C#" Value="protected internal virtual void ApplyPersonalizationState (System.Web.UI.WebControls.WebParts.WebPart webPart);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void ApplyPersonalizationState(class System.Web.UI.WebControls.WebParts.WebPart webPart) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ApplyPersonalizationState(System.Web.UI.WebControls.WebParts.WebPart)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void ApplyPersonalizationState(System::Web::UI::WebControls::WebParts::WebPart ^ webPart);" />
+      <MemberSignature Language="F#" Value="abstract member ApplyPersonalizationState : System.Web.UI.WebControls.WebParts.WebPart -&gt; unit&#xA;override this.ApplyPersonalizationState : System.Web.UI.WebControls.WebParts.WebPart -&gt; unit" Usage="webPartPersonalization.ApplyPersonalizationState webPart" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="webPart" Type="System.Web.UI.WebControls.WebParts.WebPart" />
+      </Parameters>
+      <Docs>
+        <param name="webPart"><span data-ttu-id="f6cb3-160">要对其应用个性化设置数据的 Web 部件控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-160">The Web Parts control to which personalization data is to be applied.</span></span></param>
+        <summary><span data-ttu-id="f6cb3-161">当父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> 控件请求将个性化设置数据应用于指定的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件时，按照其请求执行。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-161">Applies personalization data to the specified <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control when requested to do so by the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-162">当父<xref:System.Web.UI.WebControls.WebParts.WebPart> <xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件请求将个性化设置数据应用于单个派生的类时，将调用此方法。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-162">This method is called to apply personalization data to an individual <xref:System.Web.UI.WebControls.WebParts.WebPart>-derived class when requested to do so by the parent <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control.</span></span>  
+  
+ <span data-ttu-id="f6cb3-163">如果将`true` <xref:System.Web.UI.WebControls.WebParts.PersonalizationState.ApplyWebPartPersonalization%2A>属性设置为，则此方法将对<xref:System.Web.UI.WebControls.WebParts.PersonalizationState>实例调用方法，以将个性化设置状态应用到提供的 Web 部件控件。 <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A></span><span class="sxs-lookup"><span data-stu-id="f6cb3-163">If the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A> property is set to `true`, this method calls the <xref:System.Web.UI.WebControls.WebParts.PersonalizationState.ApplyWebPartPersonalization%2A> method on the <xref:System.Web.UI.WebControls.WebParts.PersonalizationState> instance to apply personalization state to the supplied Web Parts control.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="f6cb3-164">进行了将个性化设置状态应用于不受父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 管理的 Web 部件控件的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-164">An attempt was made to apply personalization state to a Web Parts control that is not managed by the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />.</span></span></exception>
+        <exception cref="T:System.ArgumentNullException"><span data-ttu-id="f6cb3-165"><paramref name="webPart" /> 为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-165"><paramref name="webPart" /> is <see langword="null" />.</span></span></exception>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-166">在从基础数据存储区加载状态之前，进行了应用个性化设置状态的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-166">An attempt was made to apply personalization state prior to the state being loaded from the underlying data store.</span></span>  
+  
+<span data-ttu-id="f6cb3-167">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-167">-or-</span></span> 
+<span data-ttu-id="f6cb3-168">从数据存储区返回的个性化设置状态为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-168">The personalization state returned from the data store was <see langword="null" />.</span></span>  
+  
+<span data-ttu-id="f6cb3-169">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-169">-or-</span></span> 
+<span data-ttu-id="f6cb3-170">进行了将个性化设置数据应用于同一个 Web 部件控件的多次尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-170">An attempt was made to apply personalization data more than once to the same Web Parts control.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-171">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-171">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-172">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-172">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-173">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-173">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-174">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-174">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="CanEnterSharedScope">
+      <MemberSignature Language="C#" Value="public bool CanEnterSharedScope { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanEnterSharedScope" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.CanEnterSharedScope" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property CanEnterSharedScope As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool CanEnterSharedScope { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.CanEnterSharedScope : bool" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.CanEnterSharedScope" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-175">返回一个值，该值指示用户是否已授权可以进入 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> 范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-175">Returns a value indicating whether the user is authorized to enter <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> scope.</span></span></summary>
+        <value><span data-ttu-id="f6cb3-176">如果用户已授权可以进入 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> 范围，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-176"><see langword="true" /> if the user is authorized to enter <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> scope; otherwise, <see langword="false" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-177">如果用户已`true` <xref:System.Web.UI.WebControls.WebParts.WebPartUserCapability>在中<xref:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared>获得授权，则此属性返回。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-177">This property returns `true` if the user is authorized in the <xref:System.Web.UI.WebControls.WebParts.WebPartUserCapability> to enter <xref:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared> scope.</span></span>  
+  
+ <span data-ttu-id="f6cb3-178">第一次调用属性时，它将确定用户输入<xref:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared>作用域并缓存信息的权限。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-178">The first time the property is called, it determines the user's right to enter <xref:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared> scope and caches the information.</span></span> <span data-ttu-id="f6cb3-179">如果在第一次调用此属性后修改了字典，则不会在对此属性进行后续调用时显示更改。 <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.UserCapabilities%2A></span><span class="sxs-lookup"><span data-stu-id="f6cb3-179">If the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.UserCapabilities%2A> dictionary is modified after the first time this property is called, changes are not shown on subsequent calls to this property.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="f6cb3-180">下面的代码演示如何使用<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.CanEnterSharedScope%2A>属性。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-180">The following code demonstrates using the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.CanEnterSharedScope%2A> property.</span></span> <span data-ttu-id="f6cb3-181">此代码是在<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>类说明中找到的更大代码示例的一部分。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-181">This code is part of a larger code sample found in the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> class description.</span></span>  
+  
+ [!code-csharp[WebParts_WebPartPersonalization#7](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_WebPartPersonalization/CS/persMode.ascx#7)]
+ [!code-vb[WebParts_WebPartPersonalization#7](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_WebPartPersonalization/VB/persMode.ascx#7)]  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-182">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-182">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-183">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-183">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-184">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-184">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-185">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-185">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="ChangeScope">
+      <MemberSignature Language="C#" Value="protected virtual void ChangeScope (System.Web.UI.WebControls.WebParts.PersonalizationScope scope);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void ChangeScope(valuetype System.Web.UI.WebControls.WebParts.PersonalizationScope scope) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ChangeScope(System.Web.UI.WebControls.WebParts.PersonalizationScope)" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub ChangeScope (scope As PersonalizationScope)" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void ChangeScope(System::Web::UI::WebControls::WebParts::PersonalizationScope scope);" />
+      <MemberSignature Language="F#" Value="abstract member ChangeScope : System.Web.UI.WebControls.WebParts.PersonalizationScope -&gt; unit&#xA;override this.ChangeScope : System.Web.UI.WebControls.WebParts.PersonalizationScope -&gt; unit" Usage="webPartPersonalization.ChangeScope scope" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="scope" Type="System.Web.UI.WebControls.WebParts.PersonalizationScope" />
+      </Parameters>
+      <Docs>
+        <param name="scope"><span data-ttu-id="f6cb3-186">当前页的新个性化设置范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-186">The new personalization scope for the current page.</span></span></param>
+        <summary><span data-ttu-id="f6cb3-187">将当前页的 <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> 实例更改为指定的范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-187">Changes the current page's <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> instance to the scope specified.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-188">此方法将当前正在执行的页的个性化设置范围更改为`newScope`参数指定的新范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-188">This method changes the currently executing page's personalization scope to the new scope specified by the `newScope` parameter.</span></span> <span data-ttu-id="f6cb3-189">此方法是公共<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ToggleScope%2A>方法调用的受保护的帮助器方法。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-189">This method is the protected helper method that is called by the public <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ToggleScope%2A> method.</span></span> <span data-ttu-id="f6cb3-190">如果要在两个以上的可能范围内进行切换，则存在此受保护的方法来处理将来的扩展性。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-190">This protected method exists to handle future extensibility if there are more than two possible scopes to switch between.</span></span>  
+  
+ <span data-ttu-id="f6cb3-191">如果当前范围和`newScope`的值相同，则此方法不执行任何操作。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-191">If the current scope and `newScope` are the same value, then this method performs no operation.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-192">如果尝试从 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" /> 范围切换到 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> 范围，则当前用户不具有进入 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> 范围的用户功能。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-192">If attempting to switch from <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" /> scope to <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> scope, the current user does not have the user capability to enter <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> scope.</span></span></exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><span data-ttu-id="f6cb3-193"><paramref name="scope" /> 不是 <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> 枚举的有效成员。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-193"><paramref name="scope" /> is not a valid member of the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> enumeration.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-194">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-194">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-195">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-195">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-196">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-196">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-197">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-197">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyPersonalizationState">
+      <MemberSignature Language="C#" Value="protected internal virtual void CopyPersonalizationState (System.Web.UI.WebControls.WebParts.WebPart webPartA, System.Web.UI.WebControls.WebParts.WebPart webPartB);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void CopyPersonalizationState(class System.Web.UI.WebControls.WebParts.WebPart webPartA, class System.Web.UI.WebControls.WebParts.WebPart webPartB) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.CopyPersonalizationState(System.Web.UI.WebControls.WebParts.WebPart,System.Web.UI.WebControls.WebParts.WebPart)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Sub CopyPersonalizationState (webPartA As WebPart, webPartB As WebPart)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void CopyPersonalizationState(System::Web::UI::WebControls::WebParts::WebPart ^ webPartA, System::Web::UI::WebControls::WebParts::WebPart ^ webPartB);" />
+      <MemberSignature Language="F#" Value="abstract member CopyPersonalizationState : System.Web.UI.WebControls.WebParts.WebPart * System.Web.UI.WebControls.WebParts.WebPart -&gt; unit&#xA;override this.CopyPersonalizationState : System.Web.UI.WebControls.WebParts.WebPart * System.Web.UI.WebControls.WebParts.WebPart -&gt; unit" Usage="webPartPersonalization.CopyPersonalizationState (webPartA, webPartB)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="webPartA" Type="System.Web.UI.WebControls.WebParts.WebPart" />
+        <Parameter Name="webPartB" Type="System.Web.UI.WebControls.WebParts.WebPart" />
+      </Parameters>
+      <Docs>
+        <param name="webPartA"><span data-ttu-id="f6cb3-198">提供个性化设置数据的 Web 部件控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-198">The Web Parts control supplying the personalization data.</span></span></param>
+        <param name="webPartB"><span data-ttu-id="f6cb3-199">接收个性化设置数据的 Web 部件控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-199">The Web Parts control receiving the personalization data.</span></span></param>
+        <summary><span data-ttu-id="f6cb3-200">从一个 Web 部件控件提取个性化设置状态，并将它应用于另一个 Web 部件控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-200">Extracts the personalization state from one Web Parts control and applies it to a second Web Parts control.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-201">此方法从中`webPartA`提取个性化设置状态，并将`webPartB`其应用于。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-201">This method extracts the personalization state from `webPartA` and applies it to `webPartB`.</span></span> <span data-ttu-id="f6cb3-202">此方法假定`webPartA`和`webPartB`具有相同的类型。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-202">This method assumes that `webPartA` and `webPartB` are the same type.</span></span> <span data-ttu-id="f6cb3-203">如果 Web 部件控件是控件<xref:System.Web.UI.WebControls.WebParts.GenericWebPart> ，则此方法会将已`webPartA`包装的子控件中的个性化设置状态复制到包装在`webPartB`中的子控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-203">If the Web Parts controls are <xref:System.Web.UI.WebControls.WebParts.GenericWebPart> controls, the method copies the personalization state from the child control wrapped in `webPartA` to the child control wrapped in `webPartB`.</span></span>  
+  
+ <span data-ttu-id="f6cb3-204">作为复制操作的一部分， `webPartB`将被标记为 "已更新"。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-204">As part of the copy operation, `webPartB` is marked as "dirty".</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><span data-ttu-id="f6cb3-205"><paramref name="webPartA" /> 或 <paramref name="webPartB" /> 为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-205">Either <paramref name="webPartA" /> or <paramref name="webPartB" /> is <see langword="null" />.</span></span></exception>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="f6cb3-206"><paramref name="webPartA" /> 和 <paramref name="webPartB" /> 不是同一种 <see cref="T:System.Type" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-206"><paramref name="webPartA" /> and <paramref name="webPartB" /> are not of the same <see cref="T:System.Type" />.</span></span>  
+  
+<span data-ttu-id="f6cb3-207">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-207">-or-</span></span> 
+ <span data-ttu-id="f6cb3-208"><paramref name="webPartA" /> 和 <paramref name="webPartB" /> 是 <see cref="T:System.Web.UI.WebControls.WebParts.GenericWebPart" /> 控件，但其中一个（或两个都）缺少子控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-208"><paramref name="webPartA" /> and <paramref name="webPartB" /> are <see cref="T:System.Web.UI.WebControls.WebParts.GenericWebPart" /> controls but one or both lack a child control.</span></span>  
+  
+<span data-ttu-id="f6cb3-209">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-209">-or-</span></span> 
+ <span data-ttu-id="f6cb3-210"><paramref name="webPartA" /> 和 <paramref name="webPartB" /> 是 <see cref="T:System.Web.UI.WebControls.WebParts.GenericWebPart" /> 控件，但它们的子控件不是同一种 <see cref="T:System.Type" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-210"><paramref name="webPartA" /> and <paramref name="webPartB" /> are <see cref="T:System.Web.UI.WebControls.WebParts.GenericWebPart" /> controls, but their child controls are not of the same <see cref="T:System.Type" />.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-211">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-211">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-212">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-212">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-213">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-213">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-214">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-214">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="Enabled">
+      <MemberSignature Language="C#" Value="public virtual bool Enabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Enabled" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Enabled" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Property Enabled As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property bool Enabled { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.Enabled : bool with get, set" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.Enabled" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-215">返回一个值，该值指示是否请求启用关联 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件的个性化设置。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-215">Returns a value indicating whether personalization is requested to be enabled for the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control.</span></span></summary>
+        <value><span data-ttu-id="f6cb3-216">如果启用个性化设置，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-216"><see langword="true" /> if personalization is enabled; otherwise, <see langword="false" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-217">此属性指示是否请求为父<xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件启用个性化设置。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-217">This property indicates whether personalization is requested to be enabled for the parent <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control.</span></span> <span data-ttu-id="f6cb3-218">请注意，这是与<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A>和<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsInitialized%2A>的目的相比，这是一个微妙但重要的区别。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-218">Note that this is a subtle but important distinction from the intent of <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A> and <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsInitialized%2A>.</span></span>  
+  
+ <span data-ttu-id="f6cb3-219">只有在完成<xref:System.Web.UI.WebControls.WebParts.WebPartManager>该控件的<xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A>方法之前，才能设置此属性。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-219">This property can only be set prior to the completion of the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control's <xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A> method.</span></span> <span data-ttu-id="f6cb3-220">在实践中，这意味着<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Enabled%2A> ，如果应禁用个性化设置，则必须在<xref:System.Web.UI.WebControls.WebParts.WebPartManager>元素上的页标记中设置属性。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-220">In practice, this means that the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Enabled%2A> property must be set in the page markup on the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> element if personalization should be disabled.</span></span> <span data-ttu-id="f6cb3-221">此外，还可以在`PreInit` <xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件的阶段设置此属性。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-221">Alternatively, this property can be set during the `PreInit` phase of the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-222">在完成关联 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件的 <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit(System.EventArgs)" /> 方法之后，进行了设置此属性值的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-222">An attempt was made to set this property value after the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control's <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit(System.EventArgs)" /> method had completed.</span></span></exception>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-223">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-223">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-224">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-224">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-225">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-225">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-226">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-226">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="EnsureEnabled">
+      <MemberSignature Language="C#" Value="public void EnsureEnabled (bool ensureModifiable);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnsureEnabled(bool ensureModifiable) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.EnsureEnabled(System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub EnsureEnabled (ensureModifiable As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void EnsureEnabled(bool ensureModifiable);" />
+      <MemberSignature Language="F#" Value="member this.EnsureEnabled : bool -&gt; unit" Usage="webPartPersonalization.EnsureEnabled ensureModifiable" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ensureModifiable" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="ensureModifiable"><span data-ttu-id="f6cb3-227">布尔值，指示应进行哪种类型的检查。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-227">A Boolean value indicating which type of check should be made.</span></span></param>
+        <summary><span data-ttu-id="f6cb3-228">确保 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 实例已完成初始化或当前用户具有修改个性化设置状态的权限。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-228">Ensures that the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> instance has completed initialization or that the current user has rights to modify personalization state.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-229">此方法是在多个<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>方法中使用的帮助器方法，可确保以下两种情况之一：</span><span class="sxs-lookup"><span data-stu-id="f6cb3-229">This method is a helper method used in several <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> methods to ensure one of two things:</span></span>  
+  
+-   <span data-ttu-id="f6cb3-230">实例已完成初始化（例如，调用了<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load%2A>方法并且已成功完成）。 <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization></span><span class="sxs-lookup"><span data-stu-id="f6cb3-230">The <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> instance has completed initialization (for example, the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load%2A> method was called and successfully completed).</span></span> <span data-ttu-id="f6cb3-231">如果`ensureModifiable`参数等于`false`，则执行此检查。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-231">This check is made if the `ensureModifiable` parameter equals `false`.</span></span>  
+  
+    <span data-ttu-id="f6cb3-232">- 或 -</span><span class="sxs-lookup"><span data-stu-id="f6cb3-232">-or-</span></span>
+  
+-   <span data-ttu-id="f6cb3-233">当前用户具有修改个性化设置状态的权限。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-233">The current user has rights to modify personalization state.</span></span> <span data-ttu-id="f6cb3-234">如果`ensureModifiable` 等于 `true` ，则进行此检查。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-234">This check is made if `ensureModifiable` equals `true`.</span></span>  
+  
+ <span data-ttu-id="f6cb3-235">该<xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件还在许多情况下调用此方法：</span><span class="sxs-lookup"><span data-stu-id="f6cb3-235">The <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control also calls this method in a number of cases:</span></span>  
+  
+-   <span data-ttu-id="f6cb3-236">如果为，则将显示模式切换为 "正常"。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-236">To switch the display mode to something other than normal.</span></span> <span data-ttu-id="f6cb3-237">当前用户必须有权修改个性化设置状态。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-237">The current user must have rights to modify personalization state.</span></span>  
+  
+-   <span data-ttu-id="f6cb3-238">添加、删除或移动 Web 部件控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-238">To add, delete, or move Web Parts controls.</span></span> <span data-ttu-id="f6cb3-239">当前用户必须有权修改个性化设置状态。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-239">The current user must have rights to modify personalization state.</span></span>  
+  
+-   <span data-ttu-id="f6cb3-240">连接、断开和编辑 Web 部件控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-240">To connect, disconnect, and edit Web Parts controls.</span></span> <span data-ttu-id="f6cb3-241">当前用户必须有权修改个性化设置状态。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-241">The current user must have rights to modify personalization state.</span></span>  
+  
+-   <span data-ttu-id="f6cb3-242">将 Web 部件控件导出到页面上。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-242">To export the Web Parts controls on a page.</span></span> <span data-ttu-id="f6cb3-243"><xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>实例必须已完成初始化。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-243">The <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> instance must have completed initialization.</span></span>  
+  
+-   <span data-ttu-id="f6cb3-244">导入 Web 部件控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-244">To import Web Parts controls.</span></span> <span data-ttu-id="f6cb3-245">当前用户必须有权修改个性化设置状态。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-245">The current user must have rights to modify personalization state.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-246">当前用户不具有修改个性化设置信息的权限，或其他检查失败。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-246">The current user does not have rights to modify personalization information, or other checks failed.</span></span>  
+  
+<span data-ttu-id="f6cb3-247">- 或 -</span><span class="sxs-lookup"><span data-stu-id="f6cb3-247">-or-</span></span> 
+ <span data-ttu-id="f6cb3-248"><see cref="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled" /> 返回 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-248"><see cref="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled" /> returned <see langword="false" />.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-249">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-249">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-250">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-250">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-251">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-251">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-252">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-252">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="EnterSharedScopeUserCapability">
+      <MemberSignature Language="C#" Value="public static readonly System.Web.UI.WebControls.WebParts.WebPartUserCapability EnterSharedScopeUserCapability;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Web.UI.WebControls.WebParts.WebPartUserCapability EnterSharedScopeUserCapability" />
+      <MemberSignature Language="DocId" Value="F:System.Web.UI.WebControls.WebParts.WebPartPersonalization.EnterSharedScopeUserCapability" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly EnterSharedScopeUserCapability As WebPartUserCapability " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Web::UI::WebControls::WebParts::WebPartUserCapability ^ EnterSharedScopeUserCapability;" />
+      <MemberSignature Language="F#" Value=" staticval mutable EnterSharedScopeUserCapability : System.Web.UI.WebControls.WebParts.WebPartUserCapability" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.EnterSharedScopeUserCapability" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.UI.WebControls.WebParts.WebPartUserCapability</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-253">表示进入 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartUserCapability" /> 范围的用户授权的 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> 实例。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-253">Represents the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartUserCapability" /> instance of a user's authorization to enter <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> scope.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-254">用户权限由<xref:System.Web.UI.WebControls.WebParts.WebPartUserCapability>实例中的字符串 "enterSharedScope" 表示。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-254">The user right is represented by the string "enterSharedScope" in the <xref:System.Web.UI.WebControls.WebParts.WebPartUserCapability> instance.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-255">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-255">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-256">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-256">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-257">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-257">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-258">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-258">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="ExtractPersonalizationState">
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-259">从父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件中提取个性化设置数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-259">Extracts personalization data from the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control.</span></span></summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="ExtractPersonalizationState">
+      <MemberSignature Language="C#" Value="protected internal virtual void ExtractPersonalizationState ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void ExtractPersonalizationState() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ExtractPersonalizationState" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Sub ExtractPersonalizationState ()" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void ExtractPersonalizationState();" />
+      <MemberSignature Language="F#" Value="abstract member ExtractPersonalizationState : unit -&gt; unit&#xA;override this.ExtractPersonalizationState : unit -&gt; unit" Usage="webPartPersonalization.ExtractPersonalizationState " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-260">从父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件中提取个性化设置数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-260">Extracts personalization data from the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-261">如果属性设置为`true`，并且在页面请求期间未重置个性化设置状态（例如， <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ShouldResetPersonalizationState%2A>当属性为`false`时），则此方法从父项中提取个性化设置数据。 <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A>  <xref:System.Web.UI.WebControls.WebParts.WebPartManager>在<xref:System.Web.UI.Page.SaveStateComplete>事件发生时进行控制。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-261">If the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A> property is set to `true`, and personalization state is not being reset during the page request (such as when the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ShouldResetPersonalizationState%2A> property is `false`), then this method extracts personalization data from the parent <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control during its <xref:System.Web.UI.Page.SaveStateComplete> event.</span></span>  
+  
+ <span data-ttu-id="f6cb3-262">此方法对<xref:System.Web.UI.WebControls.WebParts.PersonalizationState>实例<xref:System.Web.UI.WebControls.WebParts.PersonalizationState.ExtractWebPartManagerPersonalization%2A>调用方法，以从父<xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件提取个性化设置状态。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-262">This method calls the <xref:System.Web.UI.WebControls.WebParts.PersonalizationState.ExtractWebPartManagerPersonalization%2A> method on the <xref:System.Web.UI.WebControls.WebParts.PersonalizationState> instance to extract personalization state from the parent <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-263">在从基础数据存储区加载状态之前，进行了提取个性化设置状态的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-263">An attempt was made to extract personalization state prior to the state being loaded from the underlying data store.</span></span>  
+  
+<span data-ttu-id="f6cb3-264">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-264">-or-</span></span> 
+<span data-ttu-id="f6cb3-265">尚未应用个性化设置状态。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-265">Personalization state has not been applied yet.</span></span>  
+  
+<span data-ttu-id="f6cb3-266">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-266">-or-</span></span> 
+<span data-ttu-id="f6cb3-267">自应用个性化设置数据以来，<see cref="P:System.Web.UI.Control.ID" /> 的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 已更改。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-267">The <see cref="P:System.Web.UI.Control.ID" /> of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> has changed since personalization data was applied.</span></span>  
+  
+<span data-ttu-id="f6cb3-268">- 或 -</span><span class="sxs-lookup"><span data-stu-id="f6cb3-268">-or-</span></span> 
+<span data-ttu-id="f6cb3-269">从数据存储区返回的个性化设置状态为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-269">The personalization state returned from the data store was <see langword="null" />.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-270">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-270">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-271">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-271">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-272">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-272">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-273">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-273">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="ExtractPersonalizationState">
+      <MemberSignature Language="C#" Value="protected internal virtual void ExtractPersonalizationState (System.Web.UI.WebControls.WebParts.WebPart webPart);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void ExtractPersonalizationState(class System.Web.UI.WebControls.WebParts.WebPart webPart) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ExtractPersonalizationState(System.Web.UI.WebControls.WebParts.WebPart)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void ExtractPersonalizationState(System::Web::UI::WebControls::WebParts::WebPart ^ webPart);" />
+      <MemberSignature Language="F#" Value="abstract member ExtractPersonalizationState : System.Web.UI.WebControls.WebParts.WebPart -&gt; unit&#xA;override this.ExtractPersonalizationState : System.Web.UI.WebControls.WebParts.WebPart -&gt; unit" Usage="webPartPersonalization.ExtractPersonalizationState webPart" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="webPart" Type="System.Web.UI.WebControls.WebParts.WebPart" />
+      </Parameters>
+      <Docs>
+        <param name="webPart"><span data-ttu-id="f6cb3-274">包含要提取的个性化设置数据的 Web 部件控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-274">The Web Parts control containing personalization data to be extracted.</span></span></param>
+        <summary><span data-ttu-id="f6cb3-275">当父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件请求从 Web 部件控件提取个性化设置数据时，按照其请求执行。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-275">Extracts personalization data from a Web Parts control when requested to do so by the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-276">如果属性设置为`true`，并且在页面请求期间未重置个性化设置状态（例如， <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ShouldResetPersonalizationState%2A>当属性为`false`时），则此方法从 Web 部件控件提取个性化设置数据<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A>指定的`webPart`。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-276">If the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A> property is set to `true`, and personalization state is not being reset during the page request (such as when the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ShouldResetPersonalizationState%2A> property is `false`), then this method extracts personalization data from the Web Parts control specified by `webPart`.</span></span> <span data-ttu-id="f6cb3-277">此方法对<xref:System.Web.UI.WebControls.WebParts.PersonalizationState>实例<xref:System.Web.UI.WebControls.WebParts.PersonalizationState.ExtractWebPartPersonalization%2A>调用方法，以从提供的 Web 部件控件中提取个性化设置状态。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-277">This method calls the <xref:System.Web.UI.WebControls.WebParts.PersonalizationState.ExtractWebPartPersonalization%2A> method on the <xref:System.Web.UI.WebControls.WebParts.PersonalizationState> instance to extract personalization state from the supplied Web Parts control.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="f6cb3-278">进行了从不受父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 管理的 Web 部件控件提取个性化设置状态的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-278">An attempt was made to extract personalization state from a Web Parts control that is not managed by the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />.</span></span></exception>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-279">在从基础数据存储区加载状态之前，进行了提取个性化设置状态的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-279">An attempt was made to extract personalization state prior to the state being loaded from the underlying data store.</span></span>  
+  
+<span data-ttu-id="f6cb3-280">- 或 -</span><span class="sxs-lookup"><span data-stu-id="f6cb3-280">-or-</span></span> 
+<span data-ttu-id="f6cb3-281">尚未应用个性化设置状态。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-281">Personalization state has not been applied yet.</span></span>  
+  
+<span data-ttu-id="f6cb3-282">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-282">-or-</span></span> 
+<span data-ttu-id="f6cb3-283">自应用个性化设置数据以来，<see cref="P:System.Web.UI.Control.ID" /> 的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> 已更改。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-283">The <see cref="P:System.Web.UI.Control.ID" /> of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> has changed since personalization data was applied.</span></span>  
+  
+<span data-ttu-id="f6cb3-284">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-284">-or-</span></span> 
+<span data-ttu-id="f6cb3-285">从数据存储区返回的个性化设置状态为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-285">The personalization state returned from the data store was <see langword="null" />.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-286">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-286">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-287">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-287">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-288">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-288">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-289">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-289">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAuthorizationFilter">
+      <MemberSignature Language="C#" Value="protected internal virtual string GetAuthorizationFilter (string webPartID);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance string GetAuthorizationFilter(string webPartID) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.GetAuthorizationFilter(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Function GetAuthorizationFilter (webPartID As String) As String" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual System::String ^ GetAuthorizationFilter(System::String ^ webPartID);" />
+      <MemberSignature Language="F#" Value="abstract member GetAuthorizationFilter : string -&gt; string&#xA;override this.GetAuthorizationFilter : string -&gt; string" Usage="webPartPersonalization.GetAuthorizationFilter webPartID" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="webPartID" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="webPartID"><span data-ttu-id="f6cb3-290">与要检索的筛选器关联的 Web 部件控件的 ID。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-290">The ID of the Web Parts control associated with the filter to be retrieved.</span></span></param>
+        <summary><span data-ttu-id="f6cb3-291">检索与指定的 Web 部件控件关联的授权筛选器（如果有）。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-291">Retrieves the authorization filter, if any, associated with the specified Web Parts control.</span></span></summary>
+        <returns><span data-ttu-id="f6cb3-292">指定的 Web 部件控件的授权筛选器。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-292">The authorization filter for the specified Web Parts control.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-293">此方法检索与标识`webPartID`的 Web 部件控件关联的授权筛选器（如果有）。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-293">This method retrieves the authorization filter, if any, associated with the Web Parts control identified by `webPartID`.</span></span> <span data-ttu-id="f6cb3-294">由个性化设置序列化和管理的每个 Web 部件控件都与`webPartID`一个参数关联。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-294">Each Web Parts control that is serialized and managed by personalization is associated with a `webPartID` parameter.</span></span> <span data-ttu-id="f6cb3-295">在运行时，页的<xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件可以通过确定每个 Web 部件控件是否获得授权来筛选页面上显示的控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-295">At run time, a page's <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control can filter the controls displayed on a page by determining whether each Web Parts control is authorized.</span></span> <span data-ttu-id="f6cb3-296">此授权信息以字符串的形式存储在与每个 Web 部件控件关联的数据中。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-296">This authorization information is stored as a string in the data associated with each Web Parts control.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-297">在 <see cref="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled" /> 为 <see langword="false" /> 的情况下，在页的生命周期中，过早地通过调用此方法进行了检索授权筛选器的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-297">An attempt was made to retrieve an authorization filter when <see cref="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled" /> is <see langword="false" /> by calling this method too early in the page life cycle.</span></span>  
+  
+<span data-ttu-id="f6cb3-298">- 或 -</span><span class="sxs-lookup"><span data-stu-id="f6cb3-298">-or-</span></span> 
+<span data-ttu-id="f6cb3-299">进行了检索授权筛选器的尝试，但是尚未加载任何个性化设置状态。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-299">An attempt was made to retrieve an authorization filter and no personalization state has been loaded.</span></span>  
+  
+<span data-ttu-id="f6cb3-300">\- 或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-300">\- or</span></span> 
+<span data-ttu-id="f6cb3-301">从数据存储区返回的个性化设置状态为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-301">The personalization state returned from the data store was <see langword="null" />.</span></span></exception>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="f6cb3-302"><paramref name="webPartID" /> 为 <see langword="null" /> 或空字符串 ("")。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-302"><paramref name="webPartID" /> is <see langword="null" /> or an empty string ("").</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-303">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-303">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-304">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-304">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-305">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-305">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-306">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-306">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="HasPersonalizationState">
+      <MemberSignature Language="C#" Value="public virtual bool HasPersonalizationState { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasPersonalizationState" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.HasPersonalizationState" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable ReadOnly Property HasPersonalizationState As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property bool HasPersonalizationState { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.HasPersonalizationState : bool" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.HasPersonalizationState" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-307">返回一个值，该值指示当前页和个性化设置范围是否具有关联个性化设置数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-307">Returns a value indicating whether the current page and personalization scope have associated personalization data.</span></span></summary>
+        <value><span data-ttu-id="f6cb3-308">如果页具有与之关联的个性化设置数据，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-308"><see langword="true" /> if the page has personalization data associated with it; otherwise, <see langword="false" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-309">这是一种很方便的方法，用于确定当前页和范围的组合是否具有与之关联的个性化数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-309">This is a convenient method for determining whether the current page and scope combination has personalization data associated with it.</span></span> <span data-ttu-id="f6cb3-310">在内部，方法在<xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider.GetCountOfState%2A>提供程序上调用，以确定数据是否存在。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-310">Internally, the method calls <xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider.GetCountOfState%2A> on the provider to determine whether data exists.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-311">没有与 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 实例关联的个性化设置提供程序。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-311">There is no personalization provider associated with the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> instance.</span></span> <span data-ttu-id="f6cb3-312">如果在关联 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件的 <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit(System.EventArgs)" /> 方法完成之前访问该属性，则会发生这种情况。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-312">This can occur if the property is accessed prior to the completion of the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control's <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit(System.EventArgs)" /> method.</span></span>  
+  
+<span data-ttu-id="f6cb3-313">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-313">-or-</span></span> 
+<span data-ttu-id="f6cb3-314">关联的 <see cref="P:System.Web.UI.Control.Page" /> 的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 属性值为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-314">The value of the <see cref="P:System.Web.UI.Control.Page" /> property for the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> is <see langword="null" />.</span></span>  
+  
+<span data-ttu-id="f6cb3-315">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-315">-or-</span></span> 
+<span data-ttu-id="f6cb3-316"><see cref="P:System.Web.UI.Page.Request" /> 控件的关联 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 实例的 <see cref="T:System.Web.UI.Page" /> 属性的值是 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-316">The value of the <see cref="P:System.Web.UI.Page.Request" /> property on the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control's associated <see cref="T:System.Web.UI.Page" /> instance is <see langword="null" />.</span></span></exception>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-317">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-317">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-318">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-318">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-319">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-319">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-320">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-320">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="InitialScope">
+      <MemberSignature Language="C#" Value="public virtual System.Web.UI.WebControls.WebParts.PersonalizationScope InitialScope { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Web.UI.WebControls.WebParts.PersonalizationScope InitialScope" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Property InitialScope As PersonalizationScope" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::Web::UI::WebControls::WebParts::PersonalizationScope InitialScope { System::Web::UI::WebControls::WebParts::PersonalizationScope get(); void set(System::Web::UI::WebControls::WebParts::PersonalizationScope value); };" />
+      <MemberSignature Language="F#" Value="member this.InitialScope : System.Web.UI.WebControls.WebParts.PersonalizationScope with get, set" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue(Mono.Cecil.CustomAttributeArgument)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Web.UI.WebControls.WebParts.PersonalizationScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-321">获取或设置默认个性化设置范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-321">Gets or sets the default personalization scope.</span></span></summary>
+        <value><span data-ttu-id="f6cb3-322"><see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" />，指示关联 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 的默认个性化设置范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-322">The <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> indicating the default personalization scope of the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-323">此属性表示在缺少先前有关适当范围的知识的情况下<xref:System.Web.UI.WebControls.WebParts.WebPartManager> ，应用于父控件的默认个性化设置范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-323">This property represents the default personalization scope that should be used for the parent <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control in the absence of previous knowledge about the proper scope.</span></span> <span data-ttu-id="f6cb3-324">如果未显式设置此属性，则默认为返回<xref:System.Web.UI.WebControls.WebParts.PersonalizationScope.User>范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-324">If this property is not explicitly set, it defaults to returning <xref:System.Web.UI.WebControls.WebParts.PersonalizationScope.User> scope.</span></span>  
+  
+ <span data-ttu-id="f6cb3-325">只有在完成<xref:System.Web.UI.WebControls.WebParts.WebPartManager>该控件的<xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A>方法之前，才能设置此属性。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-325">This property can only be set prior to the completion of the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control's <xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A> method.</span></span> <span data-ttu-id="f6cb3-326">在实际操作中， <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope%2A>这意味着必须在<xref:System.Web.UI.WebControls.WebParts.WebPartManager>元素的页标记中设置。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-326">In practice, this means <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope%2A> must be set in the page markup on the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> element.</span></span> <span data-ttu-id="f6cb3-327">此外，还可以在`PreInit` <xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件的阶段设置此属性。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-327">Alternatively, this property can be set during the `PreInit` phase of the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-328">在完成关联 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件的 <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit(System.EventArgs)" /> 方法之后，进行了将此属性设置为当前值以外的值的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-328">An attempt was made to set this property to a value other than its current value after the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control's <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit(System.EventArgs)" /> method had completed.</span></span></exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><span data-ttu-id="f6cb3-329">尝试为不是 <see cref="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope" /> 枚举成员的 <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> 设置一个值。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-329">An attempt was made to set a value of <see cref="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope" /> that is not a member of the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> enumeration.</span></span></exception>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-330">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-330">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-331">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-331">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-332">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-332">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-333">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-333">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="IsEnabled">
+      <MemberSignature Language="C#" Value="public bool IsEnabled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsEnabled" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property IsEnabled As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IsEnabled { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsEnabled : bool" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-334">获取一个值，该值指示是否启用了个性化设置，以及是否为 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 类的这一实例成功加载了个性化设置数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-334">Gets a value that indicates whether personalization is enabled and has successfully loaded personalization data for this instance of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> class.</span></span></summary>
+        <value><span data-ttu-id="f6cb3-335">如果为当前的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 实例启用了个性化设置且成功加载了个性化设置数据，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-335"><see langword="true" /> if personalization is enabled for the current <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> instance and personalization data has successfully loaded; otherwise, <see langword="false" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-336">在加载个性化设置数据之前，此属性将始终`false`返回。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-336">Prior to loading personalization data, this property will always return `false`.</span></span> <span data-ttu-id="f6cb3-337">例如，此属性将`false` `PreInit`在阶段内返回。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-337">For example, this property will return `false` during the `PreInit` phase.</span></span> <span data-ttu-id="f6cb3-338">在关联<xref:System.Web.UI.WebControls.WebParts.WebPartManager>的<xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A>方法成功<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load%2A>完成之后（在此过程中调用方法），此属性将返回`true`。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-338">After the associated <xref:System.Web.UI.WebControls.WebParts.WebPartManager>'s <xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A> method has successfully completed (during which the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load%2A> method is called), this property will then return `true`.</span></span>  
+  
+ <span data-ttu-id="f6cb3-339">此属性是受保护<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsInitialized%2A>属性的可公开访问的别名。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-339">This property is a publicly accessible alias for the protected <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsInitialized%2A> property.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-340">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-340">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-341">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-341">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-342">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-342">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-343">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-343">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="IsInitialized">
+      <MemberSignature Language="C#" Value="protected bool IsInitialized { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsInitialized" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsInitialized" />
+      <MemberSignature Language="VB.NET" Value="Protected ReadOnly Property IsInitialized As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; property bool IsInitialized { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsInitialized : bool" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsInitialized" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-344">获取一个值，该值指示是否启用了个性化设置，以及是否为 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 类的这一实例成功加载了个性化设置数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-344">Gets a value that indicates whether personalization is enabled and has successfully loaded personalization data for this instance of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> class.</span></span></summary>
+        <value><span data-ttu-id="f6cb3-345">如果此实例的个性化设置已初始化，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-345"><see langword="true" /> if personalization is initialized for this instance; otherwise, <see langword="false" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-346">如果启用了个性化功能<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Enabled%2A> （如果属性设置为`true`），则在关联<xref:System.Web.UI.WebControls.WebParts.WebPartManager>的<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> <xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A>方法成功完成后立即将实例视为已初始化（在此<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load%2A>期间调用方法）。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-346">If the personalization feature is enabled (if the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Enabled%2A> property is set to `true`), the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> instance is considered initialized immediately after the associated <xref:System.Web.UI.WebControls.WebParts.WebPartManager>'s <xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A> method has successfully completed (during which the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load%2A> method is called).</span></span> <span data-ttu-id="f6cb3-347">在加载个性化设置数据之前，此属性始终`false`返回。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-347">Prior to loading personalization data, this property always returns `false`.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-348">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-348">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-349">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-349">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-350">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-350">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-351">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-351">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="IsModifiable">
+      <MemberSignature Language="C#" Value="public bool IsModifiable { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsModifiable" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsModifiable" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property IsModifiable As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IsModifiable { bool get(); };" />
+      <MemberSignature Language="F#" Value="member this.IsModifiable : bool" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsModifiable" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-352">获取一个值，该值指示当前用户是否已授权可以修改状态信息。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-352">Gets a value that indicates whether the current user is authorized to modify state information.</span></span></summary>
+        <value><span data-ttu-id="f6cb3-353">如果用户已授权可以修改状态信息，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-353"><see langword="true" /> if the user is authorized to modify state information; otherwise, <see langword="false" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-354">第一次调用此属性时，它将缓存确定用户修改个性化设置状态的权限的结果。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-354">The first time this property is called, it caches the result of determining the user's right to modify personalization state.</span></span> <span data-ttu-id="f6cb3-355">如果在第一次调用此属性后修改字典，则不会在对此属性的后续调用中反映更改。 <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.UserCapabilities%2A></span><span class="sxs-lookup"><span data-stu-id="f6cb3-355">If the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.UserCapabilities%2A> dictionary is modified after the first time this property is called, changes are not reflected in subsequent calls to this property.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="f6cb3-356">下面的代码演示如何使用<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsModifiable%2A>属性。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-356">The following code demonstrates using the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsModifiable%2A> property.</span></span> <span data-ttu-id="f6cb3-357">此代码是在<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>类说明中找到的更大代码示例的一部分。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-357">This code is part of a larger code sample found in the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> class description.</span></span>  
+  
+ [!code-csharp[WebParts_WebPartPersonalization#6](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_WebPartPersonalization/CS/persMode.ascx#6)]
+ [!code-vb[WebParts_WebPartPersonalization#6](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_WebPartPersonalization/VB/persMode.ascx#6)]  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-358">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-358">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-359">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-359">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-360">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-360">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-361">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-361">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="protected virtual System.Web.UI.WebControls.WebParts.PersonalizationScope Load ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance valuetype System.Web.UI.WebControls.WebParts.PersonalizationScope Load() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Function Load () As PersonalizationScope" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual System::Web::UI::WebControls::WebParts::PersonalizationScope Load();" />
+      <MemberSignature Language="F#" Value="abstract member Load : unit -&gt; System.Web.UI.WebControls.WebParts.PersonalizationScope&#xA;override this.Load : unit -&gt; System.Web.UI.WebControls.WebParts.PersonalizationScope" Usage="webPartPersonalization.Load " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.UI.WebControls.WebParts.PersonalizationScope</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-362">初始化个性化设置。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-362">Initializes personalization.</span></span></summary>
+        <returns><span data-ttu-id="f6cb3-363">父 <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> 的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 实例。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-363">A <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> instance for the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />.</span></span></returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-364">这是代表父<xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件初始化个性化设置信息的主要入口点。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-364">This is the main entry point for initializing personalization information on behalf of the parent <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control.</span></span> <span data-ttu-id="f6cb3-365">在父<xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件的<xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A>方法中调用此方法。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-365">This method is called during the parent <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control's <xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A> method.</span></span> <span data-ttu-id="f6cb3-366">通常，如果在父<xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件上禁用了个性化设置，则永远不会调用此方法。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-366">Normally, if personalization has been disabled on the parent <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control, this method will never be called.</span></span>  
+  
+ <span data-ttu-id="f6cb3-367">在此方法的过程中，将进行以下初始化：</span><span class="sxs-lookup"><span data-stu-id="f6cb3-367">During the course of this method, the following initializations occur:</span></span>  
+  
+-   <span data-ttu-id="f6cb3-368">获取对默认个性化设置提供程序或在<xref:System.Web.UI.WebControls.WebParts.WebPartManager>页标记<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ProviderName%2A>或属性中指示的自定义提供程序的引用。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-368">A reference to either the default personalization provider, or the custom provider indicated in the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> page markup or the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ProviderName%2A> property, is obtained.</span></span>  
+  
+-   <span data-ttu-id="f6cb3-369">调用该提供程序来确定当前正在执行的<xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider.DetermineUserCapabilities%2A>用户的用户功能（）。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-369">The provider is called to determine the user capabilities (<xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider.DetermineUserCapabilities%2A>) for the currently executing user.</span></span>  
+  
+-   <span data-ttu-id="f6cb3-370">当前页/用户/范围组合的个性化设置状态由提供程序（<xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider.LoadPersonalizationState%2A>）从基础数据存储区加载并存储<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>在实例中。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-370">The personalization state for the current page/user/scope combination is loaded from the underlying data store by the provider (<xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider.LoadPersonalizationState%2A>) and stored within the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> instance.</span></span>  
+  
+-   <span data-ttu-id="f6cb3-371">当前页/用户/范围的个性化设置范围由提供程序（<xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider.DetermineInitialScope%2A>）确定。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-371">The personalization scope for the current page/user/scope is determined by the provider (<xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider.DetermineInitialScope%2A>).</span></span> <span data-ttu-id="f6cb3-372">请注意，此确定的结果可能不同于<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope%2A>属性的值。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-372">Note that the result of this determination might be different than the value of the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope%2A> property.</span></span>  
+  
+ <span data-ttu-id="f6cb3-373">从此方法返回的范围值将用作<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Scope%2A>属性的值。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-373">The scope value returned from this method is used as the value for the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Scope%2A> property.</span></span>  
+  
+> [!NOTE]
+>  <span data-ttu-id="f6cb3-374"><xref:System.InvalidOperationException> 仅 <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load%2A> 当直接调用方法时，才会出现因未启用个性化设置而导致的异常。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-374">An <xref:System.InvalidOperationException> exception due to personalization not being enabled will occur only if the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load%2A> method is called directly.</span></span> <span data-ttu-id="f6cb3-375">在 ASP.NET 实现中，实际调用内部帮助器方法来执行加载，如果尚未为该页启用个性化设置，则此帮助器方法将以无提示方式返回。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-375">In the ASP.NET implementation, an internal helper method is actually called to perform the load, and this helper method silently returns if personalization has not been enabled for the page.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-376">如果个性化设置未启用（<see cref="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Enabled" /> 等于 <see langword="false" />），则调用此方法。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-376">This method is called when personalization is not enabled (<see cref="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Enabled" /> equals <see langword="false" />).</span></span>  
+  
+<span data-ttu-id="f6cb3-377">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-377">-or-</span></span> 
+<span data-ttu-id="f6cb3-378">关联的 <see cref="P:System.Web.UI.Control.Page" /> 的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 属性值为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-378">The value of the <see cref="P:System.Web.UI.Control.Page" /> property for the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> is <see langword="null" />.</span></span>  
+  
+<span data-ttu-id="f6cb3-379">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-379">-or-</span></span> 
+<span data-ttu-id="f6cb3-380"><see cref="P:System.Web.UI.Page.Request" /> 控件的关联 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 实例的 <see cref="T:System.Web.UI.Page" /> 属性的值是 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-380">The value of the <see cref="P:System.Web.UI.Page.Request" /> property on the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control's associated <see cref="T:System.Web.UI.Page" /> instance is <see langword="null" />.</span></span></exception>
+        <exception cref="T:System.Configuration.Provider.ProviderException"><span data-ttu-id="f6cb3-381">页面标记或 <see cref="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ProviderName" /> 属性中显式设置了一个提供程序，但未能找到该提供程序。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-381">A provider was explicitly set in either the page markup or the <see cref="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ProviderName" /> property and the provider could not be found.</span></span>  
+  
+<span data-ttu-id="f6cb3-382">- 或 -</span><span class="sxs-lookup"><span data-stu-id="f6cb3-382">-or-</span></span> 
+<span data-ttu-id="f6cb3-383">包含个性化设置状态数据的对象为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-383">The object containing the personalization state data is <see langword="null" />.</span></span></exception>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="f6cb3-384">加载和反序列化数据时出现问题。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-384">A problem occurred while loading and deserializing data.</span></span>  
+  
+<span data-ttu-id="f6cb3-385">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-385">-or-</span></span>
+  
+ <span data-ttu-id="f6cb3-386">配置文件中的个性化设置提供程序的定义出现错误。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-386">An error occurred in the definition of a personalization provider in the configuration file.</span></span></exception>
+        <exception cref="T:System.Configuration.ConfigurationErrorsException"><span data-ttu-id="f6cb3-387">基础个性化设置提供程序未能初始化，原因是未能找到默认提供程序或在尝试初始化个性化设置提供程序时出错。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-387">The underlying personalization providers failed to initialize because a default provider could not be found or because a failure occurred while attempting to initialize a personalization provider.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-388">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-388">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-389">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-389">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-390">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-390">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-391">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-391">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="ModifyStateUserCapability">
+      <MemberSignature Language="C#" Value="public static readonly System.Web.UI.WebControls.WebParts.WebPartUserCapability ModifyStateUserCapability;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Web.UI.WebControls.WebParts.WebPartUserCapability ModifyStateUserCapability" />
+      <MemberSignature Language="DocId" Value="F:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ModifyStateUserCapability" />
+      <MemberSignature Language="VB.NET" Value="Public Shared ReadOnly ModifyStateUserCapability As WebPartUserCapability " />
+      <MemberSignature Language="C++ CLI" Value="public: static initonly System::Web::UI::WebControls::WebParts::WebPartUserCapability ^ ModifyStateUserCapability;" />
+      <MemberSignature Language="F#" Value=" staticval mutable ModifyStateUserCapability : System.Web.UI.WebControls.WebParts.WebPartUserCapability" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.ModifyStateUserCapability" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Web.UI.WebControls.WebParts.WebPartUserCapability</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-392">表示修改个性化设置状态的用户权限的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartUserCapability" /> 实例。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-392">Represents the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartUserCapability" /> instance of a user's authorization to modify personalization state.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-393">用户权限由<xref:System.Web.UI.WebControls.WebParts.WebPartUserCapability>实例中的字符串 "modifyState" 表示。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-393">The user right is represented by the string "modifyState" in the <xref:System.Web.UI.WebControls.WebParts.WebPartUserCapability> instance.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-394">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-394">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-395">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-395">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-396">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-396">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-397">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-397">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="ProviderName">
+      <MemberSignature Language="C#" Value="public virtual string ProviderName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ProviderName" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ProviderName" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Property ProviderName As String" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual property System::String ^ ProviderName { System::String ^ get(); void set(System::String ^ value); };" />
+      <MemberSignature Language="F#" Value="member this.ProviderName : string with get, set" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.ProviderName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DefaultValue("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.NotifyParentProperty(true)</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-398">获取或设置个性化设置的提供程序的名称。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-398">Gets or sets the provider name for personalization.</span></span></summary>
+        <value><span data-ttu-id="f6cb3-399">个性化设置提供程序的名称。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-399">The name of the personalization provider.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-400">此属性返回在页声明中为此属性设置的值。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-400">This property returns the value set for this property in the page declaration.</span></span> <span data-ttu-id="f6cb3-401">如果未设置此属性，则返回<xref:System.String.Empty>。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-401">If this property was not set, it returns <xref:System.String.Empty>.</span></span> <span data-ttu-id="f6cb3-402">在这种情况下，页面使用配置文件中指定的默认个性化设置提供程序。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-402">In this case, the page uses the default personalization provider specified in the configuration file.</span></span>  
+  
+ <span data-ttu-id="f6cb3-403">只有在完成<xref:System.Web.UI.WebControls.WebParts.WebPartManager>该控件的<xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A>方法之前，才能设置此属性。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-403">This property can only be set prior to the completion of the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control's <xref:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit%2A> method.</span></span> <span data-ttu-id="f6cb3-404">这意味着<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ProviderName%2A>必须在<xref:System.Web.UI.WebControls.WebParts.WebPartManager>元素的页声明中设置属性。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-404">This means the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ProviderName%2A> property must be set in the page declaration on the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> element.</span></span>  <span data-ttu-id="f6cb3-405">此外，也可以在`PreInit`阶段设置此属性。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-405">Alternatively, this property can be set during the `PreInit` phase.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-406">在完成 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件的 <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit(System.EventArgs)" /> 方法之后，进行了将此属性设置为当前值以外的值的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-406">An attempt was made to set this property to a value other than its current value after the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control's <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.OnInit(System.EventArgs)" /> method has completed.</span></span></exception>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-407">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-407">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-408">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-408">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-409">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-409">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-410">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-410">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="ResetPersonalizationState">
+      <MemberSignature Language="C#" Value="public virtual void ResetPersonalizationState ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ResetPersonalizationState() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ResetPersonalizationState" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Sub ResetPersonalizationState ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void ResetPersonalizationState();" />
+      <MemberSignature Language="F#" Value="abstract member ResetPersonalizationState : unit -&gt; unit&#xA;override this.ResetPersonalizationState : unit -&gt; unit" Usage="webPartPersonalization.ResetPersonalizationState " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-411">在基础数据存储区中重置当前的页、范围和用户的个性化设置数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-411">Resets personalization data for the current page, scope, and user in the underlying data store.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-412">此方法重置基础数据存储区中当前页、范围和用户的个性化设置数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-412">This method resets personalization data for the current page, scope, and user in the underlying data store.</span></span> <span data-ttu-id="f6cb3-413">作为重置的副作用，当前正在执行的页面通过<xref:System.Web.HttpServerUtility.Transfer%2A>调用重新执行。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-413">As a side effect of the reset, the currently executing page is re-executed by a <xref:System.Web.HttpServerUtility.Transfer%2A> call.</span></span> <span data-ttu-id="f6cb3-414">请注意，此传输会按`GET`请求重新执行当前页，而不考虑页最初请求的方式。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-414">Note that this transfer re-executes the current page as a `GET` request regardless of how the page was originally requested.</span></span>  
+  
+ <span data-ttu-id="f6cb3-415">可随时调用此方法。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-415">This method can be called at any time.</span></span> <span data-ttu-id="f6cb3-416">此方法在内部调用<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ResetPersonalizationState%2A>提供程序的方法。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-416">Internally, this method calls the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ResetPersonalizationState%2A> method on the provider.</span></span> <span data-ttu-id="f6cb3-417">成功重置数据后， <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ShouldResetPersonalizationState%2A>属性将设置为。 `true`</span><span class="sxs-lookup"><span data-stu-id="f6cb3-417">After data is successfully reset, the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ShouldResetPersonalizationState%2A> property is set to `true`.</span></span> <span data-ttu-id="f6cb3-418">此属性用于<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>实例中的其他位置，以便绕过从控件属性提取个性化设置数据并在数据已重置时保存这些数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-418">This property is used elsewhere by the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> instance to bypass extracting personalization data from control properties and saving it if data has already been reset.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-419">在用户未经授权可以修改个性化设置状态的情况下，进行了重置个性化设置数据的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-419">An attempt was made to reset personalization data when the current user is not authorized to modify personalization state.</span></span>
+          
+<span data-ttu-id="f6cb3-420">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-420">-or-</span></span>
+
+<span data-ttu-id="f6cb3-421">关联的 <see cref="T:System.Web.UI.Page" /> 的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 实例为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-421">The <see cref="T:System.Web.UI.Page" /> instance for the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> is <see langword="null" />.</span></span>
+
+<span data-ttu-id="f6cb3-422">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-422">-or-</span></span>
+
+<span data-ttu-id="f6cb3-423"><see cref="P:System.Web.UI.Page.Request" /> 控件的关联 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 实例的 <see cref="T:System.Web.UI.Page" /> 属性的值是 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-423">The value of the <see cref="P:System.Web.UI.Page.Request" /> property on the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control's associated <see cref="T:System.Web.UI.Page" /> instance is <see langword="null" />.</span></span>
+
+<span data-ttu-id="f6cb3-424">- 或 -</span><span class="sxs-lookup"><span data-stu-id="f6cb3-424">-or-</span></span>
+
+<span data-ttu-id="f6cb3-425"><see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 实例无法引用有效的个性化设置提供程序。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-425">The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> instance cannot reference a valid personalization provider.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-426">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-426">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-427">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-427">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-428">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-428">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-429">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-429">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="protected virtual void Save ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Save() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Save" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable Sub Save ()" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual void Save();" />
+      <MemberSignature Language="F#" Value="abstract member Save : unit -&gt; unit&#xA;override this.Save : unit -&gt; unit" Usage="webPartPersonalization.Save " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-430">将当前的页、范围和用户的个性化设置数据保存到基础数据存储区。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-430">Saves personalization data for the current page, scope, and user to the underlying data store.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-431">在<xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件的<xref:System.Web.UI.Page.SaveStateComplete>事件中调用此方法。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-431">This method is called during the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control's <xref:System.Web.UI.Page.SaveStateComplete> event.</span></span> <span data-ttu-id="f6cb3-432">在内部，方法在提供<xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider.SavePersonalizationState%2A>程序上调用方法。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-432">Internally, the method calls the <xref:System.Web.UI.WebControls.WebParts.PersonalizationProvider.SavePersonalizationState%2A> method on the provider.</span></span>  
+  
+ <span data-ttu-id="f6cb3-433">当当前正在执行的用户不具有调用<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ModifyStateUserCapability>的功能（在当前<xref:System.Web.UI.WebControls.WebParts.WebPartUserCapability> <xref:System.InvalidOperationException>实例中）时，尝试保存个性化数据将导致异常。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-433">Attempting to save personalization data when the currently executing user does not have the capability called <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ModifyStateUserCapability> (within the current <xref:System.Web.UI.WebControls.WebParts.WebPartUserCapability> instance) results in an <xref:System.InvalidOperationException> exception.</span></span> <span data-ttu-id="f6cb3-434">请注意，仅当<xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件直接调用受保护<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Save%2A>的方法时，这才为 true。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-434">Note that this would only be true if the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control called the protected <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Save%2A> method directly.</span></span> <span data-ttu-id="f6cb3-435">在 ASP.NET 实现中，实际调用内部 helper 方法来执行保存，如果当前正在执行的用户无权修改数据，则此帮助器方法将以无提示方式返回。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-435">In the ASP.NET implementation, an internal helper method is actually called to perform the save, and this helper method silently returns if the currently executing user does not have rights to modify data.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-436">当前的用户不具有称为 <see cref="F:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ModifyStateUserCapability" /> 的功能。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-436">The current user does not have the capability called <see cref="F:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ModifyStateUserCapability" />.</span></span>  
+  
+<span data-ttu-id="f6cb3-437">- 或 -</span><span class="sxs-lookup"><span data-stu-id="f6cb3-437">-or-</span></span> 
+<span data-ttu-id="f6cb3-438"><see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 实例无法引用有效的个性化设置提供程序。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-438">The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> instance cannot reference a valid personalization provider.</span></span>  
+  
+<span data-ttu-id="f6cb3-439">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-439">-or-</span></span> 
+<span data-ttu-id="f6cb3-440">当前没有任何个性化设置提供程序与 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 实例相关联。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-440">No personalization provider is currently associated with the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> instance.</span></span> <span data-ttu-id="f6cb3-441">如果在调用 <see cref="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load" /> 之前调用此方法，则可能发生这种情况（个性化设置提供程序引用是在调用 <see cref="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load" /> 期间获取的。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-441">This can occur if this method is called prior to calling <see cref="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load" /> (the personalization provider reference is obtained during the call to <see cref="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load" />.</span></span>  
+  
+<span data-ttu-id="f6cb3-442">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-442">-or-</span></span> 
+<span data-ttu-id="f6cb3-443">尚未加载任何个性化设置状态。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-443">No personalization state has been loaded.</span></span>  
+  
+<span data-ttu-id="f6cb3-444">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-444">-or-</span></span> 
+<span data-ttu-id="f6cb3-445">关联的 <see cref="T:System.Web.UI.Page" /> 的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 实例为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-445">The <see cref="T:System.Web.UI.Page" /> instance for the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> is <see langword="null" />.</span></span>  
+  
+<span data-ttu-id="f6cb3-446">- 或 -</span><span class="sxs-lookup"><span data-stu-id="f6cb3-446">-or-</span></span> 
+<span data-ttu-id="f6cb3-447"><see cref="P:System.Web.UI.Page.Request" /> 控件的关联 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 实例的 <see cref="T:System.Web.UI.Page" /> 属性的值是 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-447">The value of the <see cref="P:System.Web.UI.Page.Request" /> property on the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control's associated <see cref="T:System.Web.UI.Page" /> instance is <see langword="null" />.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-448">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-448">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-449">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-449">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-450">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-450">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-451">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-451">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="Scope">
+      <MemberSignature Language="C#" Value="public System.Web.UI.WebControls.WebParts.PersonalizationScope Scope { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Web.UI.WebControls.WebParts.PersonalizationScope Scope" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Scope" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property Scope As PersonalizationScope" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Web::UI::WebControls::WebParts::PersonalizationScope Scope { System::Web::UI::WebControls::WebParts::PersonalizationScope get(); };" />
+      <MemberSignature Language="F#" Value="member this.Scope : System.Web.UI.WebControls.WebParts.PersonalizationScope" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.Scope" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.ComponentModel.DesignerSerializationVisibility(System.ComponentModel.DesignerSerializationVisibility.Hidden)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Web.UI.WebControls.WebParts.PersonalizationScope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-452">获取父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件的当前个性化设置范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-452">Gets the current personalization scope for the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control.</span></span></summary>
+        <value><span data-ttu-id="f6cb3-453"><see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> 实例，指示 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 的范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-453">A <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> instance indicating the scope of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-454">此值最初是根据从<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load%2A>方法返回的值设置的。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-454">This value is initially set based on the value returned from the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.Load%2A> method.</span></span> <span data-ttu-id="f6cb3-455">可以通过调用<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ToggleScope%2A>方法来修改此值。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-455">This value can be modified by calling the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ToggleScope%2A> method.</span></span>  
+  
+ <span data-ttu-id="f6cb3-456">请注意，这表示用于应用和提取个性化设置信息的范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-456">Note that this represents the scope used for applying and extracting personalization information.</span></span> <span data-ttu-id="f6cb3-457">此属性的值可能与<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope%2A>属性<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ChangeScope%2A>或方法不同。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-457">The value of this property might differ from the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.InitialScope%2A> property or the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ChangeScope%2A> method.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-458">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-458">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-459">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-459">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-460">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-460">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-461">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-461">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <MemberGroup MemberName="SetDirty">
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-462">将父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件标记为具有已更改的个性化数据（即“脏数据”）。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-462">Marks the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control as having personalization data that has changed (is "dirty").</span></span></summary>
+      </Docs>
+    </MemberGroup>
+    <Member MemberName="SetDirty">
+      <MemberSignature Language="C#" Value="protected internal virtual void SetDirty ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void SetDirty() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.SetDirty" />
+      <MemberSignature Language="VB.NET" Value="Protected Friend Overridable Sub SetDirty ()" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void SetDirty();" />
+      <MemberSignature Language="F#" Value="abstract member SetDirty : unit -&gt; unit&#xA;override this.SetDirty : unit -&gt; unit" Usage="webPartPersonalization.SetDirty " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-463">将父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 控件标记为具有已更改的个性化数据（即“脏数据”）。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-463">Marks the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control as having personalization data that has changed (is "dirty").</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-464">如果将`true`属性设置为，则此方法会将父<xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件标记为 "已更新"。 <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A></span><span class="sxs-lookup"><span data-stu-id="f6cb3-464">If the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A> property is set to `true`, this method marks the parent <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control as "dirty".</span></span> <span data-ttu-id="f6cb3-465">根据<xref:System.Web.UI.WebControls.WebParts.WebPartManager> 控件 <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> 实例的实现细节，此方法可能会调用安全检查和代码访问安全权限检查。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-465">Depending on the implementation details of the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control's instance of <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>, this method might invoke security checks and code access security permission checks.</span></span> <span data-ttu-id="f6cb3-466">此方法在内部调用<xref:System.Web.UI.WebControls.WebParts.PersonalizationState.SetWebPartManagerDirty%2A>方法。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-466">Internally, this method calls the <xref:System.Web.UI.WebControls.WebParts.PersonalizationState.SetWebPartManagerDirty%2A> method.</span></span>  
+  
+ <span data-ttu-id="f6cb3-467">请注意， <xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件在内部跟踪 "脏" 状态，并<xref:System.Web.UI.WebControls.WebParts.IPersonalizable.IsDirty%2A>通过属性而不是通过此方法公开管理器的 "dirtiness"。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-467">Note that the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control tracks "dirty" state internally and exposes the "dirtiness" of the manager through the <xref:System.Web.UI.WebControls.WebParts.IPersonalizable.IsDirty%2A> property rather than through this method.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-468">尚未加载任何个性化设置数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-468">No personalization data has been loaded.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-469">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-469">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-470">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-470">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-471">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-471">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-472">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-472">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="SetDirty">
+      <MemberSignature Language="C#" Value="protected internal virtual void SetDirty (System.Web.UI.WebControls.WebParts.WebPart webPart);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance void SetDirty(class System.Web.UI.WebControls.WebParts.WebPart webPart) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.SetDirty(System.Web.UI.WebControls.WebParts.WebPart)" />
+      <MemberSignature Language="C++ CLI" Value="protected public:&#xA; virtual void SetDirty(System::Web::UI::WebControls::WebParts::WebPart ^ webPart);" />
+      <MemberSignature Language="F#" Value="abstract member SetDirty : System.Web.UI.WebControls.WebParts.WebPart -&gt; unit&#xA;override this.SetDirty : System.Web.UI.WebControls.WebParts.WebPart -&gt; unit" Usage="webPartPersonalization.SetDirty webPart" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="webPart" Type="System.Web.UI.WebControls.WebParts.WebPart" />
+      </Parameters>
+      <Docs>
+        <param name="webPart"><span data-ttu-id="f6cb3-473">要标记为“更新”的 Web 部件控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-473">The Web Parts control to be marked "dirty".</span></span></param>
+        <summary><span data-ttu-id="f6cb3-474">将指定的 Web 部件控件标记为具有已更改（即“更新”）的个性化设置数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-474">Marks the specified Web Parts control as having personalization data that has changed (is "dirty").</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-475">`true`如果将<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A>属性设置为，则此方法会将指定的 Web 部件控件标记为 "已更新"。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-475">If the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsEnabled%2A> property is set to `true`, this method marks the specified Web Parts control as "dirty".</span></span> <span data-ttu-id="f6cb3-476">根据<xref:System.Web.UI.WebControls.WebParts.WebPartManager> 控件 <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> 实例的实现细节，此方法可能会调用安全检查和代码访问安全权限检查。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-476">Depending on the implementation details of the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control's instance of <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>, this method may invoke security checks and code access security permission checks.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><span data-ttu-id="f6cb3-477">进行了将不受父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 管理的 Web 部件控件标记为“更新”的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-477">Attempted to mark as "dirty" a Web Parts control that is not managed by the parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />.</span></span></exception>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-478">尚未加载任何个性化设置数据。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-478">No personalization data has been loaded.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-479">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-479">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-480">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-480">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-481">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-481">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-482">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-482">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="ShouldResetPersonalizationState">
+      <MemberSignature Language="C#" Value="protected bool ShouldResetPersonalizationState { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ShouldResetPersonalizationState" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ShouldResetPersonalizationState" />
+      <MemberSignature Language="VB.NET" Value="Protected Property ShouldResetPersonalizationState As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; property bool ShouldResetPersonalizationState { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.ShouldResetPersonalizationState : bool with get, set" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.ShouldResetPersonalizationState" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>set: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-483">获取或设置一个值，该值指示当前页的个性化设置数据是否已重置（例如，已请求从基础数据存储区删除个性化设置数据）。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-483">Gets or sets a value that indicates whether the personalization data of the current page has been reset (for example, a request was made to delete the personalization data from the underlying data store).</span></span></summary>
+        <value><span data-ttu-id="f6cb3-484">如果当前页的个性化设置状态已重置，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-484"><see langword="true" /> if the personalization state for the current page has been reset; otherwise, <see langword="false" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-485">如果将此属性设置为`true`，则表示当前页的个性化设置状态已重置，并且应跳过从控件提取个性化设置数据和后续保存操作。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-485">If this property is set to `true`, it indicates that the personalization state for the current page has been reset and that extraction of personalization data from controls and subsequent save operations should be skipped.</span></span> <span data-ttu-id="f6cb3-486">目前， `true` <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ResetPersonalizationState%2A>如果调用方法，此属性将由个性化设置基础结构自动设置为。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-486">Currently, this property is automatically set to `true` by the personalization infrastructure if the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ResetPersonalizationState%2A> method is called.</span></span>  
+  
+ <span data-ttu-id="f6cb3-487">请注意，虽然可以设置此属性的时间不受限制，但必须在`true` <xref:System.Web.UI.WebControls.WebParts.WebPartManager>控件的<xref:System.Web.UI.Page.SaveStateComplete>事件之前将属性设置为，以使其生效。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-487">Note that although there are no restrictions on when this property can be set, the property must be set to `true` prior to the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control's <xref:System.Web.UI.Page.SaveStateComplete> event to have any effect.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-488">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-488">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-489">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-489">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-490">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-490">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-491">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-491">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="ToggleScope">
+      <MemberSignature Language="C#" Value="public virtual void ToggleScope ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ToggleScope() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ToggleScope" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Sub ToggleScope ()" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual void ToggleScope();" />
+      <MemberSignature Language="F#" Value="abstract member ToggleScope : unit -&gt; unit&#xA;override this.ToggleScope : unit -&gt; unit" Usage="webPartPersonalization.ToggleScope " />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-492">将当前页的个性化设置范围从 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" /> 切换到 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" />，或从 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> 切换到 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-492">Switches the current page's personalization scope from <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" /> to <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> or from <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> to <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" />.</span></span></summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-493">此方法切换当前正在执行的页的个性化设置范围。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-493">This method toggles the currently executing page's personalization scope.</span></span> <span data-ttu-id="f6cb3-494">切换范围会导致<xref:System.Web.HttpServerUtility.Transfer%2A>返回当前正在执行的页。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-494">Toggling the scope results in a <xref:System.Web.HttpServerUtility.Transfer%2A> back to the current executing page.</span></span>  
+  
+ <span data-ttu-id="f6cb3-495">如果在 Web 部件控件的导出或导入过程中调用此方法，则此方法不执行任何操作。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-495">This method performs no operation if it is called while an export or import of a Web Parts control is occurring.</span></span>  
+  
+ <span data-ttu-id="f6cb3-496">如果切换范围请求是通过`POST`请求提交的页面发生的，则在传输过程中将保留所有查询字符串值; 如果`GET`通过请求提交了页面，则不会保留查询字符串参数。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-496">If a toggle scope request occurs for a page that was submitted via a `POST` request, then any query string values will be preserved during the transfer; query string parameters are not preserved if the page was submitted via a `GET` request.</span></span>  
+  
+   
+  
+## Examples  
+ <span data-ttu-id="f6cb3-497">下面的代码演示如何使用<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ToggleScope%2A>方法。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-497">The following code demonstrates using the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.ToggleScope%2A> method.</span></span> <span data-ttu-id="f6cb3-498">此代码是在<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>类说明中找到的更大代码示例的一部分。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-498">This code is part of a larger code sample found in the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> class description.</span></span>  
+  
+ [!code-csharp[WebParts_WebPartPersonalization#7](~/samples/snippets/csharp/VS_Snippets_WebNet/WebParts_WebPartPersonalization/CS/persMode.ascx#7)]
+ [!code-vb[WebParts_WebPartPersonalization#7](~/samples/snippets/visualbasic/VS_Snippets_WebNet/WebParts_WebPartPersonalization/VB/persMode.ascx#7)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException"><span data-ttu-id="f6cb3-499">在尝试从 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> 范围切换到 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" /> 范围时，当前用户不具有进入 <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> 范围的用户功能。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-499">The current user does not have the user capability to enter <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> scope when attempting to switch from <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" /> scope to <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> scope.</span></span>  
+  
+<span data-ttu-id="f6cb3-500">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-500">-or-</span></span> 
+<span data-ttu-id="f6cb3-501"><see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 实例尚未完成初始化。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-501">The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> instance has not completed initialization.</span></span>  
+  
+<span data-ttu-id="f6cb3-502">- 或 -</span><span class="sxs-lookup"><span data-stu-id="f6cb3-502">-or-</span></span> 
+<span data-ttu-id="f6cb3-503">关联的 <see cref="T:System.Web.UI.Page" /> 的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 实例为 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-503">The <see cref="T:System.Web.UI.Page" /> instance for the associated <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> is <see langword="null" />.</span></span>  
+  
+<span data-ttu-id="f6cb3-504">或</span><span class="sxs-lookup"><span data-stu-id="f6cb3-504">-or-</span></span> 
+<span data-ttu-id="f6cb3-505"><see cref="P:System.Web.UI.Page.Request" /> 控件的关联 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 实例的 <see cref="T:System.Web.UI.Page" /> 属性的值是 <see langword="null" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-505">The value of the <see cref="P:System.Web.UI.Page.Request" /> property on the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control's associated <see cref="T:System.Web.UI.Page" /> instance is <see langword="null" />.</span></span></exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><span data-ttu-id="f6cb3-506">进行了切换到未在 <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> 枚举中定义的范围的尝试。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-506">An attempt was made to toggle to a scope that is not defined in the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizationScope" /> enumeration.</span></span> <span data-ttu-id="f6cb3-507">从技术角度看，绝不应出现这种情况。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-507">Technically, this situation should never occur.</span></span></exception>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-508">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-508">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-509">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-509">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-510">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-510">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-511">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-511">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="UserCapabilities">
+      <MemberSignature Language="C#" Value="protected virtual System.Collections.IDictionary UserCapabilities { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IDictionary UserCapabilities" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.UserCapabilities" />
+      <MemberSignature Language="VB.NET" Value="Protected Overridable ReadOnly Property UserCapabilities As IDictionary" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; virtual property System::Collections::IDictionary ^ UserCapabilities { System::Collections::IDictionary ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.UserCapabilities : System.Collections.IDictionary" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.UserCapabilities" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IDictionary</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-512">从授予当前用户的 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartUserCapability" /> 获取用户功能集。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-512">Gets the set of user capabilities from <see cref="T:System.Web.UI.WebControls.WebParts.WebPartUserCapability" /> granted to the current user.</span></span></summary>
+        <value><span data-ttu-id="f6cb3-513">包含授予当前用户的一组用户功能的 <see cref="T:System.Collections.IDictionary" />，如果用户为匿名用户，则为空的 <see cref="T:System.Collections.Specialized.HybridDictionary" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-513">An <see cref="T:System.Collections.IDictionary" /> containing the set of user capabilities granted to the current user, or an empty <see cref="T:System.Collections.Specialized.HybridDictionary" /> if the user is anonymous.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-514">此<xref:System.Web.UI.WebControls.WebParts.WebPartUserCapability>类当前包含两个指示用户功能的值： `modifyState`和`enterSharedScope`。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-514">Currently the <xref:System.Web.UI.WebControls.WebParts.WebPartUserCapability> class contains two values indicating a user's capabilities: `modifyState` and `enterSharedScope`.</span></span> <span data-ttu-id="f6cb3-515">为了便于使用，可以使用帮助程序属性<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsModifiable%2A>和<xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.CanEnterSharedScope%2A>来检查字典中包含的功能。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-515">For ease of use, the capabilities contained within the dictionary can be checked with the helper properties <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.IsModifiable%2A> and <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization.CanEnterSharedScope%2A>.</span></span> <span data-ttu-id="f6cb3-516">请注意，在访问这些属性之一后，对更改功能的限制;有关详细信息，请参阅每个属性的 "说明" 部分。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-516">Note the restrictions on changing capabilities after either of these properties have been accessed; for details, see the description section of each property.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-517">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-517">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-518">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-518">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-519">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-519">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-520">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-520">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+    <Member MemberName="WebPartManager">
+      <MemberSignature Language="C#" Value="protected System.Web.UI.WebControls.WebParts.WebPartManager WebPartManager { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Web.UI.WebControls.WebParts.WebPartManager WebPartManager" />
+      <MemberSignature Language="DocId" Value="P:System.Web.UI.WebControls.WebParts.WebPartPersonalization.WebPartManager" />
+      <MemberSignature Language="VB.NET" Value="Protected ReadOnly Property WebPartManager As WebPartManager" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; property System::Web::UI::WebControls::WebParts::WebPartManager ^ WebPartManager { System::Web::UI::WebControls::WebParts::WebPartManager ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.WebPartManager : System.Web.UI.WebControls.WebParts.WebPartManager" Usage="System.Web.UI.WebControls.WebParts.WebPartPersonalization.WebPartManager" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Web</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-4.0">
+          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Web.UI.WebControls.WebParts.WebPartManager</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="f6cb3-521">获取与此 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> 实例关联的当前父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> 控件的实例。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-521">Gets an instance of the current parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control associated with this <see cref="T:System.Web.UI.WebControls.WebParts.WebPartPersonalization" /> instance.</span></span></summary>
+        <value><span data-ttu-id="f6cb3-522">当前父 <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-522">The current parent <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />.</span></span></value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <span data-ttu-id="f6cb3-523">使用此属性来确定与<xref:System.Web.UI.WebControls.WebParts.WebPartManager> <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization>类的此实例关联的控件。</span><span class="sxs-lookup"><span data-stu-id="f6cb3-523">Use this property to determine the <xref:System.Web.UI.WebControls.WebParts.WebPartManager> control associated with this instance of the <xref:System.Web.UI.WebControls.WebParts.WebPartPersonalization> class.</span></span>  
+  
+ ]]></format>
+        </remarks>
+        <altmember cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/e0s9t4ck(v=vs.100)"><span data-ttu-id="f6cb3-524">ASP.NET Web 部件控件</span><span class="sxs-lookup"><span data-stu-id="f6cb3-524">ASP.NET Web Parts Controls</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/z36h8be9(v=vs.100)"><span data-ttu-id="f6cb3-525">Web 部件个性化概述</span><span class="sxs-lookup"><span data-stu-id="f6cb3-525">Web Parts Personalization Overview</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/784d8z92(v=vs.100)"><span data-ttu-id="f6cb3-526">演练：使用用户控件实现 Web 部件个性化设置</span><span class="sxs-lookup"><span data-stu-id="f6cb3-526">Walkthrough: Implementing Web Parts Personalization with a User Control</span></span></related>
+        <related type="Article" href="https://docs.microsoft.com/previous-versions/aspnet/ms178182(v=vs.100)"><span data-ttu-id="f6cb3-527">Web 部件个性化</span><span class="sxs-lookup"><span data-stu-id="f6cb3-527">Web Parts Personalization</span></span></related>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
