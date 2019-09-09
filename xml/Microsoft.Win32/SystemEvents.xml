@@ -1,0 +1,976 @@
+<Type Name="SystemEvents" FullName="Microsoft.Win32.SystemEvents">
+  <Metadata><Meta Name="ms.openlocfilehash" Value="f5ad823f9e2ab0333d38c1e7e64f3e87d6c6bf88" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70600799" /></Metadata><TypeSignature Language="C#" Value="public sealed class SystemEvents" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SystemEvents extends System.Object" />
+  <TypeSignature Language="DocId" Value="T:Microsoft.Win32.SystemEvents" />
+  <TypeSignature Language="VB.NET" Value="Public NotInheritable Class SystemEvents" />
+  <TypeSignature Language="C++ CLI" Value="public ref class SystemEvents sealed" />
+  <TypeSignature Language="F#" Value="type SystemEvents = class" />
+  <AssemblyInfo>
+    <AssemblyName>System</AssemblyName>
+    <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.1.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>提供对系统事件通知的访问。 此类不能被继承。</summary>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ <xref:Microsoft.Win32.SystemEvents>类提供响应特定类型的系统事件的能力。  
+  
+ 引发系统事件时，将使用监视系统事件的线程调用附加到事件的任何委托。 因此，您应从事件处理程序调用线程安全。 如果需要调用未作为此类的成员公开的系统事件，可以使用<xref:Microsoft.Win32.SystemEvents.InvokeOnEventsThread%2A>方法。  
+  
+> [!CAUTION]
+>  不要在引发系统事件处理程序的线程上执行耗时的处理，因为它可能会阻止其他应用程序正常运行。  
+  
+> [!NOTE]
+>  可能不会在上[!INCLUDE[windowsver](~/includes/windowsver-md.md)]引发一些系统事件。 确保你的应用程序在上[!INCLUDE[windowsver](~/includes/windowsver-md.md)]按预期方式工作。  
+  
+   
+  
+## Examples  
+ 本部分包含两个示例。 第一个示例演示如何在普通的应用程序中使用系统事件，第二个示例演示如何在 Windows 服务中使用系统事件。  
+  
+ **示例1**  
+  
+ 下面的代码示例注册了一些系统事件的兴趣，并等待其中任何事件发生。 如果用户更改了显示分辨率，则会显示输出。  
+  
+ [!code-cpp[SystemEvents#1](~/samples/snippets/cpp/VS_Snippets_Winforms/SystemEvents/cpp/SystemEvents.cpp#1)]
+ [!code-csharp[SystemEvents#1](~/samples/snippets/csharp/VS_Snippets_Winforms/SystemEvents/CS/SystemEvents.cs#1)]
+ [!code-vb[SystemEvents#1](~/samples/snippets/visualbasic/VS_Snippets_Winforms/SystemEvents/VB/SystemEvents.vb#1)]  
+  
+ **示例2**  
+  
+ 下面的代码示例演示了一个非常简单的 Windows 服务， <xref:Microsoft.Win32.SystemEvents.TimeChanged>该<xref:Microsoft.Win32.SystemEvents.UserPreferenceChanged>服务处理和事件。 该示例包括一个名为`SimpleService`的服务、一个`HiddenForm`名为的窗体和一个安装程序。 窗体提供系统事件所需的消息循环。  
+  
+> [!NOTE]
+>  服务没有消息循环，除非允许它们与桌面交互。 如果未通过隐藏形式提供消息循环，如本示例中所示，服务必须在本地系统帐户下运行，并且需要手动干预才能实现与桌面的交互。 也就是说，管理员必须手动选中 "服务属性" 对话框的 "**登录**" 选项卡上的 "**允许服务与桌面交互**" 复选框。 在这种情况下，将自动提供消息循环。 仅当服务在本地系统帐户下运行时，此选项才可用。 无法以编程方式启用与桌面的交互。  
+  
+ 在此示例中，该服务将启动一个线程，该`HiddenForm`线程运行的实例。 事件与窗体挂钩并进行处理。 必须在窗体的 load 事件中挂接事件，以确保先完全加载窗体;否则，将不会引发事件。  
+  
+> [!NOTE]
+>  该示例提供了所有必要的代码，包括通常由 Visual Studio 设计器生成的窗体初始化代码。 如果要在 Visual Studio 中开发服务，则可以省略第二个分部类，并使用 "**属性**" 窗口将隐藏窗体的高度和宽度设置为零，将边框样式<xref:System.Windows.Forms.FormBorderStyle.None?displayProperty=nameWithType>设置为，将窗口状态<xref:System.Windows.Forms.FormWindowState.Minimized?displayProperty=nameWithType>设置为。  
+  
+ 运行示例：  
+  
+1.  从命令行编译代码。 用于源文件的名称并不重要。  
+  
+2.  在命令行中使用[installutil.exe （安装程序工具）](~/docs/framework/tools/installutil-exe-installer-tool.md)实用程序安装服务。 例如， `InstallUtil example.exe`如果源文件名为`example.cs`或`example.vb`。 您必须是管理员才能安装服务。  
+  
+3.  使用服务控制台启动该服务。  
+  
+4.  更改系统时间或更改用户首选项，例如鼠标属性。  
+  
+5.  查看事件查看器的**应用程序**类别中的消息。  
+  
+6.  使用服务控制台停止此服务。  
+  
+7.  使用`/u`选项从命令行卸载服务。 例如 `InstallUtil /u example.exe`。  
+  
+ [!code-csharp[ManagedWindowsService#1](~/samples/snippets/csharp/VS_Snippets_CLR/ManagedWindowsService/cs/source.cs#1)]
+ [!code-vb[ManagedWindowsService#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/ManagedWindowsService/VB/source.vb#1)]  
+  
+ ]]></format>
+    </remarks>
+    <permission cref="T:System.Security.NamedPermissionSet">用于完全访问系统资源。 需求值： <see cref="F:System.Security.Permissions.SecurityAction.LinkDemand" />。 关联状态：</permission>
+    <altmember cref="T:Microsoft.Win32.PowerModeChangedEventHandler" />
+    <altmember cref="T:Microsoft.Win32.SessionEndedEventHandler" />
+    <altmember cref="T:Microsoft.Win32.SessionEndingEventHandler" />
+    <altmember cref="T:Microsoft.Win32.SessionSwitchEventHandler" />
+    <altmember cref="T:Microsoft.Win32.TimerElapsedEventHandler" />
+    <altmember cref="T:Microsoft.Win32.UserPreferenceChangedEventHandler" />
+    <altmember cref="T:Microsoft.Win32.UserPreferenceChangingEventHandler" />
+  </Docs>
+  <Members>
+    <Member MemberName="CreateTimer">
+      <MemberSignature Language="C#" Value="public static IntPtr CreateTimer (int interval);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int CreateTimer(int32 interval) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Microsoft.Win32.SystemEvents.CreateTimer(System.Int32)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Function CreateTimer (interval As Integer) As IntPtr" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static IntPtr CreateTimer(int interval);" />
+      <MemberSignature Language="F#" Value="static member CreateTimer : int -&gt; nativeint" Usage="Microsoft.Win32.SystemEvents.CreateTimer interval" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="interval" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="interval">指定计时器通知之间的间隔（以毫秒为单位）。</param>
+        <summary>创建一个与系统事件窗口相关联的新窗口计时器。</summary>
+        <returns>新计时器的 ID。</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException">间隔小于或等于零。</exception>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功，或创建计时器的尝试未成功。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="DisplaySettingsChanged">
+      <MemberSignature Language="C#" Value="public static event EventHandler DisplaySettingsChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler DisplaySettingsChanged" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.DisplaySettingsChanged" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event DisplaySettingsChanged As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event EventHandler ^ DisplaySettingsChanged;" />
+      <MemberSignature Language="F#" Value="member this.DisplaySettingsChanged : EventHandler " Usage="member this.DisplaySettingsChanged : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当用户更改显示设置时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何监视<xref:Microsoft.Win32.SystemEvents.DisplaySettingsChanged>事件。 此代码示例是为<xref:Microsoft.Win32.SystemEvents>类提供的更大示例的一部分。  
+  
+ [!code-cpp[SystemEvents#2](~/samples/snippets/cpp/VS_Snippets_Winforms/SystemEvents/cpp/SystemEvents.cpp#2)]
+ [!code-csharp[SystemEvents#2](~/samples/snippets/csharp/VS_Snippets_Winforms/SystemEvents/CS/SystemEvents.cs#2)]
+ [!code-vb[SystemEvents#2](~/samples/snippets/visualbasic/VS_Snippets_Winforms/SystemEvents/VB/SystemEvents.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+        <altmember cref="E:Microsoft.Win32.SystemEvents.DisplaySettingsChanging" />
+      </Docs>
+    </Member>
+    <Member MemberName="DisplaySettingsChanging">
+      <MemberSignature Language="C#" Value="public static event EventHandler DisplaySettingsChanging;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler DisplaySettingsChanging" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.DisplaySettingsChanging" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event DisplaySettingsChanging As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event EventHandler ^ DisplaySettingsChanging;" />
+      <MemberSignature Language="F#" Value="member this.DisplaySettingsChanging : EventHandler " Usage="member this.DisplaySettingsChanging : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>更改显示设置时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+        <altmember cref="E:Microsoft.Win32.SystemEvents.DisplaySettingsChanged" />
+      </Docs>
+    </Member>
+    <Member MemberName="EventsThreadShutdown">
+      <MemberSignature Language="C#" Value="public static event EventHandler EventsThreadShutdown;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler EventsThreadShutdown" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.EventsThreadShutdown" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event EventsThreadShutdown As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event EventHandler ^ EventsThreadShutdown;" />
+      <MemberSignature Language="F#" Value="member this.EventsThreadShutdown : EventHandler " Usage="member this.EventsThreadShutdown : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>在侦听系统事件的线程终止前发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此事件在侦听系统事件的线程即将终止时引发。 系统事件委托是使用侦听系统事件的线程调用的。  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="InstalledFontsChanged">
+      <MemberSignature Language="C#" Value="public static event EventHandler InstalledFontsChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler InstalledFontsChanged" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.InstalledFontsChanged" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event InstalledFontsChanged As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event EventHandler ^ InstalledFontsChanged;" />
+      <MemberSignature Language="F#" Value="member this.InstalledFontsChanged : EventHandler " Usage="member this.InstalledFontsChanged : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当用户在系统中添加或移除字体时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="InvokeOnEventsThread">
+      <MemberSignature Language="C#" Value="public static void InvokeOnEventsThread (Delegate method);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void InvokeOnEventsThread(class System.Delegate method) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Microsoft.Win32.SystemEvents.InvokeOnEventsThread(System.Delegate)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub InvokeOnEventsThread (method As Delegate)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void InvokeOnEventsThread(Delegate ^ method);" />
+      <MemberSignature Language="F#" Value="static member InvokeOnEventsThread : Delegate -&gt; unit" Usage="Microsoft.Win32.SystemEvents.InvokeOnEventsThread method" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.Delegate" />
+      </Parameters>
+      <Docs>
+        <param name="method">要使用侦听系统事件的线程调用的委托。</param>
+        <summary>使用侦听系统事件的线程调用指定的委托。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 只要需要处理<xref:Microsoft.Win32.SystemEvents>类未公开的系统事件，就可以使用此方法。  
+  
+ 调用此方法时，将由应用程序用来处理系统事件的线程调用指定的委托。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="KillTimer">
+      <MemberSignature Language="C#" Value="public static void KillTimer (IntPtr timerId);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void KillTimer(native int timerId) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Microsoft.Win32.SystemEvents.KillTimer(System.IntPtr)" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Sub KillTimer (timerId As IntPtr)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static void KillTimer(IntPtr timerId);" />
+      <MemberSignature Language="F#" Value="static member KillTimer : nativeint -&gt; unit" Usage="Microsoft.Win32.SystemEvents.KillTimer timerId" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="timerId" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="timerId">要终止的计时器的 ID。</param>
+        <summary>终止由给定 ID 指定的计时器。</summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功，或终止计时器的尝试未成功。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="LowMemory">
+      <MemberSignature Language="C#" Value="public static event EventHandler LowMemory;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler LowMemory" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.LowMemory" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event LowMemory As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event EventHandler ^ LowMemory;" />
+      <MemberSignature Language="F#" Value="member this.LowMemory : EventHandler " Usage="member this.LowMemory : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netcore-2.1;netframework-4.8;dotnet-plat-ext-2.1;netcore-2.2;netcore-3.0;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0">
+          <AttributeName>System.ComponentModel.Browsable(false)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinmac-3.0;netcore-2.1;netframework-4.8;dotnet-plat-ext-2.1;netcore-2.2;netcore-3.0;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0">
+          <AttributeName>System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.Obsolete("")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netcore-2.1;netframework-4.8;dotnet-plat-ext-2.1;netcore-2.2;dotnet-plat-ext-2.2">
+          <AttributeName>System.Obsolete("This event has been deprecated. http://go.microsoft.com/fwlink/?linkid=14202")</AttributeName>
+        </Attribute>
+        <Attribute FrameworkAlternate="dotnet-plat-ext-3.0;netcore-3.0">
+          <AttributeName>System.Obsolete("This event has been deprecated. https://go.microsoft.com/fwlink/?linkid=14202")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当系统用完可用 RAM 时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此事件包装 WM_COMPACTING 消息。 当系统检测到超过30到60秒的时间间隔内的系统时间超过 12.5% 时，会将此消息发送到所有顶级窗口。 这表明系统内存不足。  
+  
+> [!NOTE]
+>  仅当消息泵正在运行时才引发此事件。 在 Windows 服务中，除非使用隐藏的窗体或手动启动了消息泵，否则将不会引发此事件。 有关演示如何使用 Windows 服务中的隐藏窗体处理系统事件的代码示例，请参阅<xref:Microsoft.Win32.SystemEvents>类。  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+        <block subset="none" type="usage"><para>提供此消息只是为了与基于 Windows 的16位应用程序兼容。</para></block>
+      </Docs>
+    </Member>
+    <Member MemberName="PaletteChanged">
+      <MemberSignature Language="C#" Value="public static event EventHandler PaletteChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler PaletteChanged" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.PaletteChanged" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event PaletteChanged As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event EventHandler ^ PaletteChanged;" />
+      <MemberSignature Language="F#" Value="member this.PaletteChanged : EventHandler " Usage="member this.PaletteChanged : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当用户切换到使用其他调色板的应用程序时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  仅当消息泵正在运行时才引发此事件。 在 Windows 服务中，除非使用隐藏的窗体或手动启动了消息泵，否则将不会引发此事件。 有关演示如何使用 Windows 服务中的隐藏窗体处理系统事件的代码示例，请参阅<xref:Microsoft.Win32.SystemEvents>类。  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何监视<xref:Microsoft.Win32.SystemEvents.PaletteChanged>事件。 此代码示例是为<xref:Microsoft.Win32.SystemEvents>类提供的更大示例的一部分。  
+  
+ [!code-cpp[SystemEvents#2](~/samples/snippets/cpp/VS_Snippets_Winforms/SystemEvents/cpp/SystemEvents.cpp#2)]
+ [!code-csharp[SystemEvents#2](~/samples/snippets/csharp/VS_Snippets_Winforms/SystemEvents/CS/SystemEvents.cs#2)]
+ [!code-vb[SystemEvents#2](~/samples/snippets/visualbasic/VS_Snippets_Winforms/SystemEvents/VB/SystemEvents.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="PowerModeChanged">
+      <MemberSignature Language="C#" Value="public static event Microsoft.Win32.PowerModeChangedEventHandler PowerModeChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.PowerModeChangedEventHandler PowerModeChanged" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.PowerModeChanged" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event PowerModeChanged As PowerModeChangedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event Microsoft::Win32::PowerModeChangedEventHandler ^ PowerModeChanged;" />
+      <MemberSignature Language="F#" Value="member this.PowerModeChanged : Microsoft.Win32.PowerModeChangedEventHandler " Usage="member this.PowerModeChanged : Microsoft.Win32.PowerModeChangedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.PowerModeChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当用户挂起或继续系统时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  仅当消息泵正在运行时才引发此事件。 在 Windows 服务中，除非使用隐藏的窗体或手动启动了消息泵，否则将不会引发此事件。 有关演示如何使用 Windows 服务中的隐藏窗体处理系统事件的代码示例，请参阅<xref:Microsoft.Win32.SystemEvents>类。  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+        <altmember cref="T:Microsoft.Win32.PowerModeChangedEventArgs" />
+        <altmember cref="T:Microsoft.Win32.PowerModeChangedEventHandler" />
+        <altmember cref="T:Microsoft.Win32.PowerModes" />
+      </Docs>
+    </Member>
+    <Member MemberName="SessionEnded">
+      <MemberSignature Language="C#" Value="public static event Microsoft.Win32.SessionEndedEventHandler SessionEnded;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.SessionEndedEventHandler SessionEnded" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.SessionEnded" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event SessionEnded As SessionEndedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event Microsoft::Win32::SessionEndedEventHandler ^ SessionEnded;" />
+      <MemberSignature Language="F#" Value="member this.SessionEnded : Microsoft.Win32.SessionEndedEventHandler " Usage="member this.SessionEnded : Microsoft.Win32.SessionEndedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.SessionEndedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当用户注销或关闭系统时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  仅当消息泵正在运行时才引发此事件。 在 Windows 服务中，除非使用隐藏的窗体或手动启动了消息泵，否则将不会引发此事件。 有关演示如何使用 Windows 服务中的隐藏窗体处理系统事件的代码示例，请参阅<xref:Microsoft.Win32.SystemEvents>类。  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+        <altmember cref="T:Microsoft.Win32.SessionEndedEventArgs" />
+        <altmember cref="T:Microsoft.Win32.SessionEndedEventHandler" />
+        <altmember cref="T:Microsoft.Win32.SessionEndReasons" />
+      </Docs>
+    </Member>
+    <Member MemberName="SessionEnding">
+      <MemberSignature Language="C#" Value="public static event Microsoft.Win32.SessionEndingEventHandler SessionEnding;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.SessionEndingEventHandler SessionEnding" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.SessionEnding" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event SessionEnding As SessionEndingEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event Microsoft::Win32::SessionEndingEventHandler ^ SessionEnding;" />
+      <MemberSignature Language="F#" Value="member this.SessionEnding : Microsoft.Win32.SessionEndingEventHandler " Usage="member this.SessionEnding : Microsoft.Win32.SessionEndingEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.SessionEndingEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当用户尝试注销或关闭系统时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 这是一个可取消的事件。 将属性设置为`true`将要求会话继续运行。 <xref:Microsoft.Win32.SessionEndingEventArgs.Cancel%2A> 它不保证会话不会结束。  
+  
+ 如果在 Windows 窗<xref:Microsoft.Win32.SystemEvents.SessionEnding>体中使用检测到系统注销或重新启动，则没有确定的方法来确定是否将在<xref:System.Windows.Forms.Form.Closing>此事件之前激发该事件。  
+  
+ 如果要在激发之前<xref:System.Windows.Forms.Form.Closing>执行某些特殊任务，需要<xref:Microsoft.Win32.SystemEvents.SessionEnding>确保在之前<xref:System.Windows.Forms.Form.Closing>激发。 为此，需要通过`WM_QUERYENDSESSION` `WndProc`重写函数在窗体中捕获。  此示例演示如何执行此操作。  
+  
+```vb  
+Private Shared WM_QUERYENDSESSION As Integer = &H11  
+ Private Shared systemShutdown As Boolean = False  
+ Protected Overrides Sub WndProc(ByRef m As System.Windows.Forms.Message)  
+     If m.Msg = WM_QUERYENDSESSION Then  
+         MessageBox.Show("queryendsession: this is a logoff, shutdown, or reboot")  
+         systemShutdown = True  
+     End If  
+     ' If this is WM_QUERYENDSESSION, the closing event should be raised in the base WndProc.  
+     MyBase.WndProc(m)  
+ End Sub 'WndProc   
+ Private Sub Form1_Closing(ByVal sender As System.Object, ByVal e As System.ComponentModel.CancelEventArgs) Handles MyBase.Closing  
+     If (systemShutdown) Then  
+     ' Reset the variable because the user might cancel the shutdown.  
+         systemShutdown = False  
+         If (System.Windows.Forms.DialogResult.Yes = _  
+                 MessageBox.Show("My application", "Do you want to save your work before logging off?", MessageBoxButtons.YesNo)) Then  
+                 e.Cancel = True  
+         Else  
+                 e.Cancel = False  
+         End If  
+     End If  
+ End Sub  
+  
+```  
+  
+```csharp  
+private static int WM_QUERYENDSESSION = 0x11;  
+private static bool systemShutdown = false;  
+protected override void WndProc(ref System.Windows.Forms.Message m)  
+{  
+    if (m.Msg==WM_QUERYENDSESSION)  
+    {  
+        MessageBox.Show("queryendsession: this is a logoff, shutdown, or reboot");  
+        systemShutdown = true;  
+    }  
+  
+    // If this is WM_QUERYENDSESSION, the closing event should be  
+    // raised in the base WndProc.  
+    base.WndProc(ref m);  
+  
+} //WndProc   
+  
+private void Form1_Closing(  
+    System.Object sender,   
+    System.ComponentModel.CancelEventArgs e)  
+{  
+    if (systemShutdown)  
+        // Reset the variable because the user might cancel the   
+        // shutdown.  
+    {  
+        systemShutdown = false;  
+        if (DialogResult.Yes==MessageBox.Show("My application",   
+            "Do you want to save your work before logging off?",   
+            MessageBoxButtons.YesNo))  
+        {  
+            e.Cancel = true;  
+        }  
+        else  
+        {  
+            e.Cancel = false;  
+        }  
+    }  
+}  
+```  
+  
+> [!IMPORTANT]
+>  控制台应用程序不会引发<xref:Microsoft.Win32.SystemEvents.SessionEnding>事件。  
+  
+> [!NOTE]
+>  仅当消息泵正在运行时才引发此事件。 在 Windows 服务中，除非使用隐藏的窗体或手动启动了消息泵，否则将不会引发此事件。 有关演示如何使用 Windows 服务中的隐藏窗体处理系统事件的代码示例，请参阅<xref:Microsoft.Win32.SystemEvents>类。  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+        <altmember cref="T:Microsoft.Win32.SessionEndingEventArgs" />
+        <altmember cref="T:Microsoft.Win32.SessionEndingEventHandler" />
+        <altmember cref="T:Microsoft.Win32.SessionEndReasons" />
+      </Docs>
+    </Member>
+    <Member MemberName="SessionSwitch">
+      <MemberSignature Language="C#" Value="public static event Microsoft.Win32.SessionSwitchEventHandler SessionSwitch;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.SessionSwitchEventHandler SessionSwitch" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.SessionSwitch" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event SessionSwitch As SessionSwitchEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event Microsoft::Win32::SessionSwitchEventHandler ^ SessionSwitch;" />
+      <MemberSignature Language="F#" Value="member this.SessionSwitch : Microsoft.Win32.SessionSwitchEventHandler " Usage="member this.SessionSwitch : Microsoft.Win32.SessionSwitchEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.SessionSwitchEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>更改当前登录的用户时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  仅当消息泵正在运行时才引发此事件。 在 Windows 服务中，除非使用隐藏的窗体或手动启动了消息泵，否则将不会引发此事件。 有关演示如何使用 Windows 服务中的隐藏窗体处理系统事件的代码示例，请参阅<xref:Microsoft.Win32.SystemEvents>类。  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+        <altmember cref="T:Microsoft.Win32.SessionSwitchEventHandler" />
+      </Docs>
+    </Member>
+    <Member MemberName="TimeChanged">
+      <MemberSignature Language="C#" Value="public static event EventHandler TimeChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler TimeChanged" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.TimeChanged" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event TimeChanged As EventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event EventHandler ^ TimeChanged;" />
+      <MemberSignature Language="F#" Value="member this.TimeChanged : EventHandler " Usage="member this.TimeChanged : System.EventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.EventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当用户更改系统时钟上的时间时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  仅当消息泵正在运行时才引发此事件。 在 Windows 服务中，除非使用隐藏的窗体或手动启动了消息泵，否则将不会引发此事件。 有关演示如何使用 Windows 服务中的隐藏窗体处理系统事件的代码示例，请参阅<xref:Microsoft.Win32.SystemEvents>类。  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+        <altmember cref="P:System.DateTime.Now" />
+      </Docs>
+    </Member>
+    <Member MemberName="TimerElapsed">
+      <MemberSignature Language="C#" Value="public static event Microsoft.Win32.TimerElapsedEventHandler TimerElapsed;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.TimerElapsedEventHandler TimerElapsed" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.TimerElapsed" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event TimerElapsed As TimerElapsedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event Microsoft::Win32::TimerElapsedEventHandler ^ TimerElapsed;" />
+      <MemberSignature Language="F#" Value="member this.TimerElapsed : Microsoft.Win32.TimerElapsedEventHandler " Usage="member this.TimerElapsed : Microsoft.Win32.TimerElapsedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.TimerElapsedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>在窗口计时器间隔过期时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  仅当消息泵正在运行时才引发此事件。 在 Windows 服务中，除非使用隐藏的窗体或手动启动了消息泵，否则将不会引发此事件。 有关演示如何使用 Windows 服务中的隐藏窗体处理系统事件的代码示例，请参阅<xref:Microsoft.Win32.SystemEvents>类。  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+        <altmember cref="T:Microsoft.Win32.TimerElapsedEventArgs" />
+        <altmember cref="T:Microsoft.Win32.TimerElapsedEventHandler" />
+      </Docs>
+    </Member>
+    <Member MemberName="UserPreferenceChanged">
+      <MemberSignature Language="C#" Value="public static event Microsoft.Win32.UserPreferenceChangedEventHandler UserPreferenceChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.UserPreferenceChangedEventHandler UserPreferenceChanged" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.UserPreferenceChanged" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event UserPreferenceChanged As UserPreferenceChangedEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event Microsoft::Win32::UserPreferenceChangedEventHandler ^ UserPreferenceChanged;" />
+      <MemberSignature Language="F#" Value="member this.UserPreferenceChanged : Microsoft.Win32.UserPreferenceChangedEventHandler " Usage="member this.UserPreferenceChanged : Microsoft.Win32.UserPreferenceChangedEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.UserPreferenceChangedEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>在用户首选项更改后发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  仅当消息泵正在运行时才引发此事件。 在 Windows 服务中，除非使用隐藏的窗体或手动启动了消息泵，否则将不会引发此事件。 有关演示如何使用 Windows 服务中的隐藏窗体处理系统事件的代码示例，请参阅<xref:Microsoft.Win32.SystemEvents>类。  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+        <altmember cref="T:Microsoft.Win32.UserPreferenceChangedEventArgs" />
+        <altmember cref="T:Microsoft.Win32.UserPreferenceChangedEventHandler" />
+        <altmember cref="T:Microsoft.Win32.UserPreferenceCategory" />
+      </Docs>
+    </Member>
+    <Member MemberName="UserPreferenceChanging">
+      <MemberSignature Language="C#" Value="public static event Microsoft.Win32.UserPreferenceChangingEventHandler UserPreferenceChanging;" />
+      <MemberSignature Language="ILAsm" Value=".event class Microsoft.Win32.UserPreferenceChangingEventHandler UserPreferenceChanging" />
+      <MemberSignature Language="DocId" Value="E:Microsoft.Win32.SystemEvents.UserPreferenceChanging" />
+      <MemberSignature Language="VB.NET" Value="Public Shared Custom Event UserPreferenceChanging As UserPreferenceChangingEventHandler " />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static event Microsoft::Win32::UserPreferenceChangingEventHandler ^ UserPreferenceChanging;" />
+      <MemberSignature Language="F#" Value="member this.UserPreferenceChanging : Microsoft.Win32.UserPreferenceChangingEventHandler " Usage="member this.UserPreferenceChanging : Microsoft.Win32.UserPreferenceChangingEventHandler " />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System</AssemblyName>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Win32.SystemEvents</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute FrameworkAlternate="xamarinmac-3.0">
+          <AttributeName>System.MonoTODO("Currently does nothing on Mono")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Microsoft.Win32.UserPreferenceChangingEventHandler</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>当用户首选项更改时发生。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  仅当消息泵正在运行时才引发此事件。 在 Windows 服务中，除非使用隐藏的窗体或手动启动了消息泵，否则将不会引发此事件。 有关演示如何使用 Windows 服务中的隐藏窗体处理系统事件的代码示例，请参阅<xref:Microsoft.Win32.SystemEvents>类。  
+  
+> [!CAUTION]
+>  因为这是一个静态事件，所以必须在释放应用程序时分离事件处理程序，否则会导致内存泄漏。  
+  
+   
+  
+## Examples  
+ 下面的代码示例演示如何监视<xref:Microsoft.Win32.SystemEvents.UserPreferenceChanging>事件。 此代码示例是为<xref:Microsoft.Win32.SystemEvents>类提供的更大示例的一部分。  
+  
+ [!code-cpp[SystemEvents#2](~/samples/snippets/cpp/VS_Snippets_Winforms/SystemEvents/cpp/SystemEvents.cpp#2)]
+ [!code-csharp[SystemEvents#2](~/samples/snippets/csharp/VS_Snippets_Winforms/SystemEvents/CS/SystemEvents.cs#2)]
+ [!code-vb[SystemEvents#2](~/samples/snippets/visualbasic/VS_Snippets_Winforms/SystemEvents/VB/SystemEvents.vb#2)]  
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">当前上下文不支持系统事件通知。 例如，服务器进程可能不支持全局系统事件通知。</exception>
+        <exception cref="T:System.Runtime.InteropServices.ExternalException">创建系统事件窗口线程的尝试未成功。</exception>
+        <altmember cref="T:Microsoft.Win32.UserPreferenceChangingEventArgs" />
+        <altmember cref="T:Microsoft.Win32.UserPreferenceChangingEventHandler" />
+        <altmember cref="T:Microsoft.Win32.UserPreferenceCategory" />
+      </Docs>
+    </Member>
+  </Members>
+</Type>
