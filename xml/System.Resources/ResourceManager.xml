@@ -1,5 +1,5 @@
 <Type Name="ResourceManager" FullName="System.Resources.ResourceManager">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="f40ddf3e36c2a3ed405b38e461b19dcaf278554b" /><Meta Name="ms.sourcegitcommit" Value="bc24a3ba616ee1df8b858f9400cae4f058ea3a7e" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="06/19/2019" /><Meta Name="ms.locfileid" Value="67248690" /></Metadata><TypeSignature Language="C#" Value="public class ResourceManager" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="db342e80d65f7aa94968cfa755b77a6a0c5ac058" /><Meta Name="ms.sourcegitcommit" Value="a22d0855bbf24d893f43605f8b7e3a44bd9551a5" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70353280" /></Metadata><TypeSignature Language="C#" Value="public class ResourceManager" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit ResourceManager extends System.Object" />
   <TypeSignature Language="DocId" Value="T:System.Resources.ResourceManager" />
   <TypeSignature Language="VB.NET" Value="Public Class ResourceManager" />
@@ -50,11 +50,11 @@
 
 [!INCLUDE [untrusted-data-class-note](~/includes/untrusted-data-class-note.md)]
 
- <xref:System.Resources.ResourceManager>类检索资源嵌入程序集中的二进制.resources 文件或从独立.resources 文件。 如果应用已进行了本地化，并且已在部署已本地化的资源[附属程序集](~/docs/framework/resources/creating-satellite-assemblies-for-desktop-apps.md)，它会查找特定于区域性的资源，资源回退时提供本地化的资源不存在，并且支持资源序列化。  
+ <xref:System.Resources.ResourceManager>类从嵌入在程序集或独立 .resources 文件中的二进制 .resources 文件中检索资源。 如果已在[附属程序集中](~/docs/framework/resources/creating-satellite-assemblies-for-desktop-apps.md)部署了已本地化和已本地化的资源，则该应用程序会查找特定于区域性的资源，在已本地化的资源不存在时提供资源回退，并支持资源序列化。  
   
- 有关创建和管理桌面应用中的资源的详细信息和[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用，请参阅以下部分：  
+ 有关在桌面应用和[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中创建和管理资源的详细信息，请参阅以下部分：  
   
--   [桌面应用程序](#desktop)  
+-   [桌面应用](#desktop)  
   
     -   [创建资源](#creating_resources)  
   
@@ -68,56 +68,56 @@
   
     -   [资源版本控制](#versioning)  
   
-    -   [\<可以 > 配置文件节点](#config)  
+    -   [\<satelliteassemblies > 配置文件节点](#config)  
   
--   [Windows 应用商店应用程序](#ws)  
+-   [Windows 应用商店应用](#ws)  
   
 <a name="desktop"></a>   
-## <a name="desktop-apps"></a>桌面应用程序  
- 对于桌面应用，<xref:System.Resources.ResourceManager>类从二进制资源 (.resources) 文件中检索资源。 通常情况下，语言编译器或[程序集链接器 (AL.exe)](~/docs/framework/tools/al-exe-assembly-linker.md)这些资源文件嵌入程序集。 此外可以使用<xref:System.Resources.ResourceManager>对象来直接从程序集中未通过调用嵌入的.resources 文件中检索资源<xref:System.Resources.ResourceManager.CreateFileBasedResourceManager%2A>方法。  
+## <a name="desktop-apps"></a>桌面应用  
+ 对于桌面应用程序， <xref:System.Resources.ResourceManager>类从二进制资源（.resources）文件中检索资源。 通常，语言编译器或[程序集链接器（al.exe）](~/docs/framework/tools/al-exe-assembly-linker.md)将这些资源文件嵌入到程序集中。 <xref:System.Resources.ResourceManager> 通过<xref:System.Resources.ResourceManager.CreateFileBasedResourceManager%2A>调用方法，还可以使用对象直接从未嵌入到程序集的 .resources 文件中检索资源。  
   
 > [!CAUTION]
->  使用独立.resources 文件在 ASP.NET 应用程序将中断 XCOPY 部署，因为资源保持锁定状态，直到它们被显式释放由<xref:System.Resources.ResourceManager.ReleaseAllResources%2A>方法。 如果你想要使用 ASP.NET 应用程序部署资源，你应在.resources 文件编译到附属程序集。  
+>  使用 ASP.NET 应用程序中的独立 .resources 文件将中断 XCOPY 部署，因为在<xref:System.Resources.ResourceManager.ReleaseAllResources%2A>方法显式释放资源之前，这些资源将一直保持锁定状态。 如果要将资源与 ASP.NET 应用程序一起部署，应将 .resources 文件编译为附属程序集。  
   
- 在基于资源的应用中，一个.resources 文件包含将使用其资源，如果找不到任何特定于区域性的资源的默认区域性的资源。 例如，如果应用程序的默认区域性为英语 (en)，只要已本地化的资源不能找到有关特定区域性，例如英语 （美国） （英文） 或法语 （法国） (FR-FR) 使用英语语言资源。 通常情况下，默认区域性的资源嵌入主应用程序集，并为其他本地化区域性的资源嵌入在附属程序集中。 附属程序集只能包含资源。 它们具有相同根文件名与主程序集和的扩展。 resources.dll。 对于应用程序不在全局程序集缓存中注册的程序集，附属程序集存储在其名称与程序集的区域性相对应的应用程序子目录中。  
+ 在基于资源的应用程序中，一个 .resources 文件包含默认区域性的资源，如果找不到特定于区域性的资源，则使用其资源。 例如，如果应用的默认区域性为英语（en），则当找不到特定区域性的本地化资源（例如英语（美国）（en-us）或法语（法国）（fr））时，将使用英语资源。 通常，默认区域性的资源嵌入主应用程序集中，其他本地化的区域性的资源嵌入在附属程序集中。 附属程序集只包含资源。 它们与主程序集具有相同的根文件名，扩展名为 .resources。 对于其程序集未在全局程序集缓存中注册的应用程序，附属程序集存储在其名称与程序集的区域性相对应的应用程序子目录中。  
   
 <a name="creating_resources"></a>   
 ### <a name="creating-resources"></a>创建资源  
- 要开发基于资源的应用，存储资源信息文本文件 （.txt 或.restext 扩展名的文件） 或 XML 文件 （扩展名为.resx 的文件） 中。 然后编译的文本或 XML 文件，而[资源文件生成器 (Resgen.exe)](~/docs/framework/tools/resgen-exe-resource-file-generator.md)创建二进制.resources 文件。 你可以然后嵌入生成的.resources 文件中的可执行文件或库使用编译器选项类似于`/resources`的 C# 和 Visual Basic 编译器，也可以将其嵌入附属程序集使用。 如果 Visual Studio 项目中包括的.resx 文件，Visual Studio 处理在编译和嵌入的默认和已本地化的资源自动生成过程的一部分。  
+ 开发基于资源的应用时，会将资源信息存储在文本文件（扩展名为 .txt 或 .restext 的文件）或 XML 文件（扩展名为 .resx 的文件）中。 然后，使用[资源文件生成器（resgen.exe）](~/docs/framework/tools/resgen-exe-resource-file-generator.md)编译文本或 XML 文件，以创建二进制 .resources 文件。 然后，可以通过使用编译器选项（如） `/resources` C#和 Visual Basic 编译器将生成的 .resources 文件嵌入到可执行文件或库中，也可以使用将其嵌入到附属程序集中。 如果你在 Visual Studio 项目中包含 .resx 文件，则 Visual Studio 将在生成过程中自动处理默认值和本地化资源的编译和嵌入。  
   
- 理想情况下，应创建您的应用程序为每种语言的资源支持，或至少意义的每种语言子集。 二进制.resources 文件名称遵循命名约定*basename*。*cultureName*.resources，其中*basename*是应用的名称或类，具体取决于所需的详细级别的名称。 <xref:System.Globalization.CultureInfo.Name%2A?displayProperty=nameWithType>属性用于确定*cultureName*。 应用程序的默认区域性的资源应命名为*basename*.resources。  
+ 理想情况下，应为应用支持的每种语言创建资源，或至少为每种语言的有意义的子集创建资源。 二进制 .resources 文件名称遵循命名约定*basename*。*cultureName*，其中*basename*是应用的名称或类的名称，具体取决于所需的详细程度。 属性用于确定*cultureName。* <xref:System.Globalization.CultureInfo.Name%2A?displayProperty=nameWithType> 应用的默认区域性的资源应命名为*basename*。  
   
- 例如，假设程序集具有 MyResources 的基名称的资源文件中包含多个资源。 这些资源文件应采用 MyResources.ja JP.resources 如对于日语 （日本） 区域性，对于德语区域性，MyResources.zh CHS.resources 简化的中文区域性 MyResources.de.resources 的名称和法语 （比利时） 区域性 MyResources.fr BE.resources。 默认资源文件应命名为 MyResources.resources。 特定于区域性的资源文件中的每个区域性附属程序集通常打包。 默认资源文件应嵌入应用的主程序集。  
+ 例如，假设程序集在资源文件中有多个资源，而该资源文件的基名称为 MyResources。 这些资源文件的名称应为日本（日本）区域性的 "MyResources"、"德语"、"MyResources"、"zh-chs"、"简体中文" 和 "MyResources" 等资源。MyResources.fr 法语（比利时）区域性的资源。 默认的资源文件应命名为 MyResources。 区域性特定的资源文件通常打包在每个区域性的附属程序集中。 默认资源文件应该嵌入应用程序的主程序集中。  
   
- 请注意，[程序集链接器](~/docs/framework/tools/al-exe-assembly-linker.md)允许资源标记为专用，但您应始终将其标记为公用以便它们可以访问由其他程序集。 （附属程序集不包含代码，因为标记为专用的资源是通过任何机制向应用不可用。）  
+ 请注意，[程序集链接器](~/docs/framework/tools/al-exe-assembly-linker.md)允许将资源标记为私有，但应始终将其标记为公共，以便其他程序集可以访问这些资源。 （因为附属程序集不包含任何代码，所以标记为私有的资源对您的应用程序无法通过任何机制使用。）  
   
- 有关创建的详细信息，打包和部署资源，请参阅文章[创建资源文件](~/docs/framework/resources/creating-resource-files-for-desktop-apps.md)，[创建附属程序集](~/docs/framework/resources/creating-satellite-assemblies-for-desktop-apps.md)，和[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)。  
+ 有关创建、打包和部署资源的详细信息，请参阅文章[创建资源文件](~/docs/framework/resources/creating-resource-files-for-desktop-apps.md)、[创建附属程序集](~/docs/framework/resources/creating-satellite-assemblies-for-desktop-apps.md)以及[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)。  
   
 <a name="instantiating"></a>   
 ### <a name="instantiating-a-resourcemanager-object"></a>实例化 ResourceManager 对象  
- 实例化<xref:System.Resources.ResourceManager>通过调用其类构造函数重载从嵌入的.resources 文件中检索资源的对象。 此紧密耦合<xref:System.Resources.ResourceManager>对象与特定的.resources 文件和任何关联本地化附属程序集中的.resources 文件。  
+ 可以实例化<xref:System.Resources.ResourceManager>一个对象，该对象通过调用其类构造函数重载之一从嵌入的 .resources 文件中检索资源。 这会将<xref:System.Resources.ResourceManager>对象与特定 .resources 文件和附属程序集中任何关联的本地化 .resources 文件紧密耦合在一起。  
   
- 两个最常调用的构造函数是：  
+ 最常调用的两个构造函数为：  
   
--   <xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29> 查找资源根据您提供的信息的两个部分：.resources 文件，并在其中驻留的默认.resources 文件的程序集的基名称。 基名称包括命名空间和根名称的.resources 文件，而无需其区域性或扩展。 请注意，通常从命令行编译的.resources 文件不包括命名空间名称，而在 Visual Studio 环境中创建的.resources 文件执行操作。 例如，如果一个资源文件命名为 MyCompany.StringResources.resources 并<xref:System.Resources.ResourceManager>从名为的静态方法调用构造函数`Example.Main`，下面的代码实例化<xref:System.Resources.ResourceManager>可以检索从资源的对象。资源文件：  
+-   <xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29>基于您提供的两个信息段查找资源： .resources 文件的基名称和默认 .resources 文件所在的程序集。 基名称包含 .resources 文件的命名空间和根名称，而不包含其区域性或扩展名。 请注意，从命令行编译的资源文件通常不包括命名空间名称，而在 Visual Studio 环境中创建的资源文件则执行此操作。 例如，如果资源文件命名为 MyCompany，并且<xref:System.Resources.ResourceManager>构造函数是从名为`Example.Main`的静态方法调用的，则下面的代码将实例化一个<xref:System.Resources.ResourceManager>可以从中检索资源的对象。资源文件：  
   
      [!code-csharp[Conceptual.Resources.Retrieving#1](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/ctor1.cs#1)]
      [!code-vb[Conceptual.Resources.Retrieving#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/ctor1.vb#1)]  
   
--   <xref:System.Resources.ResourceManager.%23ctor%28System.Type%29> 查找基于从类型对象的信息的附属程序集中的资源。 该类型的完全限定的名称对应于.resources 文件，而不进行其文件扩展名的基名称。 在使用 Visual Studio 资源设计器创建的桌面应用程序，Visual Studio 创建一个包装器类，其完全限定的名称是.resources 文件的根名称相同。 例如，如果一个资源文件命名为 MyCompany.StringResources.resources 并且没有名为的包装器类`MyCompany.StringResources`，下面的代码实例化<xref:System.Resources.ResourceManager>可以从.resources 文件中检索资源的对象：  
+-   <xref:System.Resources.ResourceManager.%23ctor%28System.Type%29>基于类型对象中的信息在附属程序集内查找资源。 该类型的完全限定名对应于 .resources 文件的基名称，而不包含其文件扩展名。 在使用 Visual Studio 资源设计器创建的桌面应用程序中，Visual Studio 会创建一个包装类，它的完全限定名与 .resources 文件的根名称相同。 例如，如果资源文件命名为 MyCompany，并且有一个名为`MyCompany.StringResources`的包装器类，则以下代码将实例化一个<xref:System.Resources.ResourceManager>可以从 .resources 文件中检索资源的对象：  
   
      [!code-csharp[Conceptual.Resources.Retrieving#2](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/ctor1.cs#2)]
      [!code-vb[Conceptual.Resources.Retrieving#2](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/ctor1.vb#2)]  
   
- 如果找不到相应的资源，构造函数调用将创建一个有效<xref:System.Resources.ResourceManager>对象。 但是，尝试检索的资源将引发<xref:System.Resources.MissingManifestResourceException>异常。 有关如何处理异常有关的信息，请参阅[处理 MissingManifestResourceException 和 MissingSatelliteAssembly 异常](#exception)本文后面的部分。  
+ 如果找不到合适的资源，则构造函数调用会创建<xref:System.Resources.ResourceManager>一个有效的对象。 不过，尝试检索资源会引发<xref:System.Resources.MissingManifestResourceException>异常。 有关处理异常的信息，请参阅本文后面的 "[处理 MissingManifestResourceException 和 MissingSatelliteAssembly 异常](#exception)" 一节。  
   
- 下面的示例演示如何实例化<xref:System.Resources.ResourceManager>对象。 它包含名为 ShowTime.exe 的可执行文件的源代码。 它还包括名为 Strings.txt 的包含一个单个字符串的资源的以下文本文件`TimeHeader`:  
+ 下面的示例演示如何实例化<xref:System.Resources.ResourceManager>对象。 它包含名为 ShowTime 的可执行文件的源代码。 它还包括以下名为 Strings 的文本文件， `TimeHeader`其中包含单个字符串资源：  
   
 ```  
 TimeHeader=The current time is  
 ```  
   
- 批处理文件可用于生成资源文件，并将其嵌入到可执行文件。 下面是批处理文件，以便使用 C# 编译器生成可执行文件：  
+ 可以使用批处理文件生成资源文件，并将其嵌入到可执行文件中。 下面是使用C#编译器生成可执行文件的批处理文件：  
   
 ```  
   
@@ -140,44 +140,44 @@ vbc ShowTime.vb /resource:strings.resources
   
 <a name="CultureSpecific"></a>   
 ### <a name="resourcemanager-and-culture-specific-resources"></a>ResourceManager 和特定于区域性的资源  
- 本地化的应用需要要部署资源，如文章中讨论[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)。 如果正确配置程序集，资源管理器将确定哪些资源检索基于当前线程的<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性。 （该属性还返回当前线程的 UI 区域性。）例如，如果使用编译的应用程序默认英语语言中的资源的主程序集以及法语和俄罗斯语语言资源附属程序集中两个，和<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性设置为 FR-FR，则资源管理器检索法语资源。  
+ 本地化应用需要部署资源，如[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)一文中所述。 如果正确配置了程序集，则资源管理器会根据当前线程的<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性来确定要检索的资源。 （该属性还返回当前线程的 UI 区域性。）例如，如果某个应用使用主程序集中的默认英语资源进行编译，并且在两个附属程序集中使用法语和俄语语言资源，并且该<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性设置为 fr-fr，则资源管理器将检索法语中心.  
   
- 可以设置<xref:System.Globalization.CultureInfo.CurrentUICulture%2A>属性显式或隐式。 将其设置的方式确定如何<xref:System.Resources.ResourceManager>对象检索基于区域性的资源：  
+ 可以显式或隐<xref:System.Globalization.CultureInfo.CurrentUICulture%2A>式设置属性。 设置此方法的方式决定了<xref:System.Resources.ResourceManager>对象如何根据区域性检索资源：  
   
--   如果显式设置<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性设置为特定区域性，资源管理器始终检索该区域性，而不考虑用户的浏览器或操作系统语言的资源。 请考虑使用默认英语语言资源编译的应用和英语 （美国）、 法语 （法国） 和俄语 （俄罗斯） 包含资源的三个附属程序集。 如果<xref:System.Globalization.CultureInfo.CurrentUICulture%2A>属性设置为 FR-FR，<xref:System.Resources.ResourceManager>对象始终检索法语 （法国） 资源，即使用户的操作系统语言不是法语。 请确保这是所需的行为，然后再显式设置该属性。  
+-   如果将<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性显式设置为特定区域性，则资源管理器始终会检索该区域性的资源，而不考虑用户的浏览器或操作系统语言。 假设某个应用使用默认的英语资源和三个附属程序集进行编译，其中包含英语（美国）、法语（法国）和俄语（俄罗斯）的资源。 如果将<xref:System.Resources.ResourceManager>属性设置为 fr-fr，则对象将始终检索法语（法国）资源，即使用户的操作系统语言不是法语。 <xref:System.Globalization.CultureInfo.CurrentUICulture%2A> 在显式设置属性之前，请确保这是所需的行为。  
   
-     在 ASP.NET 应用中，您必须设置<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性明确，因为它是不太可能在服务器上的设置将匹配传入客户端请求。 ASP.NET 应用程序可以设置<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性显式为用户的浏览器接受的语言。  
+     在 ASP.NET apps 中，必须显式设置<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性，因为服务器上的设置可能不会与传入的客户端请求匹配。 ASP.NET 应用可以将<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性显式设置为用户的浏览器接受语言。  
   
-     显式设置<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性定义该线程的当前 UI 区域性。 它不会影响应用程序中的任何其他线程的当前 UI 区域性。  
+     显式设置<xref:System.Threading.Thread.CurrentUICulture%2A?displayProperty=nameWithType>属性可定义该线程的当前 UI 区域性。 它不会影响应用程序中任何其他线程的当前 UI 区域性。  
   
--   可以通过将分配应用程序域中设置的所有线程 UI 区域性<xref:System.Globalization.CultureInfo>对象，表示该区域性对静态<xref:System.Globalization.CultureInfo.DefaultThreadCurrentUICulture%2A?displayProperty=nameWithType>属性。  
+-   可以通过将表示区域性的<xref:System.Globalization.CultureInfo>对象分配给静态<xref:System.Globalization.CultureInfo.DefaultThreadCurrentUICulture%2A?displayProperty=nameWithType>属性，来设置应用程序域中所有线程的 UI 区域性。  
   
--   如果未显式设置当前 UI 区域性，并且未定义当前的应用程序域中，默认区域性<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>隐式设置属性由 Windows`GetUserDefaultUILanguage`函数。 提供此函数是通过多语言用户界面 (MUI)，这使用户能够设置默认语言。 如果用户未设置的 UI 语言，则默认为系统安装的语言，它是操作系统资源的语言。  
+-   如果未显式设置当前 UI 区域性并且未定义当前应用程序域的默认区域性，则 Windows <xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType> `GetUserDefaultUILanguage`函数将隐式设置该属性。 此函数由多语言用户界面（MUI）提供，使用户能够设置默认语言。 如果用户未设置 UI 语言，则默认为系统安装的语言，这是操作系统资源的语言。  
   
- 下面的简单"Hello world"示例显式设置当前 UI 区域性。 它包含三种区域性的资源：英语 （美国） 或 EN-US、 法语 （法国） FR-FR，和俄语 （俄罗斯） 或 ru RU。 在一个名为 Greetings.txt 文本文件中包含 EN-US 资源：  
+ 以下简单的 "Hello world" 示例显式设置了当前 UI 区域性。 它包含三个区域性的资源：英语（美国）或 en-us、法语（法国）或 fr-fr、俄语（俄罗斯）或 ru。 En-us 资源包含在名为 "问候" 的文本文件中：  
   
 ```  
 HelloString=Hello world!  
 ```  
   
- -FR 资源都包含在一个名为 Greetings.fr 文本文件-FR.txt:  
+ Fr-fr 资源包含在名为 Greetings.fr-FR.TXT 的文本文件中：  
   
 ```  
 HelloString=Salut tout le monde!  
 ```  
   
- Ru RU 资源都包含在一个名为 Greetings.ru 文本文件-RU.txt:  
+ Ru-RU 资源包含在名为 Greetings.ru-RU.TXT 的文本文件中：  
   
 ```  
 HelloString=Всем привет!  
 ```  
   
- 下面是示例 (Visual Basic 版本 Example.vb) 或 Example.cs 对于 C# 版本的源代码：  
+ 下面是此示例的源代码（示例 .vb 适用于该C#版本的 Visual Basic 版本或 Example.cs）：  
   
  [!code-csharp[Conceptual.Resources.CurrentCulture#1](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.currentculture/cs/example.cs#1)]
  [!code-vb[Conceptual.Resources.CurrentCulture#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.currentculture/vb/example.vb#1)]  
   
- 若要编译此示例，请创建包含以下命令，从命令提示符运行它的批处理 (.bat) 文件。 如果你正在使用 C#，指定`csc`而不是`vbc`并`Example.cs`而不是`Example.vb`。  
+ 若要编译此示例，请创建一个包含以下命令的批处理（.bat）文件，并从命令提示符运行该文件。 C#如果使用的是，请`csc`指定而`vbc`不`Example.cs`是和`Example.vb`而不是。  
   
 ```  
 resgen Greetings.txt   
@@ -194,27 +194,27 @@ al /embed:Greetings.ru-RU.resources /culture:ru-RU /out:ru-RU\Example.resources.
   
 <a name="retrieving"></a>   
 ### <a name="retrieving-resources"></a>检索资源  
- 在调用<xref:System.Resources.ResourceManager.GetObject%28System.String%29>和<xref:System.Resources.ResourceManager.GetString%28System.String%29>方法来访问特定资源。 您还可以调用<xref:System.Resources.ResourceManager.GetStream%28System.String%29>方法来检索非字符串资源，作为字节数组。 默认情况下，在应用的已本地化的资源，这些方法都返回由执行调用的线程的当前 UI 区域性的区域性的资源。 请参阅上一节[ResourceManager 和特定于区域性的资源](#CultureSpecific)，详细了解如何定义一个线程的当前 UI 区域性。 如果资源管理器找不到当前线程的 UI 区域性的资源，它使用回退过程来检索指定的资源。 如果资源管理器找不到任何本地化的资源，则使用默认区域性的资源。 有关资源回退规则的详细信息，请参阅文章的"资源回退进程"部分[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)。  
+ 调用<xref:System.Resources.ResourceManager.GetObject%28System.String%29> 和<xref:System.Resources.ResourceManager.GetString%28System.String%29>方法来访问特定资源。 还可以调用<xref:System.Resources.ResourceManager.GetStream%28System.String%29>方法以将非字符串资源作为字节数组来检索。 默认情况下，在已本地化资源的应用程序中，这些方法返回由进行调用的线程的当前 UI 区域性确定的区域性的资源。 有关如何定义线程的当前 UI 区域性的详细信息，请参阅上一节： [ResourceManager 和特定于区域性的资源](#CultureSpecific)。 如果资源管理器找不到当前线程的 UI 区域性的资源，它将使用回退进程来检索指定的资源。 如果资源管理器找不到任何已本地化的资源，它将使用默认区域性的资源。 有关资源回退规则的详细信息，请参阅[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)一文中的 "资源回退进程" 一节。  
   
 > [!NOTE]
->  如果在指定的.resources 文件<xref:System.Resources.ResourceManager>找不到类构造函数，则尝试检索的资源将引发<xref:System.Resources.MissingManifestResourceException>或<xref:System.Resources.MissingSatelliteAssemblyException>异常。 有关如何处理异常有关的信息，请参阅[处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常](#exception)本主题后面的部分。  
+>  如果找不到<xref:System.Resources.ResourceManager>类构造函数中指定的 .resources 文件，尝试检索资源会<xref:System.Resources.MissingManifestResourceException>引发或<xref:System.Resources.MissingSatelliteAssemblyException>异常。 有关处理异常的信息，请参阅本主题后面的 "[处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常](#exception)" 一节。  
   
- 下面的示例使用<xref:System.Resources.ResourceManager.GetString%2A>方法来检索特定于区域性的资源。 针对英语 (en)、 法语 （法国） (FR-FR) 和俄语 （俄罗斯） (RU-RU).txt 文件中编译的资源组成的区域性。 该示例将当前区域性和当前 UI 区域性更改为英语 （美国）、 法语 （法国）、 俄语 （俄罗斯） 和瑞典语 （瑞典）。 然后，它调用<xref:System.Resources.ResourceManager.GetString%2A>方法来检索它的当前日期和月份一起显示的本地化的字符串。 请注意，输出会显示除了当前 UI 区域性是瑞典语 （瑞典） 之外的相应本地化的字符串。 瑞典语语言资源不可用，因为该应用将改为使用的是英语的默认区域性的资源。  
+ 下面的示例使用<xref:System.Resources.ResourceManager.GetString%2A>方法检索特定于区域性的资源。 它包含从 .txt 文件中编译的、英语（en）、法语（法国）（fr）和俄语（俄罗斯）（ru）区域性的资源。 该示例将当前区域性和当前 UI 区域性更改为英语（美国）、法语（法国）、俄语（俄罗斯）和瑞典语（瑞典）。 然后，它调用<xref:System.Resources.ResourceManager.GetString%2A>方法来检索本地化字符串，该字符串与当前日期和月份一起显示。 请注意，输出将显示适当的本地化字符串，除非当前 UI 区域性为 "瑞典语（瑞典）"。 由于瑞典语资源不可用，因此应用会改用默认区域性的资源，即英语。  
   
- 该示例需要下表中列出的基于文本的资源文件。 每个都有一个名为的单个字符串资源`DateStart`。  
+ 该示例需要下表中列出的基于文本的资源文件。 每个都有一个名为`DateStart`的字符串资源。  
   
 |culture|文件名|资源名称|资源值|  
 |-------------|---------------|-------------------|--------------------|  
-|en-US|DateStrings.txt|`DateStart`|假设今天是|  
+|en-US|DateStrings.txt|`DateStart`|今天是|  
 |fr-FR|DateStrings.fr-FR.txt|`DateStart`|Aujourd'hui，c'est le|  
 |ru-RU|DateStrings.ru-RU.txt|`DateStart`|Сегодня|  
   
- 下面是示例 (Visual Basic 版本 ShowDate.vb) 或 ShowDate.cs 代码的 C# 版本的源代码。  
+ 下面是示例的源代码（适用于 Visual Basic 版本的 ShowDate 或代码C#版本的 ShowDate.cs）。  
   
  [!code-csharp[System.Resources.ResourceManager.Class#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.class/cs/showdate.cs#2)]
  [!code-vb[System.Resources.ResourceManager.Class#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.class/vb/showdate.vb#2)]  
   
- 若要编译此示例，请创建包含以下命令，从命令提示符运行它的批处理文件。 如果你正在使用 C#，指定`csc`而不是`vbc`并`showdate.cs`而不是`showdate.vb`。  
+ 若要编译此示例，请创建一个包含以下命令的批处理文件，并从命令提示符运行该文件。 C#如果使用的是，请`csc`指定而`vbc`不`showdate.cs`是和`showdate.vb`而不是。  
   
 ```  
   
@@ -231,43 +231,43 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
   
 ```  
   
- 有两种方法来检索当前 UI 区域性非特定区域性的资源：  
+ 可以通过两种方法来检索当前 UI 区域性以外的特定区域性的资源：  
   
--   您可以调用<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>， <xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29>，或<xref:System.Resources.ResourceManager.GetStream%28System.String%2CSystem.Globalization.CultureInfo%29>方法来检索特定区域性的资源。 如果找不到已本地化的资源，资源管理器使用资源回退进程找到适当的资源。  
+-   可以调用<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>、 <xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29>或<xref:System.Resources.ResourceManager.GetStream%28System.String%2CSystem.Globalization.CultureInfo%29>方法来检索特定区域性的资源。 如果找不到本地化的资源，资源管理器将使用资源回退进程来查找适当的资源。  
   
--   您可以调用<xref:System.Resources.ResourceManager.GetResourceSet%2A>方法来获取<xref:System.Resources.ResourceSet>对象，表示特定区域性的资源。 在方法调用中，您可以确定是否资源管理器探测的父区域性如果找不到本地化的资源，或是否它只需将回退到默认区域性的资源。 然后，可以使用<xref:System.Resources.ResourceSet>方法来访问资源 （已本地化为该区域性） 的名称，或枚举集内的资源。  
+-   可以调用<xref:System.Resources.ResourceManager.GetResourceSet%2A>方法来<xref:System.Resources.ResourceSet>获取表示特定区域性的资源的对象。 在方法调用中，如果资源管理器找不到已本地化的资源，或者是否只是回退到默认区域性的资源，则可以确定资源管理器是否对父区域性进行探测。 然后，可以使用这些<xref:System.Resources.ResourceSet>方法通过名称访问资源（针对该区域性进行了本地化）或枚举集中的资源。  
   
 <a name="exception"></a>   
 ### <a name="handling-missingmanifestresourceexception-and-missingsatelliteassemblyexception-exceptions"></a>处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常  
- 如果您尝试检索特定的资源，但资源管理器找不到，已定义资源和任一没有默认区域性或默认区域性的资源找不到，资源管理器将引发<xref:System.Resources.MissingManifestResourceException>异常如果它需要在主程序集中查找的资源或<xref:System.Resources.MissingSatelliteAssemblyException>如果期望的附属程序集中找到资源。 请注意时如调用资源检索方法将引发异常<xref:System.Resources.ResourceManager.GetString%2A>或<xref:System.Resources.ResourceManager.GetObject%2A>，并不在实例<xref:System.Resources.ResourceManager>对象。  
+ 如果尝试检索特定资源，但资源管理器找不到该资源，或者未定义默认区域性，或者无法定位默认区域性的资源，则资源管理器将引发<xref:System.Resources.MissingManifestResourceException>异常。<xref:System.Resources.MissingSatelliteAssemblyException>如果需要在附属程序集中查找资源，则应查找主程序集中的资源或。 请注意，当您调用资源检索方法（如<xref:System.Resources.ResourceManager.GetString%2A>或<xref:System.Resources.ResourceManager.GetObject%2A>），而<xref:System.Resources.ResourceManager>不是实例化对象时，将引发异常。  
   
- 在以下情况下，通常会引发异常：  
+ 通常，在下列情况下会引发异常：  
   
--   相应的资源文件或附属程序集不存在。 如果资源管理器预期要在主应用程序集中嵌入的应用程序的默认资源，它们没有显示。 如果<xref:System.Resources.NeutralResourcesLanguageAttribute>属性指示应用程序的默认资源位于附属程序集中，找不到程序集。 在编译您的应用程序时，请确保资源嵌入在主程序集中或必要的附属程序集生成，适当地命名。 其名称应采用以下形式*appName*。 resources.dll，并且它应位于名为后它包含了资源的区域性的目录。  
+-   适当的资源文件或附属程序集不存在。 如果资源管理器希望在主应用程序集中嵌入应用的默认资源，则这些资源不存在。 如果该<xref:System.Resources.NeutralResourcesLanguageAttribute>特性指示应用程序的默认资源位于附属程序集中，则找不到该程序集。 在编译应用程序时，请确保将资源嵌入到主程序集中，或者生成必要的附属程序集并正确命名。 其名称应采用*appName*. .resources 格式，并应位于以其所包含资源的区域性命名的目录中。  
   
--   您的应用程序没有默认值或定义的非特定区域性。 添加<xref:System.Resources.NeutralResourcesLanguageAttribute>属性到源代码文件或项目信息文件 (Visual Basic 应用程序的 AssemblyInfo.vb) 或 C# 应用程序的 AssemblyInfo.cs 文件。  
+-   应用未定义默认或非特定区域性。 将特性添加到源代码文件或项目信息文件（AssemblyInfo 应用程序的 Visual Basic 或C#应用程序的 AssemblyInfo.cs）文件。 <xref:System.Resources.NeutralResourcesLanguageAttribute>  
   
--   `baseName`中的参数<xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29>构造函数没有指定的.resources 文件的名称。 该名称应包含资源文件的完全限定命名空间，但不是其文件扩展名。 通常情况下，在 Visual Studio 中创建的资源文件包含命名空间名称，但创建并在命令提示符下编译的资源文件不这样做。 您可以通过编译并运行以下实用程序确定的嵌入的.resources 文件的名称。 这是一个控制台应用，接受主程序集或附属程序集作为命令行参数的名称。 它将显示的字符串，应作为提供`baseName`参数，以便资源管理器可以正确识别的资源。  
+-   构造<xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29>函数中的`baseName`参数未指定 .resources 文件的名称。 名称应包括资源文件的完全限定命名空间，但不包括其文件扩展名。 通常，在 Visual Studio 中创建的资源文件包含命名空间名称，但是在命令提示符处创建和编译的资源文件不会包含在内。 可以通过编译并运行以下实用工具来确定嵌入 .resources 文件的名称。 这是一个控制台应用，它接受主程序集或附属程序集的名称作为命令行参数。 它显示应作为`baseName`参数提供的字符串，以便资源管理器可以正确地识别资源。  
   
      [!code-csharp[System.Resources.ResourceManager.Class#4](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.class/cs/resourcenames.cs#4)]
      [!code-vb[System.Resources.ResourceManager.Class#4](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.class/vb/resourcenames.vb#4)]  
   
- 如果要显式更改你的应用程序的当前区域性，您还应该记住，资源管理器检索值的基础的资源集<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性，而不<xref:System.Globalization.CultureInfo.CurrentCulture%2A?displayProperty=nameWithType>属性。 通常情况下，如果更改一个值，您还应更改其他。  
+ 如果要显式更改应用程序的当前区域性，还应记住，资源管理器将基于<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性的值而<xref:System.Globalization.CultureInfo.CurrentCulture%2A?displayProperty=nameWithType>不是属性来检索资源集。 通常情况下，如果更改一个值，则还应更改另一个值。  
   
 <a name="versioning"></a>   
 ### <a name="resource-versioning"></a>资源版本控制  
- 因为主程序集，它包含应用程序的默认资源是独立于应用程序的附属程序集，您可以发布主程序集的新版本，无需重新部署附属程序集。 您使用<xref:System.Resources.SatelliteContractVersionAttribute>属性以使用现有附属程序集，并指示资源管理器无法重新部署它们使用新版本的主程序集，  
+ 由于包含应用的默认资源的主程序集是独立于应用程序的附属程序集，因此，您可以在不重新部署附属程序集的情况下发布主程序集的新版本。 使用<xref:System.Resources.SatelliteContractVersionAttribute>特性可使用现有附属程序集，并指示资源管理器不要使用新版本的主程序集重新部署它们。  
   
- 有关版本控制支持附属程序集的详细信息，请参阅文章[中检索资源](~/docs/framework/resources/retrieving-resources-in-desktop-apps.md)。  
+ 有关对附属程序集的版本控制支持的详细信息，请参阅文章[检索资源](~/docs/framework/resources/retrieving-resources-in-desktop-apps.md)。  
   
 <a name="config"></a>   
-### <a name="satelliteassemblies-configuration-file-node"></a>\<可以 > 配置文件节点  
- 对可执行文件的部署和运行网站 （HREF.exe 文件） 从<xref:System.Resources.ResourceManager>对象可能通过 web，可能会损害您的应用程序性能探测附属程序集。 若要消除的性能问题，您可以限制此探测到已部署了您的应用程序的附属程序集。 若要执行此操作，创建`<satelliteassemblies>`应用程序的配置文件来指定在为您的应用程序，并且部署了一组特定的区域性中的节点<xref:System.Resources.ResourceManager>对象不应尝试在该节点中未列出任何区域性探测。  
+### <a name="satelliteassemblies-configuration-file-node"></a>\<satelliteassemblies > 配置文件节点  
+ 对于从网站（HREF 文件）部署和运行的可执行文件，该<xref:System.Resources.ResourceManager>对象可能会通过 web 探测附属程序集，这可能会损害应用程序的性能。 若要消除性能问题，可以将此探测范围限制为已与应用一起部署的附属程序集。 为此，请在应用程序`<satelliteassemblies>`的配置文件中创建一个节点，以指定已为应用程序部署了一组特定的区域性，并且<xref:System.Resources.ResourceManager>该对象不应尝试探测该节点中未列出的任何区域性。  
   
 > [!NOTE]
->  创建的首选的备用`<satelliteassemblies>`节点是使用[ClickOnce 部署清单](https://msdn.microsoft.com/library/8457e615-e3b6-4990-8dcf-11bc590e4e9b)功能。  
+>  创建`<satelliteassemblies>`节点的首选替代方法是使用[ClickOnce 部署清单](https://msdn.microsoft.com/library/8457e615-e3b6-4990-8dcf-11bc590e4e9b)功能。  
   
- 在您的应用程序配置文件中，创建一个部分类似于下面：  
+ 在应用的配置文件中，创建如下所示的部分：  
   
 ```  
 <?xml version ="1.0"?>  
@@ -284,40 +284,40 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
   
  按如下所示编辑此配置信息：  
   
--   指定一个或多个`<assembly>`节点的每个主要的程序集的部署，其中每个节点指定完全限定的程序集名称。 指定名称的主程序集来代替*MainAssemblyName*，并指定`Version`， `PublicKeyToken`，和`Culture`到主程序集的属性相对应的值。  
+-   为部署的每`<assembly>`个主程序集指定一个或多个节点，其中每个节点指定完全限定的程序集名称。 指定主程序集的名称代替*MainAssemblyName*，并指定`Version`、 `PublicKeyToken`和`Culture`属性值，这些值对应于主程序集。  
   
-     有关`Version`属性，指定您的程序集的版本号。 例如，您的程序集的第一个版本可能是 1.0.0.0 的版本号。  
+     对于 " `Version`属性"，请指定程序集的版本号。 例如，程序集的第一个版本可能是版本号1.0.0.0。  
   
-     有关`PublicKeyToken`属性，请指定关键字`null`如果未签名程序集具有强名称，或如果您已签名程序集指定公钥标记。  
+     对于属性，如果尚未使用强`null`名称对程序集进行签名，则指定关键字; 如果已对程序集进行签名，则指定公钥标记。 `PublicKeyToken`  
   
-     有关`Culture`属性，请指定关键字`neutral`指定主程序集，从而使<xref:System.Resources.ResourceManager>类来探测程序中列出的区域性只有`<culture>`节点。  
+     对于特性，指定关键字`neutral`以指定<xref:System.Resources.ResourceManager>主程序集，并使类只对`<culture>`节点中列出的区域性进行探测。 `Culture`  
   
-     有关完全限定的程序集名称的详细信息，请参阅文章[程序集名称](~/docs/framework/app-domains/assembly-names.md)。 有关强名称的程序集的详细信息，请参阅文章[创建和使用具有强名称程序集](~/docs/framework/app-domains/create-and-use-strong-named-assemblies.md)。  
+     有关完全限定的程序集名称的详细信息，请参阅[程序集名称](~/docs/framework/app-domains/assembly-names.md)一文。 有关强名称程序集的详细信息，请参阅[创建和使用具有强名称的程序集](~/docs/framework/app-domains/create-and-use-strong-named-assemblies.md)一文。  
   
--   指定一个或多个`<culture>`具有特定的区域性名称，如"FR-FR"或一个非特定区域性名称，例如"fr"的节点。  
+-   指定一个或多`<culture>`个具有特定区域性名称（如 "fr"）或非特定区域性名称（如 "fr"）的节点。  
   
- 如果所需的任何程序集下未列出的资源`<satelliteassemblies>`节点，<xref:System.Resources.ResourceManager>类探测器，以便使用标准的探测规则的区域性。  
+ 如果`<satelliteassemblies>`节点中未列出的任何程序集需要资源，则<xref:System.Resources.ResourceManager>该类使用标准探测规则探测区域性。  
   
 <a name="ws"></a>   
-## <a name="includewin8appnamelongincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
+## <a name="includewin8_appname_longincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
   
 > [!IMPORTANT]
->  尽管<xref:System.Resources.ResourceManager>类支持在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用，我们不建议使用。 仅在开发时使用此类[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可用于项目[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用。 用于从检索资源[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用，使用[Windows.ApplicationModel.Resources.ResourceLoader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
+>  尽管此<xref:System.Resources.ResourceManager>类在应用中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]受支持，但我们不建议使用它。 仅当你开发[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]用于应用程序的项目时，才使用此类。 若要从[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中检索资源，请改用[windows.applicationmodel.resources.core. windows.applicationmodel.resources.resourceloader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
   
- 有关[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序，<xref:System.Resources.ResourceManager>类从包资源索引 (PRI) 文件中检索资源。 单个 PRI 文件 （应用程序包 PRI 文件） 都包含默认区域性和任何资源本地化的区域性。 MakePRI 实用工具用于从一个或多个资源文件为 XML 资源 (.resw) 格式创建 PRI 文件。 对于 Visual Studio 项目中包含的资源，Visual Studio 处理过程： 创建和自动打包 PRI 文件。 然后，可以使用.NET Framework<xref:System.Resources.ResourceManager>类来访问应用程序或库的资源。  
+ 对于[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用<xref:System.Resources.ResourceManager> ，类从包资源索引（PRI）文件中检索资源。 单个 PRI 文件（应用程序包 PRI 文件）包含默认区域性和任何已本地化的区域性的资源。 使用 Makepri.exe 实用工具，可以从一个或多个 XML 资源文件（.resw）格式创建 PRI 文件。 对于包含在 Visual Studio 项目中的资源，Visual Studio 会自动处理创建和打包 PRI 文件的过程。 然后，可以使用 .NET Framework <xref:System.Resources.ResourceManager>类访问应用程序或库的资源。  
   
- 可以实例化<xref:System.Resources.ResourceManager>对象[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]中的桌面应用程序执行的相同方式应用。  
+ 可以采用与桌面<xref:System.Resources.ResourceManager>应用相同的[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]方式来实例化应用程序的对象。  
   
- 然后可以访问特定区域性的资源，并传递要检索到的资源名称<xref:System.Resources.ResourceManager.GetString%28System.String%29>方法。 默认情况下，此方法返回由执行调用的线程的当前 UI 区域性的区域性的资源。 此外可以通过传递的资源名称检索特定区域性的资源和一个<xref:System.Globalization.CultureInfo>对象，表示要检索到其资源区域性<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>方法。 如果找不到当前 UI 区域性或指定的区域性的资源，资源管理器将使用用户界面语言回退列表以找到合适的资源。  
+ 然后，你可以通过传递要检索到<xref:System.Resources.ResourceManager.GetString%28System.String%29>方法的资源的名称，来访问特定区域性的资源。 默认情况下，此方法返回由进行调用的线程的当前 UI 区域性确定的区域性的资源。 你还可以通过传递资源的名称和<xref:System.Globalization.CultureInfo>表示其资源要检索<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>到方法的区域性的对象来检索特定区域性的资源。 如果找不到当前 UI 区域性或指定区域性的资源，资源管理器将使用 UI 语言回退列表定位合适的资源。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用显式区域性和隐式的当前 UI 区域性获取从主程序集和附属程序集的字符串资源。 有关详细信息，请参阅的"目录位置的附属程序集未安装在全局程序集缓存"部分[创建附属程序集](~/docs/framework/resources/creating-satellite-assemblies-for-desktop-apps.md)主题。  
+ 下面的示例演示如何使用显式区域性和隐式当前 UI 区域性从主程序集和附属程序集获取字符串资源。 有关详细信息，请参阅[创建附属程序集](~/docs/framework/resources/creating-satellite-assemblies-for-desktop-apps.md)主题的 "不在全局程序集缓存中安装附属程序集的目录位置" 部分。  
   
  若要运行此示例：  
   
-1.  在 app 目录中，创建名为 rmc.txt，其中包含以下资源字符串的文件：  
+1.  在应用目录中，创建一个名为 rmc 的文件，其中包含以下资源字符串：  
   
     ```  
   
@@ -327,15 +327,15 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
   
     ```  
   
-2.  使用[资源文件生成器](~/docs/framework/tools/resgen-exe-resource-file-generator.md)从 rmc.txt 输入文件中，如下所示生成 rmc.resources 资源文件：  
+2.  使用[资源文件生成器](~/docs/framework/tools/resgen-exe-resource-file-generator.md)，按如下所示从 rmc 输入文件生成 rmc 资源文件：  
   
     ```  
     resgen rmc.txt  
     ```  
   
-3.  创建应用程序目录的子目录并将其"ES-MX"命名。 这是将在接下来三个步骤中创建的附属程序集的区域性名称。  
+3.  创建应用程序目录的子目录，并将其命名为 "es-MX"。 这是将在接下来的三个步骤中创建的附属程序集的区域性名称。  
   
-4.  创建名为 rmc.es MX.txt ES-MX 目录，其中包含以下资源字符串中的文件：  
+4.  在包含以下资源字符串的 rmc.es 目录中创建一个名为-MX 的文件：  
   
     ```  
   
@@ -345,31 +345,31 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
   
     ```  
   
-5.  使用[资源文件生成器](~/docs/framework/tools/resgen-exe-resource-file-generator.md)从 rmc.es MX.txt 输入文件中，如下所示生成 rmc.es MX.resources 资源文件：  
+5.  使用[资源文件生成器](~/docs/framework/tools/resgen-exe-resource-file-generator.md)生成 rmc.es-mx 输入文件中的 rmc.es 资源文件，如下所示：  
   
     ```  
     resgen rmc.es-MX.txt  
     ```  
   
-6.  假定此示例中的文件名是 rmc.vb 或 rmc.cs。 将以下源代码复制到一个文件。 然后对其进行编译并 rmc.resources 的主程序集资源文件嵌入可执行程序集。 如果使用 Visual Basic 编译器，语法为：  
+6.  假设此示例的文件名为 rmc 或 rmc.cs。 将以下源代码复制到一个文件中。 然后对其进行编译，并在可执行程序集中嵌入主程序集资源文件 rmc。 如果使用 Visual Basic 编译器，则语法为：  
   
     ```  
     vbc rmc.vb /resource:rmc.resources  
     ```  
   
-     C# 编译器的相应语法是：  
+     C#编译器的相应语法为：  
   
     ```  
     csc /resource:rmc.resources rmc.cs  
     ```  
   
-7.  使用[程序集链接器](~/docs/framework/tools/al-exe-assembly-linker.md)创建附属程序集。 如果应用程序的基名称，rmc 附属程序集名称必须是 rmc.resources.dll。 应在 ES-MX 目录中创建附属程序集。 如果 ES-MX 当前目录，请使用此命令：  
+7.  使用[程序集链接器](~/docs/framework/tools/al-exe-assembly-linker.md)创建附属程序集。 如果应用的基名称是 rmc，则附属程序集名称必须为 rmc。 应在 es MX 目录中创建附属程序集。 如果是当前目录，请使用以下命令：  
   
     ```  
     al /embed:rmc.es-MX.resources /c:es-MX /out:rmc.resources.dll   
     ```  
   
-8.  运行 rmc.exe 来获取并显示嵌入的资源字符串。  
+8.  运行 rmc 以获取并显示嵌入的资源字符串。  
   
  [!code-csharp[ResourceManager_Class#1](~/samples/snippets/csharp/VS_Snippets_CLR/ResourceManager_Class/cs/rmc.cs#1)]
  [!code-vb[ResourceManager_Class#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/ResourceManager_Class/vb/rmc.vb#1)]  
@@ -380,7 +380,7 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
     <altmember cref="T:System.Globalization.CultureInfo" />
     <altmember cref="P:System.Globalization.CultureInfo.CurrentUICulture" />
     <altmember cref="T:System.Resources.SatelliteContractVersionAttribute" />
-    <related type="Article" href="https://msdn.microsoft.com/library/8ad495d4-2941-40cf-bf64-e82e85825890">在应用程序中的资源</related>
+    <related type="Article" href="https://msdn.microsoft.com/library/8ad495d4-2941-40cf-bf64-e82e85825890">应用程序中的资源</related>
   </Docs>
   <Members>
     <MemberGroup MemberName=".ctor">
@@ -424,7 +424,7 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此构造函数是仅在编写您自己的类派生自<xref:System.Resources.ResourceManager>类。  
+ 仅当您编写自己的派生自<xref:System.Resources.ResourceManager>类的类时，此构造函数才有用。  
   
  ]]></format>
         </remarks>
@@ -472,36 +472,36 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
   
 ## Remarks  
   
-## <a name="desktop-apps"></a>桌面应用程序  
+## <a name="desktop-apps"></a>桌面应用  
  在桌面应用中，资源管理器使用`resourceSource`参数加载特定的资源文件，如下所示：  
   
--   如果<xref:System.Resources.NeutralResourcesLanguageAttribute>属性不用于指示默认区域性的资源位于附属程序集，资源管理器假设默认区域性的资源文件位于相同的程序集中指定的类型`resourceSource`参数。  
+-   如果未使用特性指示默认区域性的资源位于附属程序集中，则资源管理器将假定在与指定的类型相同的程序集中找到默认区域性的资源文件。 <xref:System.Resources.NeutralResourcesLanguageAttribute> `resourceSource`参数。  
   
--   资源管理器假定默认资源文件具有相同的基名称由指定的类型为`resourceSource`参数。  
+-   资源管理器假定默认资源文件的基名称与`resourceSource`参数指定的类型相同。  
   
--   资源管理器使用默认<xref:System.Resources.ResourceSet>类操作的资源文件。  
+-   资源管理器使用默认<xref:System.Resources.ResourceSet>类处理资源文件。  
   
- 例如，给定一个名为 MyCompany.MyProduct.MyType 类型，资源管理器查找.resources 文件中定义 MyType 的程序集名为 MyCompany.MyProduct.MyType.resources。  
+ 例如，假设有一个名为 MyCompany. MyProduct 的类型，则资源管理器会在定义 MyProduct 的程序集内查找名为 MyCompany. MyType. MyType..。  
   
- 在 Visual Studio 中，资源设计器会自动生成代码以定义`internal`（在 C# 中) 或`Friend`（在 Visual Basic) 类的名称是默认区域性的.resources 文件的基名称相同。 这样就可以实例化<xref:System.Resources.ResourceManager>对象，并将它与一组特定的资源通过获取其名称对应于该资源的名称的类型对象，因为资源，只要此类是对编译器可见，必须为嗯。 例如，如果.resources 文件命名为 Resource1，以下语句实例化<xref:System.Resources.ResourceManager>对象来管理名为 Resource1 的.resources 文件：  
+ 在 Visual Studio 中，资源设计器会自动生成代码， `internal`该代码C#定义了`Friend` （在中）或（在 Visual Basic）类，其名称与默认区域性的 .resources 文件的基名称相同。 这样一来，就可以通过<xref:System.Resources.ResourceManager>获取名称与资源名称对应的类型对象来实例化对象并将其与特定的一组资源相结合，因为只要类对编译器可见，资源就必须为这样. 例如，如果 .resources 文件命名为 resource1.resx，则以下语句将实例化一个<xref:System.Resources.ResourceManager>对象来管理名为 resource1.resx 的 .resources 文件：  
   
  [!code-csharp[System.Resources.ResourceManager.ctor#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.ctor/cs/ctor1.cs#2)]  
   
- 如果您不使用 Visual Studio，可以使用没有成员的命名空间和名称都相同的默认.resources 文件创建一个类。 说明如示例所示。  
+ 如果未使用 Visual Studio，则可以创建一个类，其中没有命名空间和名称与默认 .resources 文件相同的成员。 说明如示例所示。  
   
-## <a name="includewin8appnamelongincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
+## <a name="includewin8_appname_longincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
   
 > [!IMPORTANT]
->  尽管<xref:System.Resources.ResourceManager>类支持在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用，我们不建议使用。 仅在开发时使用此类[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可用于项目[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用。 用于从检索资源[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用，使用[Windows.ApplicationModel.Resources.ResourceLoader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
+>  尽管此<xref:System.Resources.ResourceManager>类在应用中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]受支持，但我们不建议使用它。 仅当你开发[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]用于应用程序的项目时，才使用此类。 若要从[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中检索资源，请改用[windows.applicationmodel.resources.core. windows.applicationmodel.resources.resourceloader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
   
- 在中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序，<xref:System.Resources.ResourceManager>使用`resourceSource`参数推断出该程序集、 基名称和资源项可以是位于应用程序的包资源索引 (PRI) 文件的命名空间。 例如，给定一个名为 MyCompany.MyProduct.MyType 中定义的类型`MyAssembly`，资源管理器的资源集命名为 MyAssembly 的标识符将会查找，并查找该资源组内的范围 MyCompany.MyProduct.MyType。 资源管理器中搜索该作用域内的默认上下文 （当前区域性、 当前的高对比度设置等） 的资源项。  
+ 在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序<xref:System.Resources.ResourceManager>中， `resourceSource`使用参数来推断程序集、基名称和命名空间，其中的资源项可位于应用的包资源索引（PRI）文件中。 例如，如果在中`MyAssembly`定义了一个名为 MyCompany. MyProduct. MyType 的类型，则资源管理器将查找名为 MyAssembly 的资源集标识符，并在该资源集内查找作用域 MyCompany. MyProduct。 资源管理器在此范围内搜索默认上下文（当前区域性、当前高对比度设置等）下的资源项。  
   
    
   
 ## Examples  
- 下面的示例使用<xref:System.Resources.ResourceManager.%23ctor%28System.Type%29>构造函数实例化<xref:System.Resources.ResourceManager>对象。 针对英语 (en)、 法语 （法国） (FR-FR) 和俄语 （俄罗斯） (RU-RU).txt 文件中编译的资源组成的区域性。 该示例将当前区域性和当前 UI 区域性更改为英语 （美国）、 法语 （法国）、 俄语 （俄罗斯） 和瑞典语 （瑞典）。 然后，它调用<xref:System.Resources.ResourceManager.GetString%28System.String%29>方法来检索已本地化的字符串，其中显示了一天的时间取决于一条问候信息。  
+ 下面的示例使用<xref:System.Resources.ResourceManager.%23ctor%28System.Type%29>构造函数<xref:System.Resources.ResourceManager>实例化对象。 它包含从 .txt 文件中编译的、英语（en）、法语（法国）（fr）和俄语（俄罗斯）（ru）区域性的资源。 该示例将当前区域性和当前 UI 区域性更改为英语（美国）、法语（法国）、俄语（俄罗斯）和瑞典语（瑞典）。 然后，它会<xref:System.Resources.ResourceManager.GetString%28System.String%29>调用方法来检索已本地化的字符串，该字符串将显示依赖于当天的时间的问候语。  
   
- 该示例需要三个基于文本的资源文件，如以下表中列出。 每个文件包含名为的字符串资源`Morning`， `Afternoon`，和`Evening`。  
+ 该示例需要三个基于文本的资源文件，如下表所示。 每个文件都包含名`Morning`为`Afternoon`、和`Evening`的字符串资源。  
   
 |culture|文件名|资源名称|资源值|  
 |-------------|---------------|-------------------|--------------------|  
@@ -512,10 +512,10 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
 |fr-FR|GreetingResources.fr-FR.txt|`Afternoon`|Bonjour|  
 |fr-FR|GreetingResources.fr-FR.txt|`Evening`|Bonsoir|  
 |ru-RU|GreetingResources.ru-RU.txt|`Morning`|Доброе утро|  
-|ru-RU|GreetingResources.ru-RU.txt|`Afternoon`|ДОБРЫЙ ДЕНЬ|  
-|ru-RU|GreetingResources.ru-RU.txt|`Evening`|ДОБРЫЙ ВЕЧЕР|  
+|ru-RU|GreetingResources.ru-RU.txt|`Afternoon`|Добрый день|  
+|ru-RU|GreetingResources.ru-RU.txt|`Evening`|Добрый вечер|  
   
- 下面的批处理文件可用于编译 Visual Basic 示例并创建名为 Greet.exe 的可执行文件。 若要使用 C# 进行编译，更改中的编译器名称`vbc`到`csc`并将文件扩展名从`.vb`到`.cs`。  
+ 您可以使用以下批处理文件编译 Visual Basic 示例并创建一个名为 Fibonacci 的可执行文件。 若要用C#编译，请将编译器的`vbc`名称`csc`从更改为，并`.vb`将`.cs`文件扩展名从更改为。  
   
 ```  
   
@@ -532,14 +532,14 @@ al /out:ru-RU\Greet.resources.dll /culture:ru-RU /embed: GreetingResources.ru-RU
   
 ```  
   
- 下面是示例 (Visual Basic 版本 ShowDate.vb) 或 ShowDate.cs 代码的 C# 版本的源代码。  
+ 下面是示例的源代码（适用于 Visual Basic 版本的 ShowDate 或代码C#版本的 ShowDate.cs）。  
   
  [!code-csharp[System.Resources.ResourceManager.Ctor#3](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.ctor/cs/greet.cs#3)]
  [!code-vb[System.Resources.ResourceManager.Ctor#3](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.ctor/vb/greet.vb#3)]  
   
- 除了定义 app 类名为`Example`的源代码定义的内部类的名称， `GreetingResources`，资源文件的基名称相同。 这样就可以成功实例化<xref:System.Resources.ResourceManager>对象通过调用<xref:System.Resources.ResourceManager.%23ctor%28System.Type%29>构造函数。  
+ 除了定义名为`Example`的应用类之外，源代码还定义了一个内部类，其`GreetingResources`名称与资源文件的基名称相同。 这样就可以通过<xref:System.Resources.ResourceManager> <xref:System.Resources.ResourceManager.%23ctor%28System.Type%29>调用构造函数来成功地实例化对象。  
   
- 请注意，输出显示适当的本地化字符串除非当前 UI 区域性中这种情况下是瑞典语 （瑞典），它使用英语语言资源。 瑞典语语言资源不可用，因为该应用使用的默认区域性的资源定义的<xref:System.Resources.NeutralResourcesLanguageAttribute>属性，而是。  
+ 请注意，输出会显示相应的本地化字符串，除非当前 UI 区域性为瑞典语（瑞典），在这种情况下，它使用英语资源。 由于瑞典语的资源不可用，因此应用程序将使用由<xref:System.Resources.NeutralResourcesLanguageAttribute>特性定义的默认区域性的资源。  
   
  ]]></format>
         </remarks>
@@ -589,59 +589,59 @@ al /out:ru-RU\Greet.resources.dll /culture:ru-RU /embed: GreetingResources.ru-RU
   
 ## Remarks  
   
-## <a name="desktop-apps"></a>桌面应用程序  
- 在桌面应用中，单个特定于区域性的资源文件应包含在附属程序集和默认区域性的资源文件应包含在主程序集中。 附属程序集假定包含该程序集清单中指定单个区域性的资源，并在必要时加载。  
+## <a name="desktop-apps"></a>桌面应用  
+ 在桌面应用中，每个特定于区域性的资源文件应包含在附属程序集中，并且默认区域性的资源文件应包含在主程序集中。 假设附属程序集包含该程序集清单中指定的单个区域性的资源，并在必要时进行加载。  
   
 > [!NOTE]
->  若要从直接而不是检索它们从程序集中的.resources 文件中检索资源，必须调用<xref:System.Resources.ResourceManager.CreateFileBasedResourceManager%2A>方法改为实例化<xref:System.Resources.ResourceManager>对象。  
+>  若要直接从 .resources 文件检索资源而不是从程序集检索资源，则必须<xref:System.Resources.ResourceManager.CreateFileBasedResourceManager%2A>改为调用方法来<xref:System.Resources.ResourceManager>实例化对象。  
   
- 如果通过标识的资源文件`baseName`中找不`assembly`，则方法实例化<xref:System.Resources.ResourceManager>对象，但若要检索特定资源的尝试会引发异常，通常<xref:System.Resources.MissingManifestResourceException>。 有关诊断异常的原因的信息，请参阅的"处理 MissingManifestResourceException 异常"部分<xref:System.Resources.ResourceManager>类主题。  
+ 如果在中`assembly`找不到`baseName`标识的资源文件<xref:System.Resources.ResourceManager> ，则该方法将实例化对象，但检索特定资源的尝试通常<xref:System.Resources.MissingManifestResourceException>会引发异常。 有关诊断引发异常的原因的信息，请参阅<xref:System.Resources.ResourceManager>类主题中的 "处理 MissingManifestResourceException 异常" 一节。  
   
-## <a name="includewin8appnamelongincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
+## <a name="includewin8_appname_longincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
   
 > [!IMPORTANT]
->  尽管<xref:System.Resources.ResourceManager>类支持在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用，我们不建议使用。 仅在开发时使用此类[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可用于项目[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用。 用于从检索资源[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用，使用[Windows.ApplicationModel.Resources.ResourceLoader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
+>  尽管此<xref:System.Resources.ResourceManager>类在应用中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]受支持，但我们不建议使用它。 仅当你开发[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]用于应用程序的项目时，才使用此类。 若要从[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中检索资源，请改用[windows.applicationmodel.resources.core. windows.applicationmodel.resources.resourceloader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
   
- 在中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序，资源管理器使用的简单名称`assembly`在应用程序的包资源索引 (PRI) 文件中设置参数，以查找匹配的资源。 `baseName`参数用来查找资源集内的资源项。 例如，PortableLibrary1.Resource1.de-DE.resources 的根名称是 PortableLibrary1.Resource1。  
+ 在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序中，资源管理器使用`assembly`参数的简单名称在应用的包资源索引（PRI）文件中查找匹配的资源集。 `baseName`参数用于查找资源集内的资源项。 例如，PortableLibrary1.Resource1.de 的根名称为 PortableLibrary1. Resource1.resx。  
   
    
   
 ## Examples  
- 下面的示例使用简单的非本地化"Hello World"应用程序来演示<xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29>构造函数。 下面显示了一个名为 ExampleResources.txt 文本文件的内容。 编译应用程序后，资源嵌入主应用程序集中。  
+ 下面的示例使用简单的非本地化 "Hello World" 应用程序来说明<xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29>构造函数。 下面显示了一个名为 ExampleResources 的文本文件的内容。 在编译应用程序时，会将资源嵌入主应用程序集中。  
   
 ```  
 Greeting=Hello  
 ```  
   
- 该文本文件可以通过使用转换为二进制资源文件[资源文件生成器 (ResGen.exe)](~/docs/framework/tools/resgen-exe-resource-file-generator.md)在命令提示符下，如下所示：  
+ 在命令提示符下，可以使用[资源文件生成器（resgen.exe）](~/docs/framework/tools/resgen-exe-resource-file-generator.md)将文本文件转换为二进制资源文件，如下所示：  
   
 ```  
 resgen ExampleResources.txt  
 ```  
   
- 下面的示例提供了实例化的可执行代码<xref:System.Resources.ResourceManager>对象，将提示用户输入一个名称，并显示一条问候信息。  
+ 下面的示例提供了实例化<xref:System.Resources.ResourceManager>对象的可执行代码，并提示用户输入名称并显示问候语。  
   
  [!code-csharp[System.Resources.ResourceManager.ctor#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.ctor/cs/example.cs#1)]
  [!code-vb[System.Resources.ResourceManager.ctor#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.ctor/vb/example.vb#1)]  
   
- 它可以在 Visual Basic 中使用以下命令编译：  
+ 可以在 Visual Basic 中使用以下命令编译该方法：  
   
 ```  
 vbc Example.vb /resource:ExampleResources.resources  
 ```  
   
- 或通过使用以下命令在 C# 中：  
+ 或使用中C#的以下命令：  
   
 ```  
 csc Example.cs /resource:ExampleResources.resources  
 ```  
   
- 请注意该示例检索到的资源文件包含将传递到该程序集中定义的类型的程序集的引用`typeof`函数 （在 C#) 或`GetType`函数 （在 Visual Basic 中)，并检索其值<xref:System.Type.Assembly%2A?displayProperty=nameWithType>属性。  
+ 请注意，该示例通过将该程序集中定义的类型传递给`typeof`函数（在中C#）或`GetType`函数（在 Visual Basic 中）并检索其<xref:System.Type.Assembly%2A?displayProperty=nameWithType>属性。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="baseName" /> 或 <paramref name="assembly" /> 参数为 <see langword="null" />。</exception>
-        <block subset="none" type="overrides"><para>此构造函数使用系统提供<see cref="T:System.Resources.ResourceSet" />实现。 若要使用自定义资源文件格式，应派生自<see cref="T:System.Resources.ResourceSet" />类中重写<see cref="M:System.Resources.ResourceSet.GetDefaultReader" />并<see cref="M:System.Resources.ResourceSet.GetDefaultWriter" />方法，并为键入的传入<see cref="M:System.Resources.ResourceManager.#ctor(System.String,System.Reflection.Assembly,System.Type)" />构造函数。 使用自定义<see cref="T:System.Resources.ResourceSet" />控制资源缓存策略或支持您自己的资源文件格式，但通常不是必要的非常有用。</para></block>
+        <block subset="none" type="overrides"><para>此构造函数使用系统提供<see cref="T:System.Resources.ResourceSet" />的实现。 若要使用自定义资源文件<see cref="T:System.Resources.ResourceSet" />格式，应从类派生， <see cref="M:System.Resources.ResourceSet.GetDefaultReader" />重写和<see cref="M:System.Resources.ResourceSet.GetDefaultWriter" /> <see cref="M:System.Resources.ResourceManager.#ctor(System.String,System.Reflection.Assembly,System.Type)" />方法，然后将该类型传递给构造函数。 使用自定义<see cref="T:System.Resources.ResourceSet" />对于控制资源缓存策略或支持您自己的资源文件格式非常有用，但通常不是必需的。</para></block>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -687,21 +687,21 @@ csc Example.cs /resource:ExampleResources.resources
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 单个特定于区域性的资源文件应包含在附属程序集，默认区域性的资源文件应包含在主程序集中。 附属程序集假定包含该程序集清单中指定单个区域性的资源，并在必要时加载。  
+ 单个区域性特定的资源文件应包含在附属程序集中，并且默认区域性的资源文件应包含在主程序集中。 假设附属程序集包含该程序集清单中指定的单个区域性的资源，并在必要时进行加载。  
   
 > [!NOTE]
->  若要从直接而不是检索它们从程序集中的.resources 文件中检索资源，必须调用<xref:System.Resources.ResourceManager.CreateFileBasedResourceManager%2A>方法改为实例化<xref:System.Resources.ResourceManager>对象。  
+>  若要直接从 .resources 文件检索资源而不是从程序集检索资源，则必须<xref:System.Resources.ResourceManager.CreateFileBasedResourceManager%2A>改为调用方法来<xref:System.Resources.ResourceManager>实例化对象。  
   
- 如果通过标识的资源文件`baseName`中找不`assembly`，则方法实例化<xref:System.Resources.ResourceManager>对象，但若要检索特定资源的尝试会引发异常，通常<xref:System.Resources.MissingManifestResourceException>。 有关诊断异常的原因的信息，请参阅的"处理 MissingManifestResourceException 异常"部分<xref:System.Resources.ResourceManager>类主题。  
+ 如果在中`assembly`找不到`baseName`标识的资源文件<xref:System.Resources.ResourceManager> ，则该方法将实例化对象，但检索特定资源的尝试通常<xref:System.Resources.MissingManifestResourceException>会引发异常。 有关诊断引发异常的原因的信息，请参阅<xref:System.Resources.ResourceManager>类主题中的 "处理 MissingManifestResourceException 异常" 一节。  
   
 > [!NOTE]
->  `usingResourceSet`参数用于支持您自己的资源格式，并且通常为`null`。 这是从构造函数采用不同<xref:System.Type>仅。  
+>  参数用于支持您自己的资源格式，通常为`null`。 `usingResourceSet` 这不同于只采用的<xref:System.Type>构造函数。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentException"><paramref name="usingResourceset" /> 不是 <see cref="T:System.Resources.ResourceSet" /> 的派生类。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="baseName" /> 或 <paramref name="assembly" /> 参数为 <see langword="null" />。</exception>
-        <block subset="none" type="usage"><para>此构造函数允许您指定<see cref="T:System.Resources.ResourceSet" />实现。 如果不希望特定<see cref="T:System.Resources.ResourceSet" />实现，但希望像若要使用自定义资源文件格式，您应派生自<see cref="T:System.Resources.ResourceSet" />类中重写<see cref="M:System.Resources.ResourceSet.GetDefaultReader" />和<see cref="M:System.Resources.ResourceSet.GetDefaultWriter" />方法，并将该类型传递给此构造函数。</para></block>
+        <block subset="none" type="usage"><para>此构造函数允许指定<see cref="T:System.Resources.ResourceSet" />实现。 如果你<see cref="T:System.Resources.ResourceSet" />不想使用特定的实现，但想要使用自定义资源文件格式，则应该<see cref="T:System.Resources.ResourceSet" />从类派生，重写<see cref="M:System.Resources.ResourceSet.GetDefaultReader" />和<see cref="M:System.Resources.ResourceSet.GetDefaultWriter" />方法，然后将该类型传递给此构造函数。</para></block>
       </Docs>
     </Member>
     <Member MemberName="BaseName">
@@ -739,17 +739,17 @@ csc Example.cs /resource:ExampleResources.resources
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Resources.ResourceManager.BaseName%2A>属性反映了完全限定的命名空间名称和资源文件，而无需其区域性或文件扩展名的根资源名称。 例如，如果名为应用程序的默认资源文件`SampleApps.StringResources.resources`，值<xref:System.Resources.ResourceManager.BaseName%2A>属性是"SampleApps.StringResources"。 如果应用程序的默认资源文件命名为`SampleApps.StringResources.en-US.resources`嵌入在附属程序集的值和<xref:System.Resources.ResourceManager.BaseName%2A>属性仍然是"SampleApps.StringResources"。  
+ <xref:System.Resources.ResourceManager.BaseName%2A>属性反映了资源文件的完全限定的命名空间名称和根资源名称，没有其区域性或文件扩展名。 例如，如果应用的默认资源文件命名`SampleApps.StringResources.resources`为，则<xref:System.Resources.ResourceManager.BaseName%2A>属性的值为 "SampleApps. stringresources.resources"。 如果应用的默认资源文件已命名`SampleApps.StringResources.en-US.resources`并且嵌入到附属程序集中，则该<xref:System.Resources.ResourceManager.BaseName%2A>属性的值仍为 "SampleApps. stringresources.resources"。  
   
 > [!IMPORTANT]
->  <xref:System.Resources.ResourceManager.BaseName%2A>编译和命令行中嵌入的资源文件的属性值不包括命名空间名称，除非您显式包含一个编译该文件时。 另一方面，<xref:System.Resources.ResourceManager.BaseName%2A>编译和通常嵌入在 Visual Studio 环境中的资源文件的属性值包括默认命名空间名称。  
+>  从<xref:System.Resources.ResourceManager.BaseName%2A>命令行编译和嵌入的资源文件的属性值不包含命名空间名称，除非在编译文件时显式包含一个命名空间名称。 另一方面，在 Visual Studio 环境<xref:System.Resources.ResourceManager.BaseName%2A>中编译和嵌入的资源文件的属性值通常包括默认的命名空间名称。  
   
- <xref:System.Resources.ResourceManager.BaseName%2A>属性值与相同的字符串传递给<xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29>或<xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%2CSystem.Type%29>构造函数实例化时<xref:System.Resources.ResourceManager>实例。  
+ 在实例化实例时， <xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29> <xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%2CSystem.Type%29> <xref:System.Resources.ResourceManager.BaseName%2A> <xref:System.Resources.ResourceManager>属性值与传递给或构造函数的字符串相同。  
   
    
   
 ## Examples  
- 您可以通过编译并运行以下实用程序确定的嵌入的.resources 文件的名称。 这是一个控制台应用，接受主程序集或附属程序集作为命令行参数的名称。 它将显示的字符串，应提供作为`baseName`的参数<xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29>或<xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%2CSystem.Type%29>构造函数，以便资源管理器可以正确识别的资源。  
+ 可以通过编译并运行以下实用工具来确定嵌入 .resources 文件的名称。 这是一个控制台应用，它接受主程序集或附属程序集的名称作为命令行参数。 它显示应作为`baseName` <xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%29>或<xref:System.Resources.ResourceManager.%23ctor%28System.String%2CSystem.Reflection.Assembly%2CSystem.Type%29>构造函数的参数提供的字符串，以便资源管理器可以正确地识别资源。  
   
  [!code-csharp[System.Resources.ResourceManager.Class#4](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.class/cs/resourcenames.cs#4)]
  [!code-vb[System.Resources.ResourceManager.Class#4](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.class/vb/resourcenames.vb#4)]  
@@ -788,7 +788,7 @@ csc Example.cs /resource:ExampleResources.resources
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Resources.ResourceManager.BaseNameField>字段是仅在编写您自己的类派生自<xref:System.Resources.ResourceManager>类。  
+ 仅<xref:System.Resources.ResourceManager.BaseNameField>当您编写自己的派生<xref:System.Resources.ResourceManager>自类的类时，此字段才有用。  
   
  ]]></format>
         </remarks>
@@ -837,17 +837,17 @@ csc Example.cs /resource:ExampleResources.resources
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法返回从不嵌入在程序集中的.resources 文件中检索资源的资源管理器。 可以使用此<xref:System.Resources.ResourceManager>对象加载 ASP.NET 页的资源，或若要测试<xref:System.Resources.ResourceSet>实现。  从独立.resources 文件中检索资源的示例，请参阅[中检索资源](~/docs/framework/resources/retrieving-resources-in-desktop-apps.md)一文。  
+ 此方法返回一个资源管理器，该管理器从未嵌入到程序集的 .resources 文件中检索资源。 您可以使用此<xref:System.Resources.ResourceManager>对象加载 ASP.NET 页的资源或<xref:System.Resources.ResourceSet>测试实现。  有关从独立 .resources 文件检索资源的示例，请参阅[检索资源](~/docs/framework/resources/retrieving-resources-in-desktop-apps.md)一文。  
   
- 此方法允许你指定<xref:System.Resources.ResourceSet>实现。 如果不希望特定<xref:System.Resources.ResourceSet>实现中，但想要使用自定义资源文件格式，应派生自<xref:System.Resources.ResourceSet>类中重写<xref:System.Resources.ResourceSet.GetDefaultReader%2A>和<xref:System.Resources.ResourceSet.GetDefaultWriter%2A>方法，并将该类型传递给此构造函数。  
+ 此方法允许您指定<xref:System.Resources.ResourceSet>实现。 如果<xref:System.Resources.ResourceSet>不需要特定的实现，但想要使用自定义资源文件格式，应<xref:System.Resources.ResourceSet>从类派生，重写<xref:System.Resources.ResourceSet.GetDefaultReader%2A>和<xref:System.Resources.ResourceSet.GetDefaultWriter%2A>方法，并将该类型传递给此构造函数。  
   
 > [!CAUTION]
->  使用独立.resources 文件在 ASP.NET 应用程序将中断 XCOPY 部署，因为资源保持锁定状态，直到它们被显式释放由<xref:System.Resources.ResourceManager.ReleaseAllResources%2A>方法。 如果你想要使用 ASP.NET 应用程序部署资源，请在.resources 文件编译到附属程序集。  
+>  使用 ASP.NET 应用程序中的独立 .resources 文件将中断 XCOPY 部署，因为在<xref:System.Resources.ResourceManager.ReleaseAllResources%2A>方法显式释放资源之前，这些资源将一直保持锁定状态。 如果要将资源与 ASP.NET 应用程序一起部署，请将 .resources 文件编译为附属程序集。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="baseName" /> 或 <paramref name="resourceDir" /> 参数为 <see langword="null" />。</exception>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联的枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
       </Docs>
     </Member>
     <Member MemberName="FallbackLocation">
@@ -884,9 +884,9 @@ csc Example.cs /resource:ExampleResources.resources
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Resources.ResourceManager.FallbackLocation%2A>属性很有用，只有在编写您自己的类派生自<xref:System.Resources.ResourceManager>类。  
+ 仅<xref:System.Resources.ResourceManager.FallbackLocation%2A>当您编写自己的派生<xref:System.Resources.ResourceManager>自类的类时，属性才有用。  
   
- 可以使用<xref:System.Resources.NeutralResourcesLanguageAttribute>属性以通知资源管理器在哪里查找应用的默认区域性： 主程序集 （默认值） 或在附属程序集。  
+ 您可以使用<xref:System.Resources.NeutralResourcesLanguageAttribute>属性来通知资源管理器查找应用程序的默认区域性的位置：在主程序集（默认）中或在附属程序集中。  
   
  ]]></format>
         </remarks>
@@ -936,7 +936,7 @@ csc Example.cs /resource:ExampleResources.resources
         <summary>通过检索指定程序及上的 <see cref="T:System.Resources.NeutralResourcesLanguageAttribute" /> 特性为主程序集的默认资源返回区域性特定的信息。</summary>
         <returns>如果找到的话，则为 <see cref="T:System.Resources.NeutralResourcesLanguageAttribute" /> 中的特性；否则为固定区域性性。</returns>
         <remarks>To be added.</remarks>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
       </Docs>
     </Member>
     <MemberGroup MemberName="GetObject">
@@ -988,22 +988,22 @@ csc Example.cs /resource:ExampleResources.resources
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Resources.ResourceManager.GetObject%2A>方法用于检索非字符串资源。 其中包括如属于基元数据类型的值<xref:System.Int32>或<xref:System.Double>，位图 (如<xref:System.Drawing.Bitmap?displayProperty=nameWithType>对象)，或自定义序列化对象。 通常情况下，返回的对象必须强制转换 （在 C#) 或者 （在 Visual Basic) 转换为相应类型的对象。  
+ <xref:System.Resources.ResourceManager.GetObject%2A>方法用于检索非字符串资源。 其中包括属于基元数据类型<xref:System.Int32> （例如或<xref:System.Double>）、 <xref:System.Drawing.Bitmap?displayProperty=nameWithType>位图（如对象）或自定义序列化对象的值。 通常情况下，必须将返回的对象强制C#转换（在中）或转换（Visual Basic）为适当类型的对象。  
   
- 返回的资源已本地化为当前线程，由定义的 UI 区域性<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性。 如果没有为此区域性本地化该资源，资源管理器使用回退规则加载适当的资源。 如果不找到任何可用的已本地化的资源集，则<xref:System.Resources.ResourceManager>回退上默认区域性的资源。 如果找不到资源集的默认区域性，该方法将引发<xref:System.Resources.MissingManifestResourceException>异常或资源集应驻留在附属程序集中，<xref:System.Resources.MissingSatelliteAssemblyException>异常。 如果资源管理器可以加载相应的资源设置，但找不到一个名为资源`name`，该方法将返回`null`。  
+ 返回的资源针对当前线程的 UI 区域性进行了本地化，后者由<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性定义。 如果没有为此区域性本地化该资源，资源管理器将使用回退规则加载相应的资源。 如果未找到可用的本地化资源集，则<xref:System.Resources.ResourceManager>回退到默认区域性的资源。 如果找不到默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
   
- <xref:System.Resources.ResourceManager.IgnoreCase%2A>属性确定是否的比较`name`与资源的名称是不区分大小写或区分大小写 （默认值）。  
+ 属性确定`name`与资源名称的比较是否不区分大小写或是否区分大小写（默认值）。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
   
 > [!CAUTION]
->  此方法会引发更多的异常不是列出。 这可能会发生的原因之一是此方法调用的方法，如果引发异常。  例如，<xref:System.IO.FileLoadException>可能会引发异常，如果部署或安装附属程序集，造成的错误或<xref:System.Runtime.Serialization.SerializationException>如果反序列化类型的用户定义的类型会引发用户定义的异常，可能会引发异常。  
+>  此方法可能会引发比列出的更多异常。 出现这种情况的原因之一是，此方法调用的方法会引发异常。  例如， <xref:System.IO.FileLoadException>如果在部署或安装附属程序集时出错，则可能会引发异常; 如果在反<xref:System.Runtime.Serialization.SerializationException>序列化类型时用户定义的类型引发用户定义的异常，则可能引发异常。  
   
 ## <a name="performance-considerations"></a>性能注意事项  
- 如果您调用<xref:System.Resources.ResourceManager.GetObject%2A>多次使用相同的方法`name`参数，不依赖于方法返回对每次调用相同的对象的引用。 这是因为<xref:System.Resources.ResourceManager.GetObject%2A>方法可以在缓存中，返回对现有的资源对象的引用，或者它可以重新加载资源并返回新的资源对象的引用。  
+ 如果使用同一个<xref:System.Resources.ResourceManager.GetObject%2A> `name`参数多次调用方法，则不依赖于每次调用返回对同一对象的引用的方法。 这是因为<xref:System.Resources.ResourceManager.GetObject%2A>方法可以返回对缓存中现有资源对象的引用，也可以重新加载资源并返回对新资源对象的引用。  
   
    
   
 ## Examples  
- 下面的示例使用 <xref:System.Resources.ResourceManager.GetObject%28System.String%29> 方法反序列化一个自定义对象。 该示例包含一个名为 UIElements.cs （如果使用的 Visual Basic 则） 的源代码文件，用于定义名为以下结构`PersonTable`。 此结构应由显示表列的本地化名称的常规表显示例程使用。 请注意， `PersonTable` 结构标有 <xref:System.SerializableAttribute> 属性。  
+ 下面的示例使用 <xref:System.Resources.ResourceManager.GetObject%28System.String%29> 方法反序列化一个自定义对象。 该示例包含一个名为 UIElements.cs （UIElements）的源代码文件，如果使用 Visual Basic）来定义以下名为`PersonTable`的结构。 此结构应由显示表列的本地化名称的常规表显示例程使用。 请注意， `PersonTable` 结构标有 <xref:System.SerializableAttribute> 属性。  
   
  [!code-csharp[Conceptual.Resources.Retrieving#6](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/example.cs#6)]
  [!code-vb[Conceptual.Resources.Retrieving#6](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/example.vb#6)]  
@@ -1038,7 +1038,7 @@ GetObject.exe
         <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 参数为 <see langword="null" />。</exception>
         <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的本地资源集，并且没有默认区域性资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
         <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联的枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
         <altmember cref="M:System.Resources.ResourceManager.GetStream(System.String)" />
         <related type="Article" href="~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md">打包和部署资源</related>
       </Docs>
@@ -1086,37 +1086,37 @@ GetObject.exe
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29>方法用于检索非字符串资源。 其中包括如属于基元数据类型的值<xref:System.Int32>或<xref:System.Double>，位图 (如<xref:System.Drawing.Bitmap?displayProperty=nameWithType>对象)，或自定义序列化对象。 通常情况下，返回的对象必须强制转换 （在 C#) 或者 （在 Visual Basic) 转换为相应类型的对象。  
+ <xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29>方法用于检索非字符串资源。 其中包括属于基元数据类型<xref:System.Int32> （例如或<xref:System.Double>）、 <xref:System.Drawing.Bitmap?displayProperty=nameWithType>位图（如对象）或自定义序列化对象的值。 通常情况下，必须将返回的对象强制C#转换（在中）或转换（Visual Basic）为适当类型的对象。  
   
- 返回的资源已本地化为指定的区域性`culture`，或由指定区域性<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性如果`culture`是`null`。 如果没有为此区域性本地化该资源，资源管理器使用回退规则加载适当的资源。 如果不找到任何可用的已本地化的资源集，则资源管理器会转而默认区域性的资源。 如果找不到资源集的默认区域性，该方法将引发<xref:System.Resources.MissingManifestResourceException>异常或资源集应驻留在附属程序集中，<xref:System.Resources.MissingSatelliteAssemblyException>异常。 如果资源管理器可以加载相应的资源设置，但找不到一个名为资源`name`，该方法将返回`null`。  
+ 返回的资源`culture`针对指定的区域性进行了本地化; 如果`culture`为`null`，则为<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性所指定的区域性。 如果没有为此区域性本地化该资源，资源管理器将使用回退规则加载相应的资源。 如果未找到可用的本地化资源集，资源管理器将回退到默认区域性的资源。 如果找不到默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
   
- <xref:System.Resources.ResourceManager.IgnoreCase%2A>属性确定是否的比较`name`的资源名称不区分大小写 （默认值） 或区分大小写。  
+ 属性确定`name`与资源名称的比较是否不区分大小写（默认值）或区分大小写。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
   
 > [!CAUTION]
->  此方法会引发更多的异常不是列出。 这可能会发生的原因之一是此方法调用的方法，如果引发异常。  例如，<xref:System.IO.FileLoadException>可能会引发异常，如果部署或安装附属程序集，造成的错误或<xref:System.Runtime.Serialization.SerializationException>如果反序列化类型的用户定义的类型会引发用户定义的异常，可能会引发异常。  
+>  此方法可能会引发比列出的更多异常。 出现这种情况的原因之一是，此方法调用的方法会引发异常。  例如， <xref:System.IO.FileLoadException>如果在部署或安装附属程序集时出错，则可能会引发异常; 如果在反<xref:System.Runtime.Serialization.SerializationException>序列化类型时用户定义的类型引发用户定义的异常，则可能引发异常。  
   
 ## <a name="performance-considerations"></a>性能注意事项  
- 如果您调用<xref:System.Resources.ResourceManager.GetObject%2A>多次使用相同的方法`name`参数，不依赖于方法返回对每次调用相同的对象的引用。 这是因为<xref:System.Resources.ResourceManager.GetObject%2A>方法可以在缓存中，返回对现有的资源对象的引用，或者它可以重新加载资源并返回新的资源对象的引用。  
+ 如果使用同一个<xref:System.Resources.ResourceManager.GetObject%2A> `name`参数多次调用方法，则不依赖于每次调用返回对同一对象的引用的方法。 这是因为<xref:System.Resources.ResourceManager.GetObject%2A>方法可以返回对缓存中现有资源对象的引用，也可以重新加载资源并返回对新资源对象的引用。  
   
    
   
 ## Examples  
- 下面的示例使用 <xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29> 方法反序列化一个自定义对象。 该示例包含一个名为 NumberInfo.cs (NumberInfo.vb 如果要使用 Visual Basic) 的源代码文件，用于定义名为以下结构`Numbers`。 此结构用于由非英语说话为学生讲述如何计数为 10 英文的简单教育应用程序。 请注意，`Numbers`类用来标记<xref:System.SerializableAttribute>属性。  
+ 下面的示例使用 <xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29> 方法反序列化一个自定义对象。 该示例包含一个名为 NumberInfo.cs （NumberInfo）的源代码文件，如果使用 Visual Basic）来定义以下名为`Numbers`的结构。 此结构旨在供简单的教育应用程序使用，此应用程序讲授非英语的学生，使其以英语计算为10。 请注意， `Numbers`类是<xref:System.SerializableAttribute>用特性标记的。  
   
  [!code-csharp[System.Resources.ResourceManager.GetObject#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/cs/numberinfo.cs#1)]
  [!code-vb[System.Resources.ResourceManager.GetObject#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/vb/numberinfo.vb#1)]  
   
- 下面的源代码文件中名为的 CreateResources.cs （对于 Visual Basic 则） 创建 XML 资源文件的默认英语语言，以及法语、 葡萄牙语和俄语语言。  
+ 以下来自名为 CreateResources.cs 的文件（用于 Visual Basic 的位于）的源代码将为默认英语语言创建 XML 资源文件，以及法语、葡萄牙语和俄语。  
   
  [!code-csharp[System.Resources.ResourceManager.GetObject#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/cs/createresources.cs#2)]
  [!code-vb[System.Resources.ResourceManager.GetObject#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/vb/createresources.vb#2)]  
   
- 通过以下应用程序，当前 UI 区域性设置为法语 （法国）、 葡萄牙语 （巴西） 或俄语 （俄罗斯） 会占用的资源。 它将调用<xref:System.Resources.ResourceManager.GetObject%28System.String%29>方法以获取`Numbers`对象，其中包含本地化的数字并<xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29>方法以获取`Numbers`包含英语语言的数字的对象。 然后，它显示使用的当前 UI 区域性和英语语言的奇数。 源的代码文件命名为 ShowNumbers.cs (ShowNumbers.vb)。  
+ 以下应用使用资源，这会将当前 UI 区域性设置为法语（法国）、葡萄牙语（巴西）或俄语（俄罗斯）。 它调用<xref:System.Resources.ResourceManager.GetObject%28System.String%29>方法来`Numbers`获取<xref:System.Resources.ResourceManager.GetObject%28System.String%2CSystem.Globalization.CultureInfo%29>包含本地化数字的对象，并调用方法来获取`Numbers`包含英文数字的对象。 然后，它使用当前 UI 区域性和英语显示奇数。 源代码文件的名称为 ShowNumbers.cs （ShowNumbers）。  
   
  [!code-csharp[System.Resources.ResourceManager.GetObject#3](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/cs/shownumbers.cs#3)]
  [!code-vb[System.Resources.ResourceManager.GetObject#3](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.getobject/vb/shownumbers.vb#3)]  
   
- 下面的批处理文件可用于生成和执行该示例的 Visual Basic 版本。 如果您正在使用 C#，替换`vbc`与`csc`，并替换`.vb`扩展与`.cs`。  
+ 您可以使用以下批处理文件生成并执行该示例的 Visual Basic 版本。 C#如果使用的是，请`vbc`将`csc`替换为，并`.vb`将扩展名`.cs`替换为。  
   
 ```  
   
@@ -1148,8 +1148,8 @@ ShowNumbers.exe
         <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 参数为 <see langword="null" />。</exception>
         <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的资源集，并且没有默认区域性的资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
         <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
-        <threadsafe><see cref="M:System.Resources.ResourceManager.GetObject(System.String,System.Globalization.CultureInfo)" />方法是线程安全。</threadsafe>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联的枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <threadsafe>方法<see cref="M:System.Resources.ResourceManager.GetObject(System.String,System.Globalization.CultureInfo)" />是线程安全的。</threadsafe>
         <altmember cref="M:System.Resources.ResourceManager.GetStream(System.String,System.Globalization.CultureInfo)" />
         <altmember cref="T:System.Globalization.CultureInfo" />
         <related type="Article" href="~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md">打包和部署资源</related>
@@ -1194,15 +1194,15 @@ ShowNumbers.exe
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Resources.ResourceManager.GetResourceFileName%2A>方法是仅在编写您自己的类派生自<xref:System.Resources.ResourceManager>类。  
+ 仅<xref:System.Resources.ResourceManager.GetResourceFileName%2A>当您编写自己的派生<xref:System.Resources.ResourceManager>自类的类时，方法才有用。  
   
- 此方法使用<xref:System.Globalization.CultureInfo.Name%2A?displayProperty=nameWithType>属性而非固定区域性的所有区域性的文件名的一部分。 此方法不会查找在程序集的清单或涉及磁盘，并且仅用于构造资源文件名称 (适合传递到<xref:System.Resources.ResourceReader>构造函数) 或清单资源 blob 名称。  
+ 此方法使用<xref:System.Globalization.CultureInfo.Name%2A?displayProperty=nameWithType>属性作为除固定区域性以外的所有区域性的文件名的一部分。 此方法不会在程序集的清单中查找或触摸磁盘，只用于构造资源文件名（适用于传递到<xref:System.Resources.ResourceReader>构造函数）或清单资源 blob 名称。  
   
- 在派生的类可以重写此方法来查找不同的扩展名，如"。ResX"或完全不同的方案为资源文件命名。 请注意，自定义资源文件在附属程序集的名称和未自定义的附属程序集本身的名称，可以使用方法。  
+ 派生类可以重写此方法，以便查找其他扩展，例如 ""。ResX "，或用于命名资源文件的完全不同的方案。 请注意，可以使用方法自定义附属程序集中的资源文件的名称，而不是自定义附属程序集本身的名称。  
   
  ]]></format>
         </remarks>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
         <altmember cref="T:System.Globalization.CultureInfo" />
         <related type="Article" href="~/docs/standard/globalization-localization/index.md">对 .NET 应用程序进行全球化和本地化</related>
       </Docs>
@@ -1255,12 +1255,12 @@ ShowNumbers.exe
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 返回对资源集表示为指定区域性本地化的资源。 如果尚未为此区域性本地化资源和`tryParents`是`true`，<xref:System.Resources.ResourceManager.GetResourceSet%2A>使用资源回退规则加载适当的资源。 如果`tryParents`是`false`并且找不到特定于区域性的资源集，该方法返回`null`。 有关资源回退的详细信息，请参阅"资源回退进程"一节中的[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)一文。  
+ 返回的资源集表示针对指定区域性进行了本地化的资源。 如果尚未为此区域性`tryParents`本地化资源， <xref:System.Resources.ResourceManager.GetResourceSet%2A>则`true`使用资源回退规则加载相应的资源。 如果`tryParents` `null`为`false` ，并且找不到特定于区域性的资源集，则该方法返回。 有关资源回退的详细信息，请参阅[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)一文中的 "资源回退进程" 一节。  
   
    
   
 ## Examples  
- 下面的示例调用<xref:System.Resources.ResourceManager.GetResourceSet%2A>方法来检索为法语 （法国） 区域性的区域性特定资源。 然后，枚举中的所有资源的资源集。 它包含名为 ShowNumbers.exe 的可执行文件的源代码。 它还包括以下两个文本文件，其中包含的数字名称。 第一个 NumberResources.txt，包含从 1 到 10 的英语语言中的数字的名称：  
+ 下面的示例调用<xref:System.Resources.ResourceManager.GetResourceSet%2A>方法来检索法语（法国）区域性的区域性特定资源。 然后枚举资源集中的所有资源。 它包含名为 ShowNumbers 的可执行文件的源代码。 它还包括以下包含数字名称的两个文本文件。 第一种是 NumberResources，其中包含英语中一到十个数字的名称：  
   
 ```  
   
@@ -1277,7 +1277,7 @@ ten=ten
   
 ```  
   
- 第二个 NumberResources.fr-FR.txt，包含一到四个法语语言中的数字的名称：  
+ 第二个 NumberResources.fr-FR.TXT 包含法语中的数字的名称，采用法语：  
   
 ```  
   
@@ -1288,7 +1288,7 @@ four=quatre
   
 ```  
   
- 可以使用批处理文件生成资源文件，将英语语言资源文件嵌入到可执行文件，并创建的法语语言资源的附属程序集。 下面是批处理文件，以便使用 Visual Basic 编译器生成可执行文件：  
+ 您可以使用批处理文件生成资源文件，将英语资源文件嵌入到可执行文件中，并为法语资源创建附属程序集。 下面是使用 Visual Basic 编译器生成可执行文件的批处理文件：  
   
 ```  
   
@@ -1300,7 +1300,7 @@ resgen NumberResources.fr-FR.txt
 al /out:fr-FR\ShowNumbers.resources.dll /culture:fr-FR /embed:NumberResources.fr-FR.resources  
 ```  
   
- 对于 C# 编译器，可以使用以下批处理文件：  
+ 对于C#编译器，可以使用以下批处理文件：  
   
 ```  
   
@@ -1316,13 +1316,13 @@ al /out:fr-FR\ShowNumbers.resources.dll /culture:fr-FR /embed:NumberResources.fr
  [!code-csharp[System.Resources.ResourceManager.GetResourceSet#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.getresourceset/cs/shownumbers.cs#1)]
  [!code-vb[System.Resources.ResourceManager.GetResourceSet#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.getresourceset/vb/shownumbers.vb#1)]  
   
- 请注意，如果您更改的值`createIfNotExists`自变量`false`，方法调用返回`null`，因为资源管理器尚未加载法语资源。  
+ 请注意，如果将`createIfNotExists`参数的值更改为`false`，则方法调用将返回`null`，因为资源管理器尚未加载法语资源。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="culture" /> 参数为 <see langword="null" />。</exception>
         <exception cref="T:System.Resources.MissingManifestResourceException"><paramref name="tryParents" /> 是 <see langword="true" />，未找到可用的资源集，并且没有默认区域性的资源。</exception>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联的枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
         <altmember cref="T:System.Globalization.CultureInfo" />
         <related type="Article" href="~/docs/standard/globalization-localization/index.md">对 .NET 应用程序进行全球化和本地化</related>
       </Docs>
@@ -1371,13 +1371,13 @@ al /out:fr-FR\ShowNumbers.resources.dll /culture:fr-FR /embed:NumberResources.fr
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 附属程序集版本控制的详细信息，请参阅<xref:System.Resources.SatelliteContractVersionAttribute>参考主题。  
+ 有关附属程序集版本控制的详细信息， <xref:System.Resources.SatelliteContractVersionAttribute>请参阅参考主题。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentException">在程序集 <paramref name="a" /> 找到的 <see cref="T:System.Version" /> 是无效的。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="a" /> 为 <see langword="null" />。</exception>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
         <altmember cref="T:System.Resources.SatelliteContractVersionAttribute" />
       </Docs>
     </Member>
@@ -1437,21 +1437,21 @@ al /out:fr-FR\ShowNumbers.resources.dll /culture:fr-FR /embed:NumberResources.fr
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Resources.ResourceManager.GetStream%2A>方法采用存储为资源的名称<xref:System.IO.MemoryStream>对象，获取的值<xref:System.Object>资源，并返回<xref:System.IO.UnmanagedMemoryStream>对象。 它需要直接使用流的字节，然后转换成对象起作用。 此方法很有用主要是出于性能原因：检索作为字节流而不是显式的对象的资源可以提高性能。  
+ 方法采用存储<xref:System.IO.MemoryStream>为对象的资源的名称， <xref:System.Object>获取资源的值，并返回一个<xref:System.IO.UnmanagedMemoryStream>对象。 <xref:System.Resources.ResourceManager.GetStream%2A> 它要求您直接处理字节流，然后将其转换为对象。 此方法主要用于性能原因：以字节流而不是显式对象的形式检索资源可以提高性能。  
   
- 返回的资源已本地化为当前线程，由定义的 UI 区域性<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性。 如果没有为此区域性本地化该资源，资源管理器使用回退规则加载适当的资源。 如果不找到任何可用的已本地化的资源集，则<xref:System.Resources.ResourceManager>回退上默认区域性的资源。 如果找不到资源集的默认区域性，该方法将引发<xref:System.Resources.MissingManifestResourceException>异常或资源集应驻留在附属程序集中，<xref:System.Resources.MissingSatelliteAssemblyException>异常。 如果资源管理器可以加载相应的资源设置，但找不到一个名为资源`name`，该方法将返回`null`。  
+ 返回的资源针对当前线程的 UI 区域性进行了本地化，后者由<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性定义。 如果没有为此区域性本地化该资源，资源管理器将使用回退规则加载相应的资源。 如果未找到可用的本地化资源集，则<xref:System.Resources.ResourceManager>回退到默认区域性的资源。 如果找不到默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
   
- <xref:System.Resources.ResourceManager.IgnoreCase%2A>属性确定是否的比较`name`的资源名称不区分大小写 （默认值） 或区分大小写。  
+ 属性确定`name`与资源名称的比较是否不区分大小写（默认值）或区分大小写。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
   
    
   
 ## Examples  
- 下面的示例使用 <xref:System.Resources.ResourceManager.GetStream%28System.String%29> 方法检索应用启动初始窗口中使用的位图。 以下名为的文件从源代码 CreateResources.cs （对于 C#) 或 （对于 Visual Basic) 则会生成一个名为 AppResources.resx 包含序列化的图像的.resx 文件。 在这种情况下，图片从一个名为 SplashScreen.jpg 的文件中加载；可以修改文件名以替换你自己的图像。  
+ 下面的示例使用 <xref:System.Resources.ResourceManager.GetStream%28System.String%29> 方法检索应用启动初始窗口中使用的位图。 以下来自名为 CreateResources.cs （适用于C#）或位于（对于 Visual Basic）的文件的源代码将生成一个包含序列化图像的 .Resx 文件 AppResources。 在这种情况下，图片从一个名为 SplashScreen.jpg 的文件中加载；可以修改文件名以替换你自己的图像。  
   
  [!code-csharp[Conceptual.Resources.Retrieving#4](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/createresources.cs#4)]
  [!code-vb[Conceptual.Resources.Retrieving#4](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/createresources.vb#4)]  
   
- 下面的代码从名 GetStream.cs 为 （适用于 C# 中) 的文件或 GetStream.vb （适用于 Visual Basic 中) 然后检索资源，并显示在图像<xref:System.Windows.Forms.PictureBox?displayProperty=nameWithType>控件。  
+ 以下来自名为 GetStream.cs （for C#）或 system.resources.resourcemanager.getstream （对于 Visual Basic）的文件中的代码检索资源，并在<xref:System.Windows.Forms.PictureBox?displayProperty=nameWithType>控件中显示图像。  
   
  [!code-csharp[Conceptual.Resources.Retrieving#5](~/samples/snippets/csharp/VS_Snippets_CLR/conceptual.resources.retrieving/cs/getstream.cs#5)]
  [!code-vb[Conceptual.Resources.Retrieving#5](~/samples/snippets/visualbasic/VS_Snippets_CLR/conceptual.resources.retrieving/vb/getstream.vb#5)]  
@@ -1475,7 +1475,7 @@ csc GetStream.cs /resource:AppResources.resources
         <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的资源集，并且没有默认资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
         <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联的枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
       </Docs>
     </Member>
     <Member MemberName="GetStream">
@@ -1526,11 +1526,11 @@ csc GetStream.cs /resource:AppResources.resources
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Resources.ResourceManager.GetStream%2A>方法采用存储为资源的名称<xref:System.IO.MemoryStream>对象，获取的值<xref:System.Object>资源，并返回<xref:System.IO.UnmanagedMemoryStream>对象。 它需要直接使用流的字节，然后转换成对象起作用。 此方法很有用主要是出于性能原因：检索作为字节流而不是显式的对象的资源可以提高性能。  
+ 方法采用存储<xref:System.IO.MemoryStream>为对象的资源的名称， <xref:System.Object>获取资源的值，并返回一个<xref:System.IO.UnmanagedMemoryStream>对象。 <xref:System.Resources.ResourceManager.GetStream%2A> 它要求您直接处理字节流，然后将其转换为对象。 此方法主要用于性能原因：以字节流而不是显式对象的形式检索资源可以提高性能。  
   
- 返回的资源已本地化为指定的区域性`culture`，或由指定区域性<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性如果`culture`是`null`。 如果没有为此区域性本地化该资源，资源管理器使用回退规则加载适当的资源。 如果不找到任何可用的已本地化的资源集，则<xref:System.Resources.ResourceManager>回退上默认区域性的资源。 如果找不到资源集的默认区域性，该方法将引发<xref:System.Resources.MissingManifestResourceException>异常或资源集应驻留在附属程序集中，<xref:System.Resources.MissingSatelliteAssemblyException>异常。 如果资源管理器可以加载相应的资源设置，但找不到一个名为资源`name`，该方法将返回`null`。  
+ 返回的资源`culture`针对指定的区域性进行了本地化; 如果`culture`为`null`，则为<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性所指定的区域性。 如果没有为此区域性本地化该资源，资源管理器将使用回退规则加载相应的资源。 如果未找到可用的本地化资源集，则<xref:System.Resources.ResourceManager>回退到默认区域性的资源。 如果找不到默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
   
- <xref:System.Resources.ResourceManager.IgnoreCase%2A>属性确定是否的比较`name`的资源名称不区分大小写 （默认值） 或区分大小写。  
+ 属性确定`name`与资源名称的比较是否不区分大小写（默认值）或区分大小写。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
   
  ]]></format>
         </remarks>
@@ -1538,7 +1538,7 @@ csc GetStream.cs /resource:AppResources.resources
         <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的资源集，并且没有默认资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
         <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
       </Docs>
     </Member>
     <MemberGroup MemberName="GetString">
@@ -1552,12 +1552,17 @@ csc GetStream.cs /resource:AppResources.resources
       </Docs>
     </MemberGroup>
     <Member MemberName="GetString">
-      <MemberSignature Language="C#" Value="public virtual string GetString (string name);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetString(string name) cil managed" />
+      <MemberSignature Language="C#" Value="public string GetString (string name);" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetString(string name) cil managed" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6" />
       <MemberSignature Language="DocId" Value="M:System.Resources.ResourceManager.GetString(System.String)" />
-      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetString (name As String) As String" />
-      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::String ^ GetString(System::String ^ name);" />
-      <MemberSignature Language="F#" Value="abstract member GetString : string -&gt; string&#xA;override this.GetString : string -&gt; string" Usage="resourceManager.GetString name" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetString (name As String) As String" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::String ^ GetString(System::String ^ name);" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6" />
+      <MemberSignature Language="F#" Value="member this.GetString : string -&gt; string" Usage="resourceManager.GetString name" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6" />
+      <MemberSignature Language="C#" Value="public virtual string GetString (string name);" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetString(string name) cil managed" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="VB.NET" Value="Public Overridable Function GetString (name As String) As String" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; virtual System::String ^ GetString(System::String ^ name);" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="F#" Value="abstract member GetString : string -&gt; string&#xA;override this.GetString : string -&gt; string" Usage="resourceManager.GetString name" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-1.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyName>System.Resources.ResourceManager</AssemblyName>
@@ -1592,33 +1597,33 @@ csc GetStream.cs /resource:AppResources.resources
   
 ## Remarks  
   
-## <a name="desktop-apps"></a>桌面应用程序  
- 桌面应用程序，则返回的资源已本地化为当前线程的 UI 区域性定义的<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性。 如果尚未为此区域性本地化该资源，资源管理器探测资源的"资源回退进程"部分中所述的步骤[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)一文。 如果不找到任何可用的已本地化的资源集，则资源管理器会转而默认区域性的资源。 如果资源管理器无法加载默认区域性的资源集，该方法将引发<xref:System.Resources.MissingManifestResourceException>异常或资源集应驻留在附属程序集中，<xref:System.Resources.MissingSatelliteAssemblyException>异常。 如果资源管理器可以加载相应的资源设置，但找不到一个名为资源`name`，该方法将返回`null`。  
+## <a name="desktop-apps"></a>桌面应用  
+ 在桌面应用中，为当前线程的 UI 区域性本地化返回的资源，由<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性定义。 如果尚未针对该区域性对资源进行本地化，则 resource manager 会按照[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)一文中的 "资源回退进程" 一节中所述的步骤来探测资源。 如果未找到可用的本地化资源集，资源管理器将回退到默认区域性的资源。 如果资源管理器无法加载默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
   
- <xref:System.Resources.ResourceManager.IgnoreCase%2A>属性确定是否的比较`name`的资源名称不区分大小写 （默认值） 或区分大小写。  
+ 属性确定`name`与资源名称的比较是否不区分大小写（默认值）或区分大小写。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
   
 > [!CAUTION]
->  此方法会引发更多的异常不是列出。 这可能会发生的原因之一是此方法调用的方法，如果引发异常。  例如，<xref:System.IO.FileLoadException>可能会引发异常，如果部署或安装附属程序集，造成的错误或<xref:System.Runtime.Serialization.SerializationException>如果反序列化类型的用户定义的类型会引发用户定义的异常，可能会引发异常。  
+>  此方法可能会引发比列出的更多异常。 出现这种情况的原因之一是，此方法调用的方法会引发异常。  例如， <xref:System.IO.FileLoadException>如果在部署或安装附属程序集时出错，则可能会引发异常; 如果在反<xref:System.Runtime.Serialization.SerializationException>序列化类型时用户定义的类型引发用户定义的异常，则可能引发异常。  
   
-## <a name="includewin8appnamelongincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
+## <a name="includewin8_appname_longincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
   
 > [!IMPORTANT]
->  尽管<xref:System.Resources.ResourceManager>类支持在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用，我们不建议使用。 仅在开发时使用此类[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可用于项目[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用。 用于从检索资源[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用，使用[Windows.ApplicationModel.Resources.ResourceLoader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
+>  尽管此<xref:System.Resources.ResourceManager>类在应用中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]受支持，但我们不建议使用它。 仅当你开发[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]用于应用程序的项目时，才使用此类。 若要从[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中检索资源，请改用[windows.applicationmodel.resources.core. windows.applicationmodel.resources.resourceloader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
   
- 在中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序，<xref:System.Resources.ResourceManager.GetString%28System.String%29>方法将返回的值`name`字符串调用方的当前 UI 区域性设置为本地化的资源。 区域性列表派生自操作系统的首选的 UI 语言列表。 如果资源管理器不能与匹配`name`，该方法将返回`null`。  
+ 在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序中<xref:System.Resources.ResourceManager.GetString%28System.String%29> ，该方法`name`返回字符串资源的值，该资源已本地化为调用方的当前 UI 区域性设置。 区域性列表派生自操作系统的首选 UI 语言列表。 如果资源管理器不匹配`name`，则该方法`null`返回。  
   
    
   
 ## Examples  
- 下面的示例使用<xref:System.Resources.ResourceManager.GetString%2A>方法来检索特定于区域性的资源。 针对英语 (en)、 法语 （法国） (FR-FR) 和俄语 （俄罗斯） (RU-RU).txt 文件中编译的资源组成的区域性。 该示例将当前区域性和当前 UI 区域性更改为英语 （美国）、 法语 （法国）、 俄语 （俄罗斯） 和瑞典语 （瑞典）。 然后，它调用<xref:System.Resources.ResourceManager.GetString%2A>方法来检索它的当前日期和月份一起显示的本地化的字符串。 请注意，输出会显示除了当前 UI 区域性是瑞典语 （瑞典） 之外的相应本地化的字符串。 瑞典语语言资源不可用，因为该应用将改为使用的是英语的默认区域性的资源。 该示例需要下表中列出的基于文本的资源文件。 每个都有一个名为的单个字符串资源`DateStart`。  
+ 下面的示例使用<xref:System.Resources.ResourceManager.GetString%2A>方法检索特定于区域性的资源。 它包含从 .txt 文件中编译的、英语（en）、法语（法国）（fr）和俄语（俄罗斯）（ru）区域性的资源。 该示例将当前区域性和当前 UI 区域性更改为英语（美国）、法语（法国）、俄语（俄罗斯）和瑞典语（瑞典）。 然后，它调用<xref:System.Resources.ResourceManager.GetString%2A>方法来检索本地化字符串，该字符串与当前日期和月份一起显示。 请注意，输出将显示适当的本地化字符串，除非当前 UI 区域性为 "瑞典语（瑞典）"。 由于瑞典语资源不可用，因此应用会改用默认区域性的资源，即英语。 该示例需要下表中列出的基于文本的资源文件。 每个都有一个名为`DateStart`的字符串资源。  
   
 |culture|文件名|资源名称|资源值|  
 |-------------|---------------|-------------------|--------------------|  
-|en-US|DateStrings.txt|`DateStart`|假设今天是|  
+|en-US|DateStrings.txt|`DateStart`|今天是|  
 |fr-FR|DateStrings.fr-FR.txt|`DateStart`|Aujourd'hui，c'est le|  
 |ru-RU|DateStrings.ru-RU.txt|`DateStart`|Сегодня|  
   
- 可以使用以下批处理文件来编译 C# 示例。 对于 Visual Basic，将 `csc` 更改为 `vbc`，并将源代码文件的扩展名由 `.cs` 更改为 `.vb`。  
+ 您可以使用以下批处理文件编译该C#示例。 对于 Visual Basic，将 `csc` 更改为 `vbc`，并将源代码文件的扩展名由 `.cs` 更改为 `.vb`。  
   
 ```  
 resgen DateStrings.txt  
@@ -1633,7 +1638,7 @@ resgen DateStrings.ru-RU.txt
 al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.resources  
 ```  
   
- 下面是示例 (Visual Basic 版本 ShowDate.vb) 或 ShowDate.cs 对于 C# 版本的源代码。  
+ 下面是此示例的源代码（适用于该C#版本的 Visual Basic 版本的 ShowDate 或 ShowDate.cs）。  
   
  [!code-csharp[System.Resources.ResourceManager.Class#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.class/cs/showdate.cs#2)]
  [!code-vb[System.Resources.ResourceManager.Class#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.class/vb/showdate.vb#2)]  
@@ -1644,11 +1649,11 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <exception cref="T:System.InvalidOperationException">指定资源的值不是字符串。</exception>
         <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的资源集，并且没有默认区域性的资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
         <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
-        <threadsafe><see cref="M:System.Resources.ResourceManager.GetString(System.String)" />方法是线程安全。</threadsafe>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <threadsafe>方法<see cref="M:System.Resources.ResourceManager.GetString(System.String)" />是线程安全的。</threadsafe>
         <altmember cref="T:System.Globalization.CultureInfo" />
         <related type="Article" href="~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md">打包和部署资源</related>
-        <related type="Article" href="https://msdn.microsoft.com/library/eca16922-1c46-4f68-aefe-e7a12283641f">在附属程序集中检索资源</related>
+        <related type="Article" href="https://msdn.microsoft.com/library/eca16922-1c46-4f68-aefe-e7a12283641f">检索附属程序集中的资源</related>
       </Docs>
     </Member>
     <Member MemberName="GetString">
@@ -1699,37 +1704,37 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
   
 ## Remarks  
   
-## <a name="desktop-apps"></a>桌面应用程序  
- 在桌面应用中，如果`culture`是`null`，则<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>方法使用从获取的当前 UI 区域性<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>属性。  
+## <a name="desktop-apps"></a>桌面应用  
+ 在桌面应用中， `culture`如果`null`为， <xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>则方法<xref:System.Globalization.CultureInfo.CurrentUICulture%2A?displayProperty=nameWithType>使用从属性获取的当前 UI 区域性。  
   
- 为指定的区域性本地化该资源返回`culture`参数。 如果没有为本地化资源`culture`，资源管理器探测资源的"资源回退进程"部分中所述的步骤[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)主题。 如果不找到任何可用的资源集，则资源管理器会转而默认区域性的资源。 如果资源管理器无法加载默认区域性的资源集，该方法将引发<xref:System.Resources.MissingManifestResourceException>异常或资源集应驻留在附属程序集中，<xref:System.Resources.MissingSatelliteAssemblyException>异常。 如果资源管理器可以加载相应的资源设置，但找不到一个名为资源`name`，该方法将返回`null`。  
+ 返回的资源针对`culture`参数所指定的区域性进行了本地化。 如果尚未为`culture`配置资源，资源管理器会按照[打包和部署资源](~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md)主题的 "资源回退进程" 一节中所述的步骤来探测资源。 如果未找到可用的资源集，资源管理器将回退到默认区域性的资源。 如果资源管理器无法加载默认区域性的资源集，则该方法将引发<xref:System.Resources.MissingManifestResourceException>异常，或者，如果资源集预期位于附属程序集中<xref:System.Resources.MissingSatelliteAssemblyException> ，则会引发异常。 如果资源管理器可以加载相应的资源集，但找不到名`name`为的资源， `null`则该方法将返回。  
   
- <xref:System.Resources.ResourceManager.IgnoreCase%2A>属性确定是否的比较`name`的资源名称不区分大小写 （默认值） 或区分大小写。  
+ 属性确定`name`与资源名称的比较是否不区分大小写（默认值）或区分大小写。 <xref:System.Resources.ResourceManager.IgnoreCase%2A>  
   
 > [!CAUTION]
->  此方法会引发更多的异常不是列出。 这可能会发生的原因之一是此方法调用的方法，如果引发异常。  例如，<xref:System.IO.FileLoadException>可能会引发异常，如果部署或安装附属程序集，造成的错误或<xref:System.Runtime.Serialization.SerializationException>如果反序列化类型的用户定义的类型会引发用户定义的异常，可能会引发异常。  
+>  此方法可能会引发比列出的更多异常。 出现这种情况的原因之一是，此方法调用的方法会引发异常。  例如， <xref:System.IO.FileLoadException>如果在部署或安装附属程序集时出错，则可能会引发异常; 如果在反<xref:System.Runtime.Serialization.SerializationException>序列化类型时用户定义的类型引发用户定义的异常，则可能引发异常。  
   
-## <a name="includewin8appnamelongincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
+## <a name="includewin8_appname_longincludeswin8-appname-long-mdmd-apps"></a>[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)] 应用程序  
   
 > [!IMPORTANT]
->  尽管<xref:System.Resources.ResourceManager>类支持在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用，我们不建议使用。 仅在开发时使用此类[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可用于项目[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用。 用于从检索资源[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用，使用[Windows.ApplicationModel.Resources.ResourceLoader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
+>  尽管此<xref:System.Resources.ResourceManager>类在应用中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]受支持，但我们不建议使用它。 仅当你开发[!INCLUDE[net_portable](~/includes/net-portable-md.md)]可[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]用于应用程序的项目时，才使用此类。 若要从[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用中检索资源，请改用[windows.applicationmodel.resources.core. windows.applicationmodel.resources.resourceloader](https://go.microsoft.com/fwlink/p/?LinkId=238182)类。  
   
- 在中[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序，<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>方法将返回的值`name`字符串由指定区域性本地化的资源`culture`参数。 如果没有为本地化资源`culture`区域性，查找使用整个[!INCLUDE[win8](~/includes/win8-md.md)]语言回退列表中，并查看默认区域性中后的停止。 如果资源管理器不能与匹配`name`，该方法将返回`null`。  
+ 在[!INCLUDE[win8_appname_long](~/includes/win8-appname-long-md.md)]应用程序中<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29> ，方法`name`返回字符串资源的值`culture` ，该资源针对参数指定的区域性进行了本地化。 如果没有为`culture`区域性本地化该资源，则查找将使用整个[!INCLUDE[win8](~/includes/win8-md.md)]语言回退列表，并在查找默认区域性后停止。 如果资源管理器不匹配`name`，则该方法`null`返回。  
   
    
   
 ## Examples  
- 下面的示例使用<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>方法来检索特定于区域性的资源。 该示例的默认区域性为英语 (en)，并为法语 （法国） (FR-FR) 和俄语 （俄罗斯） (RU-RU) 包括附属程序集的区域性。 该示例将当前区域性和更改当前 UI 区域性为俄语 （俄罗斯） 之前调用<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>。 然后，它调用<xref:System.Resources.ResourceManager.GetString%2A>方法和<xref:System.DateTime.ToString%28System.String%2CSystem.IFormatProvider%29?displayProperty=nameWithType>方法，并传递<xref:System.Globalization.CultureInfo>代表每个方法的法语 （法国） 和瑞典语 （瑞典） 区域性的对象。 在输出中，月和日的月份，以及其前面的字符串以法语显示，因为<xref:System.Resources.ResourceManager.GetString%2A>方法是可以检索法语资源。 但是，当使用瑞典语 （瑞典） 区域性，月和日的月份出现在瑞典语虽然其前面的字符串以英语显示。 这是因为资源管理器找不到本地化的瑞典语语言资源，使其改为返回默认英语区域性的资源。  
+ 下面的示例使用<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>方法检索特定于区域性的资源。 该示例的默认区域性为英语（en），它包括法语（法国）（fr-fr）和俄语（俄罗斯）（ru）区域性的附属程序集。 在调用<xref:System.Resources.ResourceManager.GetString%28System.String%2CSystem.Globalization.CultureInfo%29>之前，此示例将当前区域性和当前 UI 区域性更改为俄语（俄罗斯）。 然后，它调用<xref:System.Resources.ResourceManager.GetString%2A>方法<xref:System.DateTime.ToString%28System.String%2CSystem.IFormatProvider%29?displayProperty=nameWithType>和方法，并将<xref:System.Globalization.CultureInfo>表示法语（法国）和瑞典语（瑞典）区域性的对象传递给每个方法。 在输出中，月份和月份的日期以及前面的字符串显示为法语，因为<xref:System.Resources.ResourceManager.GetString%2A>方法可以检索法语资源。 但是，当使用瑞典语（瑞典）区域性时，月份和月份中的某一天将以瑞典语显示，但其前面的字符串为英语。 这是因为资源管理器找不到本地化的瑞典语资源，因此它将返回默认英语区域性的资源。  
   
- 该示例需要下表中列出的基于文本的资源文件。 每个都有一个名为的单个字符串资源`DateStart`。  
+ 该示例需要下表中列出的基于文本的资源文件。 每个都有一个名为`DateStart`的字符串资源。  
   
 |culture|文件名|资源名称|资源值|  
 |-------------|---------------|-------------------|--------------------|  
-|en-US|DateStrings.txt|`DateStart`|假设今天是|  
+|en-US|DateStrings.txt|`DateStart`|今天是|  
 |fr-FR|DateStrings.fr-FR.txt|`DateStart`|Aujourd'hui，c'est le|  
 |ru-RU|DateStrings.ru-RU.txt|`DateStart`|Сегодня|  
   
- 可以使用以下批处理文件来编译 Visual Basic 示例。 若要编译在 C# 中，更改`vbc`到`csc`，并将从源代码文件的扩展名更改`.vb`到`.cs`。  
+ 可以使用以下批处理文件编译 Visual Basic 示例。 若要在C#中编译`vbc` ， `csc`请将更改为，并将源代码文件的扩展名`.vb`从`.cs`更改为。  
   
 ```  
 resgen DateStrings.txt  
@@ -1744,7 +1749,7 @@ resgen DateStrings.ru-RU.txt
 al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.resources  
 ```  
   
- 下面是示例 (Visual Basic 版本 ShowDate.vb) 或 ShowDate.cs 对于 C# 版本的源代码。  
+ 下面是此示例的源代码（适用于该C#版本的 Visual Basic 版本的 ShowDate 或 ShowDate.cs）。  
   
  [!code-csharp[System.Resources.ResourceManager.Class#3](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.resources.resourcemanager.class/cs/showdate2.cs#3)]
  [!code-vb[System.Resources.ResourceManager.Class#3](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.resources.resourcemanager.class/vb/showdate2.vb#3)]  
@@ -1755,8 +1760,8 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <exception cref="T:System.InvalidOperationException">指定资源的值不是字符串。</exception>
         <exception cref="T:System.Resources.MissingManifestResourceException">未找到可用的资源集，并且没有默认区域性的资源。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
         <exception cref="T:System.Resources.MissingSatelliteAssemblyException">默认区域性的资源位于无法找到的附属程序集。 有关如何处理此异常的信息，请参阅 <see cref="T:System.Resources.ResourceManager" /> 类主题“处理 MissingManifestResourceException 和 MissingSatelliteAssemblyException 异常”一节。</exception>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
-        <threadsafe><see cref="M:System.Resources.ResourceManager.GetString(System.String,System.Globalization.CultureInfo)" />方法是线程安全。</threadsafe>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联的枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <threadsafe>方法<see cref="M:System.Resources.ResourceManager.GetString(System.String,System.Globalization.CultureInfo)" />是线程安全的。</threadsafe>
         <altmember cref="T:System.Globalization.CultureInfo" />
         <related type="Article" href="~/docs/framework/resources/packaging-and-deploying-resources-in-desktop-apps.md">打包和部署资源</related>
       </Docs>
@@ -1829,12 +1834,12 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果的值<xref:System.Resources.ResourceManager.IgnoreCase%2A>属性是`false`，使用名称"资源"的资源并不等同于将具有名称"资源"的资源。 如果<xref:System.Resources.ResourceManager.IgnoreCase%2A>是`true`，使用名称"资源"的资源是等效于具有名称"资源"的资源。 但请注意，当<xref:System.Resources.ResourceManager.IgnoreCase%2A>是`true`，则<xref:System.Resources.ResourceManager.GetString%2A?displayProperty=nameWithType>和<xref:System.Resources.ResourceManager.GetObject%2A?displayProperty=nameWithType>方法使用固定区域性执行不区分大小写的字符串比较。 优点是，这些方法执行不区分大小写的字符串比较的结果是不考虑区域性的所有计算机上相同。 缺点是，结果不是与所有区域性的大小写规则一致。  
+ 如果<xref:System.Resources.ResourceManager.IgnoreCase%2A>属性的值为`false`，则名称为 "resource" 的资源与名为 "resource" 的资源不等效。 如果<xref:System.Resources.ResourceManager.IgnoreCase%2A> 为`true`，则名称为 "resource" 的资源等效于名称为 "resource" 的资源。 但请注意，在为<xref:System.Resources.ResourceManager.IgnoreCase%2A> `true` <xref:System.Resources.ResourceManager.GetString%2A?displayProperty=nameWithType>时，和<xref:System.Resources.ResourceManager.GetObject%2A?displayProperty=nameWithType>方法使用固定区域性执行不区分大小写的字符串比较。 优点是这些方法执行的不区分大小写的字符串比较的结果在所有计算机上都是相同的，与区域性无关。 缺点是结果与所有区域性的大小写规则都不一致。  
   
- 例如，土耳其语的字母表中有两个版本的实现： 一个带有圆点的字符，另一个不带点。 在土耳其语，字符 I (Unicode 0049) 被视为不同字符 ı (Unicode 0131) 的大写版本。 字符 i (Unicode 0069) 被视为另一种字符 İ (Unicode 0130) 的小写形式。 根据这些大小写规则，不区分大小写的字符串比较的字符 (Unicode 0069) i 和 I (Unicode 0049) 应失败区域性"TR-TR"（土耳其语）。 但是，因为如果使用固定区域性的大小写规则执行比较<xref:System.Resources.ResourceManager.IgnoreCase%2A>是`true`，这种比较成功。  
+ 例如，土耳其语字母有两个版本的字符 I：一个带有点，一个没有句点。 在土耳其语中，字符 I （Unicode 0049）被视为不同字符ı（Unicode 0131）的大写版本。 字符 i （Unicode 0069）被视为其他字符 i （Unicode 0130）的小写形式。 根据这些大小写规则，i （Unicode 0069）和 I （Unicode 0049）字符的不区分大小写的字符串比较对于区域性 "tr-TR" （土耳其语）应该失败。 但是，因为如果<xref:System.Resources.ResourceManager.IgnoreCase%2A>为，则将使用固定区域性的大小写规则进行比较，这种`true`比较将会成功。  
   
 > [!NOTE]
->  出于性能原因，最好始终指定正确的大小写的资源名称。 设置<xref:System.Resources.ResourceManager.IgnoreCase%2A>到`true`可能会显著增加导致工作集和性能显著下降。  
+>  出于性能原因，最好始终为资源名称指定正确的大小写。 设置<xref:System.Resources.ResourceManager.IgnoreCase%2A> 为`true`可能会导致工作集大幅增加，并显著降低性能。  
   
  ]]></format>
         </remarks>
@@ -1888,8 +1893,8 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <exception cref="T:System.Resources.MissingManifestResourceException">主程序集不包含 .resources 文件，但查找资源需要此文件。</exception>
         <exception cref="T:System.ExecutionEngineException">运行时中存在内部错误。</exception>
         <exception cref="T:System.Resources.MissingSatelliteAssemblyException">未能定位与 <paramref name="culture" /> 关联的附属程序集。</exception>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
-        <block subset="none" type="overrides"><para>此方法完成资源设置，并且可以是递归和可重入查找所需的所有工作。 换而言之，此方法可能会加载的程序集和触发器<see cref="E:System.AppDomain.AssemblyLoad" />事件，然后回调到<see cref="T:System.Resources.ResourceManager" />尚未完全初始化的对象。 若要避免采用额外的锁，此方法不是线程安全。 <see cref="M:System.Resources.ResourceManager.GetResourceSet(System.Globalization.CultureInfo,System.Boolean,System.Boolean)" />， <see cref="M:System.Resources.ResourceManager.GetString(System.String)" />，和<see cref="M:System.Resources.ResourceManager.GetObject(System.String)" />方法执行所有必要的同步。</para></block>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联的枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <block subset="none" type="overrides"><para>此方法完成查找资源集所需的所有工作，可以是递归和可重入的。 换言之，此方法可能会加载一个程序集，并触发<see cref="E:System.AppDomain.AssemblyLoad" />一个事件，该事件随后回调<see cref="T:System.Resources.ResourceManager" />到尚未完全初始化的对象。 若要避免额外锁定，此方法不是线程安全的。 <see cref="M:System.Resources.ResourceManager.GetResourceSet(System.Globalization.CultureInfo,System.Boolean,System.Boolean)" />、和方法<see cref="M:System.Resources.ResourceManager.GetObject(System.String)" />执行所有必要的同步。 <see cref="M:System.Resources.ResourceManager.GetString(System.String)" /></para></block>
         <altmember cref="T:System.Globalization.CultureInfo" />
         <related type="Article" href="~/docs/standard/globalization-localization/index.md">对 .NET 应用程序进行全球化和本地化</related>
       </Docs>
@@ -1928,11 +1933,11 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 值设置为 0xBEEFCACE。 系统默认的文件格式的第四个字节包含在 little-endian 格式的 32 位有符号的整数 (请参阅<xref:System.Text.Encoding>)。  
+ 此值设置为0xBEEFCACE。 系统默认文件格式的前四个字节包含用小 endian 格式表示的32位有符号整数（请参阅<xref:System.Text.Encoding>）。  
   
- 如果<xref:System.Resources.ResourceManager.MagicNumber>位于其后的字节将版本号<xref:System.Resources.ResourceManager>标头后, 跟一个数字，指示应跳过多少个字节来克服此标头。 下一个编号指示版本的<xref:System.Resources.ResourceManager>创建标头后, 跟的版本特定信息。  
+ 如果找到了，则后面的字节将是<xref:System.Resources.ResourceManager>标头的版本号，后跟一个数字，用于指示应跳过多少个字节来超过此标头。 <xref:System.Resources.ResourceManager.MagicNumber> 下一个数字指示创建该标头<xref:System.Resources.ResourceManager>的的版本，然后是特定于版本的信息。  
   
- 当前实现的版本号是之一。 接下来的字节是包含名称的长度前缀的字符串<xref:System.Resources.IResourceReader>，从中可以读取此文件。  
+ 当前实现的版本号为1。 接下来的字节是长度为前缀的字符串<xref:System.Resources.IResourceReader>，它包含可读取此文件的名称。  
   
  ]]></format>
         </remarks>
@@ -1972,7 +1977,7 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Resources.ResourceManager.MainAssembly>字段是仅在编写您自己的类派生自<xref:System.Resources.ResourceManager>类。  
+ 仅<xref:System.Resources.ResourceManager.MainAssembly>当您编写自己的派生<xref:System.Resources.ResourceManager>自类的类时，此字段才有用。  
   
  ]]></format>
         </remarks>
@@ -2013,19 +2018,19 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法将收缩正在运行的应用中的工作集。 对此进行任何未来资源查找<xref:System.Resources.ResourceManager>对象将获得第一次查找，其开销，因为必须搜索资源管理器并再次加载资源。 这可在某些复杂的线程处理情况下，其中创建新<xref:System.Resources.ResourceManager>对象是正确的行为。  
+ 此方法将缩小正在运行的应用程序中的工作集。 此<xref:System.Resources.ResourceManager>对象将来的任何资源查找都将像第一次查找一样昂贵，因为资源管理器将不得不再次搜索并加载资源。 这在某些复杂的线程方案中非常有用，在这种<xref:System.Resources.ResourceManager>情况下，创建新对象是适当的行为。  
   
 > [!NOTE]
->  从.NET Framework 2.0 版中，开始<xref:System.Resources.ResourceManager.ReleaseAllResources%2A>方法不是线程安全方面<xref:System.Resources.ResourceManager.GetObject%2A>， <xref:System.Resources.ResourceManager.GetString%2A>，和<xref:System.Resources.ResourceManager.GetStream%2A>操作。 此更改的优点是多个线程访问资源的性能改进。 但是，如果您调用<xref:System.Resources.ResourceManager.ReleaseAllResources%2A>同时在另一个线程将获取某个资源的一个线程中的方法，获取操作可能会引发<xref:System.ObjectDisposedException>异常。  
+>  从 .NET Framework 版本2.0 开始，方法在<xref:System.Resources.ResourceManager.ReleaseAllResources%2A> <xref:System.Resources.ResourceManager.GetObject%2A>、 <xref:System.Resources.ResourceManager.GetString%2A>和<xref:System.Resources.ResourceManager.GetStream%2A>操作方面不是线程安全的。 此更改的优点是对访问资源的多个线程性能有所提高。 但是，如果在一个线程<xref:System.Resources.ResourceManager.ReleaseAllResources%2A>中调用方法同时同时获取另一个线程中的资源，则 get 操作可能会<xref:System.ObjectDisposedException>引发异常。  
   
- 此外可以在其中创建当前资源管理器的资源的托管的实例必须具有确定性，而无需等待资源管理器完全超出范围，并被垃圾回收器释放的情况下使用此方法。  
+ 你还可以在以下情况下使用此方法：当前资源管理器创建的资源的托管实例必须以确定性方式释放，无需等待资源管理器完全超出范围并进行垃圾回收。  
   
 > [!NOTE]
->  调用此方法不会卸载附属程序集。 若要卸载附属程序集，请使用<xref:System.AppDomain.Unload%2A>方法。  
+>  调用此方法不会卸载附属程序集。 若要卸载附属程序集， <xref:System.AppDomain.Unload%2A>请使用方法。  
   
  ]]></format>
         </remarks>
-        <permission cref="T:System.Security.Permissions.ReflectionPermission">当调用后期绑定机制通过如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />。 关联枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
+        <permission cref="T:System.Security.Permissions.ReflectionPermission">当通过诸如<see cref="M:System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />等机制后期绑定调用时。 关联的枚举：<see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />。</permission>
       </Docs>
     </Member>
     <Member MemberName="ResourceSets">
