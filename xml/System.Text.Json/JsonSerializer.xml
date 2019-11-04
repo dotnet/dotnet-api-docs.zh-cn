@@ -1,5 +1,5 @@
 <Type Name="JsonSerializer" FullName="System.Text.Json.JsonSerializer">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="55efe259c3954694d75aef7b8fdde8fe9e9d2cf0" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70499173" /></Metadata><TypeSignature Language="C#" Value="public static class JsonSerializer" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="5456543ac0aaac6934fd944a4bf62dc952c3d6bf" /><Meta Name="ms.sourcegitcommit" Value="0084afad1b3b1cb2c8ad2c142ae3597d08bad4a7" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="10/31/2019" /><Meta Name="ms.locfileid" Value="73381142" /></Metadata><TypeSignature Language="C#" Value="public static class JsonSerializer" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit JsonSerializer extends System.Object" />
   <TypeSignature Language="DocId" Value="T:System.Text.Json.JsonSerializer" />
   <TypeSignature Language="VB.NET" Value="Public Class JsonSerializer" />
@@ -45,7 +45,15 @@
         <returns>JSON 值的 <paramref name="returnType" /> 表示。</returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="returnType" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Text.Json.JsonException">Json 无效，<paramref name="returnType" /> 与 JSON 不兼容，或者流中存在剩余数据时。</exception>
+        <exception cref="T:System.Text.Json.JsonException">JSON 无效。
+          
+- 或 -
+
+<typeparamref name="returnType" /> 与 JSON 不兼容。
+
+- 或 -
+
+单个 JSON 值以外的跨度中存在剩余数据。</exception>
       </Docs>
     </Member>
     <Member MemberName="Deserialize">
@@ -78,12 +86,20 @@
 
 ## Remarks
 
-<xref:System.String>使用的不如使用 utf-8 方法，因为实现本身使用 utf-8。
+使用 <xref:System.String> 不如使用 UTF-8 方法，因为实现本身就使用 UTF-8。
 
           ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="json" /> 或 <paramref name="returnType" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Text.Json.JsonException">Json 无效，<paramref name="returnType" /> 与 JSON 不兼容，或者流中存在剩余数据时。</exception>
+        <exception cref="T:System.Text.Json.JsonException">JSON 无效。
+          
+- 或 -
+
+<typeparamref name="TValue" /> 与 JSON 不兼容。
+
+- 或 -
+
+单个 JSON 值以外的字符串中存在剩余数据。</exception>
       </Docs>
     </Member>
     <Member MemberName="Deserialize">
@@ -91,7 +107,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig object Deserialize(valuetype System.Text.Json.Utf8JsonReader&amp; reader, class System.Type returnType, class System.Text.Json.JsonSerializerOptions options) cil managed" />
       <MemberSignature Language="DocId" Value="M:System.Text.Json.JsonSerializer.Deserialize(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)" />
       <MemberSignature Language="VB.NET" Value="Public Shared Function Deserialize (ByRef reader As Utf8JsonReader, returnType As Type, Optional options As JsonSerializerOptions = null) As Object" />
-      <MemberSignature Language="F#" Value="static member Deserialize :  * Type * System.Text.Json.JsonSerializerOptions -&gt; obj" Usage="System.Text.Json.JsonSerializer.Deserialize (reader, returnType, options)" />
+      <MemberSignature Language="F#" Value="static member Deserialize : Utf8JsonReader * Type * System.Text.Json.JsonSerializerOptions -&gt; obj" Usage="System.Text.Json.JsonSerializer.Deserialize (reader, returnType, options)" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyName>System.Text.Json</AssemblyName>
@@ -106,7 +122,7 @@
         <Parameter Name="options" Type="System.Text.Json.JsonSerializerOptions" />
       </Parameters>
       <Docs>
-        <param name="reader">要用于读取的读取器。</param>
+        <param name="reader">要从中读取 JSON 的读取器。</param>
         <param name="returnType">要转换为并返回的对象的类型。</param>
         <param name="options">读取期间用于控制序列化程序行为的选项。</param>
         <summary>从提供的读取器读取一个 JSON 值（包括对象或数组）并将它转换为指定类型的实例。</summary>
@@ -116,18 +132,26 @@
 
 ## Remarks
 
-<xref:System.Text.Json.Utf8JsonReader.Read?displayProperty=nameWithType>如果的<xref:System.Text.Json.Utf8JsonReader.TokenType> `reader`属性为 <xref:System.Text.Json.JsonTokenType.PropertyName?displayProperty=nameWithType>  或 <xref:System.Text.Json.JsonTokenType.None?displayProperty=nameWithType> ，则通过调用来使读取器前进，以确定值的开头。
+如果 `reader` 的 <xref:System.Text.Json.Utf8JsonReader.TokenType> 属性为 <xref:System.Text.Json.JsonTokenType.PropertyName?displayProperty=nameWithType> 或 <xref:System.Text.Json.JsonTokenType.None?displayProperty=nameWithType>，则对 <xref:System.Text.Json.Utf8JsonReader.Read?displayProperty=nameWithType> 的一次调用会使读取器前进，以确定值的开头。
 
-此方法完成后， `reader`将位于 JSON 值中的最终标记处。  如果引发了异常，则读取器将重置为在调用方法时它所处的状态。
+此方法完成后，`reader` 将定位到 JSON 值中的最后一个令牌。  如果引发了异常，则读取器将重置为在调用方法时它所处的状态。
 
 此方法会创建读取器所处理的数据的副本，因此，不需要在返回此方法之后维护数据完整性。
 
-用于<xref:System.Text.Json.JsonReaderOptions>创建实例<xref:System.Text.Json.Utf8JsonReader>的的在冲突<xref:System.Text.Json.JsonSerializerOptions>时优先于。 因此， <xref:System.Text.Json.JsonReaderOptions.AllowTrailingCommas?displayProperty=nameWithType> <xref:System.Text.Json.JsonReaderOptions.MaxDepth?displayProperty=nameWithType>在读取时<xref:System.Text.Json.JsonReaderOptions.CommentHandling?displayProperty=nameWithType>使用、、和。
+用于创建 <xref:System.Text.Json.Utf8JsonReader> 实例的 <xref:System.Text.Json.JsonReaderOptions> 在发生冲突时优先于 <xref:System.Text.Json.JsonSerializerOptions>。 因此，在读取时使用 <xref:System.Text.Json.JsonReaderOptions.AllowTrailingCommas?displayProperty=nameWithType>、<xref:System.Text.Json.JsonReaderOptions.MaxDepth?displayProperty=nameWithType>和 <xref:System.Text.Json.JsonReaderOptions.CommentHandling?displayProperty=nameWithType>。
                
           ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="returnType" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Text.Json.JsonException">Json 无效，<paramref name="returnType" /> 与 JSON 不兼容，或者无法从读取器读取值。</exception>
+        <exception cref="T:System.Text.Json.JsonException">JSON 无效。
+          
+- 或 -
+
+<typeparamref name="returnType" /> 与 JSON 不兼容。
+
+- 或 -
+
+无法从读取器中读取值。</exception>
         <exception cref="T:System.ArgumentException"><paramref name="reader" /> 使用的是不受支持的选项。</exception>
       </Docs>
     </Member>
@@ -161,13 +185,13 @@
         <remarks>To be added.</remarks>
         <exception cref="T:System.Text.Json.JsonException">JSON 无效。
           
-或
+- 或 -
 
 <typeparamref name="TValue" /> 与 JSON 不兼容。
 
 - 或 -
 
-流中存在剩余数据。</exception>
+单个 JSON 值以外的跨度中存在剩余数据。</exception>
       </Docs>
     </Member>
     <Member MemberName="Deserialize&lt;TValue&gt;">
@@ -202,19 +226,19 @@
 
 ## Remarks
 
-<xref:System.String>使用的不如使用 utf-8 方法，因为实现本身使用 utf-8。
+使用 <xref:System.String> 不如使用 UTF-8 方法，因为实现本身就使用 UTF-8。
           ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="json" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.Text.Json.JsonException">JSON 无效。
           
-或
+- 或 -
 
 <typeparamref name="TValue" /> 与 JSON 不兼容。
 
 - 或 -
 
-流中存在剩余数据。</exception>
+单个 JSON 值以外的字符串中存在剩余数据。</exception>
       </Docs>
     </Member>
     <Member MemberName="Deserialize&lt;TValue&gt;">
@@ -222,7 +246,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TValue Deserialize&lt;TValue&gt;(valuetype System.Text.Json.Utf8JsonReader&amp; reader, class System.Text.Json.JsonSerializerOptions options) cil managed" />
       <MemberSignature Language="DocId" Value="M:System.Text.Json.JsonSerializer.Deserialize``1(System.Text.Json.Utf8JsonReader@,System.Text.Json.JsonSerializerOptions)" />
       <MemberSignature Language="VB.NET" Value="Public Shared Function Deserialize(Of TValue) (ByRef reader As Utf8JsonReader, Optional options As JsonSerializerOptions = null) As TValue" />
-      <MemberSignature Language="F#" Value="static member Deserialize :  * System.Text.Json.JsonSerializerOptions -&gt; 'Value" Usage="System.Text.Json.JsonSerializer.Deserialize (reader, options)" />
+      <MemberSignature Language="F#" Value="static member Deserialize : Utf8JsonReader * System.Text.Json.JsonSerializerOptions -&gt; 'Value" Usage="System.Text.Json.JsonSerializer.Deserialize (reader, options)" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyName>System.Text.Json</AssemblyName>
@@ -240,7 +264,7 @@
       </Parameters>
       <Docs>
         <typeparam name="TValue">JSON 值的目标类型。</typeparam>
-        <param name="reader">要用于读取的读取器。</param>
+        <param name="reader">要从中读取 JSON 的读取器。</param>
         <param name="options">读取期间用于控制序列化程序行为的选项。</param>
         <summary>将一个 JSON 值（包括对象或数组）从提供的读取器读取到泛型类型参数指定的类型的实例中。</summary>
         <returns>JSON 值的 <typeparamref name="TValue" /> 表示。</returns>
@@ -249,25 +273,25 @@
 
 ## Remarks
 
-<xref:System.Text.Json.Utf8JsonReader.Read?displayProperty=nameWithType>如果的<xref:System.Text.Json.Utf8JsonReader.TokenType> `reader`属性为 <xref:System.Text.Json.JsonTokenType.PropertyName?displayProperty=nameWithType>  或 <xref:System.Text.Json.JsonTokenType.None?displayProperty=nameWithType> ，则通过调用来使读取器前进，以确定值的开头。
+如果 `reader` 的 <xref:System.Text.Json.Utf8JsonReader.TokenType> 属性为 <xref:System.Text.Json.JsonTokenType.PropertyName?displayProperty=nameWithType> 或 <xref:System.Text.Json.JsonTokenType.None?displayProperty=nameWithType>，则对 <xref:System.Text.Json.Utf8JsonReader.Read?displayProperty=nameWithType> 的一次调用会使读取器前进，以确定值的开头。
                
-此方法完成后， `reader`将位于 JSON 值中的最终标记处。 如果引发了异常，则读取器将重置为在调用方法时它所处的状态。
+此方法完成后，`reader` 将定位到 JSON 值中的最后一个令牌。 如果引发了异常，则读取器将重置为在调用方法时它所处的状态。
                
 此方法会创建读取器所处理的数据的副本，因此，不需要在返回此方法之后维护数据完整性。
                
-用于<xref:System.Text.Json.JsonReaderOptions>创建实例<xref:System.Text.Json.Utf8JsonReader>的的在冲突<xref:System.Text.Json.JsonSerializerOptions>时优先于。 因此， <xref:System.Text.Json.JsonReaderOptions.AllowTrailingCommas?displayProperty=nameWithType> <xref:System.Text.Json.JsonReaderOptions.MaxDepth?displayProperty=nameWithType>在读取时<xref:System.Text.Json.JsonReaderOptions.CommentHandling?displayProperty=nameWithType>使用、、和。
+用于创建 <xref:System.Text.Json.Utf8JsonReader> 实例的 <xref:System.Text.Json.JsonReaderOptions> 在发生冲突时优先于 <xref:System.Text.Json.JsonSerializerOptions>。 因此，在读取时使用 <xref:System.Text.Json.JsonReaderOptions.AllowTrailingCommas?displayProperty=nameWithType>、<xref:System.Text.Json.JsonReaderOptions.MaxDepth?displayProperty=nameWithType>和 <xref:System.Text.Json.JsonReaderOptions.CommentHandling?displayProperty=nameWithType>。
                
           ]]></format>
         </remarks>
         <exception cref="T:System.Text.Json.JsonException">JSON 无效。
           
-或
+- 或 -
 
 <typeparamref name="TValue" /> 与 JSON 不兼容。
 
-或
+- 或 -
 
-流中存在剩余数据。</exception>
+无法从读取器中读取值。</exception>
         <exception cref="T:System.ArgumentException"><paramref name="reader" /> 不受支持的选项。</exception>
       </Docs>
     </Member>
@@ -301,11 +325,11 @@
         <exception cref="T:System.ArgumentNullException"><paramref name="utf8Json" /> 或 <paramref name="returnType" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.Text.Json.JsonException">JSON 无效。
           
-或
+- 或 -
 
 <typeparamref name="TValue" /> 与 JSON 不兼容。
 
-或
+- 或 -
 
 流中存在剩余数据。</exception>
       </Docs>
@@ -341,21 +365,21 @@
         <remarks>To be added.</remarks>
         <exception cref="T:System.Text.Json.JsonException">JSON 无效。
           
-或
+- 或 -
 
 <typeparamref name="TValue" /> 与 JSON 不兼容。
 
-或
+- 或 -
 
 流中存在剩余数据。</exception>
       </Docs>
     </Member>
     <Member MemberName="Serialize">
-      <MemberSignature Language="C#" Value="public static string Serialize (object value, Type type, System.Text.Json.JsonSerializerOptions options = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Serialize(object value, class System.Type type, class System.Text.Json.JsonSerializerOptions options) cil managed" />
+      <MemberSignature Language="C#" Value="public static string Serialize (object value, Type inputType, System.Text.Json.JsonSerializerOptions options = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string Serialize(object value, class System.Type inputType, class System.Text.Json.JsonSerializerOptions options) cil managed" />
       <MemberSignature Language="DocId" Value="M:System.Text.Json.JsonSerializer.Serialize(System.Object,System.Type,System.Text.Json.JsonSerializerOptions)" />
       <MemberSignature Language="VB.NET" Value="Public Shared Function Serialize (value As Object, inputType As Type, Optional options As JsonSerializerOptions = null) As String" />
-      <MemberSignature Language="F#" Value="static member Serialize : obj * Type * System.Text.Json.JsonSerializerOptions -&gt; string" Usage="System.Text.Json.JsonSerializer.Serialize (value, type, options)" />
+      <MemberSignature Language="F#" Value="static member Serialize : obj * Type * System.Text.Json.JsonSerializerOptions -&gt; string" Usage="System.Text.Json.JsonSerializer.Serialize (value, inputType, options)" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyName>System.Text.Json</AssemblyName>
@@ -366,32 +390,32 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="value" Type="System.Object" />
-        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="inputType" Type="System.Type" />
         <Parameter Name="options" Type="System.Text.Json.JsonSerializerOptions" />
       </Parameters>
       <Docs>
         <param name="value">要转换的值。</param>
-        <param name="type">要转换的 <paramref name="value" /> 的类型。</param>
+        <param name="inputType">要转换的 <paramref name="value" /> 的类型。</param>
         <param name="options">用于控制转换行为的选项。</param>
-        <summary>将指定类型的值转换为 <see cref="T:System.String" />。</summary>
-        <returns>值的字符串表示形式。</returns>
+        <summary>将指定类型的值转换为 JSON 字符串。</summary>
+        <returns>值的 JSON 字符串表示形式。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[
 
 ## Remarks
 
-使用的<xref:System.String>不如使用 utf-8 编码，因为在内部实现使用 utf-8。 另请参见 <xref:System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(System.Object,System.Type,System.Text.Json.JsonSerializerOptions)> 和 <xref:System.Text.Json.JsonSerializer.SerializeAsync(System.IO.Stream,System.Object,System.Type,System.Text.Json.JsonSerializerOptions,System.Threading.CancellationToken)>。
+使用 <xref:System.String> 不如使用 UTF-8 编码，因为在内部实现使用 UTF-8。 另请参见 <xref:System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(System.Object,System.Type,System.Text.Json.JsonSerializerOptions)> 和 <xref:System.Text.Json.JsonSerializer.SerializeAsync(System.IO.Stream,System.Object,System.Type,System.Text.Json.JsonSerializerOptions,System.Threading.CancellationToken)>。
 
           ]]></format>
         </remarks>
       </Docs>
     </Member>
     <Member MemberName="Serialize">
-      <MemberSignature Language="C#" Value="public static void Serialize (System.Text.Json.Utf8JsonWriter writer, object value, Type type, System.Text.Json.JsonSerializerOptions options = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Serialize(class System.Text.Json.Utf8JsonWriter writer, object value, class System.Type type, class System.Text.Json.JsonSerializerOptions options) cil managed" />
+      <MemberSignature Language="C#" Value="public static void Serialize (System.Text.Json.Utf8JsonWriter writer, object value, Type inputType, System.Text.Json.JsonSerializerOptions options = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Serialize(class System.Text.Json.Utf8JsonWriter writer, object value, class System.Type inputType, class System.Text.Json.JsonSerializerOptions options) cil managed" />
       <MemberSignature Language="DocId" Value="M:System.Text.Json.JsonSerializer.Serialize(System.Text.Json.Utf8JsonWriter,System.Object,System.Type,System.Text.Json.JsonSerializerOptions)" />
       <MemberSignature Language="VB.NET" Value="Public Shared Sub Serialize (writer As Utf8JsonWriter, value As Object, inputType As Type, Optional options As JsonSerializerOptions = null)" />
-      <MemberSignature Language="F#" Value="static member Serialize : System.Text.Json.Utf8JsonWriter * obj * Type * System.Text.Json.JsonSerializerOptions -&gt; unit" Usage="System.Text.Json.JsonSerializer.Serialize (writer, value, type, options)" />
+      <MemberSignature Language="F#" Value="static member Serialize : System.Text.Json.Utf8JsonWriter * obj * Type * System.Text.Json.JsonSerializerOptions -&gt; unit" Usage="System.Text.Json.JsonSerializer.Serialize (writer, value, inputType, options)" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyName>System.Text.Json</AssemblyName>
@@ -403,16 +427,24 @@
       <Parameters>
         <Parameter Name="writer" Type="System.Text.Json.Utf8JsonWriter" />
         <Parameter Name="value" Type="System.Object" />
-        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="inputType" Type="System.Type" />
         <Parameter Name="options" Type="System.Text.Json.JsonSerializerOptions" />
       </Parameters>
       <Docs>
-        <param name="writer">JSON 编写器。</param>
+        <param name="writer">要写入到的 JSON 编写器。</param>
         <param name="value">要转换并写入的值。</param>
-        <param name="type">要转换的 <paramref name="value" /> 的类型。</param>
+        <param name="inputType">要转换的 <paramref name="value" /> 的类型。</param>
         <param name="options">用于控制序列化行为的选项。</param>
-        <summary>将指定类型的一个 JSON 值（包括对象或数组）写入提供的编写器。</summary>
-        <remarks>To be added.</remarks>
+        <summary>将指定类型的 JSON 表示形式写入提供的编写器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks
+
+用于创建 <xref:System.Text.Json.Utf8JsonWriter> 实例的 <xref:System.Text.Json.JsonWriterOptions> 在发生冲突时优先于 <xref:System.Text.Json.JsonSerializerOptions>。 因此，在编写时使用 <xref:System.Text.Json.JsonWriterOptions.Indented?displayProperty=nameWithType>、<xref:System.Text.Json.JsonWriterOptions.SkipValidation?displayProperty=nameWithType>和 <xref:System.Text.Json.JsonWriterOptions.Encoder?displayProperty=nameWithType>。
+               
+          ]]></format>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Serialize&lt;TValue&gt;">
@@ -440,14 +472,14 @@
         <typeparam name="TValue">要序列化的值的类型。</typeparam>
         <param name="value">要转换的值。</param>
         <param name="options">用于控制序列化行为的选项。</param>
-        <summary>将泛型类型参数指定的类型的值转换为 <see cref="T:System.String" />。</summary>
-        <returns>值的字符串表示形式。</returns>
+        <summary>将泛型类型参数指定的类型的值转换为 JSON 字符串。</summary>
+        <returns>值的 JSON 字符串表示形式。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[
 
 ## Remarks
 
-使用的<xref:System.String>不如使用 utf-8 编码，因为在内部实现使用 utf-8。 另请参见 <xref:System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(System.Object,System.Type,System.Text.Json.JsonSerializerOptions)> 和 <xref:System.Text.Json.JsonSerializer.SerializeAsync(System.IO.Stream,System.Object,System.Type,System.Text.Json.JsonSerializerOptions,System.Threading.CancellationToken)>。
+使用 <xref:System.String> 不如使用 UTF-8 编码，因为在内部实现使用 UTF-8。 另请参见 <xref:System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(System.Object,System.Type,System.Text.Json.JsonSerializerOptions)> 和 <xref:System.Text.Json.JsonSerializer.SerializeAsync(System.IO.Stream,System.Object,System.Type,System.Text.Json.JsonSerializerOptions,System.Threading.CancellationToken)>。
 
           ]]></format>
         </remarks>
@@ -477,18 +509,26 @@
       </Parameters>
       <Docs>
         <typeparam name="TValue">要序列化的值的类型。</typeparam>
-        <param name="writer">JSON 编写器。</param>
+        <param name="writer">要写入到的 JSON 编写器。</param>
         <param name="value">要转换并写入的值。</param>
         <param name="options">用于控制序列化行为的选项。</param>
-        <summary>将泛型类型参数指定的类型的一个 JSON 值（包括对象或数组）写入提供的编写器。</summary>
-        <remarks>To be added.</remarks>
+        <summary>将泛型类型参数指定的类型的 JSON 表示形式写入提供的编写器。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks
+
+用于创建 <xref:System.Text.Json.Utf8JsonWriter> 实例的 <xref:System.Text.Json.JsonWriterOptions> 在发生冲突时优先于 <xref:System.Text.Json.JsonSerializerOptions>。 因此，在编写时使用 <xref:System.Text.Json.JsonWriterOptions.Indented?displayProperty=nameWithType>、<xref:System.Text.Json.JsonWriterOptions.SkipValidation?displayProperty=nameWithType>和 <xref:System.Text.Json.JsonWriterOptions.Encoder?displayProperty=nameWithType>。
+               
+          ]]></format>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="SerializeAsync">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.Task SerializeAsync (System.IO.Stream utf8Json, object value, Type type, System.Text.Json.JsonSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Tasks.Task SerializeAsync(class System.IO.Stream utf8Json, object value, class System.Type type, class System.Text.Json.JsonSerializerOptions options, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.Task SerializeAsync (System.IO.Stream utf8Json, object value, Type inputType, System.Text.Json.JsonSerializerOptions options = null, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Tasks.Task SerializeAsync(class System.IO.Stream utf8Json, object value, class System.Type inputType, class System.Text.Json.JsonSerializerOptions options, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberSignature Language="DocId" Value="M:System.Text.Json.JsonSerializer.SerializeAsync(System.IO.Stream,System.Object,System.Type,System.Text.Json.JsonSerializerOptions,System.Threading.CancellationToken)" />
-      <MemberSignature Language="F#" Value="static member SerializeAsync : System.IO.Stream * obj * Type * System.Text.Json.JsonSerializerOptions * System.Threading.CancellationToken -&gt; System.Threading.Tasks.Task" Usage="System.Text.Json.JsonSerializer.SerializeAsync (utf8Json, value, type, options, cancellationToken)" />
+      <MemberSignature Language="F#" Value="static member SerializeAsync : System.IO.Stream * obj * Type * System.Text.Json.JsonSerializerOptions * System.Threading.CancellationToken -&gt; System.Threading.Tasks.Task" Usage="System.Text.Json.JsonSerializer.SerializeAsync (utf8Json, value, inputType, options, cancellationToken)" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyName>System.Text.Json</AssemblyName>
@@ -500,14 +540,14 @@
       <Parameters>
         <Parameter Name="utf8Json" Type="System.IO.Stream" />
         <Parameter Name="value" Type="System.Object" />
-        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="inputType" Type="System.Type" />
         <Parameter Name="options" Type="System.Text.Json.JsonSerializerOptions" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="utf8Json">要写入的 UTF-8 流。</param>
         <param name="value">要转换的值。</param>
-        <param name="type">要转换的 <paramref name="value" /> 的类型。</param>
+        <param name="inputType">要转换的 <paramref name="value" /> 的类型。</param>
         <param name="options">用于控制序列化行为的选项。</param>
         <param name="cancellationToken">可能用于取消写入操作的标记。</param>
         <summary>将指定类型的值异步转换为 UTF-8 编码的 JSON 文本并将它写入指定流。</summary>
@@ -549,11 +589,11 @@
       </Docs>
     </Member>
     <Member MemberName="SerializeToUtf8Bytes">
-      <MemberSignature Language="C#" Value="public static byte[] SerializeToUtf8Bytes (object value, Type type, System.Text.Json.JsonSerializerOptions options = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] SerializeToUtf8Bytes(object value, class System.Type type, class System.Text.Json.JsonSerializerOptions options) cil managed" />
+      <MemberSignature Language="C#" Value="public static byte[] SerializeToUtf8Bytes (object value, Type inputType, System.Text.Json.JsonSerializerOptions options = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] SerializeToUtf8Bytes(object value, class System.Type inputType, class System.Text.Json.JsonSerializerOptions options) cil managed" />
       <MemberSignature Language="DocId" Value="M:System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(System.Object,System.Type,System.Text.Json.JsonSerializerOptions)" />
       <MemberSignature Language="VB.NET" Value="Public Shared Function SerializeToUtf8Bytes (value As Object, inputType As Type, Optional options As JsonSerializerOptions = null) As Byte()" />
-      <MemberSignature Language="F#" Value="static member SerializeToUtf8Bytes : obj * Type * System.Text.Json.JsonSerializerOptions -&gt; byte[]" Usage="System.Text.Json.JsonSerializer.SerializeToUtf8Bytes (value, type, options)" />
+      <MemberSignature Language="F#" Value="static member SerializeToUtf8Bytes : obj * Type * System.Text.Json.JsonSerializerOptions -&gt; byte[]" Usage="System.Text.Json.JsonSerializer.SerializeToUtf8Bytes (value, inputType, options)" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyName>System.Text.Json</AssemblyName>
@@ -564,15 +604,15 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="value" Type="System.Object" />
-        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="inputType" Type="System.Type" />
         <Parameter Name="options" Type="System.Text.Json.JsonSerializerOptions" />
       </Parameters>
       <Docs>
         <param name="value">要转换的值。</param>
-        <param name="type">要转换的 <paramref name="value" /> 的类型。</param>
+        <param name="inputType">要转换的 <paramref name="value" /> 的类型。</param>
         <param name="options">用于控制转换行为的选项。</param>
-        <summary>将指定类型的值转换为 UTF8 编码的字节数组。</summary>
-        <returns>值的 UTF-8 表示形式。</returns>
+        <summary>将指定类型的值转换为编码为 UTF-8 字节的 JSON 字符串。</summary>
+        <returns>值的 JSON 字符串表示形式，编码为 UTF-8 字节。</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -601,8 +641,8 @@
         <typeparam name="TValue">值的类型。</typeparam>
         <param name="value">要转换的值。</param>
         <param name="options">用于控制转换行为的选项。</param>
-        <summary>将泛型类型参数指定的类型的值转换为 UTF8 编码的字节数组。</summary>
-        <returns>值的 UTF-8 表示形式。</returns>
+        <summary>将泛型类型参数指定的类型的值转换为编码为 UTF-8 字节的 JSON 字符串。</summary>
+        <returns>值的 JSON 字符串表示形式，编码为 UTF-8 字节。</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
