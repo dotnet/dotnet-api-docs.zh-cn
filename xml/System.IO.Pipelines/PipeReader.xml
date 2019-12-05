@@ -1,5 +1,5 @@
 <Type Name="PipeReader" FullName="System.IO.Pipelines.PipeReader">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="42544a9cb837ca4604045449e5f093bb7970af13" /><Meta Name="ms.sourcegitcommit" Value="c573d537afba2d4c1463538f1095f2f155025464" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="10/16/2019" /><Meta Name="ms.locfileid" Value="72408025" /></Metadata><TypeSignature Language="C#" Value="public abstract class PipeReader" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="a10cdb9a053ac6426c4af6711ba7b53fb2a83789" /><Meta Name="ms.sourcegitcommit" Value="d9596ce1265534066e1fb6f9d77b02c61ff6f727" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="11/22/2019" /><Meta Name="ms.locfileid" Value="74321017" /></Metadata><TypeSignature Language="C#" Value="public abstract class PipeReader" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit PipeReader extends System.Object" />
   <TypeSignature Language="DocId" Value="T:System.IO.Pipelines.PipeReader" />
   <TypeSignature Language="VB.NET" Value="Public MustInherit Class PipeReader" />
@@ -39,6 +39,26 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <MemberGroup MemberName="AdvanceTo">
+      <AssemblyInfo>
+        <AssemblyName>System.IO.Pipelines</AssemblyName>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.1</AssemblyVersion>
+        <AssemblyVersion>4.0.1.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Docs>
+        <summary>将管道的读取光标向前移动到已使用的数据之后。</summary>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks
+
+使用的数据的内存将被释放，并且不再可用。 检查的数据应告知更多的可用数据。
+
+          ]]></format>
+        </remarks>
+      </Docs>
+    </MemberGroup>
     <Member MemberName="AdvanceTo">
       <MemberSignature Language="C#" Value="public abstract void AdvanceTo (SequencePosition consumed);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AdvanceTo(valuetype System.SequencePosition consumed) cil managed" />
@@ -61,8 +81,8 @@
       </Parameters>
       <Docs>
         <param name="consumed">标记已成功处理的数据范围。</param>
-        <summary>将管道的读取光标向前移动到已使用的数据之后。</summary>
-        <remarks>使用的数据的内存将被释放，并且不再可用。 检查的数据应告知更多的可用数据。</remarks>
+        <summary>将管道的读取光标向前移动到已使用的数据之后，将数据标记为“已处理”。</summary>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="AdvanceTo">
@@ -89,9 +109,8 @@
       <Docs>
         <param name="consumed">标记已成功处理的数据范围。</param>
         <param name="examined">标记已读取并检查的数据范围。</param>
-        <summary>将管道的读取光标向前移动到已使用的数据之后。</summary>
-        <remarks>使用的数据的内存将被释放，并且不再可用。
-检查的数据应告知更多的可用数据。</remarks>
+        <summary>将管道的读取光标向前移动到已使用的数据之后，将数据标记为“已处理”、“已读取”和“已检查”。</summary>
+       <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="AsStream">
@@ -303,7 +322,7 @@
 ## Remarks
 
 > [!IMPORTANT]
-> 不能对 @no__t 的所有实现调用 `OnWriterCompleted`。 未来版本中将删除此方法。
+> 不能对 <xref:System.IO.Pipelines.PipeWriter>的所有实现调用 `OnWriterCompleted`。 未来版本中将删除此方法。
 
           ]]></format>
         </remarks>
@@ -328,7 +347,7 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">To be added.</param>
+        <param name="cancellationToken">要监视取消请求的标记。 默认值为 <see langword="default" />。</param>
         <summary>以异步方式从当前 <see cref="T:System.IO.Pipelines.PipeReader" /> 读取一系列字节。</summary>
         <returns>表示异步读取操作的 <see cref="T:System.Threading.Tasks.ValueTask`1" />。</returns>
         <remarks>To be added.</remarks>
@@ -355,10 +374,18 @@
         <Parameter Name="result" Type="System.IO.Pipelines.ReadResult" RefType="out" />
       </Parameters>
       <Docs>
-        <param name="result"><see cref="T:System.IO.Pipelines.ReadResult" /></param>
+        <param name="result">此方法返回 <see langword="true" /> 时，此值设置为表示读取调用结果的 <see cref="T:System.IO.Pipelines.ReadResult" /> 实例；否则，此值设置为 <see langword="default" />。</param>
         <summary>尝试同步读取数据 <see cref="T:System.IO.Pipelines.PipeReader" />。</summary>
         <returns>如果数据可用或如果调用已取消或编写器已完成，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
-        <remarks>如果管道返回 <see langword="false" />，则无需调用 <see cref="M:System.IO.Pipelines.PipeReader.AdvanceTo(System.SequencePosition,System.SequencePosition)" />。</remarks>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks
+
+如果管道返回 `false`，则无需调用 <xref:System.IO.Pipelines.PipeReader.AdvanceTo(System.SequencePosition,System.SequencePosition)>。
+
+          ]]></format>
+        </remarks>
       </Docs>
     </Member>
   </Members>
