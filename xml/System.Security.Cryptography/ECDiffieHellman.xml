@@ -1,5 +1,5 @@
 <Type Name="ECDiffieHellman" FullName="System.Security.Cryptography.ECDiffieHellman">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="299577c299fefd8c8c66e3ccb842aa5d2d9ad6b4" /><Meta Name="ms.sourcegitcommit" Value="2b0967e04b047f6709322418d97215dfcef6a938" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="11/20/2019" /><Meta Name="ms.locfileid" Value="74236358" /></Metadata><TypeSignature Language="C#" Value="public abstract class ECDiffieHellman : System.Security.Cryptography.AsymmetricAlgorithm" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="b4ed87e32d598047c7b33c8ec5b55e24f72e1bac" /><Meta Name="ms.sourcegitcommit" Value="fbe36a3465a31f574ebd41192d31a74126cf757c" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="11/26/2019" /><Meta Name="ms.locfileid" Value="74546168" /></Metadata><TypeSignature Language="C#" Value="public abstract class ECDiffieHellman : System.Security.Cryptography.AsymmetricAlgorithm" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ECDiffieHellman extends System.Security.Cryptography.AsymmetricAlgorithm" />
   <TypeSignature Language="DocId" Value="T:System.Security.Cryptography.ECDiffieHellman" />
   <TypeSignature Language="VB.NET" Value="Public MustInherit Class ECDiffieHellman&#xA;Inherits AsymmetricAlgorithm" />
@@ -260,7 +260,7 @@
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Docs>
-        <summary>使用哈希函数派生可用作密钥的字节。</summary>
+        <summary>使用指定的哈希算法执行密钥派生。</summary>
       </Docs>
     </MemberGroup>
     <Member MemberName="DeriveKeyFromHash">
@@ -293,8 +293,8 @@
       <Docs>
         <param name="otherPartyPublicKey">另一方的公钥。</param>
         <param name="hashAlgorithm">用于派生密钥材料的哈希算法。</param>
-        <summary>若给定了另一方的公钥和哈希算法的名称，使用哈希函数派生可用作密钥的字节。</summary>
-        <returns>来自与另一方的公钥进行密钥交换的密钥材料。</returns>
+        <summary>使用指定的哈希算法执行密钥派生。</summary>
+        <returns>共享机密的哈希。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -303,7 +303,17 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="otherPartyPublicKey" /> 在与此密钥不同的曲线上。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="otherPartyPublicKey" /> 使用的曲线的大小与此密钥使用的曲线不同。
+
+或
+
+<paramref name="hashAlgorithm" /> 参数未指定哈希值。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="otherPartyPublicKey" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="otherPartyPublicKey" /> 使用的曲线与此密钥使用的曲线不同。
+
+或
+
+此实例仅表示一个公钥。</exception>
       </Docs>
     </Member>
     <Member MemberName="DeriveKeyFromHash">
@@ -340,11 +350,32 @@
         <param name="hashAlgorithm">用于派生密钥材料的哈希算法。</param>
         <param name="secretPrepend">在进行哈希算法之前，要预置到派生密钥前面的值。</param>
         <param name="secretAppend">在进行哈希算法之前，要追加到派生密钥的值。</param>
-        <summary>在派生类中实现时，使用哈希函数、给定的另一方公钥、哈希算法的名称、预置值和追加值可派生用作密钥的字节。</summary>
-        <returns>来自与另一方的公钥进行密钥交换的密钥材料。</returns>
-        <remarks>To be added.</remarks>
+        <summary>在派生类中实现时，使用指定的哈希算法对可选的添加数据或追加数据执行密钥派生。</summary>
+        <returns>按需添加数据或追加数据之后的共享机密的哈希值。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+
+此方法在内部执行椭圆曲线 Diffie-hellman 密钥协议，以生成共享机密（`z`）。
+此方法的返回值是使用指定哈希算法 `HASH(secretPrepend || z || secretAppend)` 的结果，其中 `||` 表示串联。
+
+如果 `secretPrepend` 或 `secretAppend` 的值 `null`，则将它们视为空数组。  
+
+ ]]></format>
+        </remarks>
         <exception cref="T:System.NotImplementedException">派生方法必须重写此方法。</exception>
-        <exception cref="T:System.ArgumentException"><paramref name="otherPartyPublicKey" /> 在与此密钥不同的曲线上。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="otherPartyPublicKey" /> 使用的曲线的大小与此密钥使用的曲线不同。
+
+或
+
+<paramref name="hashAlgorithm" /> 参数未指定哈希值。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="otherPartyPublicKey" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="otherPartyPublicKey" /> 使用的曲线与此密钥使用的曲线不同。
+
+或
+
+此实例仅表示一个公钥。</exception>
       </Docs>
     </Member>
     <MemberGroup MemberName="DeriveKeyFromHmac">
@@ -353,7 +384,7 @@
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Docs>
-        <summary>使用基于哈希的消息验证代码 (HMAC) 派生可用作密钥的字节。</summary>
+        <summary>使用指定的 HMAC（基于哈希的消息验证代码）算法执行密钥派生。</summary>
       </Docs>
     </MemberGroup>
     <Member MemberName="DeriveKeyFromHmac">
@@ -388,8 +419,8 @@
         <param name="otherPartyPublicKey">另一方的公钥。</param>
         <param name="hashAlgorithm">用于派生密钥材料的哈希算法。</param>
         <param name="hmacKey">HMAC 的密钥。</param>
-        <summary>使用基于哈希的消息验证代码 (HMAC) 派生可用作密钥的字节。</summary>
-        <returns>来自与另一方的公钥进行密钥交换的密钥材料。</returns>
+        <summary>使用指定的 HMAC（基于哈希的消息验证代码）算法执行密钥派生。</summary>
+        <returns>共享机密的 HMAC。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -398,7 +429,17 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="otherPartyPublicKey" /> 在与此密钥不同的曲线上。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="otherPartyPublicKey" /> 使用的曲线的大小与此密钥使用的曲线不同。
+
+或
+
+<paramref name="hashAlgorithm" /> 参数未指定哈希值。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="otherPartyPublicKey" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="otherPartyPublicKey" /> 使用的曲线与此密钥使用的曲线不同。
+
+或
+
+此实例仅表示一个公钥。</exception>
       </Docs>
     </Member>
     <Member MemberName="DeriveKeyFromHmac">
@@ -437,11 +478,33 @@
         <param name="hmacKey">HMAC 的密钥。</param>
         <param name="secretPrepend">在进行哈希算法之前，要预置到派生密钥前面的值。</param>
         <param name="secretAppend">在进行哈希算法之前，要追加到派生密钥的值。</param>
-        <summary>当在派生基类中实现时，使用基于哈希的消息身份验证代码 (HMAC) 派生可用作密钥的字节。</summary>
-        <returns>来自与另一方的公钥进行密钥交换的密钥材料。</returns>
-        <remarks>To be added.</remarks>
+        <summary>在派生类中实现时，使用指定的 HMAC（基于哈希的消息验证代码）算法对可选的添加数据或追加数据执行密钥派生。</summary>
+        <returns>按需添加数据或追加数据之后的共享机密的 HMAC。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+
+此方法在内部执行椭圆曲线 Diffie-hellman 密钥协议，以生成共享机密（`z`）。
+
+当 `null``hmacKey` 时，此方法的返回值是 `HMAC-HASH(z, secretPrepend || z || secretAppend)` 使用指定的 HMAC 算法的结果，其中 `||` 表示串联。 否则，从此方法返回的值为 `HMAC-HASH(hmacKey, secretPrepend || z || secretAppend)`结果。
+
+如果 `secretPrepend` 或 `secretAppend` 的值 `null`，则将它们视为空数组。  
+
+ ]]></format>
+        </remarks>
         <exception cref="T:System.NotImplementedException">派生方法必须重写此方法。</exception>
-        <exception cref="T:System.ArgumentException"><paramref name="otherPartyPublicKey" /> 在与此密钥不同的曲线上。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="otherPartyPublicKey" /> 使用的曲线的大小与此密钥使用的曲线不同。
+
+或
+
+<paramref name="hashAlgorithm" /> 参数未指定哈希值。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="otherPartyPublicKey" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="otherPartyPublicKey" /> 使用的曲线与此密钥使用的曲线不同。
+
+或
+
+此实例仅表示一个公钥。</exception>
       </Docs>
     </Member>
     <Member MemberName="DeriveKeyMaterial">
@@ -477,16 +540,25 @@
       </Parameters>
       <Docs>
         <param name="otherPartyPublicKey">另一方的公钥。</param>
-        <summary>在给定另一方公钥的情况下派生可以用作密钥的字节。</summary>
-        <returns>来自与另一方的公钥进行密钥交换的密钥材料。</returns>
+        <summary>在派生类中实现时，对共享机密执行密钥派生。</summary>
+        <returns>使用共享机密作为输入的密钥派生功能的结果。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
-## Remarks  
- 有关公钥的详细信息，请参阅 <xref:System.Security.Cryptography.ECDiffieHellmanPublicKey> 类。  
-  
+## Remarks
+
+此方法的默认行为等效于调用 <xref:System.Security.Cryptography.ECDiffieHellman.DeriveKeyFromHash%2A> 将 SHA-256 指定为不带预置值或追加值的哈希算法。
+某些实现允许更改此方法的行为，并建议调用方调用任何方法，以显式指示它执行所需的密钥派生。
+
  ]]></format>
         </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="otherPartyPublicKey" /> 使用的曲线的大小与此密钥使用的曲线不同。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="otherPartyPublicKey" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="otherPartyPublicKey" /> 使用的曲线与此密钥使用的曲线不同。
+
+或
+
+此实例仅表示一个公钥。</exception>
       </Docs>
     </Member>
     <Member MemberName="DeriveKeyTls">
@@ -521,13 +593,33 @@
         <param name="otherPartyPublicKey">另一方的公钥。</param>
         <param name="prfLabel">ASCII 编码的 PRF 标签。</param>
         <param name="prfSeed">64 字节的 PRF 种子。</param>
-        <summary>在派生类中实现时，使用传输层安全性 (TLS) 伪随机功能 (PRF) 派生算法派生可用作密钥的字节。</summary>
-        <returns>来自与另一方的公钥进行密钥交换的密钥材料。</returns>
-        <remarks>To be added.</remarks>
+        <summary>在派生类中实现时，使用 TLS（传输层安全性）1.1 PRF（伪随机函数）执行密钥派生。</summary>
+        <returns>使用共享机密作为密钥的 TLS 1.1 PRF 中的前 48 个字节。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+
+此方法在内部执行椭圆曲线 Diffie-hellman 密钥协议，以生成共享机密（`z`）。
+
+此方法的返回值是 TLS 1.1 PRF （伪随机函数）的48字节输出，`PRF(z, prfLabel, prfSeed)`。
+
+有关详细信息，请参阅[IETF RFC 4346 第5部分](https://tools.ietf.org/html/rfc4346#section-5)。
+
+]]></format>
+        </remarks>
         <exception cref="T:System.NotImplementedException">派生方法必须重写此方法。</exception>
-        <exception cref="T:System.ArgumentException"><paramref name="otherPartyPublicKey" /> 在与此密钥不同的曲线上。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="prfLabel" /> 或 <paramref name="prfSeed" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="prfSeed" /> 的长度并不正好是 64 字节。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="otherPartyPublicKey" /> 使用的曲线的大小与此密钥使用的曲线不同。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="otherPartyPublicKey" />、<paramref name="prfLabel" /> 或 <paramref name="prfSeed" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="prfSeed" /> 的长度并不正好是 64 字节。
+
+或
+
+<paramref name="otherPartyPublicKey" /> 使用的曲线与此密钥使用的曲线不同。
+
+或
+
+此实例仅表示一个公钥。</exception>
       </Docs>
     </Member>
     <Member MemberName="ExportECPrivateKey">
@@ -745,8 +837,10 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法只支持 ECPrivateKey 的二进制（BER/CER/DER）编码。
+
+此方法只支持 ECPrivateKey 的二进制（BER/CER/DER）编码。
 如果值采用 Base64 编码或 PEM 文本格式，则调用方必须在调用此方法之前对内容进行 Base64 编码。
+
  ]]></format>
         </remarks>
         <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="source" /> 的内容不表示 ASN.1-BER 编码的 PKCS#8 ECPrivateKey 结构。
@@ -790,11 +884,13 @@
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
-## Remarks  
+## Remarks
+
  密码字节直接传递到由 EncryptedPrivateKeyInfo 内容指示的算法使用的密钥派生函数（KDF）。
 这样，就可以与使用 PBKDF2 （基于密码的密钥派生函数2）处理密码时使用 UTF-8 以外文本编码的其他系统兼容。
 此方法只支持 EncryptedPrivateKeyInfo 的二进制（BER/CER/DER）编码。
 如果值采用 Base64 编码或 PEM 文本格式，则调用方必须在调用此方法之前对内容进行 Base64 编码。
+
  ]]></format>
         </remarks>
         <exception cref="T:System.Security.Cryptography.CryptographicException">密码不正确。
@@ -858,6 +954,7 @@
  当 `source` 的内容指示使用 PBKDF1 （基于密码的密钥派生函数1）或 PBKDF2 （基于密码的密钥派生函数2）的算法时，密码将通过 UTF-8 编码转换为字节。
 此方法只支持 EncryptedPrivateKeyInfo 的二进制（BER/CER/DER）编码。
 如果值采用 Base64 编码或 PEM 文本格式，则调用方必须在调用此方法之前对内容进行 Base64 编码。
+
  ]]></format>
         </remarks>
         <exception cref="T:System.Security.Cryptography.CryptographicException">密码不正确。
@@ -957,6 +1054,7 @@
 ## Remarks  
  此方法只支持 PrivateKeyInfo 的二进制（BER/CER/DER）编码。
 如果值采用 Base64 编码或 PEM 文本格式，则调用方必须在调用此方法之前对内容进行 Base64 编码。
+
  ]]></format>
         </remarks>
         <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="source" /> 的内容不表示 ASN.1-BER 编码的 PKCS#8 PrivateKeyInfo 结构。
@@ -1009,6 +1107,7 @@
 ## Remarks  
  此方法只支持 SubjectPublicKeyInfo 的二进制（DER）编码。
 如果值采用 Base64 编码或 PEM 文本格式，则调用方必须在调用此方法之前对内容进行 Base64 编码。
+
  ]]></format>
         </remarks>
         <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="source" /> 的内容不表示 ASN.1-DER 编码的 X.509 SubjectPublicKeyInfo 结构。
@@ -1242,6 +1341,7 @@
 ## Remarks  
  密码字节直接传递到 `pbeParameters`所指示算法使用的密钥派生函数（KDF）。
 这样，就可以与使用 PBKDF2 （基于密码的密钥派生函数2）处理密码时使用 UTF-8 以外文本编码的其他系统兼容。
+
  ]]></format>
         </remarks>
         <exception cref="T:System.Security.Cryptography.CryptographicException">未能导出密钥。
@@ -1290,6 +1390,7 @@
   
 ## Remarks  
  如果 `pbeParameters` 指示使用 PBKDF2 （基于密码的密钥派生函数2）的算法，则密码将通过 UTF-8 编码转换为字节。
+
  ]]></format>
         </remarks>
         <exception cref="T:System.Security.Cryptography.CryptographicException">未能导出密钥。</exception>

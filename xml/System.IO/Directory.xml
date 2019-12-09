@@ -1,5 +1,5 @@
 <Type Name="Directory" FullName="System.IO.Directory">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="9326efc090cc4b5e979d4f912c36735f65624c96" /><Meta Name="ms.sourcegitcommit" Value="fca64b45e02aa2f1e30903f26e55ff20b616dd16" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="11/04/2019" /><Meta Name="ms.locfileid" Value="73463493" /></Metadata><TypeSignature Language="C#" Value="public static class Directory" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="3bbea36b17f443851517ccfbeca4383a06386061" /><Meta Name="ms.sourcegitcommit" Value="47aee60cbc5001a16d5b9cdd0500df890fb1cdec" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="11/26/2019" /><Meta Name="ms.locfileid" Value="74529835" /></Metadata><TypeSignature Language="C#" Value="public static class Directory" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Directory extends System.Object" />
   <TypeSignature Language="DocId" Value="T:System.IO.Directory" />
   <TypeSignature Language="VB.NET" Value="Public Class Directory" />
@@ -58,7 +58,7 @@
   
  在接受路径的成员中，路径可以引用文件或目录。 你可以使用服务器和共享名称的完整路径、相对路径或通用命名约定（UNC）路径。 例如，以下所有内容都是可接受的路径：  
   
--   Visual Basic 中的 "c： \\ \ C#MyDir" 或 "c:\MyDir"。  
+-   Visual Basic 中的 "c：\\C#\MyDir" 或 "c:\MyDir"。  
   
 -   Visual Basic 中的 "MyDir\\C#\MySubdir" 或 "MyDir\MySubDir"。  
   
@@ -688,12 +688,45 @@ Directory::CreateDirectory("Public\\Html");
         <Parameter Name="enumerationOptions" Type="System.IO.EnumerationOptions" Index="2" FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="searchPattern">To be added.</param>
-        <param name="enumerationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="path">要搜索的目录的相对或绝对路径。 此字符串不区分大小写。</param>
+        <param name="searchPattern">要与 <paramref name="path" /> 中的目录名称匹配的搜索字符串成。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
+        <param name="enumerationOptions">描述要使用的搜索和枚举配置的对象。</param>
+        <summary>返回指定路径中与搜索模式匹配的目录完整名称的可枚举集合，还可搜索子目录。</summary>
+        <returns>一个可枚举集合，它包含 <paramref name="path" /> 指定的目录中与指定的搜索模式和枚举选项匹配的目录的完整名称（包括路径）。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ `searchPattern` 可以是文字和通配符的组合，但不支持正则表达式。 `searchPattern`中允许使用以下通配符说明符。
+
+|通配符说明符|匹配|
+|------------------------|-------------|
+|\* （星号）|此位置中的零个或多个字符。|
+|? （问号）|此位置正好有一个字符。|
+
+ 通配符以外的字符为原义字符。 例如，`searchPattern` 字符串 "\*t" 搜索 `path` 以字母 "t" 结尾的所有名称。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。
+
+ `searchPattern` 不能以两个句点（"..."）结束或包含两个句点（"..."），后跟 <xref:System.IO.Path.DirectorySeparatorChar> 或 <xref:System.IO.Path.AltDirectorySeparatorChar>，也不能包含任何无效字符。 你可以使用 <xref:System.IO.Path.GetInvalidPathChars%2A> 方法查询无效字符。
+
+ 可以在 `path` 参数中指定相对或绝对路径信息。 相对路径信息被解释为相对于当前工作目录，您可以使用 <xref:System.IO.Directory.GetCurrentDirectory%2A> 方法来确定。 返回的目录名称以你在 `path` 参数中提供的值为前缀。 例如，如果在 `path` 参数中提供了相对路径，则返回的目录名称将包含相对路径。
+
+ <xref:System.IO.Directory.EnumerateDirectories%2A> 和 <xref:System.IO.Directory.GetDirectories%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateDirectories%2A>时，可以在返回整个集合之前开始枚举名称的集合;使用 <xref:System.IO.Directory.GetDirectories%2A>时，必须等待返回整个名称数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateDirectories%2A> 可能更高效。
+
+ 未缓存返回的集合;对集合中的 <xref:System.Collections.Generic.IEnumerable%601.GetEnumerator%2A> 的每个调用都将启动一个新枚举。
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="path" /> 是一个长度为零的字符串，仅包含空格，或包含无效字符。 你可以使用 <see cref="M:System.IO.Path.GetInvalidPathChars" /> 方法查询无效字符。  
+  
+或 
+ <paramref name="searchPattern" /> 不包含有效模式。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="path" /> 或 <paramref name="searchPattern" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="searchOption" /> 不是有效的 <see cref="T:System.IO.SearchOption" /> 值。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException"><paramref name="path" /> 无效，如引用未映射的驱动器。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="path" /> 是一个文件名。</exception>
+        <exception cref="T:System.IO.PathTooLongException">指定的路径和/或文件名超过了系统定义的最大长度。</exception>
+        <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">调用方没有所要求的权限。</exception>
       </Docs>
     </Member>
     <Member MemberName="EnumerateDirectories">
@@ -731,11 +764,9 @@ Directory::CreateDirectory("Public\\Html");
       <Docs>
         <param name="path">要搜索的目录的相对或绝对路径。 此字符串不区分大小写。</param>
         <param name="searchPattern">要与 <paramref name="path" /> 中的目录名称匹配的搜索字符串成。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
-        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。  
-  
-默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
+        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
         <summary>返回指定路径中与搜索模式匹配的目录完整名称的可枚举集合，还可搜索子目录。</summary>
-        <returns>一个可枚举集合，它包含 <paramref name="path" /> 指定的目录中与指定的搜索模式匹配的目录的完整名称（包括路径）。</returns>
+        <returns>一个可枚举集合，它包含 <paramref name="path" /> 指定的目录中与指定的搜索模式和搜索选项匹配的目录的完整名称（包括路径）。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -985,12 +1016,55 @@ Directory::CreateDirectory("Public\\Html");
         <Parameter Name="enumerationOptions" Type="System.IO.EnumerationOptions" Index="2" FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="searchPattern">To be added.</param>
-        <param name="enumerationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="path">要搜索的目录的相对或绝对路径。 此字符串不区分大小写。</param>
+        <param name="searchPattern">要与 <paramref name="path" /> 中的文件名匹配的搜索字符串。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
+        <param name="enumerationOptions">描述要使用的搜索和枚举配置的对象。</param>
+        <summary>返回指定路径中与搜索模式和枚举选项匹配的完整文件名的可枚举集合，还可以搜索子目录。</summary>
+        <returns>一个可枚举集合，它包含 <paramref name="path" /> 指定的目录中与指定的搜索模式和枚举选项匹配的文件的完整名称（包括路径）。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ `searchPattern` 可以是文字和通配符的组合，但不支持正则表达式。 `searchPattern`中允许使用以下通配符说明符。
+
+|通配符说明符|匹配|
+|------------------------|-------------|
+|\* （星号）|此位置中的零个或多个字符。|
+|? （问号）|此位置中的零个或一个字符。|
+
+ 通配符以外的字符为原义字符。 例如，`searchPattern` 字符串 "\*t" 搜索 `path` 以字母 "t" 结尾的所有名称。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。
+
+> [!NOTE]
+>  如果在 `searchPattern` 如 "\*.txt" 中使用星号通配符，则指定扩展中的字符数将影响搜索，如下所示：
+> 
+> -   如果指定的扩展长度恰好为三个字符，则该方法将返回扩展名以指定扩展名开头的文件。 例如，"\*.xls" 同时返回 "node.js" 和 "node.js"。
+> -   在所有其他情况下，该方法将返回完全与指定扩展名匹配的文件。 例如，"\*" 将返回 "file.ai"，而不是 "node.js"。
+> 
+>  使用问号通配符时，此方法只返回与指定文件扩展名匹配的文件。 例如，给定两个文件： "file1" 和 "txtother"，在目录中，"文件？" 的搜索模式。txt "只返回第一个文件，而" file\*.txt "的搜索模式返回这两个文件。
+
+ `searchPattern` 不能以两个句点（"..."）结束或包含两个句点（"..."），后跟 <xref:System.IO.Path.DirectorySeparatorChar> 或 <xref:System.IO.Path.AltDirectorySeparatorChar>，也不能包含任何无效字符。 你可以使用 <xref:System.IO.Path.GetInvalidPathChars%2A> 方法查询无效字符。
+
+ 可以指定具有 `path` 参数的相对路径信息。 相对路径信息被解释为相对于当前工作目录，您可以使用 <xref:System.IO.Directory.GetCurrentDirectory%2A> 方法来确定。
+
+ <xref:System.IO.Directory.EnumerateFiles%2A> 和 <xref:System.IO.Directory.GetFiles%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFiles%2A>时，可以在返回整个集合之前开始枚举名称的集合;使用 <xref:System.IO.Directory.GetFiles%2A>时，必须等待返回整个名称数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。
+
+ 未缓存返回的集合;对集合中的 <xref:System.Collections.Generic.IEnumerable%601.GetEnumerator%2A> 的每个调用都将启动一个新枚举。
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="path" /> 是一个长度为零的字符串，仅包含空格，或包含无效字符。 你可以使用 <see cref="M:System.IO.Path.GetInvalidPathChars" /> 方法查询无效字符。  
+  
+或 
+ <paramref name="searchPattern" /> 不包含有效模式。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="path" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="searchPattern" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="searchOption" /> 不是有效的 <see cref="T:System.IO.SearchOption" /> 值。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException"><paramref name="path" /> 无效，如引用未映射的驱动器。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="path" /> 是一个文件名。</exception>
+        <exception cref="T:System.IO.PathTooLongException">指定的路径和/或文件名超过了系统定义的最大长度。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">调用方没有所要求的权限。</exception>
       </Docs>
     </Member>
     <Member MemberName="EnumerateFiles">
@@ -1028,11 +1102,9 @@ Directory::CreateDirectory("Public\\Html");
       <Docs>
         <param name="path">要搜索的目录的相对或绝对路径。 此字符串不区分大小写。</param>
         <param name="searchPattern">要与 <paramref name="path" /> 中的文件名匹配的搜索字符串。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
-        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。  
-  
-默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
+        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
         <summary>返回指定路径中与搜索模式匹配的完整文件名的可枚举集合，还可以搜索子目录。</summary>
-        <returns>一个可枚举集合，它包含 <paramref name="path" /> 指定的目录中与指定的搜索模式和选项匹配的文件的完整名称（包括路径）。</returns>
+        <returns>一个可枚举集合，它包含 <paramref name="path" /> 指定的目录中与指定的搜索模式和搜索选项匹配的文件的完整名称（包括路径）。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -1142,11 +1214,11 @@ Directory::CreateDirectory("Public\\Html");
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 可以指定具有 `path` 参数的相对路径信息。 相对路径信息被解释为相对于当前工作目录，您可以使用 <xref:System.IO.Directory.GetCurrentDirectory%2A> 方法来确定。  
-  
- <xref:System.IO.Directory.EnumerateFileSystemEntries%2A> 和 <xref:System.IO.Directory.GetFileSystemEntries%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFileSystemEntries%2A>时，可以在返回整个集合之前开始枚举条目的集合;使用 <xref:System.IO.Directory.GetFileSystemEntries%2A>时，必须等待返回整个项数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。  
-  
- 未缓存返回的集合;对集合中的 <xref:System.Collections.Generic.IEnumerable%601.GetEnumerator%2A> 的每个调用都将启动一个新枚举。  
+ 可以指定具有 `path` 参数的相对路径信息。 相对路径信息被解释为相对于当前工作目录，您可以使用 <xref:System.IO.Directory.GetCurrentDirectory%2A> 方法来确定。
+
+ <xref:System.IO.Directory.EnumerateFileSystemEntries%2A> 和 <xref:System.IO.Directory.GetFileSystemEntries%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFileSystemEntries%2A>时，可以在返回整个集合之前，开始枚举条目的集合;使用 <xref:System.IO.Directory.GetFileSystemEntries%2A>时，必须等待返回整个项数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。
+
+ 未缓存返回的集合;对集合中的 <xref:System.Collections.Generic.IEnumerable%601.GetEnumerator%2A> 的每个调用都将启动一个新枚举。
   
  ]]></format>
         </remarks>
@@ -1221,7 +1293,7 @@ Directory::CreateDirectory("Public\\Html");
   
  可以指定具有 `path` 参数的相对路径信息。 相对路径信息被解释为相对于当前工作目录，您可以使用 <xref:System.IO.Directory.GetCurrentDirectory%2A> 方法来确定。  
   
- <xref:System.IO.Directory.EnumerateFileSystemEntries%2A> 和 <xref:System.IO.Directory.GetFileSystemEntries%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFileSystemEntries%2A>时，可以在返回整个集合之前开始枚举条目的集合;使用 <xref:System.IO.Directory.GetFileSystemEntries%2A>时，必须等待返回整个项数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。  
+ <xref:System.IO.Directory.EnumerateFileSystemEntries%2A> 和 <xref:System.IO.Directory.GetFileSystemEntries%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFileSystemEntries%2A>时，可以在返回整个集合之前，开始枚举条目的集合;使用 <xref:System.IO.Directory.GetFileSystemEntries%2A>时，必须等待返回整个项数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。  
   
  未缓存返回的集合;对集合中的 <xref:System.Collections.Generic.IEnumerable%601.GetEnumerator%2A> 的每个调用都将启动一个新枚举。  
   
@@ -1269,12 +1341,56 @@ Directory::CreateDirectory("Public\\Html");
         <Parameter Name="enumerationOptions" Type="System.IO.EnumerationOptions" Index="2" FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="searchPattern">To be added.</param>
-        <param name="enumerationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="path">要搜索的目录的相对或绝对路径。 此字符串不区分大小写。</param>
+        <param name="searchPattern">要与 <paramref name="path" /> 中的子目录的名称匹配的搜索字符串。 此参数可以包含有效文本和通配符的组合，但不支持正则表达式。</param>
+        <param name="enumerationOptions">描述要使用的搜索和枚举配置的对象。</param>
+        <summary>返回指定路径中与搜索模式和枚举选项匹配的文件名和目录名的可枚举集合。</summary>
+        <returns>一个可枚举集合，它包含 <paramref name="path" /> 指定的目录中与指定搜索模式和指定枚举选项匹配的文件系统项。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ `searchPattern` 可以是文字和通配符的组合，但不支持正则表达式。 `searchPattern`中允许使用以下通配符说明符。
+
+|通配符说明符|匹配|
+|------------------------|-------------|
+|\* （星号）|此位置中的零个或多个字符。|
+|? （问号）|此位置中的零个或一个字符。|
+
+ 通配符以外的字符为原义字符。 例如，`searchPattern` 字符串 "\*t" 搜索 `path` 以字母 "t" 结尾的所有名称。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。
+
+> [!NOTE]
+>  如果在 `searchPattern` 如 "\*.txt" 中使用星号通配符，则指定扩展中的字符数将影响搜索，如下所示：
+> 
+> -   如果指定的扩展长度恰好为三个字符，则该方法将返回扩展名以指定扩展名开头的文件。 例如，"\*.xls" 同时返回 "node.js" 和 "node.js"。
+> -   在所有其他情况下，该方法将返回完全与指定扩展名匹配的文件。 例如，"\*" 将返回 "file.ai"，而不是 "node.js"。
+> 
+>  使用问号通配符时，此方法只返回与指定文件扩展名匹配的文件。 例如，给定两个文件： "file1" 和 "txtother"，在目录中，"文件？" 的搜索模式。txt "只返回第一个文件，而" file\*.txt "的搜索模式返回这两个文件。
+
+ `searchPattern` 不能以两个句点（"..."）结束或包含两个句点（"..."），后跟 <xref:System.IO.Path.DirectorySeparatorChar> 或 <xref:System.IO.Path.AltDirectorySeparatorChar>，也不能包含任何无效字符。 你可以使用 <xref:System.IO.Path.GetInvalidPathChars%2A> 方法查询无效字符。
+
+ 可以指定具有 `path` 参数的相对路径信息。 相对路径信息被解释为相对于当前工作目录，您可以使用 <xref:System.IO.Directory.GetCurrentDirectory%2A> 方法来确定。
+
+ <xref:System.IO.Directory.EnumerateFileSystemEntries%2A> 和 <xref:System.IO.Directory.GetFileSystemEntries%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFileSystemEntries%2A>时，可以在返回整个集合之前，开始枚举条目的集合;使用 <xref:System.IO.Directory.GetFileSystemEntries%2A>时，必须等待返回整个项数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。
+
+ 未缓存返回的集合;对集合中的 <xref:System.Collections.Generic.IEnumerable%601.GetEnumerator%2A> 的每个调用都将启动一个新枚举。
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="path" /> 是一个长度为零的字符串，仅包含空格，或包含无效字符。 你可以使用 <see cref="M:System.IO.Path.GetInvalidPathChars" /> 方法查询无效字符。  
+  
+或 
+ <paramref name="searchPattern" /> 不包含有效模式。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="path" /> 为 <see langword="null" />。  
+  
+或 
+ <paramref name="searchPattern" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="searchOption" /> 不是有效的 <see cref="T:System.IO.SearchOption" /> 值。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException"><paramref name="path" /> 无效，如引用未映射的驱动器。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="path" /> 是一个文件名。</exception>
+        <exception cref="T:System.IO.PathTooLongException">指定的路径和/或文件名超过了系统定义的最大长度。</exception>
+        <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">调用方没有所要求的权限。</exception>
       </Docs>
     </Member>
     <Member MemberName="EnumerateFileSystemEntries">
@@ -1312,9 +1428,7 @@ Directory::CreateDirectory("Public\\Html");
       <Docs>
         <param name="path">要搜索的目录的相对或绝对路径。 此字符串不区分大小写。</param>
         <param name="searchPattern">要与 <paramref name="path" /> 中的文件系统项匹配的搜索字符串。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
-        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。  
-  
-默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
+        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
         <summary>返回指定路径中与搜索模式匹配的文件名称和目录名的可枚举集合，还可以搜索子目录。</summary>
         <returns>由 <paramref name="path" /> 指定的目录中与指定搜索模式和选项匹配的文件系统项的可枚举集合。</returns>
         <remarks>
@@ -1342,7 +1456,7 @@ Directory::CreateDirectory("Public\\Html");
   
  可以指定具有 `path` 参数的相对路径信息。 相对路径信息被解释为相对于当前工作目录，您可以使用 <xref:System.IO.Directory.GetCurrentDirectory%2A> 方法来确定。  
   
- <xref:System.IO.Directory.EnumerateFileSystemEntries%2A> 和 <xref:System.IO.Directory.GetFileSystemEntries%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFileSystemEntries%2A>时，可以在返回整个集合之前开始枚举条目的集合;使用 <xref:System.IO.Directory.GetFileSystemEntries%2A>时，必须等待返回整个项数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。  
+ <xref:System.IO.Directory.EnumerateFileSystemEntries%2A> 和 <xref:System.IO.Directory.GetFileSystemEntries%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFileSystemEntries%2A>时，可以在返回整个集合之前，开始枚举条目的集合;使用 <xref:System.IO.Directory.GetFileSystemEntries%2A>时，必须等待返回整个项数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。  
   
  未缓存返回的集合;对集合中的 <xref:System.Collections.Generic.IEnumerable%601.GetEnumerator%2A> 的每个调用都将启动一个新枚举。  
   
@@ -1512,7 +1626,7 @@ Directory::CreateDirectory("Public\\Html");
 调用方没有所要求的权限。</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">用于枚举目录的访问控制列表（ACL）的权限。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.NoAccess" />、<see cref="F:System.Security.AccessControl.AccessControlActions.View" />  
   
-安全操作：手动.</permission>
+安全操作：需求。</permission>
       </Docs>
     </Member>
     <Member MemberName="GetAccessControl">
@@ -1572,7 +1686,7 @@ Directory::CreateDirectory("Public\\Html");
 调用方没有所要求的权限。</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">用于枚举目录的访问控制列表（ACL）的权限。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.NoAccess" />、<see cref="F:System.Security.AccessControl.AccessControlActions.View" />  
   
-安全操作：手动.</permission>
+安全操作：需求。</permission>
       </Docs>
     </Member>
     <Member MemberName="GetCreationTime">
@@ -1627,7 +1741,7 @@ Directory::CreateDirectory("Public\\Html");
   
  此方法等效于 <xref:System.IO.File.GetCreationTime%2A?displayProperty=nameWithType>。  
   
- 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 。协调世界时（UTC），调整为本地时间。  
+ 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 公元协调世界时（UTC），调整为本地时间。  
   
  允许 `path` 参数指定相对或绝对路径信息。 相对路径信息被解释为相对于当前工作目录。 若要获取当前工作目录，请参阅 <xref:System.IO.Directory.GetCurrentDirectory%2A>。  
   
@@ -1707,7 +1821,7 @@ Directory::CreateDirectory("Public\\Html");
 > [!NOTE]
 >  此方法可能会返回不准确的值，因为它使用的本机函数的值可能不会持续由操作系统进行更新。  
   
- 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 。通用协调时间 (UTC) 开始和结束。  
+ 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 公元协调世界时（UTC）。  
   
  使用此方法可以基于协调世界时（UTC）获取目录的创建时间。  
   
@@ -1970,7 +2084,7 @@ Directory::CreateDirectory("Public\\Html");
         <exception cref="T:System.IO.PathTooLongException">指定的路径和/或文件名超过了系统定义的最大长度。</exception>
         <exception cref="T:System.IO.IOException"><paramref name="path" /> 是一个文件名。</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">指定的路径无效（例如，它位于未映射的驱动器上）。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于访问当前目录的路径信息。 关联的枚举：<see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" />。</permission>
+        <permission cref="T:System.Security.Permissions.FileIOPermission">用于访问当前目录的路径信息。 关联枚举：<see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" />。</permission>
         <altmember cref="M:System.IO.Directory.GetCurrentDirectory" />
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
@@ -2004,12 +2118,45 @@ Directory::CreateDirectory("Public\\Html");
         <Parameter Name="enumerationOptions" Type="System.IO.EnumerationOptions" Index="2" FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="searchPattern">To be added.</param>
-        <param name="enumerationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="path">要搜索的目录的相对或绝对路径。 此字符串不区分大小写。</param>
+        <param name="searchPattern">要与 <paramref name="path" /> 中的子目录的名称匹配的搜索字符串。 此参数可以包含有效文本和通配符的组合，但不支持正则表达式。</param>
+        <param name="enumerationOptions">描述要使用的搜索和枚举配置的对象。</param>
+        <summary>返回指定目录中与指定的搜索模式和枚举选项匹配的子目录的名称（包括其路径）。</summary>
+        <returns>一个数组，它包含指定目录中与搜索模式和枚举选项匹配的子目录的完整名称（包含路径）；如果未找到任何文件，则为空数组。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此方法返回与指定的搜索模式匹配的指定目录下的所有子目录。 如果指定的目录没有子目录，或者没有与 `searchPattern` 参数匹配的子目录，则此方法将返回一个空数组。 仅搜索顶级目录。 如果还想要搜索子目录，请使用 <xref:System.IO.Directory.GetDirectories%28System.String%2CSystem.String%2CSystem.IO.SearchOption%29> 方法，并在 `searchOption` 参数中指定 <xref:System.IO.SearchOption.AllDirectories>。
+
+ `searchPattern` 可以是文字和通配符的组合，但不支持正则表达式。 `searchPattern`中允许使用以下通配符说明符。
+
+|通配符说明符|匹配|
+|------------------------|-------------|
+|\* （星号）|此位置中的零个或多个字符。|
+|? （问号）|此位置中的零个或一个字符。|
+
+ 通配符以外的字符为原义字符。 例如，`searchPattern` 字符串 "\*t" 搜索 `path` 以字母 "t" 结尾的所有名称。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。
+
+ `searchPattern` 不能以两个句点（"..."）结束或包含两个句点（"..."），后跟 <xref:System.IO.Path.DirectorySeparatorChar> 或 <xref:System.IO.Path.AltDirectorySeparatorChar>，也不能包含任何无效字符。 你可以使用 <xref:System.IO.Path.GetInvalidPathChars%2A> 方法查询无效字符。
+
+ `path` 参数可以指定相对或绝对路径信息，并且不区分大小写。  相对路径信息被解释为相对于当前工作目录。 若要获取当前工作目录，请参阅 <xref:System.IO.Directory.GetCurrentDirectory%2A>。
+
+ <xref:System.IO.Directory.EnumerateDirectories%2A> 和 <xref:System.IO.Directory.GetDirectories%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateDirectories%2A>时，可以在返回整个集合之前开始枚举名称的集合;使用 <xref:System.IO.Directory.GetDirectories%2A>时，必须等待返回整个名称数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateDirectories%2A> 可能更高效。
+
+ 有关常见 i/o 任务的列表，请参阅[常见 I/o 任务](~/docs/standard/io/common-i-o-tasks.md)。
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.UnauthorizedAccessException">调用方没有所要求的权限。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="path" /> 为长度为零的字符串，仅包含空格，或包含一个或多个无效字符。 可以通过使用 <see cref="M:System.IO.Path.GetInvalidPathChars" /> 查询无效的字符。  
+  
+或 
+ <paramref name="searchPattern" /> 不包含有效的模式。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="path" /> 或 <paramref name="searchPattern" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.PathTooLongException">指定的路径和/或文件名超过了系统定义的最大长度。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="path" /> 是一个文件名。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">指定的路径无效（例如，它位于未映射的驱动器上）。</exception>
       </Docs>
     </Member>
     <Member MemberName="GetDirectories">
@@ -2396,12 +2543,61 @@ Directory::CreateDirectory("Public\\Html");
         <Parameter Name="enumerationOptions" Type="System.IO.EnumerationOptions" Index="2" FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="searchPattern">To be added.</param>
-        <param name="enumerationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="path">要搜索的目录的相对或绝对路径。 此字符串不区分大小写。</param>
+        <param name="searchPattern">要与 <paramref name="path" /> 中的子目录的名称匹配的搜索字符串。 此参数可以包含有效文本和通配符的组合，但不支持正则表达式。</param>
+        <param name="enumerationOptions">描述要使用的搜索和枚举配置的对象。</param>
+        <summary>返回指定目录中与指定的搜索模式和枚举选项匹配的文件的名称（包括其路径）。</summary>
+        <returns>一个数组，它包含指定目录中与指定的搜索模式和枚举选项匹配的文件的完整名称（包含路径）；如果未找到任何文件，则为空数组。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 返回的文件名将追加到所提供的 `path` 参数上，并且不保证返回的文件名的顺序。如果需要特定的排序顺序，请使用 <xref:System.Array.Sort%2A> 方法。
+
+ `searchPattern` 可以是文字和通配符的组合，但不支持正则表达式。 `searchPattern`中允许使用以下通配符说明符。
+
+|通配符说明符|匹配|
+|------------------------|-------------|
+|\* （星号）|此位置中的零个或多个字符。|
+|? （问号）|此位置中的零个或一个字符。|
+
+ 通配符以外的字符为原义字符。 例如，`searchPattern` 字符串 "\*t" 搜索 `path` 以字母 "t" 结尾的所有名称。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。
+
+ `searchPattern` 不能以两个句点（"..."）结束或包含两个句点（"..."），后跟 <xref:System.IO.Path.DirectorySeparatorChar> 或 <xref:System.IO.Path.AltDirectorySeparatorChar>，也不能包含任何无效字符。 你可以使用 <xref:System.IO.Path.GetInvalidPathChars%2A> 方法查询无效字符。
+
+> [!NOTE]
+>  如果在 `searchPattern` 如 "\*.txt" 中使用星号通配符，则指定扩展中的字符数将影响搜索，如下所示：
+> 
+> -   如果指定的扩展长度恰好为三个字符，则该方法将返回扩展名以指定扩展名开头的文件。 例如，"\*.xls" 同时返回 "node.js" 和 "node.js"。
+> -   在所有其他情况下，该方法将返回完全与指定扩展名匹配的文件。 例如，"\*" 将返回 "file.ai"，而不是 "node.js"。
+> 
+>  使用问号通配符时，此方法只返回与指定文件扩展名匹配的文件。 例如，给定两个文件： "file1" 和 "txtother"，在目录中，"文件？" 的搜索模式。txt "只返回第一个文件，而" file\*.txt "的搜索模式返回这两个文件。
+
+> [!NOTE]
+>  由于此方法使用8.3 文件名格式和长文件名格式的文件名进行检查，因此类似于 "\*1\*.txt" 的搜索模式可能会返回意外的文件名。 例如，使用搜索模式 "\*1\*.txt" 将返回 "longfilename"，因为等效的8.3 文件名格式为 "LONGFI ~ 1 .TXT"。
+
+ <xref:System.IO.Directory.EnumerateFiles%2A> 和 <xref:System.IO.Directory.GetFiles%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFiles%2A>时，可以在返回整个集合之前开始枚举名称的集合;使用 <xref:System.IO.Directory.GetFiles%2A>时，必须等待返回整个名称数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。
+
+ `path` 参数可以指定相对或绝对路径信息。 相对路径信息被解释为相对于当前工作目录。 若要获取当前工作目录，请参阅 <xref:System.IO.Directory.GetCurrentDirectory%2A>。
+
+ `path` 参数不区分大小写。
+
+ 有关常见 i/o 任务的列表，请参阅[常见 I/o 任务](~/docs/standard/io/common-i-o-tasks.md)。
+  
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.IO.IOException"><paramref name="path" /> 是一个文件名。  
+  
+或 
+发生了网络错误。</exception>
+        <exception cref="T:System.UnauthorizedAccessException">调用方没有所要求的权限。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="path" /> 为长度为零的字符串，仅包含空格，或包含一个或多个无效字符。 可以通过使用 <see cref="M:System.IO.Path.GetInvalidPathChars" /> 查询无效的字符。  
+  
+或 
+ <paramref name="searchPattern" /> 不包含有效的模式。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="path" /> 或 <paramref name="searchPattern" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.PathTooLongException">指定的路径和/或文件名超过了系统定义的最大长度。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">指定的路径未找到或无效（例如，它在未映射的驱动器上）。</exception>
       </Docs>
     </Member>
     <Member MemberName="GetFiles">
@@ -2555,7 +2751,7 @@ Directory::CreateDirectory("Public\\Html");
 ## Remarks  
  不保证返回的文件和目录名称的顺序。如果需要特定的排序顺序，请使用 <xref:System.Array.Sort%2A> 方法。  
   
- <xref:System.IO.Directory.EnumerateFileSystemEntries%2A> 和 <xref:System.IO.Directory.GetFileSystemEntries%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFileSystemEntries%2A>时，可以在返回整个集合之前开始枚举条目的集合;使用 <xref:System.IO.Directory.GetFileSystemEntries%2A>时，必须等待返回整个项数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。  
+ <xref:System.IO.Directory.EnumerateFileSystemEntries%2A> 和 <xref:System.IO.Directory.GetFileSystemEntries%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFileSystemEntries%2A>时，可以在返回整个集合之前，开始枚举条目的集合;使用 <xref:System.IO.Directory.GetFileSystemEntries%2A>时，必须等待返回整个项数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。  
   
  此方法等同于将星号（\*）指定为搜索模式的 <xref:System.IO.Directory.GetFileSystemEntries%2A>。  
   
@@ -2715,12 +2911,54 @@ Directory::CreateDirectory("Public\\Html");
         <Parameter Name="enumerationOptions" Type="System.IO.EnumerationOptions" Index="2" FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="searchPattern">To be added.</param>
-        <param name="enumerationOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="path">要搜索的目录的相对或绝对路径。 此字符串不区分大小写。</param>
+        <param name="searchPattern">要与 <paramref name="path" /> 中的子目录的名称匹配的搜索字符串。 此参数可以包含有效文本和通配符的组合，但不支持正则表达式。</param>
+        <param name="enumerationOptions">描述要使用的搜索和枚举配置的对象。</param>
+        <summary>返回指定路径中与搜索模式和枚举选项匹配的文件名和目录名的数组。</summary>
+        <returns>一个数组，它包含与指定的搜索模式和枚举选项匹配的文件名和目录名；如果找不到任何文件或目录，则为空数组。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 不保证返回的文件和目录名称的顺序。如果需要特定的排序顺序，请使用 <xref:System.Array.Sort%2A> 方法。
+
+ `searchPattern` 可以是文字和通配符的组合，但不支持正则表达式。 `searchPattern`中允许使用以下通配符说明符。
+
+|通配符说明符|匹配|
+|------------------------|-------------|
+|\* （星号）|此位置中的零个或多个字符。|
+|? （问号）|此位置中的零个或一个字符。|
+
+ 通配符以外的字符为原义字符。 例如，`searchPattern` 字符串 "\*t" 搜索 `path` 以字母 "t" 结尾的所有名称。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。
+
+ `searchPattern` 不能以两个句点（"..."）结束或包含两个句点（"..."），后跟 <xref:System.IO.Path.DirectorySeparatorChar> 或 <xref:System.IO.Path.AltDirectorySeparatorChar>，也不能包含任何无效字符。 你可以使用 <xref:System.IO.Path.GetInvalidPathChars%2A> 方法查询无效字符。
+
+> [!NOTE]
+>  如果在 `searchPattern` 如 "\*.txt" 中使用星号通配符，则指定扩展中的字符数将影响搜索，如下所示：
+> 
+> -   如果指定的扩展长度恰好为三个字符，则该方法将返回扩展名以指定扩展名开头的文件。 例如，"\*.xls" 同时返回 "node.js" 和 "node.js"。
+> -   在所有其他情况下，该方法将返回完全与指定扩展名匹配的文件。 例如，"\*" 将返回 "file.ai"，而不是 "node.js"。
+> 
+>  使用问号通配符时，此方法只返回与指定文件扩展名匹配的文件。 例如，给定两个文件： "file1" 和 "txtother"，在目录中，"文件？" 的搜索模式。txt "只返回第一个文件，而" file\*.txt "的搜索模式返回这两个文件。
+
+ 允许 `path` 参数指定相对或绝对路径信息。 相对路径信息被解释为相对于当前工作目录。 若要获取当前工作目录，请参阅 <xref:System.IO.Directory.GetCurrentDirectory%2A>。
+
+ `path` 参数不区分大小写。
+
+ 有关常见 i/o 任务的列表，请参阅[常见 I/o 任务](~/docs/standard/io/common-i-o-tasks.md)。
+
+          ]]></format>
+        </remarks>
+        <exception cref="T:System.UnauthorizedAccessException">调用方没有所要求的权限。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="path" /> 为长度为零的字符串，仅包含空格，或包含一个或多个无效字符。 你可以使用 <see cref="M:System.IO.Path.GetInvalidPathChars" /> 方法查询无效字符。
+
+或
+
+          <paramref name="searchPattern" /> 不包含有效模式。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="path" /> 或 <paramref name="searchPattern" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.PathTooLongException">指定的路径和/或文件名超过了系统定义的最大长度。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="path" /> 是一个文件名。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">指定的路径无效（例如，它位于未映射的驱动器上）。</exception>
       </Docs>
     </Member>
     <Member MemberName="GetFileSystemEntries">
@@ -2758,9 +2996,7 @@ Directory::CreateDirectory("Public\\Html");
       <Docs>
         <param name="path">要搜索的目录的相对或绝对路径。 此字符串不区分大小写。</param>
         <param name="searchPattern">要与 <paramref name="path" /> 中的文件和目录的名称匹配的搜索字符串。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
-        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。  
-  
-默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
+        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
         <summary>返回指定路径中与搜索模式匹配的所有文件名和目录名的数组，还可以搜索子目录。</summary>
         <returns>与指定的搜索条件匹配的文件名和目录名的数组；如果找不到任何文件或目录，则为空数组。</returns>
         <remarks>
@@ -2788,7 +3024,7 @@ Directory::CreateDirectory("Public\\Html");
 >   
 >  使用问号通配符时，此方法只返回与指定文件扩展名匹配的文件。 例如，给定两个文件： "file1" 和 "txtother"，在目录中，"文件？" 的搜索模式。txt "只返回第一个文件，而" file\*.txt "的搜索模式返回这两个文件。  
   
- <xref:System.IO.Directory.EnumerateFileSystemEntries%2A> 和 <xref:System.IO.Directory.GetFileSystemEntries%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFileSystemEntries%2A>时，可以在返回整个集合之前开始枚举条目的集合;使用 <xref:System.IO.Directory.GetFileSystemEntries%2A>时，必须等待返回整个项数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。  
+ <xref:System.IO.Directory.EnumerateFileSystemEntries%2A> 和 <xref:System.IO.Directory.GetFileSystemEntries%2A> 方法的区别如下：使用 <xref:System.IO.Directory.EnumerateFileSystemEntries%2A>时，可以在返回整个集合之前，开始枚举条目的集合;使用 <xref:System.IO.Directory.GetFileSystemEntries%2A>时，必须等待返回整个项数组，然后才能访问数组。 因此，在处理多个文件和目录时，<xref:System.IO.Directory.EnumerateFiles%2A> 可能更高效。  
   
  可以指定具有 `path` 参数的相对路径信息。 相对路径信息被解释为相对于当前工作目录，您可以使用 <xref:System.IO.Directory.GetCurrentDirectory%2A> 方法来确定。  
   
@@ -2863,7 +3099,7 @@ Directory::CreateDirectory("Public\\Html");
   
  此方法与 <xref:System.IO.File.GetLastAccessTime%2A?displayProperty=nameWithType>完全相同。  
   
- 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 。协调世界时（UTC），调整为本地时间。  
+ 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 公元协调世界时（UTC），调整为本地时间。  
   
  允许 `path` 参数指定相对或绝对路径信息。 相对路径信息被解释为相对于当前工作目录。 若要获取当前工作目录，请参阅 <xref:System.IO.Directory.GetCurrentDirectory%2A>。  
   
@@ -2944,7 +3180,7 @@ Directory::CreateDirectory("Public\\Html");
 > [!NOTE]
 >  此方法可能会返回不准确的值，因为它使用的本机函数的值可能不会持续由操作系统进行更新。  
   
- 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 。通用协调时间 (UTC) 开始和结束。  
+ 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 公元协调世界时（UTC）。  
   
  有关常见 i/o 任务的列表，请参阅[常见 I/o 任务](~/docs/standard/io/common-i-o-tasks.md)。  
   
@@ -3021,7 +3257,7 @@ Directory::CreateDirectory("Public\\Html");
 > [!NOTE]
 >  此方法可能会返回不准确的值，因为它使用的本机函数的值可能不会持续由操作系统进行更新。  
   
- 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 。协调世界时（UTC），调整为本地时间。  
+ 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 公元协调世界时（UTC），调整为本地时间。  
   
  允许 `path` 参数指定相对或绝对路径信息。 相对路径信息被解释为相对于当前工作目录。 若要获取当前工作目录，请参阅 <xref:System.IO.Directory.GetCurrentDirectory%2A>。  
   
@@ -3101,7 +3337,7 @@ Directory::CreateDirectory("Public\\Html");
 > [!NOTE]
 >  此方法可能会返回不准确的值，因为它使用的本机函数的值可能不会持续由操作系统进行更新。  
   
- 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 。通用协调时间 (UTC) 开始和结束。  
+ 如果 `path` 参数中所述的目录不存在，则此方法将返回12:00 年1月 1601 1 日午夜 公元协调世界时（UTC）。  
   
  有关常见 i/o 任务的列表，请参阅[常见 I/o 任务](~/docs/standard/io/common-i-o-tasks.md)。  
   
@@ -3445,7 +3681,7 @@ Directory::CreateDirectory("Public\\Html");
         <exception cref="T:System.PlatformNotSupportedException">当前操作系统不是 Windows 2000 或更高版本。</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">用于枚举目录的访问控制列表（ACL）的权限。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.NoAccess" />、<see cref="F:System.Security.AccessControl.AccessControlActions.View" />  
   
-安全操作：手动.</permission>
+安全操作：需求。</permission>
         <altmember cref="T:System.IO.FileSystemWatcher" />
       </Docs>
     </Member>
