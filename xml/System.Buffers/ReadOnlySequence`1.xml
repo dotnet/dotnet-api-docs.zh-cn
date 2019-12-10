@@ -1,5 +1,5 @@
 <Type Name="ReadOnlySequence&lt;T&gt;" FullName="System.Buffers.ReadOnlySequence&lt;T&gt;">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="950af3d1586452bc44a25cd976b48a9ee7e3b2ba" /><Meta Name="ms.sourcegitcommit" Value="c573d537afba2d4c1463538f1095f2f155025464" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="10/16/2019" /><Meta Name="ms.locfileid" Value="72404571" /></Metadata><TypeSignature Language="C#" Value="public struct ReadOnlySequence&lt;T&gt;" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="181fdb5c23969a42d7417eae16a42399138acf9c" /><Meta Name="ms.sourcegitcommit" Value="218a2e36017b9f4ffa6c10e1644404e6d7d6bd1e" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/05/2019" /><Meta Name="ms.locfileid" Value="74839361" /></Metadata><TypeSignature Language="C#" Value="public struct ReadOnlySequence&lt;T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit ReadOnlySequence`1&lt;T&gt; extends System.ValueType" />
   <TypeSignature Language="DocId" Value="T:System.Buffers.ReadOnlySequence`1" />
   <TypeSignature Language="VB.NET" Value="Public Structure ReadOnlySequence(Of T)" />
@@ -28,7 +28,7 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <typeparam name="T">To be added.</typeparam>
+    <typeparam name="T">只读序列中的元素的类型。</typeparam>
     <summary>表示可读取 <typeparamref name="T" /> 有序系列的序列。</summary>
     <remarks>To be added.</remarks>
   </Docs>
@@ -55,11 +55,11 @@
         <Parameter Name="memory" Type="System.ReadOnlyMemory&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <param name="memory">To be added.</param>
+        <param name="memory"><typeparamref name="T" /> 类型的元素的只读内存块。</param>
         <summary>通过 <see cref="T:System.ReadOnlyMemory`1" /> 创建 <see cref="T:System.Buffers.ReadOnlySequence`1" /> 的实例。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
-使用者应管理内存的生存期，直到不再使用 <see cref="T:System.Buffers.ReadOnlySequence`1" />。
+如果不再使用 <see cref="T:System.Buffers.ReadOnlySequence`1" />，则使用者应管理内存的生存期。
 
 ]]></format>
         </remarks>
@@ -148,12 +148,22 @@
         <Parameter Name="endIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="startSegment">To be added.</param>
-        <param name="startIndex">To be added.</param>
-        <param name="endSegment">To be added.</param>
-        <param name="endIndex">To be added.</param>
+        <param name="startSegment">链接内存列表的初始节点。</param>
+        <param name="startIndex"><paramref name="startSegment" /> 内序列的起始位置。</param>
+        <param name="endSegment">链接内存列表的最终节点。</param>
+        <param name="endIndex"><paramref name="endSegment" /> 内序列的结尾位置。</param>
         <summary>通过由起始段和结束段表示的已链接内存列表及其中的相应索引创建 <see cref="T:System.Buffers.ReadOnlySequence`1" /> 的实例。</summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="startSegment" /> 或 <paramref name="endSegment" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">尽管 <paramref name="startSegment" /> 不同于 <paramref name="endSegment" />，<paramref name="startSegment" /> 的运行索引大于 <paramref name="endSegment" /> 的运行索引。
+
+或
+
+<paramref name="startSegment" /> 等于 <paramref name="endSegment" />，但 <paramref name="endIndex" /> 小于 <paramref name="startIndex" />。
+
+或
+
+<paramref name="startIndex" /> 大于 <paramref name="startSegment" /> 的基础内存块的长度。</exception>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -178,7 +188,7 @@
         <ReturnType>System.Buffers.ReadOnlySequence&lt;T&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>返回一个空的 <see cref="T:System.Buffers.ReadOnlySequence`1" /></summary>
+        <summary>返回一个空 <see cref="T:System.Buffers.ReadOnlySequence`1" />。</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -314,9 +324,9 @@
         <Parameter Name="offset" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added.</param>
+        <param name="offset">从序列开始处的偏移量。</param>
         <summary>按从序列开头偏移 <paramref name="offset" /> 的量返回一个新的 <see cref="T:System.SequencePosition" />。</summary>
-        <returns>To be added.</returns>
+        <returns>一个对象，表示从序列开始处的指定 <paramref name="offset" /> 处开始的序列位置。</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -346,10 +356,10 @@
         <Parameter Name="origin" Type="System.SequencePosition" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added.</param>
-        <param name="origin">To be added.</param>
-        <summary>按从 <paramref name="origin" /> 偏离 <paramref name="offset" /> 的量返回一个新的 <see cref="T:System.SequencePosition" />。</summary>
-        <returns>一个新的对象，它在原始对象的 <paramref name="offset" /> 位置开始。</returns>
+        <param name="offset">从指定 <paramref name="origin" /> 序列位置的偏移量。</param>
+        <param name="origin">表示从其开始偏移的点的序列位置。</param>
+        <summary>从 <paramref name="origin" /> 位置的指定偏移量开始，返回新的 <see cref="T:System.SequencePosition" />。</summary>
+        <returns>一个对象，表示从指定的 <paramref name="origin" /> 位置对象的 <paramref name="offset" /> 处开始的序列位置。</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -403,7 +413,7 @@
       </ReturnValue>
       <Docs>
         <summary>获取一个值，它指示 <see cref="T:System.Buffers.ReadOnlySequence`1" /> 是否包含单个 <see cref="T:System.ReadOnlyMemory`1" /> 段。</summary>
-        <value>如果只读序列为空，则 <see langword="true" />;否则 @no__t 为-1。</value>
+        <value>如果只读序列为空，则为 <see langword="true" />;否则，<see langword="false" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -777,8 +787,8 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <summary>返回表示当前序列的字符串。</summary>
+        <returns>表示当前序列的字符串。</returns>
         <remarks>To be added.</remarks>
         <inheritdoc />
       </Docs>

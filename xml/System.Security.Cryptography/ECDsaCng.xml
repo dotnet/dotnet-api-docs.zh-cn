@@ -1,5 +1,5 @@
 <Type Name="ECDsaCng" FullName="System.Security.Cryptography.ECDsaCng">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="6805504eb676aa056830a2f3b5d194b28a469b0c" /><Meta Name="ms.sourcegitcommit" Value="a22d0855bbf24d893f43605f8b7e3a44bd9551a5" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70363630" /></Metadata><TypeSignature Language="C#" Value="public sealed class ECDsaCng : System.Security.Cryptography.ECDsa" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="20f94e9836c6b0c61d4397932295d34553c11e78" /><Meta Name="ms.sourcegitcommit" Value="0cb8bc0854af5bc6af4211b6cf43cbda48e9f6c8" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/04/2019" /><Meta Name="ms.locfileid" Value="74797981" /></Metadata><TypeSignature Language="C#" Value="public sealed class ECDsaCng : System.Security.Cryptography.ECDsa" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ECDsaCng extends System.Security.Cryptography.ECDsa" />
   <TypeSignature Language="DocId" Value="T:System.Security.Cryptography.ECDsaCng" />
   <TypeSignature Language="VB.NET" Value="Public NotInheritable Class ECDsaCng&#xA;Inherits ECDsa" />
@@ -32,12 +32,13 @@
       <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此类派生<xref:System.Security.Cryptography.ECDsa>自抽象基类。  
+仅当使用 Windows CNG 库执行平台互操作时，才应直接使用此类。
+当不需要平台互操作时，应使用 <xref:System.Security.Cryptography.ECDsa.Create%2A?displayProperty=nameWithType> 工厂方法，而不是特定的派生实现。
   
    
   
 ## Examples  
- 下面的示例演示如何使用<xref:System.Security.Cryptography.ECDsaCng>类对消息进行签名，以及如何使用签名来验证消息是否未被更改。  
+ 下面的示例演示如何使用 <xref:System.Security.Cryptography.ECDsaCng> 类对消息进行签名，以及如何使用签名来验证消息是否未被更改。  
   
  [!code-csharp[ECDsaCng#1](~/samples/snippets/csharp/VS_Snippets_CLR/ecdsacng/cs/program.cs#1)]
  [!code-vb[ECDsaCng#1](~/samples/snippets/visualbasic/VS_Snippets_CLR/ecdsacng/vb/program.vb#1)]  
@@ -92,11 +93,15 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 随机密钥对的公钥长度为521位。  
+
+此构造函数不会立即生成新的公共/专用密钥对。
+此构造函数将 <xref:System.Security.Cryptography.ECDsaCng.KeySize> 属性设置为521，并且当需要某个键时，保存的大小用于标识目标曲线。
+如果通过 <xref:System.Security.Cryptography.ECDsaCng.ImportParameters%2A> 方法或其他密钥导入方法加载密钥，则此构造函数中的密钥大小没有任何意义。
   
  ]]></format>
         </remarks>
         <exception cref="T:System.PlatformNotSupportedException">此系统不支持下一代加密技术 (CNG) 类。</exception>
+        <altmember cref="M:System.Security.Cryptography.ECDsa.Create" />
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -134,17 +139,22 @@
       </Parameters>
       <Docs>
         <param name="keySize">密钥大小。 有效密钥大小是 256、384 和 521 位。</param>
-        <summary>使用指定密钥大小，通过随机密钥对来初始化 <see cref="T:System.Security.Cryptography.ECDsaCng" /> 类的新实例。</summary>
+        <summary>使用指定的目标密钥大小初始化 <see cref="T:System.Security.Cryptography.ECDsaCng" /> 类的新实例。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 随机密钥对的公钥长度由`keySize`参数定义。  
+
+此构造函数不会立即生成新的公共/专用密钥对。
+此构造函数将 <xref:System.Security.Cryptography.ECDsaCng.KeySize> 属性设置为提供的值，并且当需要某个键时，保存的大小用于标识目标曲线。
+如果通过 <xref:System.Security.Cryptography.ECDsaCng.ImportParameters%2A> 方法或其他密钥导入方法加载密钥，则此构造函数中的密钥大小没有任何意义。
+ 
   
  ]]></format>
         </remarks>
         <exception cref="T:System.PlatformNotSupportedException">此系统不支持下一代加密技术 (CNG) 类。</exception>
         <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="keySize" /> 指定了无效的长度。</exception>
+        <altmember cref="Overload:System.Security.Cryptography.ECDsa.Create" />
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -226,7 +236,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- `curve``true`传递<xref:System.Security.Cryptography.ECCurve.Validate%2A?displayProperty=nameWithType>给方法时，必须验证（即必须返回），并且必须是已命名或显式质数。  
+ `curve` 必须在传递到 <xref:System.Security.Cryptography.ECCurve.Validate%2A?displayProperty=nameWithType> 方法时验证（即必须返回 `true`），并且必须是已命名或显式质数。  
   
  ]]></format>
         </remarks>
@@ -266,8 +276,8 @@
         <Parameter Name="disposing" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-plat-ext-2.1;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="disposing">若要释放托管资源和非托管的资源，则为 <see langword="true" />；若要仅释放非托管资源，则为 <see langword="false" />。</param>
+        <summary>释放 <see cref="T:System.Security.Cryptography.ECDsaCng" /> 类的当前实例使用的资源。</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -384,7 +394,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 若要反序列化 XML 密钥， <xref:System.Security.Cryptography.ECDsaCng.FromXmlString%28System.String%2CSystem.Security.Cryptography.ECKeyXmlFormat%29>请改用重载。  
+ 若要反序列化 XML 密钥，请改用 <xref:System.Security.Cryptography.ECDsaCng.FromXmlString%28System.String%2CSystem.Security.Cryptography.ECKeyXmlFormat%29> 重载。  
   
  ]]></format>
         </remarks>
@@ -458,7 +468,7 @@
       </Parameters>
       <Docs>
         <param name="curve">用于生成密钥的曲线。</param>
-        <summary>生成用于 ECDsaCng 算法的密钥。</summary>
+        <summary>为指定曲线生成新的临时公钥/私钥对，替换当前密钥。</summary>
         <remarks>To be added.</remarks>
         <exception cref="T:System.Security.Cryptography.CryptographicException"><paramref name="curve" /> 不进行验证。</exception>
       </Docs>
@@ -497,11 +507,11 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此属性接受以下算法： <xref:System.Security.Cryptography.CngAlgorithm.MD5%2A>、 <xref:System.Security.Cryptography.CngAlgorithm.Sha1%2A>、 <xref:System.Security.Cryptography.CngAlgorithm.Sha256%2A>、 <xref:System.Security.Cryptography.CngAlgorithm.Sha384%2A>和<xref:System.Security.Cryptography.CngAlgorithm.Sha512%2A>。  
+ 此属性接受以下算法： <xref:System.Security.Cryptography.CngAlgorithm.MD5%2A>、<xref:System.Security.Cryptography.CngAlgorithm.Sha1%2A>、<xref:System.Security.Cryptography.CngAlgorithm.Sha256%2A>、<xref:System.Security.Cryptography.CngAlgorithm.Sha384%2A>和 <xref:System.Security.Cryptography.CngAlgorithm.Sha512%2A>。  
   
  还可以使用其他自定义哈希算法。  
   
- 由于 MD5 和 SHA1 出现冲突，Microsoft 建议<xref:System.Security.Cryptography.CngAlgorithm.Sha256%2A>您这样做。 默认算法为<xref:System.Security.Cryptography.CngAlgorithm.Sha256%2A>。  
+ 由于 MD5 和 SHA1 出现冲突，Microsoft 建议 <xref:System.Security.Cryptography.CngAlgorithm.Sha256%2A>。 默认算法是 <xref:System.Security.Cryptography.CngAlgorithm.Sha256%2A>。  
   
  如果要对已进行哈希处理的数据进行签名或验证，则不会使用此属性。  
   
@@ -541,10 +551,10 @@
         <Parameter Name="hashAlgorithm" Type="System.Security.Cryptography.HashAlgorithmName" Index="1" FrameworkAlternate="dotnet-plat-ext-2.1;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <param name="hashAlgorithm">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="data">要进行哈希处理的二进制流。</param>
+        <param name="hashAlgorithm">要用于对数据进行哈希处理的算法。</param>
+        <summary>使用指定的哈希算法计算指定的二进制流的哈希值。</summary>
+        <returns>经过哈希处理的数据。</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -581,12 +591,12 @@
         <Parameter Name="hashAlgorithm" Type="System.Security.Cryptography.HashAlgorithmName" Index="3" FrameworkAlternate="dotnet-plat-ext-2.1;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="hashAlgorithm">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="data">要进行哈希处理的数据。</param>
+        <param name="offset"><paramref name="data" /> 中要进行哈希处理的第一个字节的索引。</param>
+        <param name="count">要进行哈希处理的字节数。</param>
+        <param name="hashAlgorithm">要用于对数据进行哈希处理的算法。</param>
+        <summary>使用指定的哈希算法计算字节数组指定部分的哈希值。</summary>
+        <returns>经过哈希处理的数据。</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -626,7 +636,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果`parameters` 仅<xref:System.Security.Cryptography.ECParameters.Q>包含，则只导入公钥。 如果`parameters`还包含<xref:System.Security.Cryptography.ECParameters.D>，则导入完整密钥对。 <xref:System.Security.Cryptography.ECParameters.Curve>字段指定要导入的曲线类型。  
+ 如果 `parameters` 仅包含 <xref:System.Security.Cryptography.ECParameters.Q>，则只导入一个公钥。 如果 `parameters` 也包含 <xref:System.Security.Cryptography.ECParameters.D>，则将导入完整密钥对。 "<xref:System.Security.Cryptography.ECParameters.Curve>" 字段指定要导入的曲线类型。  
   
  ]]></format>
         </remarks>
@@ -695,9 +705,22 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>获取或设置非对称算法所用密钥模块的大小（以位为单位）。</summary>
+        <value>非对称算法所用密钥模块的大小（以位为单位）。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+
+如果将此属性设置为其当前值，则不会产生任何效果。
+如果将此属性设置为新的合法值，则将放弃当前密钥，但会推迟创建新密钥，直到需要一个密钥。
+
+由于键大小不唯一标识椭圆曲线，因此不建议使用属性 setter。 若要生成特定曲线上的新键，请使用 <xref:System.Security.Cryptography.ECDsaCng.GenerateKey%2A> 方法。
+
+]]></format>
+        </remarks> 
+        <exception cref="T:System.Security.Cryptography.CryptographicException"><see cref="P:System.Security.Cryptography.ECDsaCng.LegalKeySizes" /> 不允许 <paramref name="value" />。</exception>
+        <altmember cref="M:System.Security.Cryptography.ECDsaCng.GenerateKey(System.Security.Cryptography.ECCurve)" />
       </Docs>
     </Member>
     <Member MemberName="LegalKeySizes">
@@ -726,9 +749,22 @@
         <ReturnType>System.Security.Cryptography.KeySizes[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>获取 <see cref="P:System.Security.Cryptography.ECDsaCng.KeySize" /> 属性资源库支持的密钥大小（以位为单位）。</summary>
+        <value>一个数组，该数组包含 <see cref="P:System.Security.Cryptography.ECDsaCng.KeySize" /> 属性 setter 支持的密钥大小。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+
+在椭圆曲线加密（ECC）中，密钥大小不是密钥生成过程中的唯一输入，它派生自特定椭圆曲线的曲线参数。
+此属性仅报告三个合法密钥大小：256、384和521位。
+当密钥大小仅用作密钥生成的基础时，支持的大小将映射到命名曲线 secp256r1 （又称 NIST P-256）、secp384r1 （又称 NIST P-384）和 secp521r1 （又称 NIST P-521）。
+
+在 Windows 10 上执行时，此类支持许多其他命名曲线，但不会在此属性中反映出来。
+
+ ]]></format>
+        </remarks>
+        <altmember cref="M:System.Security.Cryptography.ECDsaCng.GenerateKey(System.Security.Cryptography.ECCurve)" />
       </Docs>
     </Member>
     <MemberGroup MemberName="SignData">
@@ -774,15 +810,15 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法通过使用<xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A>属性对输入数据进行哈希处理，然后对结果进行签名来为指定的数据生成签名。  
+ 此方法通过使用 <xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A> 属性对输入数据进行哈希处理，然后对结果进行签名，从而为指定数据生成签名。  
   
- 如果<xref:System.Security.Permissions.KeyContainerPermissionFlags.Sign?displayProperty=nameWithType> <xref:System.Security.Cryptography.ECDsaCng>对象不随机生成下一代加密技术（CNG）密钥，则需要此标志。  
+ 如果 <xref:System.Security.Cryptography.ECDsaCng> 对象不随机生成下一代加密技术（CNG）密钥，则需要 <xref:System.Security.Permissions.KeyContainerPermissionFlags.Sign?displayProperty=nameWithType> 标志。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="data" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.Security.Cryptography.CryptographicException">与该实例关联的密钥信息没有私钥。</exception>
-        <permission cref="T:System.Security.Permissions.KeyContainerPermission">用于对数据进行签名的权限。 需求值: <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举:<see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Sign" /></permission>
+        <permission cref="T:System.Security.Permissions.KeyContainerPermission">用于对数据进行签名的权限。 需求值： <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举： <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Sign" /></permission>
       </Docs>
     </Member>
     <Member MemberName="SignData">
@@ -827,15 +863,15 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法通过使用<xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A>属性对输入数据进行哈希处理，然后对结果进行签名，从而为指定数据流生成签名。  
+ 此方法通过使用 <xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A> 属性对输入数据进行哈希处理，然后对结果进行签名，从而为指定的数据流生成签名。  
   
- 如果<xref:System.Security.Permissions.KeyContainerPermissionFlags.Sign?displayProperty=nameWithType> <xref:System.Security.Cryptography.ECDsaCng>对象不随机生成下一代加密技术（CNG）密钥，则需要此标志。  
+ 如果 <xref:System.Security.Cryptography.ECDsaCng> 对象不随机生成下一代加密技术（CNG）密钥，则需要 <xref:System.Security.Permissions.KeyContainerPermissionFlags.Sign?displayProperty=nameWithType> 标志。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="data" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.Security.Cryptography.CryptographicException">与该实例关联的密钥信息没有私钥。</exception>
-        <permission cref="T:System.Security.Permissions.KeyContainerPermission">用于对数据进行签名的权限。 需求值: <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举:<see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Sign" /></permission>
+        <permission cref="T:System.Security.Permissions.KeyContainerPermission">用于对数据进行签名的权限。 需求值： <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举： <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Sign" /></permission>
       </Docs>
     </Member>
     <Member MemberName="SignData">
@@ -884,16 +920,16 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法通过使用<xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A>属性对输入数据进行哈希处理，然后对结果进行签名，为指定数据生成签名  
+ 此方法通过使用 <xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A> 属性对输入数据进行哈希处理，然后对结果进行签名，为指定数据生成签名  
   
- 如果<xref:System.Security.Permissions.KeyContainerPermissionFlags.Sign?displayProperty=nameWithType> <xref:System.Security.Cryptography.ECDsaCng>对象不随机生成下一代加密技术（CNG）密钥，则需要此标志。  
+ 如果 <xref:System.Security.Cryptography.ECDsaCng> 对象不随机生成下一代加密技术（CNG）密钥，则需要 <xref:System.Security.Permissions.KeyContainerPermissionFlags.Sign?displayProperty=nameWithType> 标志。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="data" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="count" /> 或 <paramref name="offset" /> 导致读取超出数据字符串范围。</exception>
         <exception cref="T:System.Security.Cryptography.CryptographicException">与该实例关联的密钥信息没有私钥。</exception>
-        <permission cref="T:System.Security.Permissions.KeyContainerPermission">用于对数据进行签名的权限。 需求值: <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举:<see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Sign" /></permission>
+        <permission cref="T:System.Security.Permissions.KeyContainerPermission">用于对数据进行签名的权限。 需求值： <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举： <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Sign" /></permission>
       </Docs>
     </Member>
     <Member MemberName="SignHash">
@@ -943,13 +979,13 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果<xref:System.Security.Permissions.KeyContainerPermissionFlags.Sign?displayProperty=nameWithType> <xref:System.Security.Cryptography.ECDsaCng>对象不随机生成下一代加密技术（CNG）密钥，则需要此标志。  
+ 如果 <xref:System.Security.Cryptography.ECDsaCng> 对象不随机生成下一代加密技术（CNG）密钥，则需要 <xref:System.Security.Permissions.KeyContainerPermissionFlags.Sign?displayProperty=nameWithType> 标志。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="hash" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.Security.Cryptography.CryptographicException">与该实例关联的密钥信息没有私钥。</exception>
-        <permission cref="T:System.Security.Permissions.KeyContainerPermission">用于对数据进行签名的权限。 需求值: <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举:<see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Sign" /></permission>
+        <permission cref="T:System.Security.Permissions.KeyContainerPermission">用于对数据进行签名的权限。 需求值： <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举： <see cref="F:System.Security.Permissions.KeyContainerPermissionFlags.Sign" /></permission>
       </Docs>
     </Member>
     <MemberGroup MemberName="ToXmlString">
@@ -991,7 +1027,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 若要将当前键转换为 XML 表示形式，请<xref:System.Security.Cryptography.ECDsaCng.ToXmlString%28System.Security.Cryptography.ECKeyXmlFormat%29>改用重载。  
+ 若要将当前键转换为 XML 表示形式，请改用 <xref:System.Security.Cryptography.ECDsaCng.ToXmlString%28System.Security.Cryptography.ECKeyXmlFormat%29> 重载。  
   
  ]]></format>
         </remarks>
@@ -1058,13 +1094,12 @@
         <Parameter Name="bytesWritten" Type="System.Int32" RefType="out" Index="3" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="destination">To be added.</param>
-        <param name="hashAlgorithm">To be added.</param>
-        <param name="bytesWritten">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="source">要进行哈希处理的数据。</param>
+        <param name="destination">要接收哈希值的缓冲区。</param>
+        <param name="hashAlgorithm">要用于对数据进行哈希处理的算法。</param>
+        <param name="bytesWritten">此方法返回时，为写入 <paramref name="destination" /> 的字节总数。 该参数未经初始化即被处理。</param>
+        <summary>尝试使用指定的哈希算法，将指定的只读字节范围的哈希值计算入提供的目标。</summary>
+        <returns>如果 <paramref name="destination" /> 不够长，无法接收哈希值，则为 <see langword="false" />。</returns>
       </Docs>
     </Member>
     <Member MemberName="TrySignHash">
@@ -1092,11 +1127,11 @@
         <Parameter Name="bytesWritten" Type="System.Int32" RefType="out" Index="2" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <param name="destination">To be added.</param>
-        <param name="bytesWritten">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="source">待签名数据的哈希值。</param>
+        <param name="destination">要接收签名的缓冲区。</param>
+        <param name="bytesWritten">此方法返回时，为写入 <paramref name="destination" /> 的字节总数。 该参数未经初始化即被处理。</param>
+        <summary>尝试使用当前密钥，将指定的表示数据哈希只读字节范围的 ECDSA 数字签名计算入提供的目标。</summary>
+        <returns>如果 <paramref name="destination" /> 不够长，无法接收签名，则为 <see langword="false" />。</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1145,7 +1180,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法通过使用<xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A>属性对输入数据进行哈希处理，然后对结果进行签名，为给定数据生成签名。  
+ 此方法通过使用 <xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A> 属性对输入数据进行哈希处理，然后对结果进行签名，为给定数据生成签名。  
   
  ]]></format>
         </remarks>
@@ -1196,7 +1231,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法在验证前使用<xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A>属性对输入数据进行哈希处理。  
+ 此方法在验证前使用 <xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A> 属性对输入数据进行哈希处理。  
   
  ]]></format>
         </remarks>
@@ -1251,7 +1286,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法在验证前使用<xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A>属性对输入数据进行哈希处理。  
+ 此方法在验证前使用 <xref:System.Security.Cryptography.ECDsaCng.HashAlgorithm%2A> 属性对输入数据进行哈希处理。  
   
  ]]></format>
         </remarks>
@@ -1305,7 +1340,7 @@
       <Docs>
         <param name="hash">待验证的数据的哈希值。</param>
         <param name="signature">要结合哈希值验证的数据的数字签名。</param>
-        <summary>针对指定的哈希值验证指定的数字签名。</summary>
+        <summary>验证数字签名是否适用于当前密钥和提供的数据哈希。</summary>
         <returns>如果签名有效，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="hash" /> 或 <paramref name="signature" /> 为 <see langword="null" />。</exception>
@@ -1334,10 +1369,10 @@
         <Parameter Name="signature" Type="System.ReadOnlySpan&lt;System.Byte&gt;" Index="1" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0" />
       </Parameters>
       <Docs>
-        <param name="hash">To be added.</param>
-        <param name="signature">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="hash">待验证的数据的哈希值。</param>
+        <param name="signature">要结合哈希值验证的数据的数字签名。</param>
+        <summary>验证数字签名是否适用于当前密钥和提供的数据哈希。</summary>
+        <returns>如果签名有效，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
