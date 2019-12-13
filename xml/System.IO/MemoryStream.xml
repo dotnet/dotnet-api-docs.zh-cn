@@ -1,5 +1,5 @@
 <Type Name="MemoryStream" FullName="System.IO.MemoryStream">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="9af057c6339a53b35de845e9f26e8b4d06f89ef8" /><Meta Name="ms.sourcegitcommit" Value="394eb46af92ad32373cd2c7855b688846886ed40" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="11/23/2019" /><Meta Name="ms.locfileid" Value="74424865" /></Metadata><TypeSignature Language="C#" Value="public class MemoryStream : System.IO.Stream" />
+  <TypeSignature Language="C#" Value="public class MemoryStream : System.IO.Stream" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit MemoryStream extends System.IO.Stream" />
   <TypeSignature Language="DocId" Value="T:System.IO.MemoryStream" />
   <TypeSignature Language="VB.NET" Value="Public Class MemoryStream&#xA;Inherits Stream" />
@@ -552,7 +552,7 @@
         </remarks>
         <exception cref="T:System.IO.IOException">尝试的异步读取超过了内存流的结尾，或者发生了磁盘错误。</exception>
         <exception cref="T:System.ArgumentException">一个或多个自变量无效。</exception>
-        <exception cref="T:System.ObjectDisposedException">在内存流关闭后调用方法。</exception>
+        <exception cref="T:System.ObjectDisposedException">在内存流关闭后调用了方法。</exception>
         <exception cref="T:System.NotSupportedException">当前内存流实现不支持读取操作。</exception>
       </Docs>
     </Member>
@@ -608,7 +608,7 @@
         </remarks>
         <exception cref="T:System.IO.IOException">尝试进行的异步写入超过了内存流的结尾，或者发生了磁盘错误。</exception>
         <exception cref="T:System.ArgumentException">一个或多个自变量无效。</exception>
-        <exception cref="T:System.ObjectDisposedException">在内存流关闭后调用方法。</exception>
+        <exception cref="T:System.ObjectDisposedException">在内存流关闭后调用了方法。</exception>
         <exception cref="T:System.NotSupportedException">当前内存流实现不支持写入操作。</exception>
       </Docs>
     </Member>
@@ -1875,7 +1875,7 @@ End Try
 ## Remarks  
  此方法重写 <xref:System.IO.Stream.SetLength%2A>。  
   
- 如果指定的值小于流的当前长度，则流将被截断。 如果在截断后，流中的当前位置超过了流的结尾，则 <xref:System.IO.MemoryStream.ReadByte%2A> 方法返回-1，<xref:System.IO.MemoryStream.Read%2A> 方法会将零字节读入提供的字节数组，<xref:System.IO.MemoryStream.Write%2A> 和 <xref:System.IO.MemoryStream.WriteByte%2A> 方法将在末尾追加指定的字节流，增加其长度。 如果指定的值大于当前容量并且流的大小可调整，则会增加容量，并保持流中的当前位置不变。 如果增加长度，则新旧长度之间的流的内容将初始化为零。  
+ 如果指定的值小于流的当前长度，则流将被截断。 如果在截断后，流中的当前位置超过了流的结尾，则 <xref:System.IO.MemoryStream.ReadByte%2A> 方法返回-1，<xref:System.IO.MemoryStream.Read%2A> 方法会将零字节读入提供的字节数组，<xref:System.IO.MemoryStream.Write%2A> 和 <xref:System.IO.MemoryStream.WriteByte%2A> 方法会在流的末尾追加指定的字节，增加其长度。 如果指定的值大于当前容量并且流的大小可调整，则会增加容量，并保持流中的当前位置不变。 如果增加长度，则新旧长度之间的流的内容将初始化为零。  
   
 > [!NOTE]
 >  <xref:System.IO.MemoryStream> 实例必须支持编写此方法才能工作。 使用 <xref:System.IO.MemoryStream.CanWrite%2A> 属性可确定当前实例是否支持写入。 有关附加信息，请参见 <xref:System.IO.Stream.CanWrite%2A>。  
@@ -1988,10 +1988,28 @@ End Try
         <Parameter Name="buffer" Type="System.ArraySegment&lt;System.Byte&gt;" RefType="out" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="buffer">用于创建此流的字节数组段。</param>
-        <summary>返回从其创建此流的无符号字节数组。 用于指示转换是否成功的返回值。</summary>
-        <returns>如果转换成功，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
-        <remarks>To be added.</remarks>
+        <param name="buffer">如果此方法返回 <see langword="true" />，则为从中创建此流的字节数组段；如果此方法返回 <see langword="false" />，则此参数设置为 <see langword="default" />。</param>
+        <summary>返回从中创建此流的无符号字节的数组。 用于指示转换是否成功的返回值。</summary>
+        <returns>如果缓冲区可公开，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <remarks>
+          <format type="text/markdown">
+  <![CDA
+
+## Remarks
+
+当基础缓冲区标记为 exposable 时，此方法将返回 `true`，这是在创建当前 `MemoryStream` 实例时发生的：
+
+- <xref:System.IO.MemoryStream.%23ctor>。
+- < x:. MemoryStream .% 23ctor% 28System.object %29）。
+- 参数 `publiclyVisible` 设置为 `true`，< x: MemoryStream .% 23ctor% 28System.object% 5B% 5D，system.string，system.string，system.string，system.string，system.string %29。
+
+如果在创建当前 `MemoryStream` 实例时，将不会公开基础缓冲区：
+
+- < x:. MemoryStream .% 23ctor% 28System.object% 5B% 5D，System.object %29）。
+- 参数 `publiclyVisible` 设置为 `false`，< x: MemoryStream .% 23ctor% 28System.object% 5B% 5D，system.string，system.string，system.string，system.string，system.string %29。
+
+          ]]></format>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Write">
