@@ -1,5 +1,5 @@
 <Type Name="ReaderWriterLockSlim" FullName="System.Threading.ReaderWriterLockSlim">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="bccb975feff4e3305b575f6d69439f620330aec9" /><Meta Name="ms.sourcegitcommit" Value="055a4a82a0b08bfbdc21bd1347fb71f7fe2c099e" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="08/15/2019" /><Meta Name="ms.locfileid" Value="69098803" /></Metadata><TypeSignature Language="C#" Value="public class ReaderWriterLockSlim : IDisposable" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="52eecb3efba89c4c616bb2a219a05fa825de9bfb" /><Meta Name="ms.sourcegitcommit" Value="8ae9a18b248625c8e1851e607c00346a64849587" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/17/2019" /><Meta Name="ms.locfileid" Value="75158629" /></Metadata><TypeSignature Language="C#" Value="public class ReaderWriterLockSlim : IDisposable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ReaderWriterLockSlim extends System.Object implements class System.IDisposable" />
   <TypeSignature Language="DocId" Value="T:System.Threading.ReaderWriterLockSlim" />
   <TypeSignature Language="VB.NET" Value="Public Class ReaderWriterLockSlim&#xA;Implements IDisposable" />
@@ -11,6 +11,7 @@
     <AssemblyVersion>4.0.10.0</AssemblyVersion>
     <AssemblyVersion>4.1.0.0</AssemblyVersion>
     <AssemblyVersion>4.1.1.0</AssemblyVersion>
+    <AssemblyVersion>4.1.2.0</AssemblyVersion>
   </AssemblyInfo>
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
@@ -37,125 +38,125 @@
       <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 用于<xref:System.Threading.ReaderWriterLockSlim>保护由多个线程读取并一次写入一个线程的资源。 <xref:System.Threading.ReaderWriterLockSlim>允许多个线程处于读取模式, 允许一个线程处于具有独占锁定所有权的写入模式, 并允许具有读取访问权限的一个线程处于可升级读取模式, 在该模式下, 线程可以升级到写入模式, 而无需释放它对资源的读取访问权限。  
+ 使用 <xref:System.Threading.ReaderWriterLockSlim> 保护由多个线程读取的资源并一次写入一个线程。 <xref:System.Threading.ReaderWriterLockSlim> 允许多个线程处于读取模式，则允许一个线程处于具有独占锁定所有权的写入模式，并且允许具有读取访问权限的一个线程处于可升级读取模式，在该模式下，线程可以升级到写入模式，而无需放弃对资源的读取访问权限。  
   
 > [!NOTE]
 >  虽然 <xref:System.Threading.ReaderWriterLockSlim> 类似于 <xref:System.Threading.ReaderWriterLock>，但不同之处在于，前者简化了递归规则以及锁状态的升级和降级规则。 <xref:System.Threading.ReaderWriterLockSlim> 避免了许多潜在的死锁情况。 另外，<xref:System.Threading.ReaderWriterLockSlim> 的性能显著优于 <xref:System.Threading.ReaderWriterLock>。 建议对所有新开发的项目使用 <xref:System.Threading.ReaderWriterLockSlim>。  
   
- 默认情况下, <xref:System.Threading.ReaderWriterLockSlim> <xref:System.Threading.LockRecursionPolicy.NoRecursion?displayProperty=nameWithType>使用标志创建的新实例, 并且不允许使用递归。 建议对所有新的开发使用此默认策略, 因为递归引入了不必要的复杂性, 并使代码更容易发生死锁。 若要简化从<xref:System.Threading.Monitor>使用或<xref:System.Threading.ReaderWriterLock>的现有项目的迁移<xref:System.Threading.LockRecursionPolicy.SupportsRecursion?displayProperty=nameWithType> , 可以使用标志来创建允许递归<xref:System.Threading.ReaderWriterLockSlim>的实例。  
+ 默认情况下，<xref:System.Threading.ReaderWriterLockSlim> 的新实例是使用 <xref:System.Threading.LockRecursionPolicy.NoRecursion?displayProperty=nameWithType> 标志创建的，不允许使用递归。 建议对所有新的开发使用此默认策略，因为递归引入了不必要的复杂性，并使代码更容易发生死锁。 若要简化从使用 <xref:System.Threading.Monitor> 或 <xref:System.Threading.ReaderWriterLock>的现有项目的迁移，可以使用 <xref:System.Threading.LockRecursionPolicy.SupportsRecursion?displayProperty=nameWithType> 标志创建允许递归的 <xref:System.Threading.ReaderWriterLockSlim> 实例。  
   
- 线程可以在三种模式下进入锁定: 读取模式、写入模式和可升级读取模式。 (在本主题的其余部分中, "可升级读取模式" 称为 "可升级模式", 而短语 "enter `x`模式" 将优先用于更长的短语 "进入`x`锁定模式"。)  
+ 线程可以在三种模式下进入锁定：读取模式、写入模式和可升级读取模式。 （在本主题的其余部分中，"可升级的读取模式" 称为 "可升级模式"，将优先使用 "输入 `x` 模式" 短语来 "在 `x` 模式下进入锁定"。）  
   
- 不管递归策略如何, 在任何时候都只能有一个线程处于写入模式。 当线程处于写入模式时, 任何其他线程都不能在任何模式下进入锁定状态。 在任何时候, 只能有一个线程处于可升级模式。 任意数量的线程都可以处于读取模式, 并且在其他线程处于读取模式时, 可以有一个处于可升级模式的线程。  
+ 不管递归策略如何，在任何时候都只能有一个线程处于写入模式。 当线程处于写入模式时，任何其他线程都不能在任何模式下进入锁定状态。 在任何时候，只能有一个线程处于可升级模式。 任意数量的线程都可以处于读取模式，并且在其他线程处于读取模式时，可以有一个处于可升级模式的线程。  
   
 > [!IMPORTANT]
->  此类型实现 <xref:System.IDisposable> 接口。 在使用完类型后，您应直接或间接释放类型。 若要直接释放类型，请在 `try`/`catch` 块中调用其 <xref:System.IDisposable.Dispose%2A> 方法。 若要间接释放类型，请使用 `using`（在 C# 中）或 `Using`（在 Visual Basic 中）等语言构造。 有关详细信息，请参阅 <xref:System.IDisposable> 接口主题中的“使用实现 IDisposable 的对象”一节。  
+>  此类型实现 <xref:System.IDisposable> 接口。 在使用完类型后，您应直接或间接释放类型。 若要直接释放类型，请在 <xref:System.IDisposable.Dispose%2A>`try`/ 块中调用其 `catch` 方法。 若要间接释放类型，请使用 `using`（在 C# 中）或 `Using`（在 Visual Basic 中）等语言构造。 有关详细信息，请参阅 <xref:System.IDisposable> 接口主题中的“使用实现 IDisposable 的对象”一节。  
   
- <xref:System.Threading.ReaderWriterLockSlim>具有托管线程关联;也就是说, 每个<xref:System.Threading.Thread>对象都必须进行自己的方法调用来进入和退出锁模式。 任何线程都无法更改另一个线程的模式。  
+ <xref:System.Threading.ReaderWriterLockSlim> 具有托管线程关联;也就是说，每个 <xref:System.Threading.Thread> 对象都必须进行自己的方法调用来进入和退出锁模式。 任何线程都无法更改另一个线程的模式。  
   
- <xref:System.Threading.ReaderWriterLockSlim>如果不允许递归, 尝试进入锁定的线程可能会出于多种原因而阻塞:  
+ 如果 <xref:System.Threading.ReaderWriterLockSlim> 不允许使用递归，尝试进入锁定的线程可能会出于多种原因而阻塞：  
   
--   如果有等待进入写入模式的线程或在写入模式下有单个线程, 则尝试进入读取模式的线程会被阻止。  
+-   如果有等待进入写入模式的线程或在写入模式下有单个线程，则尝试进入读取模式的线程会被阻止。  
   
     > [!NOTE]
-    >  在编写器排队时阻止新的读取器是优先写入器的锁公平策略。 当前的公平策略在最常见的情况下, 将公平与读者和编写者进行平衡, 以提高吞吐量。 未来版本[!INCLUDE[dnprdnshort](~/includes/dnprdnshort-md.md)]的可能会引入新的公平策略。  
+    >  在编写器排队时阻止新的读取器是优先写入器的锁公平策略。 当前的公平策略在最常见的情况下，将公平与读者和编写者进行平衡，以提高吞吐量。 未来版本的 [!INCLUDE[dnprdnshort](~/includes/dnprdnshort-md.md)] 可能会引入新的公平策略。  
   
--   如果已存在处于可升级模式的线程, 则为尝试进入可升级模式的线程, 如果存在等待进入写入模式的线程, 则为; 如果在写入模式下有单个线程, 则为。  
+-   如果已存在处于可升级模式的线程，则为尝试进入可升级模式的线程，如果存在等待进入写入模式的线程，则为; 如果在写入模式下有单个线程，则为。  
   
--   如果在三种模式中的任何一种模式下有线程, 则尝试进入写入模式块的线程。  
+-   如果在三种模式中的任何一种模式下有线程，则尝试进入写入模式块的线程。  
   
 ## <a name="upgrading-and-downgrading-locks"></a>升级和降级锁  
- 可升级模式适用于以下情况: 线程通常会从受保护的资源中读取内容, 但如果满足某些条件, 则可能需要对其进行写入。 进入可升级模式的<xref:System.Threading.ReaderWriterLockSlim>线程具有对受保护资源的读取访问权限, 并且可以通过<xref:System.Threading.ReaderWriterLockSlim.EnterWriteLock%2A>调用或<xref:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock%2A>方法升级为写入模式。 由于一次只能有一个处于可升级模式的线程, 因此当不允许递归时, 升级到写入模式不会死锁, 这是默认策略。  
+ 可升级模式适用于以下情况：线程通常会从受保护的资源中读取内容，但如果满足某些条件，则可能需要对其进行写入。 在可升级模式下进入 <xref:System.Threading.ReaderWriterLockSlim> 的线程具有对受保护资源的读取访问权限，并且可以通过调用 <xref:System.Threading.ReaderWriterLockSlim.EnterWriteLock%2A> 或 <xref:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock%2A> 方法升级为写入模式。 由于一次只能有一个处于可升级模式的线程，因此当不允许递归时，升级到写入模式不会死锁，这是默认策略。  
   
 > [!IMPORTANT]
->  不管递归策略如何, 最初进入读取模式的线程都不允许升级到可升级模式或写入模式, 因为这种模式产生了死锁的概率。 例如, 在读取模式下的两个线程都尝试进入写入模式时, 它们会死锁。 可升级模式旨在避免这类死锁。  
+>  不管递归策略如何，最初进入读取模式的线程都不允许升级到可升级模式或写入模式，因为这种模式产生了死锁的概率。 例如，在读取模式下的两个线程都尝试进入写入模式时，它们会死锁。 可升级模式旨在避免这类死锁。  
   
- 如果其他线程处于读取模式, 则正在升级的线程会被阻止。 当线程被阻止时, 其他尝试进入读取模式的线程将被阻止。 如果所有线程都退出了读取模式, 则被阻止的可升级线程进入写入模式。 如果有其他等待进入写入模式的线程, 它们将保持阻止状态, 因为处于可升级模式的单个线程会阻止它们获取对资源的独占访问权限。  
+ 如果其他线程处于读取模式，则正在升级的线程会被阻止。 当线程被阻止时，其他尝试进入读取模式的线程将被阻止。 如果所有线程都退出了读取模式，则被阻止的可升级线程进入写入模式。 如果有其他等待进入写入模式的线程，它们将保持阻止状态，因为处于可升级模式的单个线程会阻止它们获取对资源的独占访问权限。  
   
- 当处于可升级模式的线程退出写入模式时, 除非有等待进入写入模式的线程, 否则等待进入读取模式的其他线程可以执行此操作。 处于可升级模式的线程可以无限期地升级和降级, 只要它是写入受保护资源的唯一线程。  
+ 当处于可升级模式的线程退出写入模式时，除非有等待进入写入模式的线程，否则等待进入读取模式的其他线程可以执行此操作。 处于可升级模式的线程可以无限期地升级和降级，只要它是写入受保护资源的唯一线程。  
   
 > [!IMPORTANT]
->  如果允许多个线程进入写入模式或可升级模式, 则不得允许一个线程独占可升级模式。 否则, 尝试直接进入写入模式的线程会无限期阻止, 而在被阻止时, 其他线程将无法进入读取模式。  
+>  如果允许多个线程进入写入模式或可升级模式，则不得允许一个线程独占可升级模式。 否则，尝试直接进入写入模式的线程会无限期阻止，而在被阻止时，其他线程将无法进入读取模式。  
   
- 处于可升级模式的线程可以通过首先调用<xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A>方法, 然后<xref:System.Threading.ReaderWriterLockSlim.ExitUpgradeableReadLock%2A>调用方法, 降级到读取模式。 此降级模式允许适用于所有锁递归策略, 甚至<xref:System.Threading.LockRecursionPolicy.NoRecursion>是。  
+ 处于可升级模式的线程可以通过首先调用 <xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A> 方法，然后调用 <xref:System.Threading.ReaderWriterLockSlim.ExitUpgradeableReadLock%2A> 方法，降级到读取模式。 所有锁递归策略都允许使用此降级模式，甚至 <xref:System.Threading.LockRecursionPolicy.NoRecursion>。  
   
- 降级到读取模式后, 线程无法重新进入可升级模式, 除非它已退出读取模式。  
+ 降级到读取模式后，线程无法重新进入可升级模式，除非它已退出读取模式。  
   
 ## <a name="entering-the-lock-recursively"></a>以递归方式进入锁定  
- 您可以通过<xref:System.Threading.ReaderWriterLockSlim.%23ctor%28System.Threading.LockRecursionPolicy%29>使用<xref:System.Threading.ReaderWriterLockSlim>指定锁定策略的构造函数并指定<xref:System.Threading.LockRecursionPolicy.SupportsRecursion?displayProperty=nameWithType>来创建支持递归锁定条目的。  
+ 您可以通过使用指定锁定策略的 <xref:System.Threading.ReaderWriterLockSlim.%23ctor%28System.Threading.LockRecursionPolicy%29> 构造函数并指定 <xref:System.Threading.LockRecursionPolicy.SupportsRecursion?displayProperty=nameWithType>来创建支持递归锁定条目的 <xref:System.Threading.ReaderWriterLockSlim>。  
   
 > [!NOTE]
->  建议不要将递归用于新的开发, 因为这会引入不必要的复杂性, 并使代码更容易发生死锁。  
+>  建议不要将递归用于新的开发，因为这会引入不必要的复杂性，并使代码更容易发生死锁。  
   
- <xref:System.Threading.ReaderWriterLockSlim>对于允许递归的, 可以通过以下方式了解线程可输入的模式:  
+ 对于允许递归的 <xref:System.Threading.ReaderWriterLockSlim>，可以通过以下方式了解线程可输入的模式：  
   
--   处于读取模式的线程可以以递归方式进入读取模式, 但不能进入写入模式或可升级模式。 如果尝试执行此操作, <xref:System.Threading.LockRecursionException>则会引发。 进入读取模式, 然后进入写入模式或可升级模式是一种具有极大的死锁概率的模式, 因此不允许这样做。 如前文所述, 可升级模式适用于需要升级锁定的情况。  
+-   处于读取模式的线程可以以递归方式进入读取模式，但不能进入写入模式或可升级模式。 如果尝试执行此操作，则会引发 <xref:System.Threading.LockRecursionException>。 进入读取模式，然后进入写入模式或可升级模式是一种具有极大的死锁概率的模式，因此不允许这样做。 如前文所述，可升级模式适用于需要升级锁定的情况。  
   
--   处于可升级模式的线程可以进入写入模式和/或读取模式, 并且可以递归输入三种模式中的任何一种。 但是, 如果有其他线程处于读取模式, 则尝试进入写入模式块。  
+-   处于可升级模式的线程可以进入写入模式和/或读取模式，并且可以递归输入三种模式中的任何一种。 但是，如果有其他线程处于读取模式，则尝试进入写入模式块。  
   
--   处于写入模式的线程可以进入读取模式和/或可升级模式, 并且可以递归输入三种模式中的任何一种。  
+-   处于写入模式的线程可以进入读取模式和/或可升级模式，并且可以递归输入三种模式中的任何一种。  
   
 -   未进入锁定状态的线程可以进入任何模式。 尝试输入非递归锁的原因与此尝试相同。  
   
- 线程可以退出它已经按任意顺序进入的模式, 只要它进入该模式时, 它的每一种模式就会发生的次数完全相同。 如果线程尝试退出模式的次数过多, 或退出未输入的模式, <xref:System.Threading.SynchronizationLockException>则会引发。  
+ 线程可以退出它已经按任意顺序进入的模式，只要它进入该模式时，它的每一种模式就会发生的次数完全相同。 如果线程尝试退出模式的次数过多，或退出未输入的模式，则会引发 <xref:System.Threading.SynchronizationLockException>。  
   
 ## <a name="lock-states"></a>锁定状态  
- 你可能会发现, 将锁视为其状态是非常有用的。 <xref:System.Threading.ReaderWriterLockSlim>可以是以下四种状态之一: 未输入、读取、升级和写入。  
+ 你可能会发现，将锁视为其状态是非常有用的。 <xref:System.Threading.ReaderWriterLockSlim> 可以是以下四种状态之一：未输入、读取、升级和写入。  
   
--   未输入:在此状态下, 任何线程都没有进入锁定状态 (或所有线程都已退出锁)。  
+-   未输入：在此状态下，没有线程进入锁定状态（或所有线程都已退出锁）。  
   
--   读取在此状态下, 一个或多个线程已进入对受保护资源的读取访问权限。  
+-   读取：在此状态中，一个或多个线程已进入对受保护资源的读取访问权限。  
   
     > [!NOTE]
-    >  线程可以使用<xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A>或<xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A>方法进入读取模式锁定状态, 也可以通过从可升级模式降级进入。  
+    >  线程可以使用 <xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A> 或 <xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A> 方法进入读取模式锁定状态，也可以通过从可升级模式降级进入。  
   
--   升级在此状态下, 一个线程已进入带有升级到写入访问权限的选项 (即在可升级模式下) 的 "读取" 访问权限, 并且零个或多个线程已进入读取访问锁定状态。 一次不能有多个线程可使用升级选项输入锁定;阻止尝试进入可升级模式的其他线程。  
+-   升级：在此状态下，一个线程已进入具有 "升级到写入访问权限" 选项（即在可升级模式下）的 "读取" 访问锁定，并且零个或多个线程已进入读取访问锁定状态。 一次不能有多个线程可使用升级选项输入锁定;阻止尝试进入可升级模式的其他线程。  
   
--   写入在此状态下, 一个线程进入了对受保护资源的写访问锁定。 该线程独占持有锁。 会阻止任何其他尝试输入锁定的其他线程。  
+-   写入：在此状态下，一个线程已进入对受保护资源的写访问锁定。 该线程独占持有锁。 会阻止任何其他尝试输入锁定的其他线程。  
   
- 下表描述了当线程`t`采用最左侧的列中所述的操作时, 锁定状态与不允许递归的锁之间的转换。 执行操作时, `t`没有模式。 (表脚注中介绍`t`了处于可升级模式的特殊情况。)最上面一行介绍锁定的开始状态。 单元格描述对线程发生的操作, 并在括号中显示锁定状态的更改。  
+ 下表描述了在线程 `t` 采用最左侧的列中所述的操作时，锁定状态与不允许递归的锁之间的转换。 执行操作时，`t` 没有模式。 （表脚注中介绍了 `t` 处于可升级模式的特殊情况。）最上面一行介绍锁定的开始状态。 单元格描述对线程发生的操作，并在括号中显示锁定状态的更改。  
   
-||未输入 (N)|读取 (R)|升级 (U)|写入 (W)|  
+||未输入（N）|读取（R）|升级（U）|写入（W）|  
 |-|-----------------------|----------------|-------------------|-----------------|  
-|`t`进入读取模式|`t`进入 (R)。|`t`如果线程正在等待写入模式, 则为块;否则, `t`将进入。|`t`如果线程正在等待写入模式, 则为块;否则, `t`将进入。<sup>1</sup>|`t`防止.|  
-|`t`进入可升级模式|`t`进入 (U)。|`t`如果线程正在等待写入模式或升级模式, 则为块;否则, `t`输入 (U)。|`t`防止.|`t`防止.|  
-|`t`进入写入模式|`t`进入 (W)。|`t`防止.|`t`防止.<sup>2</sup>|`t`防止.|  
+|`t` 进入读取模式|`t` 进入（R）。|如果线程正在等待写入模式，则 `t` 块;否则，`t` 进入。|如果线程正在等待写入模式，则 `t` 块;否则，`t` 进入。<sup>1</sup>|`t` 块。|  
+|`t` 进入可升级模式|`t` 进入（U）。|如果线程正在等待写入模式或升级模式，则 `t` 块;否则，`t` 进入（U）。|`t` 块。|`t` 块。|  
+|`t` 进入写入模式|`t` 进入（W）。|`t` 块。|`t` 块。<sup>2</sup>|`t` 块。|  
   
- <sup></sup> 如果`t`在可升级模式下启动, 则为 1; 否则进入读取模式。 此操作永远不会阻止。 锁定状态不会更改。 (然后, 线程可以通过退出可升级模式来完成降级到读取模式。)  
+ 如果 `t` 在可升级模式下启动，则为<sup>1</sup> ; 否则进入读取模式。 此操作永远不会阻止。 锁定状态不会更改。 （然后，线程可以通过退出可升级模式来完成降级到读取模式。）  
   
- <sup>2</sup>如果`t`在可升级模式下启动, 则会阻止处于读取模式的线程。 否则, 会升级到写入模式。 锁定状态将更改为写入 (W)。 如果`t`块是因为在读取模式下有线程, 则它会在最后一个线程退出读取模式时立即进入写入模式, 即使有等待进入写入模式的线程。  
+ <sup>2</sup>如果 `t` 在可升级模式下启动，则会阻止处于读取模式的线程。 否则，会升级到写入模式。 锁定状态将更改为写入（W）。 如果 `t` 块是因为在读取模式下有线程，则当最后一个线程退出读取模式（即使有等待进入写入模式的线程）时，它将进入写入模式。  
   
- 当由于线程退出锁而发生状态更改时, 将选择下一个要唤醒的线程, 如下所示:  
+ 当由于线程退出锁而发生状态更改时，将选择下一个要唤醒的线程，如下所示：  
   
--   首先, 线程正在等待写入模式, 并且已经处于可升级模式 (最多可以有一个此类线程)。  
+-   首先，线程正在等待写入模式，并且已经处于可升级模式（最多可以有一个此类线程）。  
   
--   如果失败, 则为等待写入模式的线程。  
+-   如果失败，则为等待写入模式的线程。  
   
--   如果失败, 则为等待可升级模式的线程。  
+-   如果失败，则为等待可升级模式的线程。  
   
--   如果未成功, 则为等待读取模式的所有线程。  
+-   如果未成功，则为等待读取模式的所有线程。  
   
- 在前两种情况下, 该锁的后续状态始终为 Write (W), 在第三种情况下为 Upgrade (U)。 在最后一种情况下, 如果状态更改后有一个处于可升级模式的线程处于可升级模式, 则锁定的状态为 "升级 (U)"; 否则为 "读取 (R)"。  
+ 在前两种情况下，该锁的后续状态始终为 Write （W），在第三种情况下为 Upgrade （U）。 在最后一种情况下，如果状态更改后有一个处于可升级模式的线程处于可升级模式，则锁定的状态为 "升级（U）"; 否则为 "读取（R）"。  
   
    
   
 ## Examples  
- 下面的示例演示了一个简单的同步缓存, 该缓存包含包含整数键的字符串。 的<xref:System.Threading.ReaderWriterLockSlim>实例用于同步对充当内部缓存的的<xref:System.Collections.Generic.Dictionary%602>访问。  
+ 下面的示例演示了一个简单的同步缓存，该缓存包含包含整数键的字符串。 <xref:System.Threading.ReaderWriterLockSlim> 的实例用于同步对充当内部缓存的 <xref:System.Collections.Generic.Dictionary%602> 的访问。  
   
- 该示例包括要添加到缓存中、从缓存中删除以及从缓存中读取的简单方法。 为了演示超时, 此示例包含一个方法, 该方法仅在指定的超时时间内添加到缓存中。  
+ 该示例包括要添加到缓存中、从缓存中删除以及从缓存中读取的简单方法。 为了演示超时，此示例包含一个方法，该方法仅在指定的超时时间内添加到缓存中。  
   
- 为了演示可升级模式, 该示例包含一个方法, 该方法检索与键关联的值, 并将其与新值进行比较。 如果值不变, 则方法将返回一个状态, 指示没有任何更改。 如果未找到键的值, 则插入键/值对。 如果值已更改, 则会更新。 可升级模式允许线程从读取访问权限升级到按需写入访问权限, 而不会导致死锁风险。  
+ 为了演示可升级模式，该示例包含一个方法，该方法检索与键关联的值，并将其与新值进行比较。 如果值不变，则方法将返回一个状态，指示没有任何更改。 如果未找到键的值，则插入键/值对。 如果值已更改，则会更新。 可升级模式允许线程从读取访问权限升级到按需写入访问权限，而不会导致死锁风险。  
   
- 该示例包含一个嵌套枚举, 该枚举指定演示可升级模式的方法的返回值。  
+ 该示例包含一个嵌套枚举，该枚举指定演示可升级模式的方法的返回值。  
   
- 该示例使用无参数构造函数创建锁, 因此不允许使用递归。 当锁<xref:System.Threading.ReaderWriterLockSlim>不允许递归时, 对的编程更简单且更不易出错。  
+ 该示例使用无参数构造函数创建锁，因此不允许使用递归。 当锁定不允许递归时，对 <xref:System.Threading.ReaderWriterLockSlim> 进行编程更简单，并且不易出错。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#11](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/classexample1.cs#11)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#11](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/classexample1.vb#11)]  
 [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#12](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/classexample1.cs#12)]
 [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#12](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/classexample1.vb#12)]  
   
- 然后, 下面的代码使用`SynchronizedCache`对象存储蔬菜名称的字典。 它创建三个任务。 第一个将存储在数组中的蔬菜的名称写入到`SynchronizedCache`实例中。 第二个和第三个任务以升序顺序显示了蔬菜的名称 (从低索引到高索引)。 最终任务会搜索字符串 "cucumber", 找到它时, 会调用<xref:System.Threading.ReaderWriterLockSlim.EnterUpgradeableReadLock%2A>方法来替换字符串 "绿色 bean"。  
+ 然后，下面的代码使用 `SynchronizedCache` 对象存储蔬菜名称的字典。 它创建三个任务。 首先将存储在数组中的蔬菜名称写入 `SynchronizedCache` 实例。 第二个和第三个任务以升序顺序显示了蔬菜的名称（从低索引到高索引）。 最终任务会搜索字符串 "cucumber"，找到它时，将调用 <xref:System.Threading.ReaderWriterLockSlim.EnterUpgradeableReadLock%2A> 方法来替换字符串 "绿色 bean"。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#11](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/classexample1.cs#11)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#11](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/classexample1.vb#11)]  
@@ -191,6 +192,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -215,29 +217,29 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Threading.ReaderWriterLockSlim>使用此构造函数初始化的不允许使用递归。 也就是说，<xref:System.Threading.ReaderWriterLockSlim.RecursionPolicy%2A> 属性将返回 <xref:System.Threading.LockRecursionPolicy.NoRecursion?displayProperty=nameWithType>。  
+ 使用此构造函数初始化的 <xref:System.Threading.ReaderWriterLockSlim> 不允许使用递归。 也就是说，<xref:System.Threading.ReaderWriterLockSlim.RecursionPolicy%2A> 属性将返回 <xref:System.Threading.LockRecursionPolicy.NoRecursion?displayProperty=nameWithType>。  
   
- 有关递归策略及其效果的详细信息, 请参阅<xref:System.Threading.LockRecursionPolicy>枚举<xref:System.Threading.ReaderWriterLockSlim>和类。  
+ 有关递归策略及其效果的详细信息，请参阅 <xref:System.Threading.LockRecursionPolicy> 枚举和 <xref:System.Threading.ReaderWriterLockSlim> 类。  
   
    
   
 ## Examples  
- 下面的示例演示了一个简单的同步缓存, 该缓存包含包含整数键的字符串。 的<xref:System.Threading.ReaderWriterLockSlim>实例用于同步对充当内部缓存的的<xref:System.Collections.Generic.Dictionary%602>访问。 无参数构造函数用于创建锁。  
+ 下面的示例演示了一个简单的同步缓存，该缓存包含包含整数键的字符串。 <xref:System.Threading.ReaderWriterLockSlim> 的实例用于同步对充当内部缓存的 <xref:System.Collections.Generic.Dictionary%602> 的访问。 无参数构造函数用于创建锁。  
   
- 该示例包括要添加到缓存中、从缓存中删除以及从缓存中读取的简单方法。 为了演示超时, 此示例包含一个方法, 该方法仅在指定的超时时间内添加到缓存中。  
+ 该示例包括要添加到缓存中、从缓存中删除以及从缓存中读取的简单方法。 为了演示超时，此示例包含一个方法，该方法仅在指定的超时时间内添加到缓存中。  
   
- 为了演示可升级模式, 该示例包含一个方法, 该方法检索与键关联的值, 并将其与新值进行比较。 如果值不变, 则方法将返回一个状态, 指示没有任何更改。 如果未找到键的值, 则插入键/值对。 如果值已更改, 则会更新。 可升级模式允许线程从读取访问权限升级到按需写入访问权限, 而不会导致死锁风险。  
+ 为了演示可升级模式，该示例包含一个方法，该方法检索与键关联的值，并将其与新值进行比较。 如果值不变，则方法将返回一个状态，指示没有任何更改。 如果未找到键的值，则插入键/值对。 如果值已更改，则会更新。 可升级模式允许线程从读取访问权限升级到按需写入访问权限，而不会导致死锁风险。  
   
- 该示例包含一个嵌套枚举, 该枚举指定演示可升级模式的方法的返回值。  
+ 该示例包含一个嵌套枚举，该枚举指定演示可升级模式的方法的返回值。  
   
- 该示例使用无参数构造函数创建锁, 因此不允许使用递归。 当锁<xref:System.Threading.ReaderWriterLockSlim>不允许递归时, 对的编程更简单且更不易出错。  
+ 该示例使用无参数构造函数创建锁，因此不允许使用递归。 当锁定不允许递归时，对 <xref:System.Threading.ReaderWriterLockSlim> 进行编程更简单，并且不易出错。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#11](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/classexample1.cs#11)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#11](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/classexample1.vb#11)]  
 [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#12](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/classexample1.cs#12)]
 [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#12](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/classexample1.vb#12)]  
   
- 然后, 下面的代码使用`SynchronizedCache`对象存储蔬菜名称的字典。 它创建三个任务。 第一个将存储在数组中的蔬菜的名称写入到`SynchronizedCache`实例中。 第二个和第三个任务以升序顺序显示了蔬菜的名称 (从低索引到高索引)。 最终任务会搜索字符串 "cucumber", 找到它时, 会调用<xref:System.Threading.ReaderWriterLockSlim.EnterUpgradeableReadLock%2A>方法来替换字符串 "绿色 bean"。  
+ 然后，下面的代码使用 `SynchronizedCache` 对象存储蔬菜名称的字典。 它创建三个任务。 首先将存储在数组中的蔬菜名称写入 `SynchronizedCache` 实例。 第二个和第三个任务以升序顺序显示了蔬菜的名称（从低索引到高索引）。 最终任务会搜索字符串 "cucumber"，找到它时，将调用 <xref:System.Threading.ReaderWriterLockSlim.EnterUpgradeableReadLock%2A> 方法来替换字符串 "绿色 bean"。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#11](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/classexample1.cs#11)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#11](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/classexample1.vb#11)]  
@@ -263,6 +265,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -280,35 +283,35 @@
       </Parameters>
       <Docs>
         <param name="recursionPolicy">枚举值之一，用于指定锁定递归策略。</param>
-        <summary>初始化 <see cref="T:System.Threading.ReaderWriterLockSlim" /> 类的新实例，从而指定锁定递归策略。</summary>
+        <summary>在指定锁定递归策略的情况下初始化 <see cref="T:System.Threading.ReaderWriterLockSlim" /> 类的新实例。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 递归策略确定对多次输入锁定的线程的限制。 例如, 如果使用<xref:System.Threading.LockRecursionPolicy.NoRecursion?displayProperty=nameWithType>创建了一个锁, 并且该线程已进入读取模式锁定状态, <xref:System.Threading.LockRecursionException>则在该线程尝试重新进入读取模式锁定状态时将引发。 同样, 如果线程进入写入模式锁定状态, 则在线程<xref:System.Threading.LockRecursionException>尝试在任何模式下重新进入锁定时, 将引发。  
+ 递归策略确定对多次输入锁定的线程的限制。 例如，如果使用 <xref:System.Threading.LockRecursionPolicy.NoRecursion?displayProperty=nameWithType> 创建了一个锁，并且某个线程已进入读取模式锁定状态，则在该线程尝试重新进入读取模式锁定状态时将引发 <xref:System.Threading.LockRecursionException>。 同样，如果某个线程进入写入模式锁定状态，则如果该线程尝试在任何模式下重新进入锁定，则会引发 <xref:System.Threading.LockRecursionException>。  
   
 > [!NOTE]
->  可升级模式的线程可以升级到写入模式或降级到读取模式, 而不考虑锁定递归策略设置。  
+>  可升级模式的线程可以升级到写入模式或降级到读取模式，而不考虑锁定递归策略设置。  
   
- 不管递归策略如何, 最初进入读取模式的线程都不允许升级到可升级模式或写入模式, 因为这种模式产生了死锁的概率。  
+ 不管递归策略如何，最初进入读取模式的线程都不允许升级到可升级模式或写入模式，因为这种模式产生了死锁的概率。  
   
- 有关递归策略及其效果的详细信息, 请参阅<xref:System.Threading.LockRecursionPolicy>枚举<xref:System.Threading.ReaderWriterLockSlim>和类。  
+ 有关递归策略及其效果的详细信息，请参阅 <xref:System.Threading.LockRecursionPolicy> 枚举和 <xref:System.Threading.ReaderWriterLockSlim> 类。  
   
    
   
 ## Examples  
- 下面的示例演示两个异常方案, 一个依赖于设置<xref:System.Threading.LockRecursionPolicy> , 另一个不是。  
+ 下面的示例演示两个异常方案，一个依赖于 <xref:System.Threading.LockRecursionPolicy> 设置，另一个不依赖。  
   
- 在第一个方案中, 线程进入读取模式, 然后尝试以递归方式进入读取模式。 如果是使用无参数构造函数创建的, 而该构造函数将<xref:System.Threading.LockRecursionPolicy.NoRecursion?displayProperty=nameWithType>递归策略设置为, 则会引发异常。 <xref:System.Threading.ReaderWriterLockSlim> 如果<xref:System.Threading.LockRecursionPolicy.SupportsRecursion?displayProperty=nameWithType> 用于<xref:System.Threading.ReaderWriterLockSlim>创建, 则不会引发异常。  
+ 在第一个方案中，线程进入读取模式，然后尝试以递归方式进入读取模式。 如果 <xref:System.Threading.ReaderWriterLockSlim> 是使用无参数构造函数创建的，而该构造函数将递归策略设置为 <xref:System.Threading.LockRecursionPolicy.NoRecursion?displayProperty=nameWithType>，则会引发异常。 如果使用 <xref:System.Threading.LockRecursionPolicy.SupportsRecursion?displayProperty=nameWithType> 来创建 <xref:System.Threading.ReaderWriterLockSlim>，则不会引发异常。  
   
- 在第二种情况下, 线程进入读取模式, 然后尝试进入写入模式。 <xref:System.Threading.LockRecursionException>无论锁递归策略如何, 都将引发。  
+ 在第二种情况下，线程进入读取模式，然后尝试进入写入模式。 无论锁递归策略如何，都将引发 <xref:System.Threading.LockRecursionException>。  
   
 [!code-csharp[System.Threading.LockRecursionPolicy#11](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.LockRecursionPolicy/cs/ClassExample1.cs#11)] 
 [!code-vb[System.Threading.LockRecursionPolicy#11](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.LockRecursionPolicy/vb/ClassExample1.vb#11)]   
 [!code-csharp[System.Threading.LockRecursionPolicy#12](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.LockRecursionPolicy/cs/ClassExample1.cs#12)] 
 [!code-vb[System.Threading.LockRecursionPolicy#12](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.LockRecursionPolicy/vb/ClassExample1.vb#12)]  
   
- 然后, 下面的代码使用`SynchronizedCache`对象存储蔬菜名称的字典。 它创建三个任务。 第一个将存储在数组中的蔬菜的名称写入到`SynchronizedCache`实例中。 第二个和第三个任务以升序顺序显示了蔬菜的名称 (从低索引到高索引)。 最终任务会搜索字符串 "cucumber", 找到它时, 会调用<xref:System.Threading.ReaderWriterLockSlim.EnterUpgradeableReadLock%2A>方法来替换字符串 "绿色 bean"。  
+ 然后，下面的代码使用 `SynchronizedCache` 对象存储蔬菜名称的字典。 它创建三个任务。 首先将存储在数组中的蔬菜名称写入 `SynchronizedCache` 实例。 第二个和第三个任务以升序顺序显示了蔬菜的名称（从低索引到高索引）。 最终任务会搜索字符串 "cucumber"，找到它时，将调用 <xref:System.Threading.ReaderWriterLockSlim.EnterUpgradeableReadLock%2A> 方法来替换字符串 "绿色 bean"。  
   
 [!code-csharp[System.Threading.LockRecursionPolicy#11](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.LockRecursionPolicy/cs/ClassExample1.cs#11)] 
 [!code-vb[System.Threading.LockRecursionPolicy#11](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.LockRecursionPolicy/vb/ClassExample1.vb#11)]   
@@ -335,6 +338,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -357,14 +361,14 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 即使锁允许递归并且线程已多次进入读取模式, 也只会对线程计数一次。  
+ 即使锁允许递归并且线程已多次进入读取模式，也只会对线程计数一次。  
   
- 此属性仅用于调试、分析和日志记录目的, 而不用于控制算法的行为。 计算结果后, 结果就会更改。 因此, 根据此属性做出决策并不安全。  
+ 此属性仅用于调试、分析和日志记录目的，而不用于控制算法的行为。 计算结果后，结果就会更改。 因此，根据此属性做出决策并不安全。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用<xref:System.Threading.ReaderWriterLockSlim.CurrentReadCount%2A>属性在读取模式中的线程数超过阈值时生成事件日志项。  
+ 下面的示例演示如何使用 <xref:System.Threading.ReaderWriterLockSlim.CurrentReadCount%2A> 属性在读取模式中的线程数超过阈值时生成事件日志项。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/cs/source.cs#1)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/vb/source.vb#1)]  
@@ -394,6 +398,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -421,10 +426,10 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 在完成使用 <xref:System.Threading.ReaderWriterLockSlim.Dispose%2A> 后，应调用 <xref:System.Threading.ReaderWriterLockSlim>。 <xref:System.Threading.ReaderWriterLockSlim.Dispose%2A> 方法使 <xref:System.Threading.ReaderWriterLockSlim> 处于不可用状态。 调用<xref:System.Threading.ReaderWriterLockSlim.Dispose%2A>后, 必须释放对的<xref:System.Threading.ReaderWriterLockSlim>所有引用, 以便垃圾回收器能够<xref:System.Threading.ReaderWriterLockSlim>回收占用的内存。 有关详细信息, 请参阅[清理非托管资源](~/docs/standard/garbage-collection/unmanaged.md)和[实现 Dispose 方法](~/docs/standard/garbage-collection/implementing-dispose.md)。  
+ 在完成使用 <xref:System.Threading.ReaderWriterLockSlim.Dispose%2A> 后，应调用 <xref:System.Threading.ReaderWriterLockSlim>。 <xref:System.Threading.ReaderWriterLockSlim.Dispose%2A> 方法使 <xref:System.Threading.ReaderWriterLockSlim> 处于不可用状态。 调用 <xref:System.Threading.ReaderWriterLockSlim.Dispose%2A>后，必须释放对 <xref:System.Threading.ReaderWriterLockSlim> 的所有引用，以便垃圾回收器可以回收 <xref:System.Threading.ReaderWriterLockSlim> 占用的内存。 有关详细信息，请参阅[清理非托管资源](~/docs/standard/garbage-collection/unmanaged.md)和[实现 Dispose 方法](~/docs/standard/garbage-collection/implementing-dispose.md)。  
   
 > [!NOTE]
->  在释放<xref:System.Threading.ReaderWriterLockSlim.Dispose%2A>对对象的<xref:System.Threading.ReaderWriterLockSlim>最后一个引用之前, 始终调用。  
+>  在释放对 <xref:System.Threading.ReaderWriterLockSlim> 对象的最后一个引用之前，请始终调用 <xref:System.Threading.ReaderWriterLockSlim.Dispose%2A>。  
   
  ]]></format>
         </remarks>
@@ -451,6 +456,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -473,23 +479,23 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法会一直阻止, 直到调用线程进入锁定状态, 因此可能永远不会返回。 <xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A>使用方法阻止指定的间隔, 然后在调用线程未进入读取模式的时间间隔后返回。  
+ 此方法会一直阻止，直到调用线程进入锁定状态，因此可能永远不会返回。 使用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A> 方法可在指定的时间间隔内阻塞，如果调用线程未在该间隔内进入读取模式，则返回。  
   
  多个线程可以同时进入读取模式。  
   
- 如果一个或多个线程正在等待进入写入模式, 则调用<xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A>方法的线程将会阻塞, 直到这些线程超时或进入写入模式, 然后再从中退出。  
+ 如果一个或多个线程正在等待进入写入模式，则调用 <xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A> 方法的线程将受阻，直到这些线程超时或进入写入模式，然后再从中退出。  
   
 > [!NOTE]
->  如果某个锁允许递归, 则进入读取模式锁定状态的线程可以以递归方式进入读取模式, 即使其他线程正在等待进入写入模式。  
+>  如果某个锁允许递归，则进入读取模式锁定状态的线程可以以递归方式进入读取模式，即使其他线程正在等待进入写入模式。  
   
- 当其他线程处于读取模式时, 最多只能有一个线程处于可升级模式。 如果其他线程正在等待进入可升级模式, 并且没有等待进入写入模式的线程, 则调用<xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A>方法的线程会立即进入读取模式, 而不会阻止。  
+ 当其他线程处于读取模式时，最多只能有一个线程处于可升级模式。 如果其他线程正在等待进入可升级模式，并且没有等待进入写入模式的线程，则调用 <xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A> 方法的线程会立即进入读取模式，而不会阻止。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用<xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A>方法进入读取模式锁定状态。 示例中所示的方法检索与键关联的值。 如果未找到该键, 则允许由内部<xref:System.Collections.Generic.Dictionary%602>引发的异常终止方法。 `finally`块用于<xref:System.Threading.ReaderWriterLockSlim.ExitReadLock%2A>执行方法, 确保调用方退出读取模式。  
+ 下面的示例演示如何使用 <xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A> 方法进入读取模式锁定状态。 示例中所示的方法检索与键关联的值。 如果未找到该键，则允许由内部 <xref:System.Collections.Generic.Dictionary%602> 引发的异常终止方法。 `finally` 块用于执行 <xref:System.Threading.ReaderWriterLockSlim.ExitReadLock%2A> 方法，确保调用方退出读取模式。  
   
- 此代码是为<xref:System.Threading.ReaderWriterLockSlim>类提供的更大示例的一部分。  
+ 此代码是为 <xref:System.Threading.ReaderWriterLockSlim> 类提供的更大示例的一部分。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/source.cs#2)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/source.vb#2)]  
@@ -498,13 +504,13 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.Threading.LockRecursionException"><see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> 属性为 <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />，并且当前线程在已持有读取锁定时已尝试获取读取锁定。  
+        <exception cref="T:System.Threading.LockRecursionException"><see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> 属性为 <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />，并且当前线程在已持有读取锁时已尝试获取读取锁。  
   
-或 
-<see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> 属性为 <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />，并且当前线程在已持有写入锁定时已尝试获取读取锁定。  
+- 或 - 
+<see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> 属性为 <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />，并且当前线程在已持有写入锁时已尝试获取读取锁。  
   
-或 
-递归数将超出计数器的容量。 此限值很大，因此应用程序应该不会遇到此异常。</exception>
+- 或 - 
+递归数将超出该计数器的容量。 此限值很大，因此应用程序永远不会遇到此异常。</exception>
         <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.ReaderWriterLockSlim" /> 对象已释放。</exception>
       </Docs>
     </Member>
@@ -522,6 +528,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -544,27 +551,27 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法会一直阻止, 直到调用线程进入锁定状态, 因此可能永远不会返回。 <xref:System.Threading.ReaderWriterLockSlim.TryEnterUpgradeableReadLock%2A>使用方法阻止指定的间隔, 然后在调用线程未进入可升级模式的时间间隔内返回。  
+ 此方法会一直阻止，直到调用线程进入锁定状态，因此可能永远不会返回。 使用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterUpgradeableReadLock%2A> 方法可在指定的时间间隔内阻塞，如果调用线程未在该时间间隔内进入可升级模式，则返回。  
   
- 当线程通常访问<xref:System.Threading.ReaderWriterLockSlim>在读取模式下受保护的资源时, 可使用可升级模式, 但如果满足某些条件, 则可能需要进入写入模式。 处于可升级模式的线程可以降级到读取模式或升级到写入模式。  
+ 当线程通常访问在读取模式下受 <xref:System.Threading.ReaderWriterLockSlim> 保护的资源时，请使用可升级模式，但如果满足某些条件，则可能需要进入写入模式。 处于可升级模式的线程可以降级到读取模式或升级到写入模式。  
   
- 在任何给定时间, 只有一个线程可以进入可升级模式。 如果某个线程处于可升级模式, 并且没有等待进入写入模式的线程, 则任何数量的其他线程都可以进入读取模式, 即使有等待进入可升级模式的线程。  
+ 在任何给定时间，只有一个线程可以进入可升级模式。 如果某个线程处于可升级模式，并且没有等待进入写入模式的线程，则任何数量的其他线程都可以进入读取模式，即使有等待进入可升级模式的线程。  
   
- 如果一个或多个线程正在等待进入写入模式, 则调用<xref:System.Threading.ReaderWriterLockSlim.EnterUpgradeableReadLock%2A>方法的线程将会阻塞, 直到这些线程超时或进入写入模式, 然后再从中退出。  
+ 如果一个或多个线程正在等待进入写入模式，则调用 <xref:System.Threading.ReaderWriterLockSlim.EnterUpgradeableReadLock%2A> 方法的线程将受阻，直到这些线程超时或进入写入模式，然后再从中退出。  
   
 > [!NOTE]
->  如果某个锁允许递归, 则进入可升级模式锁定状态的线程可以以递归方式进入可升级模式, 即使其他线程正在等待进入写入模式。  
+>  如果某个锁允许递归，则进入可升级模式锁定状态的线程可以以递归方式进入可升级模式，即使其他线程正在等待进入写入模式。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用<xref:System.Threading.ReaderWriterLockSlim.EnterUpgradeableReadLock%2A>方法进入可升级模式锁定状态。 `finally`块用于<xref:System.Threading.ReaderWriterLockSlim.ExitUpgradeableReadLock%2A>执行方法, 确保调用方退出可升级模式。  
+ 下面的示例演示如何使用 <xref:System.Threading.ReaderWriterLockSlim.EnterUpgradeableReadLock%2A> 方法进入可升级模式锁定状态。 `finally` 块用于执行 <xref:System.Threading.ReaderWriterLockSlim.ExitUpgradeableReadLock%2A> 方法，确保调用方退出可升级模式。  
   
- 示例中所示的方法检索与键关联的值, 并将其与新值进行比较。 如果值不变, 则方法将返回一个状态, 指示没有任何更改。 如果未找到键的值, 则插入键/值对。 如果值已更改, 则会更新。 可升级模式允许线程根据需要升级读取锁定, 而不会导致死锁的风险。  
+ 示例中所示的方法检索与键关联的值，并将其与新值进行比较。 如果值不变，则方法将返回一个状态，指示没有任何更改。 如果未找到键的值，则插入键/值对。 如果值已更改，则会更新。 可升级模式允许线程根据需要升级读取锁定，而不会导致死锁的风险。  
   
- 该示例使用无参数构造函数创建锁, 因此不允许使用递归。 当锁<xref:System.Threading.ReaderWriterLockSlim>不允许递归时, 对的编程更简单且更不易出错。  
+ 该示例使用无参数构造函数创建锁，因此不允许使用递归。 当锁定不允许递归时，对 <xref:System.Threading.ReaderWriterLockSlim> 进行编程更简单，并且不易出错。  
   
- 此代码是为<xref:System.Threading.ReaderWriterLockSlim>类提供的更大示例的一部分。  
+ 此代码是为 <xref:System.Threading.ReaderWriterLockSlim> 类提供的更大示例的一部分。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/source.cs#2)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/source.vb#2)]  
@@ -577,11 +584,11 @@
         </remarks>
         <exception cref="T:System.Threading.LockRecursionException"><see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> 属性为 <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />，而且当前线程已进入任意模式的锁定状态。  
   
-或 
+- 或 - 
 当前线程已进入读取模式，因此尝试进入可升级模式将有可能导致死锁。  
   
 - 或 - 
-递归数将超出计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
+递归数将超出该计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
         <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.ReaderWriterLockSlim" /> 对象已释放。</exception>
       </Docs>
     </Member>
@@ -599,6 +606,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -621,19 +629,19 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法会一直阻止, 直到调用线程进入锁定状态, 因此可能永远不会返回。 <xref:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock%2A>使用方法阻止指定的间隔, 然后在调用线程未进入该间隔期间的写入模式时返回。  
+ 此方法会一直阻止，直到调用线程进入锁定状态，因此可能永远不会返回。 使用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock%2A> 方法可在指定的时间间隔内阻塞，如果调用线程未在该时间间隔内进入写入模式，则返回。  
   
- 如果其他线程已进入读取模式锁定状态, 则调用<xref:System.Threading.ReaderWriterLockSlim.EnterWriteLock%2A>方法的线程将会阻塞, 直到这些线程退出读取模式。 当有等待进入写入模式的线程时, 尝试进入读取模式或可升级模式的其他线程将会阻止, 直到所有等待进入写入模式的线程超时或进入写入模式, 然后再从中退出。  
+ 如果其他线程已进入读取模式锁定状态，则调用 <xref:System.Threading.ReaderWriterLockSlim.EnterWriteLock%2A> 方法的线程将会阻塞，直到这些线程退出读取模式。 当有等待进入写入模式的线程时，尝试进入读取模式或可升级模式的其他线程将会阻止，直到所有等待进入写入模式的线程超时或进入写入模式，然后再从中退出。  
   
 > [!NOTE]
->  如果某个锁允许递归, 则进入写入模式锁定状态的线程可以以递归方式进入写入模式, 即使其他线程正在等待进入写入模式。  
+>  如果某个锁允许递归，则进入写入模式锁定状态的线程可以以递归方式进入写入模式，即使其他线程正在等待进入写入模式。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用<xref:System.Threading.ReaderWriterLockSlim.EnterWriteLock%2A>方法进入写入模式锁定状态。 示例中显示的方法将新的键/值对添加到同步的缓存中。 如果该密钥已在缓存中, 则允许内部<xref:System.Collections.Generic.Dictionary%602>引发的异常终止该方法。 `finally`块用于<xref:System.Threading.ReaderWriterLockSlim.ExitWriteLock%2A>执行方法, 确保调用方退出写入模式。  
+ 下面的示例演示如何使用 <xref:System.Threading.ReaderWriterLockSlim.EnterWriteLock%2A> 方法进入写入模式锁定状态。 示例中显示的方法将新的键/值对添加到同步的缓存中。 如果该密钥已在缓存中，则允许由内部 <xref:System.Collections.Generic.Dictionary%602> 引发的异常终止该方法。 `finally` 块用于执行 <xref:System.Threading.ReaderWriterLockSlim.ExitWriteLock%2A> 方法，确保调用方退出写入模式。  
   
- 此代码是为<xref:System.Threading.ReaderWriterLockSlim>类提供的更大示例的一部分。  
+ 此代码是为 <xref:System.Threading.ReaderWriterLockSlim> 类提供的更大示例的一部分。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/source.cs#2)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/source.vb#2)]  
@@ -644,11 +652,11 @@
         </remarks>
         <exception cref="T:System.Threading.LockRecursionException"><see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> 属性为 <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />，而且当前线程已进入任意模式的锁定状态。  
   
-或 
+- 或 - 
 当前线程已进入读取模式且尚无写锁定，因此尝试进入写入模式锁定状态将有可能导致死锁。  
   
-或 
-递归数将超出计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
+- 或 - 
+递归数将超出该计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
         <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.ReaderWriterLockSlim" /> 对象已释放。</exception>
       </Docs>
     </Member>
@@ -666,6 +674,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -688,16 +697,16 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法对于递归顺序是不敏感的。 例如, 如果某个线程进入可升级模式的锁定状态, 然后进入读取模式锁定状态, 则线程退出这两种模式的顺序并不重要。 如果某个锁允许递归, 则线程可以进入写入模式的锁定, 然后以递归方式进入读取模式;线程退出读取模式和写入模式的顺序并不重要。  
+ 此方法对于递归顺序是不敏感的。 例如，如果某个线程进入可升级模式的锁定状态，然后进入读取模式锁定状态，则线程退出这两种模式的顺序并不重要。 如果某个锁允许递归，则线程可以进入写入模式的锁定，然后以递归方式进入读取模式;线程退出读取模式和写入模式的顺序并不重要。  
   
  退出锁可能会发出其他等待线程的信号。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用`finally`块<xref:System.Threading.ReaderWriterLockSlim.ExitReadLock%2A>执行方法, 确保调用方退出读取模式。 示例中所示的方法检索与键关联的值。 如果未找到该键, 则允许由内部<xref:System.Collections.Generic.Dictionary%602>引发的异常终止方法。 <xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A>方法用于进入读取模式。  
+ 下面的示例演示如何使用 `finally` 块执行 <xref:System.Threading.ReaderWriterLockSlim.ExitReadLock%2A> 方法，确保调用方退出读取模式。 示例中所示的方法检索与键关联的值。 如果未找到该键，则允许由内部 <xref:System.Collections.Generic.Dictionary%602> 引发的异常终止方法。 <xref:System.Threading.ReaderWriterLockSlim.EnterReadLock%2A> 方法用于进入读取模式。  
   
- 此代码是为<xref:System.Threading.ReaderWriterLockSlim>类提供的更大示例的一部分。  
+ 此代码是为 <xref:System.Threading.ReaderWriterLockSlim> 类提供的更大示例的一部分。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/source.cs#2)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/source.vb#2)]  
@@ -723,6 +732,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -745,20 +755,20 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法对于递归顺序是不敏感的。 例如, 如果某个线程进入可升级模式的锁定, 然后在写入模式下进入锁定状态, 则该线程退出这两个模式的顺序并不重要。 如果锁允许递归, 则线程可以进入写入模式的锁定, 然后以递归方式进入可升级模式;线程退出可升级模式和写入模式的顺序并不重要。  
+ 此方法对于递归顺序是不敏感的。 例如，如果某个线程进入可升级模式的锁定，然后在写入模式下进入锁定状态，则该线程退出这两个模式的顺序并不重要。 如果锁允许递归，则线程可以进入写入模式的锁定，然后以递归方式进入可升级模式;线程退出可升级模式和写入模式的顺序并不重要。  
   
  退出锁可能会发出其他等待线程的信号。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用`finally`块<xref:System.Threading.ReaderWriterLockSlim.ExitUpgradeableReadLock%2A>执行方法, 确保调用方退出可升级模式。  
+ 下面的示例演示如何使用 `finally` 块执行 <xref:System.Threading.ReaderWriterLockSlim.ExitUpgradeableReadLock%2A> 方法，确保调用方退出可升级模式。  
   
- 示例中所示的方法检索与键关联的值, 并将其与新值进行比较。 如果值不变, 则方法将返回一个状态, 指示没有任何更改。 如果未找到键的值, 则插入键/值对。 如果值已更改, 则会更新。 可升级模式允许线程根据需要升级读取锁定, 而不会导致死锁的风险。  
+ 示例中所示的方法检索与键关联的值，并将其与新值进行比较。 如果值不变，则方法将返回一个状态，指示没有任何更改。 如果未找到键的值，则插入键/值对。 如果值已更改，则会更新。 可升级模式允许线程根据需要升级读取锁定，而不会导致死锁的风险。  
   
- 该示例使用无参数构造函数创建锁, 因此不允许使用递归。 当锁<xref:System.Threading.ReaderWriterLockSlim>不允许递归时, 对的编程更简单且更不易出错。  
+ 该示例使用无参数构造函数创建锁，因此不允许使用递归。 当锁定不允许递归时，对 <xref:System.Threading.ReaderWriterLockSlim> 进行编程更简单，并且不易出错。  
   
- 此代码是为<xref:System.Threading.ReaderWriterLockSlim>类提供的更大示例的一部分。  
+ 此代码是为 <xref:System.Threading.ReaderWriterLockSlim> 类提供的更大示例的一部分。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/source.cs#2)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/source.vb#2)]  
@@ -786,6 +796,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -808,16 +819,16 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此方法对于递归顺序是不敏感的。 例如, 如果某个线程进入可升级模式的锁定, 然后在写入模式下进入锁定状态, 则该线程退出这两个模式的顺序并不重要。 如果某个锁允许递归, 则线程可以进入写入模式的锁定, 然后以递归方式进入读取模式;线程退出读取模式和写入模式的顺序并不重要。  
+ 此方法对于递归顺序是不敏感的。 例如，如果某个线程进入可升级模式的锁定，然后在写入模式下进入锁定状态，则该线程退出这两个模式的顺序并不重要。 如果某个锁允许递归，则线程可以进入写入模式的锁定，然后以递归方式进入读取模式;线程退出读取模式和写入模式的顺序并不重要。  
   
  退出锁可能会发出其他等待线程的信号。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用`finally`块<xref:System.Threading.ReaderWriterLockSlim.ExitWriteLock%2A>执行方法, 确保调用方退出写入模式。 示例中显示的方法将新的键/值对添加到同步的缓存中。 如果该密钥已在缓存中, 则允许内部<xref:System.Collections.Generic.Dictionary%602>引发的异常终止该方法。 <xref:System.Threading.ReaderWriterLockSlim.EnterWriteLock%2A>方法用于进入写入模式锁定状态。  
+ 下面的示例演示如何使用 `finally` 块执行 <xref:System.Threading.ReaderWriterLockSlim.ExitWriteLock%2A> 方法，确保调用方退出写入模式。 示例中显示的方法将新的键/值对添加到同步的缓存中。 如果该密钥已在缓存中，则允许由内部 <xref:System.Collections.Generic.Dictionary%602> 引发的异常终止该方法。 <xref:System.Threading.ReaderWriterLockSlim.EnterWriteLock%2A> 方法用于进入写入模式锁定状态。  
   
- 此代码是为<xref:System.Threading.ReaderWriterLockSlim>类提供的更大示例的一部分。  
+ 此代码是为 <xref:System.Threading.ReaderWriterLockSlim> 类提供的更大示例的一部分。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/source.cs#2)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/source.vb#2)]  
@@ -843,6 +854,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -870,7 +882,7 @@
    
   
 ## Examples  
- 下面的示例演示如何使用<xref:System.Threading.ReaderWriterLockSlim.IsReadLockHeld%2A>属性在当前线程意外进入读取模式的情况下生成断言。  
+ 下面的示例演示如何使用 <xref:System.Threading.ReaderWriterLockSlim.IsReadLockHeld%2A> 属性在当前线程意外进入读取模式的情况下生成断言。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/cs/source.cs#1)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/vb/source.vb#1)]  
@@ -895,6 +907,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -922,7 +935,7 @@
    
   
 ## Examples  
- 下面的示例演示了在当前线程<xref:System.Threading.ReaderWriterLockSlim.IsUpgradeableReadLockHeld%2A>已意外进入可升级模式的情况下, 如何使用属性生成断言。  
+ 下面的示例演示了在当前线程已意外进入可升级模式的情况下，如何使用 <xref:System.Threading.ReaderWriterLockSlim.IsUpgradeableReadLockHeld%2A> 属性生成断言。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/cs/source.cs#1)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/vb/source.vb#1)]  
@@ -947,6 +960,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -974,7 +988,7 @@
    
   
 ## Examples  
- 下面的示例演示如何使用<xref:System.Threading.ReaderWriterLockSlim.IsWriteLockHeld%2A>属性在当前线程意外进入写入模式的情况下生成断言。  
+ 下面的示例演示了在当前线程意外进入写入模式时，如何使用 <xref:System.Threading.ReaderWriterLockSlim.IsWriteLockHeld%2A> 属性生成断言。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/cs/source.cs#1)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/vb/source.vb#1)]  
@@ -999,6 +1013,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1021,14 +1036,14 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 递归策略确定对多次输入锁定的线程的限制。 例如, 如果使用<xref:System.Threading.LockRecursionPolicy.NoRecursion?displayProperty=nameWithType>创建了一个锁, 并且该线程已进入读取模式锁定状态, <xref:System.Threading.LockRecursionException>则在该线程尝试重新进入读取模式锁定状态时将引发。  
+ 递归策略确定对多次输入锁定的线程的限制。 例如，如果使用 <xref:System.Threading.LockRecursionPolicy.NoRecursion?displayProperty=nameWithType> 创建了一个锁，并且某个线程已进入读取模式锁定状态，则在该线程尝试重新进入读取模式锁定状态时将引发 <xref:System.Threading.LockRecursionException>。  
   
 > [!NOTE]
->  可升级模式的线程可以升级到写入模式或降级到读取模式, 而不考虑锁定递归策略设置。  
+>  可升级模式的线程可以升级到写入模式或降级到读取模式，而不考虑锁定递归策略设置。  
   
- 不管递归策略如何, 最初进入读取模式的线程都不允许升级到可升级模式或写入模式, 因为这种模式产生了死锁的概率。  
+ 不管递归策略如何，最初进入读取模式的线程都不允许升级到可升级模式或写入模式，因为这种模式产生了死锁的概率。  
   
- 有关递归策略及其效果的详细信息, 请参阅<xref:System.Threading.LockRecursionPolicy>枚举<xref:System.Threading.ReaderWriterLockSlim>和类。  
+ 有关递归策略及其效果的详细信息，请参阅 <xref:System.Threading.LockRecursionPolicy> 枚举和 <xref:System.Threading.ReaderWriterLockSlim> 类。  
   
  ]]></format>
         </remarks>
@@ -1049,6 +1064,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1066,12 +1082,12 @@
       </ReturnValue>
       <Docs>
         <summary>获取当前线程进入读取模式锁定状态的次数，用于指示递归。</summary>
-        <value>如果当前线程未进入读取模式, 则为 0 (零); 如果线程已进入读取模式但尚未以递归方式进入, 则为 1; 如果线程已递归进入锁定状态 , 则为*n* 。</value>
+        <value>如果当前线程未进入读取模式，则为0（零）; 如果线程已进入读取模式但尚未以递归方式进入，则为 1; 如果线程*已递归进入*锁定状态，则为*n* 。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此属性仅用于调试、分析和日志记录目的, 而不用于控制算法的行为。 计算结果后, 结果就会更改。 因此, 根据此属性做出决策并不安全。  
+ 此属性仅用于调试、分析和日志记录目的，而不用于控制算法的行为。 计算结果后，结果就会更改。 因此，根据此属性做出决策并不安全。  
   
  ]]></format>
         </remarks>
@@ -1091,6 +1107,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1108,12 +1125,12 @@
       </ReturnValue>
       <Docs>
         <summary>获取当前线程进入可升级模式锁定状态的次数，用于指示递归。</summary>
-        <value>如果当前线程未进入可升级模式, 则为 0; 如果线程已进入可升级模式但尚未以递归方式进入, 则为 1; 如果线程已进入可升级模式, 则为*n* -1 次。</value>
+        <value>如果当前线程未进入可升级模式，则为 0; 如果线程已进入可升级模式但尚未以递归方式进入，则为 1; 如果线程已进入可升级模式，则为*n* *-1*次。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此属性仅用于调试、分析和日志记录目的, 而不用于控制算法的行为。 计算结果后, 结果就会更改。 因此, 根据此属性做出决策并不安全。  
+ 此属性仅用于调试、分析和日志记录目的，而不用于控制算法的行为。 计算结果后，结果就会更改。 因此，根据此属性做出决策并不安全。  
   
  ]]></format>
         </remarks>
@@ -1133,6 +1150,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1150,12 +1168,12 @@
       </ReturnValue>
       <Docs>
         <summary>获取当前线程进入写入模式锁定状态的次数，用于指示递归。</summary>
-        <value>如果当前线程未进入写入模式, 则为 0; 如果线程已进入写入模式但尚未以递归方式进入写入模式, 则为 1; 如果线程已进入写入模式, 则为*n* 。</value>
+        <value>如果当前线程未进入写入模式，则为 0; 如果线程已进入写入模式但尚未以递归方式进入写入模式，则为 1; 如果线程*已进入写入*模式，则为*n* 。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此属性仅用于调试、分析和日志记录目的, 而不用于控制算法的行为。 计算结果后, 结果就会更改。 因此, 根据此属性做出决策并不安全。  
+ 此属性仅用于调试、分析和日志记录目的，而不用于控制算法的行为。 计算结果后，结果就会更改。 因此，根据此属性做出决策并不安全。  
   
  ]]></format>
         </remarks>
@@ -1186,6 +1204,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1205,30 +1224,30 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">等待的毫秒数；或为 -1 (<see cref="F:System.Threading.Timeout.Infinite" />)，表示无限期等待。</param>
+        <param name="millisecondsTimeout">等待的毫秒数，或为 -1 (<see cref="F:System.Threading.Timeout.Infinite" />)，表示无限期等待。</param>
         <summary>尝试进入读取模式锁定状态，可以选择整数超时时间。</summary>
         <returns>如果调用线程已进入读取模式，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果`millisecondsTimeout`为 0 (零), 则此方法检查锁状态, 并`false`在所需状态不可用时立即返回。  
+ 如果 `millisecondsTimeout` 为0（零），则此方法将检查锁定状态，并在所需的状态不可用时立即返回 `false`。  
   
  多个线程可以同时进入读取模式。  
   
- 如果一个或多个线程正在等待进入写入模式, 则调用<xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A>方法的线程将受阻, 直到这些线程已超时或进入写入模式, 然后从其中退出, 或直到调用线程自己的超时间隔到期。  
+ 如果一个或多个线程正在等待进入写入模式，则调用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A> 方法的线程将受阻，直到这些线程超时或进入写入模式，然后从其中退出，或直到调用线程自己的超时间隔到期。  
   
 > [!NOTE]
->  如果某个锁允许递归, 则进入读取模式锁定状态的线程可以以递归方式进入读取模式, 即使其他线程正在等待进入写入模式。  
+>  如果某个锁允许递归，则进入读取模式锁定状态的线程可以以递归方式进入读取模式，即使其他线程正在等待进入写入模式。  
   
- 当其他线程处于读取模式时, 一个线程可以处于可升级模式。 如果其他线程正在等待进入可升级模式, 并且没有等待进入写入模式的线程, 则调用<xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A>方法的线程会立即进入读取模式, 而不会阻止。  
+ 当其他线程处于读取模式时，一个线程可以处于可升级模式。 如果其他线程正在等待进入可升级模式，并且没有等待进入写入模式的线程，则调用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A> 方法的线程会立即进入读取模式，而不会阻止。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.Threading.LockRecursionException"><see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> 属性为 <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />，而且当前线程已进入锁定状态。  
   
 - 或 - 
-递归数将超出计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
+递归数将超出该计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 的值为负，但不等于 <see cref="F:System.Threading.Timeout.Infinite" /> (-1)，这是唯一允许使用的负值。</exception>
         <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.ReaderWriterLockSlim" /> 对象已释放。</exception>
       </Docs>
@@ -1247,6 +1266,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1273,26 +1293,26 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果`timeout`为 0 (零), 则此方法检查锁状态, 并`false`在所需状态不可用时立即返回。  
+ 如果 `timeout` 为0（零），则此方法将检查锁定状态，并在所需的状态不可用时立即返回 `false`。  
   
  多个线程可以同时进入读取模式锁定状态。  
   
- 如果一个或多个线程排队等待进入写入模式, 则调用<xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A>方法的线程将会阻塞, 直到这些线程已超时或进入写入模式, 然后从其中退出, 或直到调用线程自己的超时间隔到期。  
+ 如果一个或多个线程排队等候进入写入模式，则调用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A> 方法的线程将会阻塞，直到这些线程超时或进入写入模式，然后从其中退出，或直到调用线程自己的超时间隔到期。  
   
 > [!NOTE]
->  如果某个锁允许递归, 则进入读取模式锁定状态的线程可以以递归方式进入读取模式, 即使其他线程正在等待进入写入模式。  
+>  如果某个锁允许递归，则进入读取模式锁定状态的线程可以以递归方式进入读取模式，即使其他线程正在等待进入写入模式。  
   
- 当其他线程处于读取模式时, 一个线程可以处于可升级模式。 如果其他线程正在等待进入可升级模式, 并且没有等待进入写入模式的线程, 则调用<xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A>方法的线程会立即进入读取模式, 而不会阻止。  
+ 当其他线程处于读取模式时，一个线程可以处于可升级模式。 如果其他线程正在等待进入可升级模式，并且没有等待进入写入模式的线程，则调用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterReadLock%2A> 方法的线程会立即进入读取模式，而不会阻止。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.Threading.LockRecursionException"><see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> 属性为 <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />，而且当前线程已进入锁定状态。  
   
-或 
-递归数将超出计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
+- 或 - 
+递归数将超出该计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 的值为负，但不等于 -1 毫秒，这是唯一允许使用的负值。  
   
-或 
+- 或 - 
 <paramref name="timeout" /> 的值大于 <see cref="F:System.Int32.MaxValue" /> 毫秒。</exception>
         <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.ReaderWriterLockSlim" /> 对象已释放。</exception>
       </Docs>
@@ -1322,6 +1342,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1341,23 +1362,23 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">等待的毫秒数；或为 -1 (<see cref="F:System.Threading.Timeout.Infinite" />)，表示无限期等待。</param>
+        <param name="millisecondsTimeout">等待的毫秒数，或为 -1 (<see cref="F:System.Threading.Timeout.Infinite" />)，表示无限期等待。</param>
         <summary>尝试进入可升级模式锁定状态，可以选择超时时间。</summary>
         <returns>如果调用线程已进入可升级模式，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果`millisecondsTimeout`为 0 (零), 则此方法检查锁状态, 并`false`在所需状态不可用时立即返回。  
+ 如果 `millisecondsTimeout` 为0（零），则此方法将检查锁定状态，并在所需的状态不可用时立即返回 `false`。  
   
- 当线程通常访问<xref:System.Threading.ReaderWriterLockSlim>在读取模式下受保护的资源时, 可使用可升级模式, 但如果满足某些条件, 则可能需要进入写入模式。 处于可升级模式的线程可以升级到写入模式或降级到读取模式。  
+ 当线程通常访问在读取模式下受 <xref:System.Threading.ReaderWriterLockSlim> 保护的资源时，请使用可升级模式，但如果满足某些条件，则可能需要进入写入模式。 处于可升级模式的线程可以升级到写入模式或降级到读取模式。  
   
- 在任何给定时间, 只有一个线程可以进入可升级模式锁定状态。 如果某个线程处于可升级模式, 并且没有等待进入写入模式的线程, 则任何数量的其他线程都可以进入读取模式, 即使有等待进入可升级模式的线程。  
+ 在任何给定时间，只有一个线程可以进入可升级模式锁定状态。 如果某个线程处于可升级模式，并且没有等待进入写入模式的线程，则任何数量的其他线程都可以进入读取模式，即使有等待进入可升级模式的线程。  
   
- 如果一个或多个线程正在等待进入写入模式, 则调用<xref:System.Threading.ReaderWriterLockSlim.TryEnterUpgradeableReadLock%2A>方法的线程将受阻, 直到这些线程已超时或进入写入模式, 然后从其中退出, 或直到调用线程自己的超时间隔到期。  
+ 如果一个或多个线程正在等待进入写入模式，则调用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterUpgradeableReadLock%2A> 方法的线程将受阻，直到这些线程超时或进入写入模式，然后从其中退出，或直到调用线程自己的超时间隔到期。  
   
 > [!NOTE]
->  如果某个锁允许递归, 则进入可升级模式锁定状态的线程可以以递归方式进入可升级模式, 即使其他线程正在等待进入写入模式。  
+>  如果某个锁允许递归，则进入可升级模式锁定状态的线程可以以递归方式进入可升级模式，即使其他线程正在等待进入写入模式。  
   
  ]]></format>
         </remarks>
@@ -1366,8 +1387,8 @@
 - 或 - 
 初始状态下，当前线程进入读取模式锁定状态，因此尝试进入可升级模式将有可能导致死锁。  
   
-或 
-递归数将超出计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
+- 或 - 
+递归数将超出该计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 的值为负，但不等于 <see cref="F:System.Threading.Timeout.Infinite" /> (-1)，这是唯一允许使用的负值。</exception>
         <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.ReaderWriterLockSlim" /> 对象已释放。</exception>
       </Docs>
@@ -1386,6 +1407,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1412,16 +1434,16 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果`timeout`为 0 (零), 则此方法检查锁状态, 并`false`在所需状态不可用时立即返回。  
+ 如果 `timeout` 为0（零），则此方法将检查锁定状态，并在所需的状态不可用时立即返回 `false`。  
   
- 当线程通常访问<xref:System.Threading.ReaderWriterLockSlim>在读取模式下受保护的资源时, 可使用可升级模式, 但如果满足某些条件, 则可能需要进入写入模式。 处于可升级模式的线程可以升级到写入模式或降级到读取模式。  
+ 当线程通常访问在读取模式下受 <xref:System.Threading.ReaderWriterLockSlim> 保护的资源时，可使用可升级模式，但如果满足某些条件，则可能需要进入写入模式。 处于可升级模式的线程可以升级到写入模式或降级到读取模式。  
   
- 在任何给定时间, 只有一个线程可以进入可升级模式锁定状态。 如果某个线程处于可升级模式, 并且没有等待进入写入模式的线程, 则任何数量的其他线程都可以进入读取模式, 即使有等待进入可升级模式的线程。  
+ 在任何给定时间，只有一个线程可以进入可升级模式锁定状态。 如果某个线程处于可升级模式，并且没有等待进入写入模式的线程，则任何数量的其他线程都可以进入读取模式，即使有等待进入可升级模式的线程。  
   
- 如果一个或多个线程正在等待进入写入模式, 则调用<xref:System.Threading.ReaderWriterLockSlim.TryEnterUpgradeableReadLock%2A>方法的线程将受阻, 直到这些线程已超时或进入写入模式, 然后从其中退出, 或直到调用线程自己的超时间隔到期。  
+ 如果一个或多个线程正在等待进入写入模式，则调用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterUpgradeableReadLock%2A> 方法的线程将受阻，直到这些线程超时或进入写入模式，然后从其中退出，或直到调用线程自己的超时间隔到期。  
   
 > [!NOTE]
->  如果某个锁允许递归, 则进入可升级模式锁定状态的线程可以以递归方式进入可升级模式, 即使其他线程正在等待进入写入模式。  
+>  如果某个锁允许递归，则进入可升级模式锁定状态的线程可以以递归方式进入可升级模式，即使其他线程正在等待进入写入模式。  
   
  ]]></format>
         </remarks>
@@ -1431,10 +1453,10 @@
 初始状态下，当前线程进入读取模式锁定状态，因此尝试进入可升级模式将有可能导致死锁。  
   
 - 或 - 
-递归数将超出计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
+递归数将超出该计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 的值为负，但不等于 -1 毫秒，这是唯一允许使用的负值。  
   
-或 
+- 或 - 
 <paramref name="timeout" /> 的值大于 <see cref="F:System.Int32.MaxValue" /> 毫秒。</exception>
         <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.ReaderWriterLockSlim" /> 对象已释放。</exception>
       </Docs>
@@ -1464,6 +1486,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1483,28 +1506,28 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">等待的毫秒数；或为 -1 (<see cref="F:System.Threading.Timeout.Infinite" />)，表示无限期等待。</param>
+        <param name="millisecondsTimeout">等待的毫秒数，或为 -1 (<see cref="F:System.Threading.Timeout.Infinite" />)，表示无限期等待。</param>
         <summary>尝试进入写入模式锁定状态，可以选择超时时间。</summary>
         <returns>如果调用线程已进入写入模式，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果`millisecondsTimeout`为 0 (零), 则此方法检查锁状态, 并`false`在所需状态不可用时立即返回。  
+ 如果 `millisecondsTimeout` 为0（零），则此方法将检查锁定状态，并在所需的状态不可用时立即返回 `false`。  
   
- 如果其他线程已进入读取模式锁定状态, 则调用<xref:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock%2A>方法的线程将会阻塞, 直到这些线程退出读取模式或超时间隔已过。 在等待进入写入模式的线程被阻止时, 还会在所有等待进入写入模式的线程超时或进入写入模式之后, 尝试进入读取模式或可升级模式的其他线程进入写入模式。  
+ 如果其他线程已进入读取模式锁定状态，则调用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock%2A> 方法的线程将会阻塞，直到这些线程退出读取模式或超时间隔结束。 在等待进入写入模式的线程被阻止时，还会在所有等待进入写入模式的线程超时或进入写入模式之后，尝试进入读取模式或可升级模式的其他线程进入写入模式。  
   
 > [!NOTE]
->  如果某个锁允许递归, 则进入写入模式锁定状态的线程可以以递归方式进入写入模式, 即使其他线程正在等待进入写入模式。  
+>  如果某个锁允许递归，则进入写入模式锁定状态的线程可以以递归方式进入写入模式，即使其他线程正在等待进入写入模式。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用<xref:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock%2A>方法在写入模式下进入锁定状态, 超时为。示例中显示的方法将新的键/值对添加到同步的缓存中。 如果在线程进入锁之前经过了指定的超时间隔, 则该方法将返回`false`。 如果添加了`true`键/值对, 则方法返回。  
+ 下面的示例演示如何使用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock%2A> 方法进入写入模式锁定状态，超时为。示例中显示的方法将新的键/值对添加到同步的缓存中。 如果在线程进入锁之前经过了指定的超时间隔，则该方法将返回 `false`。 如果添加了键/值对，则方法将返回 `true`。  
   
- 如果该密钥已在缓存中, 则允许内部<xref:System.Collections.Generic.Dictionary%602>引发的异常终止该方法。 `finally`块用于<xref:System.Threading.ReaderWriterLockSlim.ExitWriteLock%2A>执行方法, 确保调用方退出锁。  
+ 如果该密钥已在缓存中，则允许由内部 <xref:System.Collections.Generic.Dictionary%602> 引发的异常终止该方法。 `finally` 块用于执行 <xref:System.Threading.ReaderWriterLockSlim.ExitWriteLock%2A> 方法，确保调用方退出锁。  
   
- 此代码是为<xref:System.Threading.ReaderWriterLockSlim>类提供的更大示例的一部分。  
+ 此代码是为 <xref:System.Threading.ReaderWriterLockSlim> 类提供的更大示例的一部分。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/cs/source.cs#2)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Shadow#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Shadow/vb/source.vb#2)]  
@@ -1518,8 +1541,8 @@
 - 或 - 
 初始状态下，当前线程进入读取模式锁定状态，因此尝试进入写入模式将有可能导致死锁。  
   
-或 
-递归数将超出计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
+- 或 - 
+递归数将超出该计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 的值为负，但不等于 <see cref="F:System.Threading.Timeout.Infinite" /> (-1)，这是唯一允许使用的负值。</exception>
         <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.ReaderWriterLockSlim" /> 对象已释放。</exception>
       </Docs>
@@ -1538,6 +1561,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1564,22 +1588,22 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果`timeout`为 0 (零), 则此方法检查锁状态, 并`false`在所需状态不可用时立即返回。  
+ 如果 `timeout` 为0（零），则此方法将检查锁定状态，并在所需的状态不可用时立即返回 `false`。  
   
- 如果其他线程已进入读取模式锁定状态, 则调用<xref:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock%2A>方法的线程将会阻塞, 直到这些线程退出读取模式或超时间隔已过。 在等待进入写入模式的线程被阻止时, 还会在所有等待进入写入模式的线程超时或进入写入模式之后, 尝试进入读取模式或可升级模式的其他线程进入写入模式。  
+ 如果其他线程已进入读取模式锁定状态，则调用 <xref:System.Threading.ReaderWriterLockSlim.TryEnterWriteLock%2A> 方法的线程将会阻塞，直到这些线程退出读取模式或超时间隔结束。 在等待进入写入模式的线程被阻止时，还会在所有等待进入写入模式的线程超时或进入写入模式之后，尝试进入读取模式或可升级模式的其他线程进入写入模式。  
   
 > [!NOTE]
->  如果某个锁允许递归, 则进入写入模式锁定状态的线程可以以递归方式进入写入模式, 即使其他线程正在等待进入写入模式。  
+>  如果某个锁允许递归，则进入写入模式锁定状态的线程可以以递归方式进入写入模式，即使其他线程正在等待进入写入模式。  
   
  ]]></format>
         </remarks>
         <exception cref="T:System.Threading.LockRecursionException"><see cref="P:System.Threading.ReaderWriterLockSlim.RecursionPolicy" /> 属性为 <see cref="F:System.Threading.LockRecursionPolicy.NoRecursion" />，而且当前线程已进入锁定状态。  
   
-或 
+- 或 - 
 初始状态下，当前线程进入读取模式锁定状态，因此尝试进入写入模式将有可能导致死锁。  
   
-或 
-递归数将超出计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
+- 或 - 
+递归数将超出该计数器的容量。 此限制数值很大，因此任何情况下应用程序都不应遇到此情况。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 的值为负，但不等于 -1 毫秒，这是唯一允许使用的负值。  
   
 - 或 - 
@@ -1601,6 +1625,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1628,12 +1653,12 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此属性仅用于调试、分析和日志记录目的, 而不用于控制算法的行为。 计算结果后, 结果就会更改。 因此, 根据此属性做出决策并不安全。  
+ 此属性仅用于调试、分析和日志记录目的，而不用于控制算法的行为。 计算结果后，结果就会更改。 因此，根据此属性做出决策并不安全。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用<xref:System.Threading.ReaderWriterLockSlim.WaitingReadCount%2A>属性生成事件日志项 (如果阻止进入读取模式的线程数超过阈值)。  
+ 下面的示例演示如何使用 <xref:System.Threading.ReaderWriterLockSlim.WaitingReadCount%2A> 属性生成事件日志项（如果阻止进入读取模式的线程数超过阈值）。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/cs/source.cs#1)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/vb/source.vb#1)]  
@@ -1658,6 +1683,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1685,12 +1711,12 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此属性仅用于调试、分析和日志记录目的, 而不用于控制算法的行为。 计算结果后, 结果就会更改。 因此, 根据此属性做出决策并不安全。  
+ 此属性仅用于调试、分析和日志记录目的，而不用于控制算法的行为。 计算结果后，结果就会更改。 因此，根据此属性做出决策并不安全。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用<xref:System.Threading.ReaderWriterLockSlim.WaitingUpgradeCount%2A>属性生成事件日志项 (如果已阻止等待进入可升级模式的线程数超过阈值)。  
+ 下面的示例演示如何使用 <xref:System.Threading.ReaderWriterLockSlim.WaitingUpgradeCount%2A> 属性生成事件日志项（如果阻止进入可升级模式的线程数超过阈值）。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/cs/source.cs#1)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/vb/source.vb#1)]  
@@ -1715,6 +1741,7 @@
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.1.1.0</AssemblyVersion>
+        <AssemblyVersion>4.1.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -1742,12 +1769,12 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此属性仅用于调试、分析和日志记录目的, 而不用于控制算法的行为。 计算结果后, 结果就会更改。 因此, 根据此属性做出决策并不安全。  
+ 此属性仅用于调试、分析和日志记录目的，而不用于控制算法的行为。 计算结果后，结果就会更改。 因此，根据此属性做出决策并不安全。  
   
    
   
 ## Examples  
- 下面的示例演示如何使用<xref:System.Threading.ReaderWriterLockSlim.WaitingWriteCount%2A>属性在等待进入写入模式的线程数超过阈值时生成事件日志项。  
+ 下面的示例演示如何使用 <xref:System.Threading.ReaderWriterLockSlim.WaitingWriteCount%2A> 属性生成事件日志项（如果阻止进入写入模式的线程数超过阈值）。  
   
  [!code-csharp[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/cs/source.cs#1)]
  [!code-vb[System.Threading.ReaderWriterLockSlim_Aux#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.Threading.ReaderWriterLockSlim_Aux/vb/source.vb#1)]  
