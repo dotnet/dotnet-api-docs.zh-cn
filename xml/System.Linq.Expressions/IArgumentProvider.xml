@@ -1,5 +1,5 @@
 <Type Name="IArgumentProvider" FullName="System.Linq.Expressions.IArgumentProvider">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="978f18032b1aec687a3f90531a776cb2a47a2705" /><Meta Name="ms.sourcegitcommit" Value="bc24a3ba616ee1df8b858f9400cae4f058ea3a7e" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="06/19/2019" /><Meta Name="ms.locfileid" Value="67244476" /></Metadata><TypeSignature Language="C#" Value="public interface IArgumentProvider" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="4707d5b432079f7fbab7d53beca370220bc24978" /><Meta Name="ms.sourcegitcommit" Value="8ae9a18b248625c8e1851e607c00346a64849587" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/17/2019" /><Meta Name="ms.locfileid" Value="75131290" /></Metadata><TypeSignature Language="C#" Value="public interface IArgumentProvider" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IArgumentProvider" />
   <TypeSignature Language="DocId" Value="T:System.Linq.Expressions.IArgumentProvider" />
   <TypeSignature Language="VB.NET" Value="Public Interface IArgumentProvider" />
@@ -11,6 +11,7 @@
     <AssemblyVersion>4.1.0.0</AssemblyVersion>
     <AssemblyVersion>4.2.0.0</AssemblyVersion>
     <AssemblyVersion>4.2.1.0</AssemblyVersion>
+    <AssemblyVersion>4.2.2.0</AssemblyVersion>
   </AssemblyInfo>
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
@@ -30,19 +31,19 @@
       
 ## Remarks
 
-不应使用此 API。  它是公共仅仅是因为程序集重构，并且它仅用于内部性能优化。 这样，减少树的大小的两个优化：
+不应使用此 API。  它仅由于程序集重构而成为公共的，并且仅用于内部性能优化。 它允许两种优化来减小树的大小：
   
-1. 它可以使节点上保留<xref:System.Collections.Generic.IList%601>而不是<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>。  这将保存为每个节点分配只读集合的成本。
+1. 它使节点可以保存到 <xref:System.Collections.Generic.IList%601> 而不是 <xref:System.Collections.ObjectModel.ReadOnlyCollection%601>。  这节省了为每个节点分配只读集合的成本。
   
-2. 这样，若要对特定数量的自变量上创建该保留的专用的子类 (例如， `Block2`， `Block2`， `Block4`)。  因此，这些节点避免了分配同时<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>和用于存储其元素，从而节省了每个节点的 32 字节数组。  此方法由各种节点，其中包括<xref:System.Linq.Expressions.BlockExpression>， <xref:System.Linq.Expressions.InvocationExpression>，和<xref:System.Linq.Expressions.MethodCallExpression>。
+2. 它允许创建专门的子类，以容纳特定数量的自变量（例如 `Block2`、`Block2``Block4`）。  因此，这些节点避免同时分配 <xref:System.Collections.ObjectModel.ReadOnlyCollection%601> 和数组来存储其元素，从而为每个节点节省32字节。  此方法由各种节点使用，包括 <xref:System.Linq.Expressions.BlockExpression>、<xref:System.Linq.Expressions.InvocationExpression>和 <xref:System.Linq.Expressions.MethodCallExpression>。
             
-表达式树节点继续公开的原始 LINQ 属性<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>对象。 它们通过重复使用字段来存储数组或通常存储在数组中的元素执行此操作。
+表达式树节点继续公开 <xref:System.Collections.ObjectModel.ReadOnlyCollection%601> 对象的原始 LINQ 属性。 它们通过重复使用一个字段来存储数组或通常存储在数组中的元素来执行此操作。
             
-对于数组用例，集合将类型化为<xref:System.Collections.Generic.IList%601>而不是<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>。 当最初构造该节点时，它是一个数组。  编译器或此库中的实用程序可通过此接口访问的元素。 访问数组元素将升级到的数组<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>。
+对于数组用例，集合将类型化为 <xref:System.Collections.Generic.IList%601> 而不是 <xref:System.Collections.ObjectModel.ReadOnlyCollection%601>。 最初构造节点时，该节点是数组。  此库中的编译器或实用工具通过此接口访问元素。 访问数组元素可将数组提升为 <xref:System.Collections.ObjectModel.ReadOnlyCollection%601>。
             
-对于对象的情况，第一个参数存储在字段类型化为<xref:System.Object>。 当最初构造该节点时，此字段将包含<xref:System.Linq.Expressions.Expression>的第一个参数。  时的编译器和实用程序在此库中的访问自变量、 他们再次使用此接口和第一个参数的访问器使用内部`Expression.ReturnObject<T>(System.Object)`帮助器方法以返回处理的对象<xref:System.Linq.Expressions.Expression>或<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>用例。 当用户访问<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>，将更新对象字段来直接占用<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>。
+对于对象事例，第一个参数存储在类型化的字段中，<xref:System.Object>。 最初构造节点时，此字段保留第一个参数的 <xref:System.Linq.Expressions.Expression>。  当此库中的编译器和实用工具访问参数时，它们将再次使用此接口，第一个参数的访问器使用内部 `Expression.ReturnObject<T>(System.Object)` 帮助器方法来返回处理 <xref:System.Linq.Expressions.Expression> 或 <xref:System.Collections.ObjectModel.ReadOnlyCollection%601> 大小写的对象。 用户访问 <xref:System.Collections.ObjectModel.ReadOnlyCollection%601>时，对象字段将更新为直接保存到 <xref:System.Collections.ObjectModel.ReadOnlyCollection%601>。
             
-非常重要的<xref:System.Linq.Expressions.Expression>属性一致地返回相同<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>。 否则，将中断重写树查看器使用的表达式访问者。 它是从 LINQ v1 返回不同的重大更改<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>从同一个<xref:System.Linq.Expressions.Expression>节点。 目前，用户可以依赖对象标识来判断节点是否已更改。  存储<xref:System.Collections.ObjectModel.ReadOnlyCollection%601>重载字段中都可以减少内存使用和维护的公共 API 兼容性。
+<xref:System.Linq.Expressions.Expression> 属性总是返回相同 <xref:System.Collections.ObjectModel.ReadOnlyCollection%601>，这一点很重要。 否则，表达式访问者使用的重写程序树查看程序将中断。 这是从 LINQ v1 到从同一 <xref:System.Linq.Expressions.Expression> 节点返回不同 <xref:System.Collections.ObjectModel.ReadOnlyCollection%601> 的重大更改。 目前，用户可以依赖对象标识来判断节点是否已更改。  将 <xref:System.Collections.ObjectModel.ReadOnlyCollection%601> 存储在重载字段中可减少内存使用量，并保持公共 API 的兼容性。
 
       ]]></format>
     </remarks>
@@ -62,6 +63,7 @@
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -79,7 +81,7 @@
       <Docs>
         <summary>返回表达式树节点的参数数目。 此 API 仅供内部使用。</summary>
         <value>作为 <see cref="T:System.Int32" /> 的表达式树节点的参数数目。</value>
-        <remarks>不应使用此 API。 它是公共仅仅是因为程序集重构，和它在内部用于性能优化。</remarks>
+        <remarks>不应使用此 API。 由于程序集重构，它是公共的，并且在内部用于性能优化。</remarks>
       </Docs>
     </Member>
     <Member MemberName="GetArgument">
@@ -96,6 +98,7 @@
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Core</AssemblyName>
@@ -117,7 +120,7 @@
         <param name="index">自变量的索引。</param>
         <summary><paramref name="index" /> 时返回自变量，当 <paramref name="index" /> 超出界限时引发。 此 API 仅供内部使用。</summary>
         <returns>索引时的自变量。</returns>
-        <remarks>不应使用此 API。  由于程序集重构，只能为公共的；并且在内部用于性能优化。</remarks>
+        <remarks>不应使用此 API。  仅在程序集重构时公开，并且仅用于内部性能优化。</remarks>
       </Docs>
     </Member>
   </Members>
