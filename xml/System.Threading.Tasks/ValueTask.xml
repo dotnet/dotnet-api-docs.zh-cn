@@ -1,5 +1,5 @@
 <Type Name="ValueTask" FullName="System.Threading.Tasks.ValueTask">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="229d1bf03b128c84133e142a8ae199b7608a6620" /><Meta Name="ms.sourcegitcommit" Value="74239f3977d28923e5020663db2c4e91601bea79" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="07/24/2019" /><Meta Name="ms.locfileid" Value="68434840" /></Metadata><TypeSignature Language="C#" Value="public struct ValueTask : IEquatable&lt;System.Threading.Tasks.ValueTask&gt;" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="311e72a880b85210be21076656f522af8d00fd8e" /><Meta Name="ms.sourcegitcommit" Value="8ae9a18b248625c8e1851e607c00346a64849587" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/17/2019" /><Meta Name="ms.locfileid" Value="75158895" /></Metadata><TypeSignature Language="C#" Value="public struct ValueTask : IEquatable&lt;System.Threading.Tasks.ValueTask&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit ValueTask extends System.ValueType implements class System.IEquatable`1&lt;valuetype System.Threading.Tasks.ValueTask&gt;" />
   <TypeSignature Language="DocId" Value="T:System.Threading.Tasks.ValueTask" />
   <TypeSignature Language="VB.NET" Value="Public Structure ValueTask&#xA;Implements IEquatable(Of ValueTask)" />
@@ -8,6 +8,7 @@
   <AssemblyInfo>
     <AssemblyName>System.Runtime</AssemblyName>
     <AssemblyVersion>4.2.1.0</AssemblyVersion>
+    <AssemblyVersion>4.2.2.0</AssemblyVersion>
   </AssemblyInfo>
   <AssemblyInfo>
     <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -25,10 +26,10 @@
     </Interface>
   </Interfaces>
   <Attributes>
-    <Attribute FrameworkAlternate="netcore-2.2;netcore-2.1;netcore-3.0;netstandard-2.1">
+    <Attribute FrameworkAlternate="netcore-2.2;netcore-2.1;netcore-3.0;netstandard-2.1;netcore-3.1">
       <AttributeName>System.Runtime.CompilerServices.AsyncMethodBuilder(typeof(System.Runtime.CompilerServices.AsyncValueTaskMethodBuilder))</AttributeName>
     </Attribute>
-    <Attribute FrameworkAlternate="netcore-2.2;netcore-2.1;netcore-3.0;netstandard-2.1">
+    <Attribute FrameworkAlternate="netcore-2.2;netcore-2.1;netcore-3.0;netstandard-2.1;netcore-3.1">
       <AttributeName>System.Runtime.CompilerServices.IsReadOnly</AttributeName>
     </Attribute>
   </Attributes>
@@ -38,22 +39,22 @@
       <format type="text/markdown"><![CDATA[ 
 
 ## Remarks  
-实例可以等待或<xref:System.Threading.Tasks.Task>使用<xref:System.Threading.Tasks.ValueTask.AsTask%2A>转换为。 `ValueTask` 实例仅可等待一次, 并且在实例完成之前, 使用者可能不会调用<xref:System.Threading.Tasks.ValueTask.GetAwaiter>。 `ValueTask` 如果这些限制不可接受, 请`ValueTask` <xref:System.Threading.Tasks.Task>通过调用<xref:System.Threading.Tasks.ValueTask.AsTask%2A>将转换为。
+`ValueTask` 的实例可以使用 <xref:System.Threading.Tasks.ValueTask.AsTask%2A>等待或转换为 <xref:System.Threading.Tasks.Task>。 `ValueTask` 实例只能等待一次，并且在实例完成之前，使用者可能不会调用 <xref:System.Threading.Tasks.ValueTask.GetAwaiter>。 如果这些限制不可接受，请通过调用 <xref:System.Threading.Tasks.ValueTask.AsTask%2A>将 `ValueTask` 转换为 <xref:System.Threading.Tasks.Task>。
 
-永远不应对`ValueTask`实例执行以下操作:
+永远不应对 `ValueTask` 实例执行以下操作：
 
 - 等待实例多次。
-- 多次<xref:System.Threading.Tasks.ValueTask.AsTask%2A>调用。
+- 多次调用 <xref:System.Threading.Tasks.ValueTask.AsTask%2A>。
 - 使用多种方法来使用此实例。
 
-如果执行上述任一操作, 则结果是不确定的。
+如果执行上述任一操作，则结果是不确定的。
 
-是可包装<xref:System.Threading.Tasks.Task> 或<xref:System.Threading.Tasks.Sources.IValueTaskSource>实例的结构。 `ValueTask` 如果返回`ValueTask`一个从异步<xref:System.Threading.Tasks.Sources.IValueTaskSource>方法包装实例的, 则会启用高吞吐量应用程序, 以避免使用可重用<xref:System.Threading.Tasks.Sources.IValueTaskSource>对象池进行分配。 有关详细信息, 请参阅[了解原因和 ValueTask](https://devblogs.microsoft.com/dotnet/understanding-the-whys-whats-and-whens-of-valuetask/)的内容。
+`ValueTask` 是一种可以包装 <xref:System.Threading.Tasks.Task> 或 <xref:System.Threading.Tasks.Sources.IValueTaskSource> 实例的结构。 返回一个通过异步方法包装 <xref:System.Threading.Tasks.Sources.IValueTaskSource> 实例的 `ValueTask`，这使得高吞吐量应用程序可以通过使用可重用的 <xref:System.Threading.Tasks.Sources.IValueTaskSource> 对象池来避免分配。 有关详细信息，请参阅[了解原因和 ValueTask](https://devblogs.microsoft.com/dotnet/understanding-the-whys-whats-and-whens-of-valuetask/)的内容。
 
-使用而不是会<xref:System.Threading.Tasks.Task>引入一些开销。 `ValueTask` 由于`ValueTask`是具有多个字段的结构, 因此从方法返回它将导致复制更多的数据, 并<xref:System.Threading.Tasks.Task>返回一个引用。 因此, 不返回结果的任何异步方法的默认选择都应该是返回<xref:System.Threading.Tasks.Task>。 仅当性能分析证明需要使用时, `ValueTask`才应使用, 而<xref:System.Threading.Tasks.Task>不是。 此属性应该用于在方法<xref:System.Threading.Tasks.Task>返回成功完成的情况下, 手动返回已成功完成的单一实例。 <xref:System.Threading.Tasks.Task.CompletedTask?displayProperty=nameWithType>
+使用 `ValueTask` 而不是 <xref:System.Threading.Tasks.Task> 会带来一些开销。 由于 `ValueTask` 是具有多个字段的结构，因此从方法返回会导致复制更多的数据，并返回单个 <xref:System.Threading.Tasks.Task> 引用。 因此，不返回结果的任何异步方法的默认选择都应该是返回 <xref:System.Threading.Tasks.Task>。 仅当性能分析证明它值得时，才应使用 `ValueTask` 而不是 <xref:System.Threading.Tasks.Task>。 <xref:System.Threading.Tasks.Task.CompletedTask?displayProperty=nameWithType> 属性应该用于在返回 <xref:System.Threading.Tasks.Task> 的方法同步成功完成的情况下，手动返回已成功完成的单一实例。
 
 > [!NOTE]
-> 支持从C# 7.0 开始`ValueTask`使用该类型, Visual Basic 的任何版本都不支持此类型。
+> 支持从C# 7.0 开始使用 `ValueTask` 类型，且 Visual Basic 的任何版本都不支持该类型。
  ]]></format>
     </remarks>
   </Docs>
@@ -68,6 +69,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -96,6 +98,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -111,7 +114,7 @@
       <Docs>
         <param name="source">表示操作的对象。</param>
         <param name="token">一个传递给 <see cref="T:System.Threading.Tasks.Sources.IValueTaskSource" /> 的不透明值</param>
-        <summary>使用提供的表示操作的 <see cref="T:System.Threading.Tasks.Sources.IValueTaskSource" /> 对象初始化 <see cref="T:System.Threading.Tasks.ValueTask" /> 类的新实例。</summary>
+        <summary>使用提供的表示操作的 <see cref="T:System.Threading.Tasks.ValueTask" /> 对象初始化 <see cref="T:System.Threading.Tasks.Sources.IValueTaskSource" /> 类的新实例。</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -126,6 +129,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -139,11 +143,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>检索表示此 <see cref="T:System.Threading.Tasks.ValueTask" /> 的 <see cref="T:System.Threading.Tasks.Task" /> 对象。</summary>
-        <returns>包装在此 <see cref="T:System.Threading.Tasks.ValueTask" /> 中的 <see cref="T:System.Threading.Tasks.Task" /> 对象（如果存在），或者表示结果的新 <see cref="T:System.Threading.Tasks.Task" /> 对象。</returns>
+        <summary>检索表示此 <see cref="T:System.Threading.Tasks.Task" /> 的 <see cref="T:System.Threading.Tasks.ValueTask" /> 对象。</summary>
+        <returns>包装在此 <see cref="T:System.Threading.Tasks.Task" /> 中的 <see cref="T:System.Threading.Tasks.ValueTask" /> 对象（如果存在），或者表示结果的新 <see cref="T:System.Threading.Tasks.Task" /> 对象。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[
-此方法返回包装的任务对象 (如果存在), 或生成一个新的任务对象来表示结果。
+此方法返回包装的任务对象（如果存在），或生成一个新的任务对象来表示结果。
           ]]></format>
         </remarks>
       </Docs>
@@ -159,6 +163,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -191,6 +196,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -213,7 +219,7 @@
           <format type="text/markdown"><![CDATA[ 
 
 ## Remarks  
-当<xref:System.Threading.Tasks.ValueTask>两个实例包装相同<xref:System.Threading.Tasks.Task>或相同对<xref:System.Threading.Tasks.Sources.IValueTaskSource>对象和标记时, 两个实例相等。
+当两个 <xref:System.Threading.Tasks.ValueTask> 实例包装同一 <xref:System.Threading.Tasks.Task> 或相同的 <xref:System.Threading.Tasks.Sources.IValueTaskSource> 对象和标记对时，它们是相等的。
 
  ]]></format>
         </remarks>
@@ -233,6 +239,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -255,7 +262,7 @@
           <format type="text/markdown"><![CDATA[ 
 
 ## Remarks  
-当<xref:System.Threading.Tasks.ValueTask>两个实例包装相同<xref:System.Threading.Tasks.Task>或相同对<xref:System.Threading.Tasks.Sources.IValueTaskSource>对象和标记时, 两个实例相等。
+当两个 <xref:System.Threading.Tasks.ValueTask> 实例包装同一 <xref:System.Threading.Tasks.Task> 或相同的 <xref:System.Threading.Tasks.Sources.IValueTaskSource> 对象和标记对时，它们是相等的。
 
  ]]></format>
         </remarks>
@@ -272,6 +279,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -301,6 +309,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -330,6 +339,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -343,10 +353,10 @@
       </ReturnValue>
       <Docs>
         <summary>获取指示此对象是否表示取消的操作的值。</summary>
-        <value><see langword="true" />如果此对象表示取消的操作, 则为; 否则为。否则为<see langword="false" />。</value>
+        <value><see langword="true" /> 如果此对象表示取消的操作，则为; 否则为。否则，<see langword="false" />。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[
-如果通过结果或<xref:System.Threading.Tasks.Sources.IValueTaskSource>由支持, 则将始终返回`false`。 <xref:System.Threading.Tasks.ValueTask>  如果它由<xref:System.Threading.Tasks.Task>支持, 它将返回<xref:System.Threading.Tasks.Task.IsCanceled>任务的属性的值。
+如果 <xref:System.Threading.Tasks.ValueTask> 是通过结果或 <xref:System.Threading.Tasks.Sources.IValueTaskSource>来支持的，则将始终返回 `false`。  如果它由 <xref:System.Threading.Tasks.Task>支持，它将返回任务的 <xref:System.Threading.Tasks.Task.IsCanceled> 属性的值。
           ]]></format>
         </remarks>
       </Docs>
@@ -362,6 +372,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -375,7 +386,7 @@
       </ReturnValue>
       <Docs>
         <summary>获取指示此对象是否表示完成的操作的值。</summary>
-        <value><see langword="true" />如果此对象表示已完成的操作, 则为; 否则为。否则为<see langword="false" />。</value>
+        <value>如果此对象表示已完成的操作，则为 <see langword="true" />;否则，<see langword="false" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -390,6 +401,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -403,7 +415,7 @@
       </ReturnValue>
       <Docs>
         <summary>获取指示此对象是否表示成功完成的操作的值。</summary>
-        <value><see langword="true" />如果此对象表示已成功完成的操作, 则为; 否则为。否则为<see langword="false" />。</value>
+        <value>如果此对象表示已成功完成的操作，则为 <see langword="true" />;否则，<see langword="false" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -418,6 +430,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -431,7 +444,7 @@
       </ReturnValue>
       <Docs>
         <summary>获取指示此对象是否表示失败的操作的值。</summary>
-        <value><see langword="true" />如果此对象表示失败的操作, 则为; 否则为。否则为<see langword="false" />。</value>
+        <value>如果此对象表示失败的操作，则为 <see langword="true" />;否则，<see langword="false" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -446,6 +459,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -465,12 +479,12 @@
         <param name="left">要比较的第一个值。</param>
         <param name="right">要比较的第二个值。</param>
         <summary>比较两个 <see cref="T:System.Threading.Tasks.ValueTask" /> 值以判断是否相等。</summary>
-        <returns>如果两个 <see cref="T:System.Threading.Tasks.ValueTask" /> 值相等，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <returns>如果两个 <see langword="true" /> 值相等，则为 <see cref="T:System.Threading.Tasks.ValueTask" />；否则为 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[ 
 
 ## Remarks  
-当<xref:System.Threading.Tasks.ValueTask>两个实例包装相同<xref:System.Threading.Tasks.Task>或相同对<xref:System.Threading.Tasks.Sources.IValueTaskSource>对象和标记时, 两个实例相等。
+当两个 <xref:System.Threading.Tasks.ValueTask> 实例包装同一 <xref:System.Threading.Tasks.Task> 或相同的 <xref:System.Threading.Tasks.Sources.IValueTaskSource> 对象和标记对时，它们是相等的。
 
  ]]></format>
         </remarks>
@@ -487,6 +501,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
@@ -506,12 +521,12 @@
         <param name="left">要比较的第一个值。</param>
         <param name="right">要比较的第二个值。</param>
         <summary>确定两个 <see cref="T:System.Threading.Tasks.ValueTask" /> 值是否不相等。</summary>
-        <returns>如果两个 <see cref="T:System.Threading.Tasks.ValueTask" /> 值相等，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <returns>如果两个 <see langword="true" /> 值相等，则为 <see cref="T:System.Threading.Tasks.ValueTask" />；否则为 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[ 
 
 ## Remarks  
-当<xref:System.Threading.Tasks.ValueTask>两个实例包装相同<xref:System.Threading.Tasks.Task>或相同对<xref:System.Threading.Tasks.Sources.IValueTaskSource>对象和标记时, 两个实例相等。
+当两个 <xref:System.Threading.Tasks.ValueTask> 实例包装同一 <xref:System.Threading.Tasks.Task> 或相同的 <xref:System.Threading.Tasks.Sources.IValueTaskSource> 对象和标记对时，它们是相等的。
 
  ]]></format>
         </remarks>
@@ -528,6 +543,7 @@
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks.Extensions</AssemblyName>
