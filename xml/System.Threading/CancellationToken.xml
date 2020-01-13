@@ -1,5 +1,5 @@
 <Type Name="CancellationToken" FullName="System.Threading.CancellationToken">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="46671aabc589af213b55a39d94ee6bfa476647e2" /><Meta Name="ms.sourcegitcommit" Value="c573d537afba2d4c1463538f1095f2f155025464" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="10/16/2019" /><Meta Name="ms.locfileid" Value="72404478" /></Metadata><TypeSignature Language="C#" Value="public struct CancellationToken" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="58841345f1327ef71c91d5d0be31d13c0a6c091c" /><Meta Name="ms.sourcegitcommit" Value="8ae9a18b248625c8e1851e607c00346a64849587" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/17/2019" /><Meta Name="ms.locfileid" Value="75158811" /></Metadata><TypeSignature Language="C#" Value="public struct CancellationToken" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit CancellationToken extends System.ValueType" />
   <TypeSignature Language="DocId" Value="T:System.Threading.CancellationToken" />
   <TypeSignature Language="VB.NET" Value="Public Structure CancellationToken" />
@@ -24,6 +24,7 @@
     <AssemblyName>System.Runtime</AssemblyName>
     <AssemblyVersion>4.2.0.0</AssemblyVersion>
     <AssemblyVersion>4.2.1.0</AssemblyVersion>
+    <AssemblyVersion>4.2.2.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ValueType</BaseTypeName>
@@ -36,17 +37,17 @@
     <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
       <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
     </Attribute>
-    <Attribute FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1">
+    <Attribute FrameworkAlternate="netcore-2.1;netcore-2.2;netcore-3.0;netstandard-2.1;netcore-3.1">
       <AttributeName>System.Runtime.CompilerServices.IsReadOnly</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>传播有关应取消操作的通知。</summary>
+    <summary>传播应取消操作的通知。</summary>
     <remarks>
       <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- @No__t 为0，则在线程、线程池工作项或 @no__t 1 对象之间启用协作取消。 可以通过实例化一个 <xref:System.Threading.CancellationTokenSource> 对象来创建取消标记，该对象管理从其 @no__t 属性检索到的取消标记。 然后，将取消标记传递给应接收取消通知的任意数量的线程、任务或操作。 标记无法用于启动取消。 当所属对象调用 <xref:System.Threading.CancellationTokenSource.Cancel%2A?displayProperty=nameWithType> 时，取消标记的每个副本上的 @no__t 属性将设置为 `true`。 接收通知的对象可以采用任何适当的方式进行响应。  
+ <xref:System.Threading.CancellationToken> 在线程、线程池工作项或 <xref:System.Threading.Tasks.Task> 对象之间启用协作取消。 可以通过实例化一个 <xref:System.Threading.CancellationTokenSource> 对象来创建取消标记，该对象管理从其 <xref:System.Threading.CancellationTokenSource.Token%2A?displayProperty=nameWithType> 属性检索到的取消标记。 然后，将取消标记传递给应接收取消通知的任意数量的线程、任务或操作。 标记无法用于启动取消。 如果拥有的对象调用 <xref:System.Threading.CancellationTokenSource.Cancel%2A?displayProperty=nameWithType>，则取消标记的每个副本上的 <xref:System.Threading.CancellationToken.IsCancellationRequested%2A> 属性都设置为 "`true`"。 接收通知的对象可以采用任何适当的方式进行响应。  
   
  有关详细信息和代码示例，请参阅[托管线程中的取消](~/docs/standard/threading/cancellation-in-managed-threads.md)。  
   
@@ -55,14 +56,14 @@
 ## Examples  
  下面的示例使用随机数生成器来模拟数据收集应用程序，该应用程序从第11个不同乐器读取10个整数值。 如果值为零，则指示度量值对一个检测失败，在这种情况下，应取消该操作，而不应计算整体平均值。  
   
- 为了处理操作的可能取消，此示例实例化了一个 <xref:System.Threading.CancellationTokenSource> 对象，该对象生成一个传递到 @no__t 对象的取消标记。 @No__t 的对象依次将取消标记传递给负责收集特定检测的读取的每个任务。 调用 <xref:System.Threading.Tasks.TaskFactory.ContinueWhenAll%60%602%28System.Threading.Tasks.Task%7B%60%600%7D%5B%5D%2CSystem.Func%7BSystem.Threading.Tasks.Task%7B%60%600%7D%5B%5D%2C%60%601%7D%2CSystem.Threading.CancellationToken%29?displayProperty=nameWithType> 方法，以确保仅在成功收集所有读数后计算平均值。 如果任务未被取消，则调用 <xref:System.Threading.Tasks.TaskFactory.ContinueWhenAll%2A?displayProperty=nameWithType> 方法会引发异常。  
+ 为了处理操作的可能取消，此示例实例化一个 <xref:System.Threading.CancellationTokenSource> 对象，该对象将生成一个传递到 <xref:System.Threading.Tasks.TaskFactory> 对象的取消标记。 <xref:System.Threading.Tasks.TaskFactory> 对象依次将取消标记传递给负责收集特定检测的读取的每个任务。 调用 <xref:System.Threading.Tasks.TaskFactory.ContinueWhenAll%60%602%28System.Threading.Tasks.Task%7B%60%600%7D%5B%5D%2CSystem.Func%7BSystem.Threading.Tasks.Task%7B%60%600%7D%5B%5D%2C%60%601%7D%2CSystem.Threading.CancellationToken%29?displayProperty=nameWithType> 方法，以确保仅在成功收集所有读数后计算平均值。 如果任务未被取消，则对 <xref:System.Threading.Tasks.TaskFactory.ContinueWhenAll%2A?displayProperty=nameWithType> 方法的调用将引发异常。  
   
  [!code-csharp[System.Threading.CancellationTokenSource.Class#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.threading.cancellationtokensource.class/cs/cancel1.cs#1)]
  [!code-vb[System.Threading.CancellationTokenSource.Class#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.threading.cancellationtokensource.class/vb/cancel1.vb#1)]  
   
  ]]></format>
     </remarks>
-    <threadsafe>@No__t 的所有公共和受保护成员都是线程安全的，可从多个线程同时使用。</threadsafe>
+    <threadsafe><see cref="T:System.Threading.CancellationToken" /> 的所有公共和受保护成员都是线程安全的，可从多个线程并发使用。</threadsafe>
     <related type="Article" href="~/docs/standard/threading/cancellation-in-managed-threads.md">取消</related>
     <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
   </Docs>
@@ -94,6 +95,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="canceled" Type="System.Boolean" />
@@ -105,9 +107,9 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 使用此构造函数创建的标记将保留为 `canceled` 参数指定的已取消状态。 如果 `canceled` @no__t 为-1，则 @no__t 2 和 @no__t 都将为 @no__t。  
+ 使用此构造函数创建的标记将保留 `canceled` 参数指定的已取消状态。 如果 `false``canceled`，<xref:System.Threading.CancellationToken.CanBeCanceled%2A> 和 <xref:System.Threading.CancellationToken.IsCancellationRequested%2A> 将 `false`。  
   
- 如果 `canceled` @no__t 为-1，则 @no__t 2 和 @no__t 都将为 @no__t。  
+ 如果 `true``canceled`，<xref:System.Threading.CancellationToken.CanBeCanceled%2A> 和 <xref:System.Threading.CancellationToken.IsCancellationRequested%2A> 将 `true`。  
   
  ]]></format>
         </remarks>
@@ -142,6 +144,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
@@ -158,7 +161,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果 <xref:System.Threading.CancellationToken.CanBeCanceled%2A> 返回 `false`，则表明令牌永远不会转换为已取消状态，这意味着 <xref:System.Threading.CancellationToken.IsCancellationRequested%2A> 绝不会返回 `true`。 静态 <xref:System.Threading.CancellationToken.None%2A?displayProperty=nameWithType> 属性返回无法取消的取消标记。  
+ 如果 <xref:System.Threading.CancellationToken.CanBeCanceled%2A> 返回 `false`，则保证令牌永远不会转换为已取消状态，这意味着 <xref:System.Threading.CancellationToken.IsCancellationRequested%2A> 绝不会返回 `true`。 静态 <xref:System.Threading.CancellationToken.None%2A?displayProperty=nameWithType> 属性返回无法取消的取消标记。  
   
  您可以选择使用此属性来确定在检查 <xref:System.Threading.CancellationToken.IsCancellationRequested%2A> 属性的值之前是否可以取消取消标记，以确定是否已取消。  
   
@@ -205,6 +208,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -215,18 +219,18 @@
       <Docs>
         <param name="other">要与此实例进行比较的其他对象。</param>
         <summary>确定当前的 <see cref="T:System.Threading.CancellationToken" /> 实例是否等于指定的 <see cref="T:System.Object" />。</summary>
-        <returns>如果 <paramref name="other" /> 是 <see cref="T:System.Threading.CancellationToken" /> 且这两个实例相等，则为 <see langword="true" />；否则为 <see langword="false" />。 有关详细信息，请参阅备注部分。</returns>
+        <returns>如果 <see langword="true" /> 是 <paramref name="other" /> 且这两个实例相等，则为 <see cref="T:System.Threading.CancellationToken" />；否则为 <see langword="false" />。 有关详细信息，请参阅“备注”部分。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
 ## Remarks  
 
 如果满足以下任一条件，则两个取消标记相等： 
 
-- 它们与相同的 <xref:System.Threading.CancellationTokenSource> 相关联。
+- 它们与相同的 <xref:System.Threading.CancellationTokenSource>关联。
 
-- 它们都是从公共 <xref:System.Threading.CancellationToken> 构造函数构造的，它们的 @no__t 值相等。
+- 它们都是从公共 <xref:System.Threading.CancellationToken> 构造函数构造的，它们的 <xref:System.Threading.CancellationToken.IsCancellationRequested?displayProperty=nameWithType> 值相等。
 
-- 这两个取消标记的值都 <xref:System.Threading.CancellationToken.None?displayProperty=nameWithType>。
+- 这两个取消标记的值都是 <xref:System.Threading.CancellationToken.None?displayProperty=nameWithType>。
 
        ]]></format>
         </remarks>
@@ -262,6 +266,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -272,18 +277,18 @@
       <Docs>
         <param name="other">要与此实例进行比较的其他 <see cref="T:System.Threading.CancellationToken" />。</param>
         <summary>确定当前的 <see cref="T:System.Threading.CancellationToken" /> 实例是否等于指定的标记。</summary>
-        <returns>如果实例相等，则为 <see langword="true" />；否则为 <see langword="false" />。 有关详细信息，请参阅备注部分。</returns>
+        <returns>如果实例相等，则为 <see langword="true" />；否则为 <see langword="false" />。 有关详细信息，请参阅“备注”部分。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
 ## Remarks  
 
 如果满足以下任一条件，则两个取消标记相等： 
 
-- 它们与相同的 <xref:System.Threading.CancellationTokenSource> 相关联。
+- 它们与相同的 <xref:System.Threading.CancellationTokenSource>关联。
 
-- 它们都是从公共 <xref:System.Threading.CancellationToken> 构造函数构造的，它们的 @no__t 值相等。
+- 它们都是从公共 <xref:System.Threading.CancellationToken> 构造函数构造的，它们的 <xref:System.Threading.CancellationToken.IsCancellationRequested?displayProperty=nameWithType> 值相等。
 
-- 这两个取消标记的值都 <xref:System.Threading.CancellationToken.None?displayProperty=nameWithType>。
+- 这两个取消标记的值都是 <xref:System.Threading.CancellationToken.None?displayProperty=nameWithType>。
 
        ]]></format>
         </remarks>
@@ -318,6 +323,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -356,6 +362,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
@@ -372,19 +379,19 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此属性指示是否已为此标记请求取消，无论是通过最初以已取消状态构造的令牌，还是通过在令牌的关联 @no__t 上调用 <xref:System.Threading.CancellationTokenSource.Cancel%2A>。  
+ 此属性指示是否已为此标记请求取消，无论是通过最初以已取消状态构造的令牌，还是通过对令牌的关联 <xref:System.Threading.CancellationTokenSource>调用 <xref:System.Threading.CancellationTokenSource.Cancel%2A>。  
   
- 如果此属性 `true`，则只保证已请求取消。 它不保证每个已注册的处理程序已完成执行，也不保证取消请求已完成传播到所有已注册的处理程序。 可能需要更多的同步，尤其是在同时取消相关对象的情况下。  
+ 如果 `true`此属性，则它仅保证已请求取消。 它不保证每个已注册的处理程序已完成执行，也不保证取消请求已完成传播到所有已注册的处理程序。 可能需要更多的同步，尤其是在同时取消相关对象的情况下。  
   
    
   
 ## Examples  
- 下面是一个简单的示例，它在 <xref:System.Threading.CancellationToken.IsCancellationRequested%2A> 属性返回 `true` 之前执行服务器进程。  
+ 下面是一个简单的示例，它在 <xref:System.Threading.CancellationToken.IsCancellationRequested%2A> 属性返回 `true`之前执行服务器进程。  
   
  [!code-csharp[System.Threading.Tasks.CancellationToken.IsCancellationRequested#12](~/samples/snippets/csharp/VS_Snippets_CLR_System/System.Threading.Tasks.CancellationToken.IsCancellationRequested/cs/cancellation.cs#12)]
  [!code-vb[System.Threading.Tasks.CancellationToken.IsCancellationRequested#12](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/System.Threading.Tasks.CancellationToken.IsCancellationRequested/vb/cancelthreads.vb#12)]  
   
- 该示例实例化一个 @no__t 的对象，该对象控制对取消标记的访问。 然后，它定义了两个线程过程。 第一个定义为用于汇集键盘的 lambda 表达式，并在按 "C" 键时调用 <xref:System.Threading.CancellationTokenSource.Cancel%2A?displayProperty=nameWithType> 将取消标记设置为 "已取消" 状态。 第二种方法是参数化方法 `ServerClass.StaticMethod`，它执行循环，直到 @no__t 1 属性 @no__t 为-2。  
+ 该示例实例化一个 <xref:System.Threading.CancellationTokenSource> 对象，该对象控制对取消标记的访问。 然后，它定义了两个线程过程。 第一个定义为用于汇集键盘的 lambda 表达式，并在按 "C" 键时调用 <xref:System.Threading.CancellationTokenSource.Cancel%2A?displayProperty=nameWithType> 将取消标记设置为 "已取消" 状态。 第二种方法是参数化方法，`ServerClass.StaticMethod`执行循环，直到 `true`<xref:System.Threading.CancellationToken.IsCancellationRequested%2A> 属性。  
   
  然后，主线程启动两个线程和块，直到执行 `ServerClass.StaticMethod` 方法的线程终止。  
   
@@ -421,6 +428,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
@@ -437,7 +445,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此属性返回的取消标记无法取消;也就是说，其 <xref:System.Threading.CancellationToken.CanBeCanceled%2A> 属性 @no__t 为-1。  
+ 此属性返回的取消标记无法取消;也就是说，它的 <xref:System.Threading.CancellationToken.CanBeCanceled%2A> 属性是 `false`的。  
   
  你还可以使用C# [default （CancellationToken）](~/docs/csharp/language-reference/keywords/default.md)语句创建空取消标记。 
 
@@ -476,6 +484,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -495,11 +504,11 @@
 
 如果满足以下任一条件，则两个取消标记相等： 
 
-- 它们与相同的 <xref:System.Threading.CancellationTokenSource> 相关联。
+- 它们与相同的 <xref:System.Threading.CancellationTokenSource>关联。
 
-- 它们都是从公共 <xref:System.Threading.CancellationToken> 构造函数构造的，它们的 @no__t 值相等。
+- 它们都是从公共 <xref:System.Threading.CancellationToken> 构造函数构造的，它们的 <xref:System.Threading.CancellationToken.IsCancellationRequested?displayProperty=nameWithType> 值相等。
 
-- 这两个取消标记的值都 <xref:System.Threading.CancellationToken.None?displayProperty=nameWithType>。
+- 这两个取消标记的值都是 <xref:System.Threading.CancellationToken.None?displayProperty=nameWithType>。
        ]]></format>
         </remarks>
         <exception cref="T:System.ObjectDisposedException">关联的 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
@@ -534,6 +543,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -598,6 +608,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.CancellationTokenRegistration</ReturnType>
@@ -615,9 +626,9 @@
 ## Remarks  
  如果此标记已处于 "已取消" 状态，则委托将立即和同步运行。 此方法调用将传播委托生成的任何异常。  
   
- 当前 <xref:System.Threading.ExecutionContext> 与委托一起捕获，在执行时将使用。 
+ 当前 <xref:System.Threading.ExecutionContext> 与委托一起捕获，并将在执行时使用。 
 
- 未捕获当前 <xref:System.Threading.SynchronizationContext>。
+ 不捕获当前 <xref:System.Threading.SynchronizationContext>。
  
  ]]></format>
         </remarks>
@@ -655,6 +666,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.CancellationTokenRegistration</ReturnType>
@@ -674,9 +686,9 @@
 ## Remarks  
  如果此标记已处于 "已取消" 状态，则委托将立即和同步运行。 此方法调用将传播委托生成的任何异常。  
   
- 当前 <xref:System.Threading.ExecutionContext> 与委托一起捕获，在执行时将使用。 
+ 当前 <xref:System.Threading.ExecutionContext> 与委托一起捕获，并将在执行时使用。 
 
- 如果 `useSynchronizationContext` @no__t 为-1，则当前 <xref:System.Threading.SynchronizationContext> （如果存在）也将与委托一起捕获，并在执行时使用。 否则，不会捕获 <xref:System.Threading.SynchronizationContext>。
+ 如果 `true``useSynchronizationContext`，则当前 <xref:System.Threading.SynchronizationContext>（如果存在）也将与委托一起捕获，并在执行时使用。 否则，将不会捕获 <xref:System.Threading.SynchronizationContext>。
   
  ]]></format>
         </remarks>
@@ -714,6 +726,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.CancellationTokenRegistration</ReturnType>
@@ -733,9 +746,9 @@
 ## Remarks  
  如果此标记已处于 "已取消" 状态，则委托将立即和同步运行。 此方法调用将传播委托生成的任何异常。  
   
- 当前 <xref:System.Threading.ExecutionContext> 与委托一起捕获，在执行时将使用。 
+ 当前 <xref:System.Threading.ExecutionContext> 与委托一起捕获，并将在执行时使用。 
 
- 未捕获当前 <xref:System.Threading.SynchronizationContext>。
+ 不捕获当前 <xref:System.Threading.SynchronizationContext>。
   
  ]]></format>
         </remarks>
@@ -773,6 +786,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.CancellationTokenRegistration</ReturnType>
@@ -794,9 +808,9 @@
 ## Remarks  
  如果此标记已处于 "已取消" 状态，则委托将立即和同步运行。 此方法调用将传播委托生成的任何异常。  
   
- 当前 <xref:System.Threading.ExecutionContext> 与委托一起捕获，在执行时将使用。 
+ 当前 <xref:System.Threading.ExecutionContext> 与委托一起捕获，并将在执行时使用。 
 
- 如果 `useSynchronizationContext` @no__t 为-1，则当前 <xref:System.Threading.SynchronizationContext> （如果存在）也将与委托一起捕获，并在执行时使用。 否则，不会捕获 <xref:System.Threading.SynchronizationContext>。
+ 如果 `true``useSynchronizationContext`，则当前 <xref:System.Threading.SynchronizationContext>（如果存在）也将与委托一起捕获，并在执行时使用。 否则，将不会捕获 <xref:System.Threading.SynchronizationContext>。
   
  ]]></format>
         </remarks>
@@ -834,6 +848,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
@@ -885,6 +900,7 @@ End If
       <AssemblyInfo>
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks</AssemblyName>
@@ -899,8 +915,8 @@ End If
         <ReturnType>System.Threading.CancellationTokenRegistration</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="callback" Type="System.Action&lt;System.Object&gt;" Index="0" FrameworkAlternate="netcore-3.0" />
-        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="netcore-3.0" />
+        <Parameter Name="callback" Type="System.Action&lt;System.Object&gt;" Index="0" FrameworkAlternate="netcore-3.0;netcore-3.1" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="netcore-3.0;netcore-3.1" />
       </Parameters>
       <Docs>
         <param name="callback">要在取消 <see cref="T:System.Threading.CancellationToken" /> 时执行的委托。</param>
@@ -945,6 +961,7 @@ End If
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.WaitHandle</ReturnType>
@@ -956,7 +973,7 @@ End If
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 访问此属性将导致实例化 @no__t 0。 最好只在必要时使用此属性，然后在最早的机会中释放关联的 <xref:System.Threading.CancellationTokenSource> 实例（释放源将释放此分配的句柄）。 不应直接关闭或释放该句柄。  
+ 访问此属性将导致 <xref:System.Threading.WaitHandle> 实例化。 最好只在必要时使用此属性，然后在最早的机会中释放关联的 <xref:System.Threading.CancellationTokenSource> 实例（释放源将释放此分配的句柄）。 不应直接关闭或释放该句柄。  
   
  ]]></format>
         </remarks>
