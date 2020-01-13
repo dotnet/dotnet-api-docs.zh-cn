@@ -1,5 +1,5 @@
 <Type Name="Task" FullName="System.Threading.Tasks.Task">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="58e6e4e0391714c0a1d6aac9d51577e438d64a14" /><Meta Name="ms.sourcegitcommit" Value="2b0967e04b047f6709322418d97215dfcef6a938" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="11/20/2019" /><Meta Name="ms.locfileid" Value="74236905" /></Metadata><TypeSignature Language="C#" Value="public class Task : IAsyncResult, IDisposable" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="f952036180de7e8ddbce20a1abb7ee709291dcbf" /><Meta Name="ms.sourcegitcommit" Value="8ae9a18b248625c8e1851e607c00346a64849587" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/17/2019" /><Meta Name="ms.locfileid" Value="75117445" /></Metadata><TypeSignature Language="C#" Value="public class Task : IAsyncResult, IDisposable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Task extends System.Object implements class System.IAsyncResult, class System.IDisposable" />
   <TypeSignature Language="DocId" Value="T:System.Threading.Tasks.Task" />
   <TypeSignature Language="VB.NET" Value="Public Class Task&#xA;Implements IAsyncResult, IDisposable" />
@@ -24,6 +24,7 @@
     <AssemblyName>System.Runtime</AssemblyName>
     <AssemblyVersion>4.2.0.0</AssemblyVersion>
     <AssemblyVersion>4.2.1.0</AssemblyVersion>
+    <AssemblyVersion>4.2.2.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -50,7 +51,7 @@
       <format type="text/markdown"><![CDATA[  
    
 ## Remarks  
- <xref:System.Threading.Tasks.Task> 类表示不返回值并且通常以异步方式执行的单个操作。 <xref:System.Threading.Tasks.Task> 对象是第一次在 .NET Framework 4 中引入的[基于任务的异步模式](~/docs/standard/asynchronous-programming-patterns/task-based-asynchronous-pattern-tap.md)的中心组件之一。 由于 <xref:System.Threading.Tasks.Task> 对象执行的工作通常在线程池线程上异步执行，而不是在主应用程序线程上同步执行，因此您可以使用 <xref:System.Threading.Tasks.Task.Status%2A> 属性，还可以使用 <xref:System.Threading.Tasks.Task.IsCanceled%2A>、<xref:System.Threading.Tasks.Task.IsCompleted%2A>和 <xref:System.Threading.Tasks.Task.IsFaulted%2A> 属性，用于确定任务的状态。 通常，lambda 表达式用于指定任务要执行的工作。  
+ <xref:System.Threading.Tasks.Task> 类表示不返回值并且通常以异步方式执行的单个操作。 <xref:System.Threading.Tasks.Task> 对象是第一次在 .NET Framework 4 中引入的[基于任务的异步模式](~/docs/standard/asynchronous-programming-patterns/task-based-asynchronous-pattern-tap.md)的中心组件之一。 由于 <xref:System.Threading.Tasks.Task> 对象执行的工作通常在线程池线程上异步执行，而不是在主应用程序线程上同步执行，因此，您可以使用 "<xref:System.Threading.Tasks.Task.Status%2A>" 属性以及 "<xref:System.Threading.Tasks.Task.IsCanceled%2A>"、"<xref:System.Threading.Tasks.Task.IsCompleted%2A>" 和 "<xref:System.Threading.Tasks.Task.IsFaulted%2A>" 属性来确定任务的状态。 通常，lambda 表达式用于指定任务要执行的工作。  
   
  对于返回值的操作，请使用 <xref:System.Threading.Tasks.Task%601> 类。  
   
@@ -96,7 +97,7 @@
   
 <a name="Separating"></a>   
 ## <a name="separating-task-creation-and-execution"></a>分离任务创建和执行  
- <xref:System.Threading.Tasks.Task> 类还提供了初始化任务的构造函数，但不计划执行该任务。 出于性能原因，<xref:System.Threading.Tasks.Task.Run%2A?displayProperty=nameWithType> 或 <xref:System.Threading.Tasks.TaskFactory.StartNew%2A?displayProperty=nameWithType> 方法是用于创建和计划计算任务的首选机制，但对于必须分隔创建和计划的情况，可以使用构造函数，然后调用 <xref:System.Threading.Tasks.Task.Start%2A?displayProperty=nameWithType>用于计划任务稍后执行的方法。  
+ <xref:System.Threading.Tasks.Task> 类还提供了初始化任务的构造函数，但不计划执行该任务。 出于性能原因，<xref:System.Threading.Tasks.Task.Run%2A?displayProperty=nameWithType> 或 <xref:System.Threading.Tasks.TaskFactory.StartNew%2A?displayProperty=nameWithType> 方法是用于创建和计划计算任务的首选机制，但对于必须分隔创建和计划的情况，可以使用构造函数，然后调用 <xref:System.Threading.Tasks.Task.Start%2A?displayProperty=nameWithType> 方法来计划稍后执行该任务。  
   
 <a name="WaitingForOne"></a>   
 ## <a name="waiting-for-one-or-more-tasks-to-complete"></a>正在等待一个或多个任务完成  
@@ -142,7 +143,7 @@
   
 <a name="Debugger"></a>   
 ## <a name="for-debugger-developers"></a>对于调试器开发人员  
- 对于实现自定义调试器的开发人员而言，任务的多个内部和私有成员可能会很有用（它们可能会因发布而变化）。 `m_taskId` 字段可用作 <xref:System.Threading.Tasks.Task.Id%2A> 属性的后备存储，但是从调试器直接访问此字段比通过属性的 getter 方法访问相同的值更有效（`s_taskIdCounter` 计数器用于检索任务的下一个可用 ID）。 同样，"`m_stateFlags`" 字段存储有关任务当前生命周期阶段的信息，也可以通过 <xref:System.Threading.Tasks.Task.Status%2A> 属性访问信息。 "`m_action`" 字段存储对任务的委托的引用，而 "`m_stateObject`" 字段存储开发人员传递给任务的异步状态。 最后，对于分析堆栈帧的调试器，`InternalWait` 方法为任务进入等待操作的时间提供可能的标记。   
+ 对于实现自定义调试器的开发人员而言，任务的多个内部和私有成员可能会很有用（它们可能会因发布而变化）。 `m_taskId` 字段可用作 <xref:System.Threading.Tasks.Task.Id%2A> 属性的后备存储，但是从调试器直接访问此字段可能比通过属性的 getter 方法访问相同的值更有效（`s_taskIdCounter` 计数器用于检索任务的下一个可用 ID）。 同样，"`m_stateFlags`" 字段存储有关任务当前生命周期阶段的信息，也可以通过 <xref:System.Threading.Tasks.Task.Status%2A> 属性访问信息。 "`m_action`" 字段存储对任务的委托的引用，而 "`m_stateObject`" 字段存储开发人员传递给任务的异步状态。 最后，对于分析堆栈帧的调试器，`InternalWait` 方法为任务进入等待操作的时间提供可能的标记。   
   
  ]]></format>
     </remarks>
@@ -189,6 +190,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="action" Type="System.Action" />
@@ -251,6 +253,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="action" Type="System.Action" />
@@ -308,6 +311,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="action" Type="System.Action" />
@@ -356,6 +360,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="action" Type="System.Action&lt;System.Object&gt;" />
@@ -411,6 +416,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="action" Type="System.Action" />
@@ -432,7 +438,7 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ObjectDisposedException">创建了 <paramref name="cancellationToken" /> 的 <see cref="T:System.Threading.CancellationTokenSource" /> 已经被释放。</exception>
+        <exception cref="T:System.ObjectDisposedException">创建了 <see cref="T:System.Threading.CancellationTokenSource" /> 的 <paramref name="cancellationToken" /> 已经被释放。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="action" /> 参数为 null。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="creationOptions" /> 参数为 <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> 指定无效值。</exception>
       </Docs>
@@ -463,6 +469,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="action" Type="System.Action&lt;System.Object&gt;" />
@@ -482,7 +489,7 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ObjectDisposedException">创建了 <paramref name="cancellationToken" /> 的 <see cref="T:System.Threading.CancellationTokenSource" /> 已经被释放。</exception>
+        <exception cref="T:System.ObjectDisposedException">创建了 <see cref="T:System.Threading.CancellationTokenSource" /> 的 <paramref name="cancellationToken" /> 已经被释放。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="action" /> 参数为 null。</exception>
       </Docs>
     </Member>
@@ -513,6 +520,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="action" Type="System.Action&lt;System.Object&gt;" />
@@ -562,6 +570,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="action" Type="System.Action&lt;System.Object&gt;" />
@@ -583,7 +592,7 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ObjectDisposedException">创建了 <paramref name="cancellationToken" /> 的 <see cref="T:System.Threading.CancellationTokenSource" /> 已经被释放。</exception>
+        <exception cref="T:System.ObjectDisposedException">创建了 <see cref="T:System.Threading.CancellationTokenSource" /> 的 <paramref name="cancellationToken" /> 已经被释放。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="action" /> 参数为 null。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="creationOptions" /> 参数为 <see cref="T:System.Threading.Tasks.TaskCreationOptions" /> 指定无效值。</exception>
       </Docs>
@@ -618,6 +627,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -661,6 +671,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -708,6 +719,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
@@ -718,7 +730,7 @@
         <ReturnType>System.Runtime.CompilerServices.ConfiguredTaskAwaitable</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="continueOnCapturedContext" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continueOnCapturedContext" Type="System.Boolean" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="continueOnCapturedContext">尝试将延续任务封送回原始上下文，则为 <see langword="true" />；否则为 <see langword="false" />。</param>
@@ -764,6 +776,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -772,7 +785,7 @@
         <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task&gt;" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。 在运行时，委托将作为一个自变量传递给完成的任务。</param>
+        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。 在运行时，委托将作为一个参数传递给完成的任务。</param>
         <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成时异步执行的延续任务。</summary>
         <returns>一个新的延续 <see cref="T:System.Threading.Tasks.Task" />。</returns>
         <remarks>
@@ -825,13 +838,14 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task,System.Object&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task,System.Object&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="continuationAction">在任务完成时要运行的操作。 运行时，委托作为一个自变量传递给完成的任务和调用方提供的状态对象。</param>
@@ -875,6 +889,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -884,7 +899,7 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。 在运行时，委托将作为一个自变量传递给完成的任务。</param>
+        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。 在运行时，委托将作为一个参数传递给完成的任务。</param>
         <param name="cancellationToken">将指派给新的延续任务的 <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" />。</param>
         <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成时可接收取消标记并以异步方式执行的延续任务。</summary>
         <returns>一个新的延续 <see cref="T:System.Threading.Tasks.Task" />。</returns>
@@ -927,6 +942,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -936,7 +952,7 @@
         <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">根据在 <paramref name="continuationOptions" /> 中指定的条件运行的操作。 在运行时，委托将作为一个自变量传递给完成的任务。</param>
+        <param name="continuationAction">根据在 <paramref name="continuationOptions" /> 中指定的条件运行的操作。 在运行时，委托将作为一个参数传递给完成的任务。</param>
         <param name="continuationOptions">用于设置计划延续任务的时间以及延续任务的工作方式的选项。 这包括条件（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />）和执行选项（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />）。</param>
         <summary>创建一个在目标任务完成时按照指定的 <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> 执行的延续任务。</summary>
         <returns>一个新的延续 <see cref="T:System.Threading.Tasks.Task" />。</returns>
@@ -1025,6 +1041,7 @@ End Class
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -1034,7 +1051,7 @@ End Class
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。 在运行时，委托将作为一个自变量传递给完成的任务。</param>
+        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。 在运行时，委托将作为一个参数传递给完成的任务。</param>
         <param name="scheduler">要与延续任务关联并用于其执行过程的 <see cref="T:System.Threading.Tasks.TaskScheduler" />。</param>
         <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成时异步执行的延续任务。 延续任务使用指定计划程序。</summary>
         <returns>一个新的延续 <see cref="T:System.Threading.Tasks.Task" />。</returns>
@@ -1049,7 +1066,7 @@ End Class
         <exception cref="T:System.ObjectDisposedException">已释放了 <see cref="T:System.Threading.Tasks.Task" />。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="continuationAction" /> 参数为 <see langword="null" />。  
   
-或 
+- 或 - 
 <paramref name="scheduler" /> 参数为 null。</exception>
       </Docs>
     </Member>
@@ -1079,14 +1096,15 @@ End Class
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task,System.Object&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task,System.Object&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。 运行时，将传递委托，如完成的任务一样，调用方提供的状态对象（如参数）。</param>
@@ -1133,17 +1151,18 @@ End Class
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task,System.Object&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task,System.Object&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。 运行时，委托将作为一个自变量传递给完成的任务和调用方提供的状态对象。</param>
+        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。 运行时，将传递委托，如完成的任务一样，调用方提供的状态对象（如自变量）。</param>
         <param name="state">一个表示由该延续操作使用的数据的对象。</param>
         <param name="continuationOptions">用于设置计划延续任务的时间以及延续任务的工作方式的选项。 这包括条件（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />）和执行选项（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />）。</param>
         <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成时接收调用方提供的状态信息并执行的延续任务。 延续任务根据一组指定的条件执行。</summary>
@@ -1187,17 +1206,18 @@ End Class
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task,System.Object&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task,System.Object&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。  运行时，委托将作为一个自变量传递给完成的任务和调用方提供的状态对象。</param>
+        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。  运行时，将传递委托，如完成的任务一样，调用方提供的状态对象（如自变量）。</param>
         <param name="state">一个表示由该延续操作使用的数据的对象。</param>
         <param name="scheduler">要与延续任务关联并用于其执行过程的 <see cref="T:System.Threading.Tasks.TaskScheduler" />。</param>
         <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成时接收调用方提供的状态信息并以异步方式执行的延续任务。 延续任务使用指定计划程序。</summary>
@@ -1239,6 +1259,7 @@ End Class
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -1250,11 +1271,11 @@ End Class
         <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">根据在 <paramref name="continuationOptions" /> 中指定的条件运行的操作。 在运行时，委托将作为一个自变量传递给完成的任务。</param>
+        <param name="continuationAction">根据在 <paramref name="continuationOptions" /> 中指定的条件运行的操作。 在运行时，委托将作为一个参数传递给完成的任务。</param>
         <param name="cancellationToken">将指派给新的延续任务的 <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" />。</param>
         <param name="continuationOptions">用于设置计划延续任务的时间以及延续任务的工作方式的选项。 这包括条件（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />）和执行选项（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />）。</param>
         <param name="scheduler">要与延续任务关联并用于其执行过程的 <see cref="T:System.Threading.Tasks.TaskScheduler" />。</param>
-        <summary>创建一个在目标任务完成时按照指定的 <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> 执行的延续任务。 延续任务会收到一个取消标记，并使用指定的计划程序。</summary>
+        <summary>创建一个在目标任务完成时按照指定的 <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> 执行的延续任务。 延续任务会收到一个取消标记，并使用指定计划程序。</summary>
         <returns>一个新的延续 <see cref="T:System.Threading.Tasks.Task" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -1308,7 +1329,7 @@ End Sub
         <exception cref="T:System.ObjectDisposedException">创建了该标记的 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="continuationAction" /> 参数为 null。  
   
-或 
+- 或 - 
 <paramref name="scheduler" /> 参数为 null。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="continuationOptions" /> 参数为 <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> 指定无效值。</exception>
       </Docs>
@@ -1339,19 +1360,20 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task,System.Object&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" Index="3" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" Index="4" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationAction" Type="System.Action&lt;System.Threading.Tasks.Task,System.Object&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" Index="3" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" Index="4" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。 运行时，委托将作为一个自变量传递给完成的任务和调用方提供的状态对象。</param>
+        <param name="continuationAction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的操作。 运行时，将传递委托，如完成的任务一样，调用方提供的状态对象（如自变量）。</param>
         <param name="state">一个表示由该延续操作使用的数据的对象。</param>
         <param name="cancellationToken">将指派给新的延续任务的 <see cref="T:System.Threading.CancellationToken" />。</param>
         <param name="continuationOptions">用于设置计划延续任务的时间以及延续任务的工作方式的选项。 这包括条件（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />）和执行选项（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />）。</param>
@@ -1398,6 +1420,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -1410,7 +1433,7 @@ End Sub
       </Parameters>
       <Docs>
         <typeparam name="TResult">延续任务生成的结果的类型。</typeparam>
-        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task`1" /> 完成时要运行的函数。 在运行时，委托将作为一个自变量传递给完成的任务。</param>
+        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task`1" /> 完成时要运行的函数。 在运行时，委托将作为一个参数传递给完成的任务。</param>
         <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task`1" /> 完成时异步执行并返回一个值的延续任务。</summary>
         <returns>一个新的延续任务。</returns>
         <remarks>
@@ -1460,6 +1483,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -1468,8 +1492,8 @@ End Sub
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,System.Object,TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,System.Object,TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">延续任务生成的结果的类型。</typeparam>
@@ -1514,6 +1538,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -1527,7 +1552,7 @@ End Sub
       </Parameters>
       <Docs>
         <typeparam name="TResult">延续任务生成的结果的类型。</typeparam>
-        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。 在运行时，委托将作为一个自变量传递给完成的任务。</param>
+        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。 在运行时，委托将作为一个参数传递给完成的任务。</param>
         <param name="cancellationToken">将指派给新的延续任务的 <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" />。</param>
         <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成时异步执行并返回一个值的延续任务。 延续任务收到取消标记。</summary>
         <returns>一个新的延续 <see cref="T:System.Threading.Tasks.Task`1" />。</returns>
@@ -1541,7 +1566,7 @@ End Sub
         </remarks>
         <exception cref="T:System.ObjectDisposedException">已释放了 <see cref="T:System.Threading.Tasks.Task" />。  
   
-或 
+- 或 - 
 创建了该标记的 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="continuationFunction" /> 参数为 null。</exception>
       </Docs>
@@ -1573,6 +1598,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -1586,7 +1612,7 @@ End Sub
       </Parameters>
       <Docs>
         <typeparam name="TResult">延续任务生成的结果的类型。</typeparam>
-        <param name="continuationFunction">根据 <paramref name="continuationOptions" /> 中指定的条件运行函数。 在运行时，委托将作为一个自变量传递给完成的任务。</param>
+        <param name="continuationFunction">根据在 <paramref name="continuationOptions" /> 中指定的条件运行的函数。 在运行时，委托将作为一个参数传递给完成的任务。</param>
         <param name="continuationOptions">用于设置计划延续任务的时间以及延续任务的工作方式的选项。 这包括条件（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />）和执行选项（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />）。</param>
         <summary>创建一个按照指定延续任务选项执行并返回一个值的延续任务。</summary>
         <returns>一个新的延续 <see cref="T:System.Threading.Tasks.Task`1" />。</returns>
@@ -1630,6 +1656,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -1643,7 +1670,7 @@ End Sub
       </Parameters>
       <Docs>
         <typeparam name="TResult">延续任务生成的结果的类型。</typeparam>
-        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。 在运行时，委托将作为一个自变量传递给完成的任务。</param>
+        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。 在运行时，委托将作为一个参数传递给完成的任务。</param>
         <param name="scheduler">要与延续任务关联并用于其执行过程的 <see cref="T:System.Threading.Tasks.TaskScheduler" />。</param>
         <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成时异步执行并返回一个值的延续任务。 延续任务使用指定计划程序。</summary>
         <returns>一个新的延续 <see cref="T:System.Threading.Tasks.Task`1" />。</returns>
@@ -1658,7 +1685,7 @@ End Sub
         <exception cref="T:System.ObjectDisposedException">已释放了 <see cref="T:System.Threading.Tasks.Task" />。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="continuationFunction" /> 参数为 null。  
   
-或 
+- 或 - 
 <paramref name="scheduler" /> 参数为 null。</exception>
       </Docs>
     </Member>
@@ -1688,6 +1715,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -1696,13 +1724,13 @@ End Sub
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,System.Object,TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,System.Object,TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">延续任务生成的结果的类型。</typeparam>
-        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。 运行时，委托将作为一个自变量传递给完成的任务和调用方提供的状态对象。</param>
+        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。 运行时，将传递委托，如完成的任务一样，调用方提供的状态对象（如自变量）。</param>
         <param name="state">一个表示由该延续功能使用的数据的对象。</param>
         <param name="cancellationToken">将指派给新的延续任务的 <see cref="T:System.Threading.CancellationToken" />。</param>
         <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成时异步执行并返回一个值的延续任务。 延续任务接收调用方提供的状态信息和取消标记。</summary>
@@ -1746,6 +1774,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -1754,13 +1783,13 @@ End Sub
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,System.Object,TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,System.Object,TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">延续任务生成的结果的类型。</typeparam>
-        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。 运行时，委托将作为一个自变量传递给完成的任务和调用方提供的状态对象。</param>
+        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。 运行时，将传递委托，如完成的任务一样，调用方提供的状态对象（如自变量）。</param>
         <param name="state">一个表示由该延续功能使用的数据的对象。</param>
         <param name="continuationOptions">用于设置计划延续任务的时间以及延续任务的工作方式的选项。 这包括条件（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />）和执行选项（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />）。</param>
         <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成时根据指定的任务延续选项执行的延续任务。 延续任务接收调用方提供的状态信息。</summary>
@@ -1804,6 +1833,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -1812,16 +1842,16 @@ End Sub
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,System.Object,TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,System.Object,TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">延续任务生成的结果的类型。</typeparam>
-        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。  运行时，委托将作为一个自变量传递给完成的任务和调用方提供的状态对象。</param>
+        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。  运行时，将传递委托，如完成的任务一样，调用方提供的状态对象（如自变量）。</param>
         <param name="state">一个表示由该延续功能使用的数据的对象。</param>
         <param name="scheduler">要与延续任务关联并用于其执行过程的 <see cref="T:System.Threading.Tasks.TaskScheduler" />。</param>
-        <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成时异步执行的延续任务。 延续任务接收调用方提供的状态信息，并使用指定的计划程序。</summary>
+        <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成时异步执行的延续任务。 延续任务接收调用方提供的状态信息，并使用指定计划程序。</summary>
         <returns>一个新的延续 <see cref="T:System.Threading.Tasks.Task`1" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -1860,6 +1890,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -1875,11 +1906,11 @@ End Sub
       </Parameters>
       <Docs>
         <typeparam name="TResult">延续任务生成的结果的类型。</typeparam>
-        <param name="continuationFunction">根据指定 <c>continuationOptions.</c> 运行的函数。 在运行时，委托将作为一个自变量传递给完成的任务。</param>
+        <param name="continuationFunction">根据指定 <c>continuationOptions.</c> 运行的函数。 在运行时，委托将作为一个参数传递给完成的任务。</param>
         <param name="cancellationToken">将指派给新的延续任务的 <see cref="P:System.Threading.Tasks.TaskFactory.CancellationToken" />。</param>
         <param name="continuationOptions">用于设置计划延续任务的时间以及延续任务的工作方式的选项。 这包括条件（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />）和执行选项（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />）。</param>
         <param name="scheduler">要与延续任务关联并用于其执行过程的 <see cref="T:System.Threading.Tasks.TaskScheduler" />。</param>
-        <summary>创建一个按照指定延续任务选项执行并返回一个值的延续任务。 延续任务被传入一个取消标记，并使用指定的计划程序。</summary>
+        <summary>创建一个按照指定延续任务选项执行并返回一个值的延续任务。 延续任务被传入一个取消标记，并使用指定计划程序。</summary>
         <returns>一个新的延续 <see cref="T:System.Threading.Tasks.Task`1" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -1899,11 +1930,11 @@ End Sub
         </remarks>
         <exception cref="T:System.ObjectDisposedException">已释放了 <see cref="T:System.Threading.Tasks.Task" />。  
   
-或 
+- 或 - 
 创建了该标记的 <see cref="T:System.Threading.CancellationTokenSource" /> 已被释放。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="continuationFunction" /> 参数为 null。  
   
-或 
+- 或 - 
 <paramref name="scheduler" /> 参数为 null。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="continuationOptions" /> 参数为 <see cref="T:System.Threading.Tasks.TaskContinuationOptions" /> 指定无效值。</exception>
       </Docs>
@@ -1934,6 +1965,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -1942,20 +1974,20 @@ End Sub
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,System.Object,TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" Index="3" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" Index="4" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationFunction" Type="System.Func&lt;System.Threading.Tasks.Task,System.Object,TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="state" Type="System.Object" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="2" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="continuationOptions" Type="System.Threading.Tasks.TaskContinuationOptions" Index="3" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="scheduler" Type="System.Threading.Tasks.TaskScheduler" Index="4" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">延续任务生成的结果的类型。</typeparam>
-        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。 运行时，委托将作为一个自变量传递给完成的任务和调用方提供的状态对象。</param>
+        <param name="continuationFunction">在 <see cref="T:System.Threading.Tasks.Task" /> 完成时要运行的函数。 运行时，将传递委托，如完成的任务一样，调用方提供的状态对象（如自变量）。</param>
         <param name="state">一个表示由该延续功能使用的数据的对象。</param>
         <param name="cancellationToken">将指派给新的延续任务的 <see cref="T:System.Threading.CancellationToken" />。</param>
         <param name="continuationOptions">用于设置计划延续任务的时间以及延续任务的工作方式的选项。 这包括条件（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled" />）和执行选项（如 <see cref="F:System.Threading.Tasks.TaskContinuationOptions.ExecuteSynchronously" />）。</param>
         <param name="scheduler">要与延续任务关联并用于其执行过程的 <see cref="T:System.Threading.Tasks.TaskScheduler" />。</param>
-        <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成并返回一个值时根据指定的任务延续选项执行的延续任务。 延续任务接收调用方提供的状态信息和取消标记，并使用指定的计划程序。</summary>
+        <summary>创建一个在目标 <see cref="T:System.Threading.Tasks.Task" /> 完成并返回一个值时根据指定的任务延续选项执行的延续任务。 延续任务接收调用方提供的状态信息和取消标记，并使用指定计划程序。</summary>
         <returns>一个新的延续 <see cref="T:System.Threading.Tasks.Task`1" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -1997,6 +2029,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.TaskCreationOptions</ReturnType>
@@ -2034,6 +2067,7 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Int32&gt;</ReturnType>
@@ -2091,12 +2125,13 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="millisecondsDelay" Type="System.Int32" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="millisecondsDelay" Type="System.Int32" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="millisecondsDelay">在完成返回的任务前要等待的毫秒数；如果无限期等待，则为 -1。</param>
@@ -2162,12 +2197,13 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="delay" Type="System.TimeSpan" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="delay" Type="System.TimeSpan" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="delay">在完成返回的任务前等待的时间跨度；如果无限期等待，则为 <see langword="TimeSpan.FromMilliseconds(-1)" />。</param>
@@ -2195,7 +2231,7 @@ End Sub
         </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="delay" /> 表示除 <see langword="TimeSpan.FromMilliseconds(-1)" /> 以外的负时间间隔。  
   
-或 
+- 或 - 
 <paramref name="delay" /> 参数的 <see cref="P:System.TimeSpan.TotalMilliseconds" /> 属性大于 <see cref="F:System.Int32.MaxValue" />。</exception>
       </Docs>
     </Member>
@@ -2225,13 +2261,14 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="millisecondsDelay" Type="System.Int32" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="millisecondsDelay" Type="System.Int32" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="millisecondsDelay">在完成返回的任务前要等待的毫秒数；如果无限期等待，则为 -1。</param>
@@ -2289,13 +2326,14 @@ End Sub
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="delay" Type="System.TimeSpan" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="delay" Type="System.TimeSpan" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="delay">在完成返回的任务前等待的时间跨度；如果无限期等待，则为 <see langword="TimeSpan.FromMilliseconds(-1)" />。</param>
@@ -2330,7 +2368,7 @@ Task t Status: RanToCompletion, Result: 42
         </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="delay" /> 表示除 <see langword="TimeSpan.FromMilliseconds(-1)" /> 以外的负时间间隔。  
   
-或 
+- 或 - 
 <paramref name="delay" /> 参数的 <see cref="P:System.TimeSpan.TotalMilliseconds" /> 属性大于 <see cref="F:System.Int32.MaxValue" />。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">该任务已取消。</exception>
         <exception cref="T:System.ObjectDisposedException">已释放提供的 <paramref name="cancellationToken" />。</exception>
@@ -2371,6 +2409,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks</AssemblyName>
@@ -2414,6 +2453,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks</AssemblyName>
@@ -2422,7 +2462,7 @@ Task t Status: RanToCompletion, Result: 42
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="disposing" Type="System.Boolean" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1" />
+        <Parameter Name="disposing" Type="System.Boolean" Index="0" FrameworkAlternate="netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-2.0;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netstandard-2.1;netcore-3.1" />
       </Parameters>
       <Docs>
         <param name="disposing">一个布尔值，该值指示是否由于调用 <see cref="M:System.Threading.Tasks.Task.Dispose" /> 的原因而调用此方法。</param>
@@ -2466,6 +2506,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.AggregateException</ReturnType>
@@ -2510,12 +2551,13 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.TaskFactory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>提供对用于创建和配置 <see cref="T:System.Threading.Tasks.Task" /> 和 <see cref="T:System.Threading.Tasks.Task`1" /> 实例的工厂方法的访问。</summary>
+        <summary>提供对用于创建 <see cref="T:System.Threading.Tasks.Task" /> 和 <see cref="T:System.Threading.Tasks.Task`1" /> 的工厂方法的访问。</summary>
         <value>一个工厂对象，可创建多种 <see cref="T:System.Threading.Tasks.Task" /> 和 <see cref="T:System.Threading.Tasks.Task`1" /> 对象。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -2570,12 +2612,13 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="cancellationToken">完成任务的取消标记。</param>
@@ -2610,6 +2653,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -2618,7 +2662,7 @@ Task t Status: RanToCompletion, Result: 42
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">任务返回的结果的类型。</typeparam>
@@ -2630,11 +2674,11 @@ Task t Status: RanToCompletion, Result: 42
       </Docs>
     </Member>
     <Member MemberName="FromException">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.Task FromException (Exception exception);" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Tasks.Task FromException(class System.Exception exception) cil managed" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-      <MemberSignature Language="DocId" Value="M:System.Threading.Tasks.Task.FromException(System.Exception)" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Threading::Tasks::Task ^ FromException(Exception ^ exception);" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-      <MemberSignature Language="F#" Value="static member FromException : Exception -&gt; System.Threading.Tasks.Task" Usage="System.Threading.Tasks.Task.FromException exception" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.Task FromException (Exception exception);" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Tasks.Task FromException(class System.Exception exception) cil managed" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Tasks.Task.FromException(System.Exception)" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; static System::Threading::Tasks::Task ^ FromException(Exception ^ exception);" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="F#" Value="static member FromException : Exception -&gt; System.Threading.Tasks.Task" Usage="System.Threading.Tasks.Task.FromException exception" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks</AssemblyName>
@@ -2654,16 +2698,17 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="exception" Type="System.Exception" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="exception" Type="System.Exception" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="exception">完成任务的异常。</param>
-        <summary>创建 <see cref="T:System.Threading.Tasks.Task" />，它在完成后出现指定的异常。</summary>
+        <summary>创建 <see cref="T:System.Threading.Tasks.Task" />，它是以指定的异常来完成的。</summary>
         <returns>出错的任务。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -2676,11 +2721,11 @@ Task t Status: RanToCompletion, Result: 42
       </Docs>
     </Member>
     <Member MemberName="FromException&lt;TResult&gt;">
-      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.Task&lt;TResult&gt; FromException&lt;TResult&gt; (Exception exception);" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Tasks.Task`1&lt;!!TResult&gt; FromException&lt;TResult&gt;(class System.Exception exception) cil managed" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-      <MemberSignature Language="DocId" Value="M:System.Threading.Tasks.Task.FromException``1(System.Exception)" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename TResult&gt;&#xA; static System::Threading::Tasks::Task&lt;TResult&gt; ^ FromException(Exception ^ exception);" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-      <MemberSignature Language="F#" Value="static member FromException : Exception -&gt; System.Threading.Tasks.Task&lt;'Result&gt;" Usage="System.Threading.Tasks.Task.FromException exception" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Tasks.Task&lt;TResult&gt; FromException&lt;TResult&gt; (Exception exception);" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Threading.Tasks.Task`1&lt;!!TResult&gt; FromException&lt;TResult&gt;(class System.Exception exception) cil managed" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="DocId" Value="M:System.Threading.Tasks.Task.FromException``1(System.Exception)" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA;generic &lt;typename TResult&gt;&#xA; static System::Threading::Tasks::Task&lt;TResult&gt; ^ FromException(Exception ^ exception);" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+      <MemberSignature Language="F#" Value="static member FromException : Exception -&gt; System.Threading.Tasks.Task&lt;'Result&gt;" Usage="System.Threading.Tasks.Task.FromException exception" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyName>System.Threading.Tasks</AssemblyName>
@@ -2700,6 +2745,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -2708,12 +2754,12 @@ Task t Status: RanToCompletion, Result: 42
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="exception" Type="System.Exception" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="exception" Type="System.Exception" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">任务返回的结果的类型。</typeparam>
         <param name="exception">完成任务的异常。</param>
-        <summary>创建 <see cref="T:System.Threading.Tasks.Task`1" />，它在完成后出现指定的异常。</summary>
+        <summary>创建 <see cref="T:System.Threading.Tasks.Task`1" />，它是以指定的异常来完成的。</summary>
         <returns>出错的任务。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -2724,7 +2770,7 @@ Task t Status: RanToCompletion, Result: 42
    
   
 ## Examples  
- 下面的示例是一个命令行实用工具，该实用工具计算每个目录中的文件中其名称作为命令行参数传递的字节数。 该示例只调用 <xref:System.Threading.Tasks.Task.FromException%60%601%28System.Exception%29> 方法来创建出错的任务（如果特定子目录不是这样），而不是执行实例化 <xref:System.IO.FileInfo> 对象的较长代码路径，并检索其 <xref:System.IO.FileInfo.Length%2A?displayProperty=nameWithType> 属性的值。处于.  
+ 下面的示例是一个命令行实用工具，该实用工具计算每个目录中的文件中其名称作为命令行参数传递的字节数。 该示例只调用 <xref:System.Threading.Tasks.Task.FromException%60%601%28System.Exception%29> 方法来创建出错的任务（如果特定子目录不存在），而不是执行实例化 <xref:System.IO.FileInfo> 对象的较长代码路径，并检索其 <xref:System.IO.FileInfo.Length%2A?displayProperty=nameWithType> 属性的值。  
   
  [!code-csharp[System.Threading.Tasks.Task.FromResult#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.threading.tasks.task.fromresult/cs/fromresult1.cs#1)]
  [!code-vb[System.Threading.Tasks.Task.FromResult#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.threading.tasks.task.fromresult/vb/fromresult1.vb#1)]  
@@ -2760,6 +2806,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -2768,7 +2815,7 @@ Task t Status: RanToCompletion, Result: 42
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="result" Type="TResult" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="result" Type="TResult" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">任务返回的结果的类型。</typeparam>
@@ -2786,7 +2833,7 @@ Task t Status: RanToCompletion, Result: 42
    
   
 ## Examples  
- 下面的示例是一个命令行实用工具，该实用工具计算每个目录中的文件中其名称作为命令行参数传递的字节数。 该示例只调用 <xref:System.Threading.Tasks.Task.FromResult%2A> 方法来创建一个其 <xref:System.Threading.Tasks.Task%601.Result%2A?displayProperty=nameWithType> 属性为零（0）的任务，而不是执行实例化 <xref:System.IO.FileStream> <xref:System.IO.FileStream.Length%2A?displayProperty=nameWithType> 对象的更长的代码路径，如果目录没有任何文件。  
+ 下面的示例是一个命令行实用工具，该实用工具计算每个目录中的文件中其名称作为命令行参数传递的字节数。 该示例只调用 <xref:System.Threading.Tasks.Task.FromResult%2A> 方法来创建其 <xref:System.Threading.Tasks.Task%601.Result%2A?displayProperty=nameWithType> 属性为零（0）的任务（如果目录中没有文件），而不是执行实例化 <xref:System.IO.FileStream> 对象的较长代码路径，并检索其 <xref:System.IO.FileStream.Length%2A?displayProperty=nameWithType> 属性的值。  
   
  [!code-csharp[System.Threading.Tasks.Task.FromResult#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.threading.tasks.task.fromresult/cs/fromresult1.cs#1)]
  [!code-vb[System.Threading.Tasks.Task.FromResult#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.threading.tasks.task.fromresult/vb/fromresult1.vb#1)]  
@@ -2823,6 +2870,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
@@ -2873,6 +2921,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -2920,6 +2969,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2976,6 +3026,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2">
@@ -3012,6 +3063,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>mscorlib</AssemblyName>
@@ -3059,6 +3111,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -3123,12 +3176,13 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="action" Type="System.Action" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="action" Type="System.Action" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="action">以异步方式执行的工作量。</param>
@@ -3203,12 +3257,13 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="function" Type="System.Func&lt;System.Threading.Tasks.Task&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="function" Type="System.Func&lt;System.Threading.Tasks.Task&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="function">以异步方式执行的工作量。</param>
@@ -3252,19 +3307,20 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="action" Type="System.Action" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="action" Type="System.Action" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="action">以异步方式执行的工作量。</param>
         <param name="cancellationToken">可用于取消工作的取消标记</param>
         <summary>将在线程池上运行的指定工作排队，并返回代表该工作的 <see cref="T:System.Threading.Tasks.Task" /> 对象。 可使用取消标记来取消工作。</summary>
-        <returns>一个任务，它表示在线程池中排队执行的工作。</returns>
+        <returns>一个任务，它表示在线程池中排队等待执行的工作。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -3291,7 +3347,7 @@ Task t Status: RanToCompletion, Result: 42
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="action" /> 参数是 <see langword="null" />。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">该任务已取消。</exception>
-        <exception cref="T:System.ObjectDisposedException">与 <paramref name="cancellationToken" /> 关联的 <see cref="T:System.Threading.CancellationTokenSource" /> 已释放。</exception>
+        <exception cref="T:System.ObjectDisposedException">与 <see cref="T:System.Threading.CancellationTokenSource" /> 关联的 <paramref name="cancellationToken" /> 已释放。</exception>
         <related type="Article" href="~/docs/standard/parallel-programming/exception-handling-task-parallel-library.md">异常处理（任务并行库）</related>
       </Docs>
     </Member>
@@ -3321,17 +3377,18 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="function" Type="System.Func&lt;System.Threading.Tasks.Task&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="function" Type="System.Func&lt;System.Threading.Tasks.Task&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="function">以异步方式执行的工作。</param>
-        <param name="cancellationToken">应用于取消工作的取消标记。</param>
+        <param name="cancellationToken">应用以取消工作的取消标记。</param>
         <summary>将在线程池上运行的指定工作排队，并返回 <paramref name="function" /> 所返回的任务的代理项。</summary>
         <returns>表示由 <paramref name="function" /> 返回的任务代理的任务。</returns>
         <remarks>
@@ -3344,7 +3401,7 @@ Task t Status: RanToCompletion, Result: 42
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="function" /> 参数是 <see langword="null" />。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">该任务已取消。</exception>
-        <exception cref="T:System.ObjectDisposedException">与 <paramref name="cancellationToken" /> 关联的 <see cref="T:System.Threading.CancellationTokenSource" /> 已释放。</exception>
+        <exception cref="T:System.ObjectDisposedException">与 <see cref="T:System.Threading.CancellationTokenSource" /> 关联的 <paramref name="cancellationToken" /> 已释放。</exception>
         <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
         <related type="Article" href="~/docs/standard/parallel-programming/exception-handling-task-parallel-library.md">异常处理（任务并行库）</related>
       </Docs>
@@ -3376,6 +3433,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -3384,12 +3442,12 @@ Task t Status: RanToCompletion, Result: 42
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="function" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="function" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">代理任务返回的结果的类型。</typeparam>
         <param name="function">以异步方式执行的工作量。</param>
-        <summary>将指定的工作排成队列在线程池上运行，并返回由 <paramref name="function" /> 返回的 <see langword="Task(TResult)" /> 的代理。</summary>
+        <summary>将指定的工作排成队列在线程池上运行，并返回由 <see langword="Task(TResult)" /> 返回的 <paramref name="function" /> 的代理。</summary>
         <returns>表示由 <see langword="Task(TResult)" /> 返回的 <see langword="Task(TResult)" /> 的代理的 <paramref name="function" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -3430,6 +3488,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -3438,7 +3497,7 @@ Task t Status: RanToCompletion, Result: 42
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="function" Type="System.Func&lt;TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="function" Type="System.Func&lt;TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">任务的返回类型。</typeparam>
@@ -3501,6 +3560,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -3509,14 +3569,14 @@ Task t Status: RanToCompletion, Result: 42
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="function" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="function" Type="System.Func&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">代理任务返回的结果的类型。</typeparam>
         <param name="function">以异步方式执行的工作量。</param>
         <param name="cancellationToken">应用以取消工作的取消标记</param>
-        <summary>将指定的工作排成队列在线程池上运行，并返回由 <paramref name="function" /> 返回的 <see langword="Task(TResult)" /> 的代理。</summary>
+        <summary>将指定的工作排成队列在线程池上运行，并返回由 <see langword="Task(TResult)" /> 返回的 <paramref name="function" /> 的代理。</summary>
         <returns>表示由 <see langword="Task(TResult)" /> 返回的 <see langword="Task(TResult)" /> 的代理的 <paramref name="function" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -3528,7 +3588,7 @@ Task t Status: RanToCompletion, Result: 42
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="function" /> 参数是 <see langword="null" />。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">该任务已取消。</exception>
-        <exception cref="T:System.ObjectDisposedException">与 <paramref name="cancellationToken" /> 关联的 <see cref="T:System.Threading.CancellationTokenSource" /> 已释放。</exception>
+        <exception cref="T:System.ObjectDisposedException">与 <see cref="T:System.Threading.CancellationTokenSource" /> 关联的 <paramref name="cancellationToken" /> 已释放。</exception>
         <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
         <related type="Article" href="~/docs/standard/parallel-programming/exception-handling-task-parallel-library.md">异常处理（任务并行库）</related>
       </Docs>
@@ -3559,6 +3619,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult&gt;</ReturnType>
@@ -3567,8 +3628,8 @@ Task t Status: RanToCompletion, Result: 42
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="function" Type="System.Func&lt;TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="function" Type="System.Func&lt;TResult&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">任务的结果类型。</typeparam>
@@ -3611,7 +3672,7 @@ Task t Status: RanToCompletion, Result: 42
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="function" /> 参数为 <see langword="null" />。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">该任务已取消。</exception>
-        <exception cref="T:System.ObjectDisposedException">与 <paramref name="cancellationToken" /> 关联的 <see cref="T:System.Threading.CancellationTokenSource" /> 已释放。</exception>
+        <exception cref="T:System.ObjectDisposedException">与 <see cref="T:System.Threading.CancellationTokenSource" /> 关联的 <paramref name="cancellationToken" /> 已释放。</exception>
         <related type="Article" href="~/docs/standard/parallel-programming/task-cancellation.md">任务取消</related>
         <related type="Article" href="~/docs/standard/parallel-programming/exception-handling-task-parallel-library.md">异常处理（任务并行库）</related>
       </Docs>
@@ -3653,6 +3714,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3710,6 +3772,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3774,6 +3837,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3833,6 +3897,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3887,6 +3952,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.TaskStatus</ReturnType>
@@ -3944,6 +4010,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.WaitHandle</ReturnType>
@@ -3992,6 +4059,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -4039,6 +4107,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -4063,7 +4132,7 @@ Task t Status: RanToCompletion, Result: 42
         <exception cref="T:System.ObjectDisposedException">已释放了 <see cref="T:System.Threading.Tasks.Task" />。</exception>
         <exception cref="T:System.AggregateException">已取消任务。 <see cref="P:System.AggregateException.InnerExceptions" /> 集合包含 <see cref="T:System.Threading.Tasks.TaskCanceledException" /> 对象。  
   
-或 
+- 或 - 
 执行任务期间引发了一个异常。 <see cref="P:System.AggregateException.InnerExceptions" /> 集合包含一个或多个异常的相关信息。</exception>
         <related type="ExternalDocumentation" href="https://devblogs.microsoft.com/pfxteam/task-wait-and-inlining/">Wait 和 "内联"</related>
       </Docs>
@@ -4095,6 +4164,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -4132,7 +4202,7 @@ Task t Status: RanToCompletion, Result: 42
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 是一个非 -1 的负数，而 -1 表示无限期超时。</exception>
         <exception cref="T:System.AggregateException">已取消任务。 <see cref="P:System.AggregateException.InnerExceptions" /> 集合包含 <see cref="T:System.Threading.Tasks.TaskCanceledException" /> 对象。  
   
-或 
+- 或 - 
 执行任务期间引发了一个异常。 <see cref="P:System.AggregateException.InnerExceptions" /> 集合包含一个或多个异常的相关信息。</exception>
       </Docs>
     </Member>
@@ -4162,6 +4232,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -4199,7 +4270,7 @@ Task t Status: RanToCompletion, Result: 42
         <exception cref="T:System.ObjectDisposedException">已释放该任务。</exception>
         <exception cref="T:System.AggregateException">已取消任务。 <see cref="P:System.AggregateException.InnerExceptions" /> 集合包含 <see cref="T:System.Threading.Tasks.TaskCanceledException" /> 对象。  
   
-或 
+- 或 - 
 执行任务期间引发了一个异常。 <see cref="P:System.AggregateException.InnerExceptions" /> 集合包含一个或多个异常的相关信息。</exception>
       </Docs>
     </Member>
@@ -4230,6 +4301,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -4265,11 +4337,11 @@ Task t Status: RanToCompletion, Result: 42
         </remarks>
         <exception cref="T:System.ObjectDisposedException">已释放了 <see cref="T:System.Threading.Tasks.Task" />。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 为 -1 毫秒以外的负数，表示无限期超时。 
-或 
+- 或 - 
  <paramref name="timeout" /> 大于 <see cref="F:System.Int32.MaxValue" />。</exception>
         <exception cref="T:System.AggregateException">已取消任务。 <see cref="P:System.AggregateException.InnerExceptions" /> 集合包含 <see cref="T:System.Threading.Tasks.TaskCanceledException" /> 对象。  
   
-或 
+- 或 - 
 执行任务期间引发了一个异常。 <see cref="P:System.AggregateException.InnerExceptions" /> 集合包含一个或多个异常的相关信息。</exception>
       </Docs>
     </Member>
@@ -4299,6 +4371,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -4346,7 +4419,7 @@ Task t Status: RanToCompletion, Result: 42
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 是一个非 -1 的负数，而 -1 表示无限期超时。</exception>
         <exception cref="T:System.AggregateException">已取消任务。 <see cref="P:System.AggregateException.InnerExceptions" /> 集合包含 <see cref="T:System.Threading.Tasks.TaskCanceledException" /> 对象。  
   
-或 
+- 或 - 
 执行任务期间引发了一个异常。 <see cref="P:System.AggregateException.InnerExceptions" /> 集合包含一个或多个异常的相关信息。</exception>
       </Docs>
     </Member>
@@ -4357,7 +4430,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyVersion>4.0.10.0</AssemblyVersion>
       </AssemblyInfo>
       <Docs>
-        <summary>等待所有提供的 <see cref="T:System.Threading.Tasks.Task" /> 对象完成执行过程。</summary>
+        <summary>等待提供的所有 <see cref="T:System.Threading.Tasks.Task" /> 对象完成执行过程。</summary>
       </Docs>
     </MemberGroup>
     <Member MemberName="WaitAll">
@@ -4387,6 +4460,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -4414,12 +4488,12 @@ Task t Status: RanToCompletion, Result: 42
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ObjectDisposedException"><paramref name="tasks" /> 中的一个或多个 <see cref="T:System.Threading.Tasks.Task" /> 对象已释放。</exception>
+        <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.Tasks.Task" /> 中的一个或多个 <paramref name="tasks" /> 对象已释放。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="tasks" /> 参数为 <see langword="null" />。</exception>
         <exception cref="T:System.ArgumentException"><paramref name="tasks" /> 参数包含一个 null 元素。</exception>
-        <exception cref="T:System.AggregateException">至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例已取消。 如果任务取消，则 <see cref="T:System.AggregateException" /> 异常在其 <see cref="P:System.AggregateException.InnerExceptions" /> 集合中包含 <see cref="T:System.OperationCanceledException" /> 异常。  
+        <exception cref="T:System.AggregateException">至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例已取消。 如果任务取消，则 <see cref="T:System.AggregateException" /> 异常在其 <see cref="T:System.OperationCanceledException" /> 集合中包含 <see cref="P:System.AggregateException.InnerExceptions" /> 异常。  
   
-或 
+- 或 - 
 在至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例的执行过程中引发了异常。</exception>
       </Docs>
     </Member>
@@ -4450,6 +4524,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -4464,11 +4539,11 @@ Task t Status: RanToCompletion, Result: 42
         <summary>等待所有提供的 <see cref="T:System.Threading.Tasks.Task" /> 在指定的毫秒数内完成执行。</summary>
         <returns>如果在分配的时间内所有 <see langword="true" /> 实例都已完成执行，则为 <see cref="T:System.Threading.Tasks.Task" />；否则为 <see langword="false" />。</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ObjectDisposedException"><paramref name="tasks" /> 中的一个或多个 <see cref="T:System.Threading.Tasks.Task" /> 对象已释放。</exception>
+        <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.Tasks.Task" /> 中的一个或多个 <paramref name="tasks" /> 对象已释放。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="tasks" /> 参数为 <see langword="null" />。</exception>
-        <exception cref="T:System.AggregateException">至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例已取消。 如果任务已取消，则 <see cref="T:System.AggregateException" /> 在其 <see cref="P:System.AggregateException.InnerExceptions" /> 集合中包含 <see cref="T:System.OperationCanceledException" />。  
+        <exception cref="T:System.AggregateException">至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例已取消。 如果任务已取消，则 <see cref="T:System.AggregateException" /> 在其 <see cref="T:System.OperationCanceledException" /> 集合中包含 <see cref="P:System.AggregateException.InnerExceptions" />。  
   
-或 
+- 或 - 
 在至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例的执行过程中引发了异常。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 是一个非 -1 的负数，而 -1 表示无限期超时。</exception>
         <exception cref="T:System.ArgumentException"><paramref name="tasks" /> 参数包含一个 null 元素。</exception>
@@ -4500,6 +4575,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -4522,12 +4598,12 @@ Task t Status: RanToCompletion, Result: 42
         </remarks>
         <exception cref="T:System.OperationCanceledException">已取消 <paramref name="cancellationToken" />。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="tasks" /> 参数为 <see langword="null" />。</exception>
-        <exception cref="T:System.AggregateException">至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例已取消。 如果任务已取消，则 <see cref="T:System.AggregateException" /> 在其 <see cref="P:System.AggregateException.InnerExceptions" /> 集合中包含 <see cref="T:System.OperationCanceledException" />。  
+        <exception cref="T:System.AggregateException">至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例已取消。 如果任务已取消，则 <see cref="T:System.AggregateException" /> 在其 <see cref="T:System.OperationCanceledException" /> 集合中包含 <see cref="P:System.AggregateException.InnerExceptions" />。  
   
-或 
+- 或 - 
 在至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例的执行过程中引发了异常。</exception>
         <exception cref="T:System.ArgumentException"><paramref name="tasks" /> 参数包含一个 null 元素。</exception>
-        <exception cref="T:System.ObjectDisposedException"><paramref name="tasks" /> 中的一个或多个 <see cref="T:System.Threading.Tasks.Task" /> 对象已释放。</exception>
+        <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.Tasks.Task" /> 中的一个或多个 <paramref name="tasks" /> 对象已释放。</exception>
       </Docs>
     </Member>
     <Member MemberName="WaitAll">
@@ -4557,6 +4633,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -4571,14 +4648,14 @@ Task t Status: RanToCompletion, Result: 42
         <summary>等待所有提供的可取消 <see cref="T:System.Threading.Tasks.Task" /> 对象在指定的时间间隔内完成执行。</summary>
         <returns>如果在分配的时间内所有 <see langword="true" /> 实例都已完成执行，则为 <see cref="T:System.Threading.Tasks.Task" />；否则为 <see langword="false" />。</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ObjectDisposedException"><paramref name="tasks" /> 中的一个或多个 <see cref="T:System.Threading.Tasks.Task" /> 对象已释放。</exception>
+        <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.Tasks.Task" /> 中的一个或多个 <paramref name="tasks" /> 对象已释放。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="tasks" /> 参数为 <see langword="null" />。</exception>
-        <exception cref="T:System.AggregateException">至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例已取消。 如果任务已取消，则 <see cref="T:System.AggregateException" /> 在其 <see cref="P:System.AggregateException.InnerExceptions" /> 集合中包含 <see cref="T:System.OperationCanceledException" />。  
+        <exception cref="T:System.AggregateException">至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例已取消。 如果任务已取消，则 <see cref="T:System.AggregateException" /> 在其 <see cref="T:System.OperationCanceledException" /> 集合中包含 <see cref="P:System.AggregateException.InnerExceptions" />。  
   
-或 
+- 或 - 
 在至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例的执行过程中引发了异常。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 为 -1 毫秒以外的负数，表示无限期超时。 
-或 
+- 或 - 
  <paramref name="timeout" /> 大于 <see cref="F:System.Int32.MaxValue" />。</exception>
         <exception cref="T:System.ArgumentException"><paramref name="tasks" /> 参数包含一个 null 元素。</exception>
       </Docs>
@@ -4609,6 +4686,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -4632,11 +4710,11 @@ Task t Status: RanToCompletion, Result: 42
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ObjectDisposedException"><paramref name="tasks" /> 中的一个或多个 <see cref="T:System.Threading.Tasks.Task" /> 对象已释放。</exception>
+        <exception cref="T:System.ObjectDisposedException"><see cref="T:System.Threading.Tasks.Task" /> 中的一个或多个 <paramref name="tasks" /> 对象已释放。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="tasks" /> 参数为 <see langword="null" />。</exception>
-        <exception cref="T:System.AggregateException">至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例已取消。 如果任务已取消，则 <see cref="T:System.AggregateException" /> 在其 <see cref="P:System.AggregateException.InnerExceptions" /> 集合中包含 <see cref="T:System.OperationCanceledException" />。  
+        <exception cref="T:System.AggregateException">至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例已取消。 如果任务已取消，则 <see cref="T:System.AggregateException" /> 在其 <see cref="T:System.OperationCanceledException" /> 集合中包含 <see cref="P:System.AggregateException.InnerExceptions" />。  
   
-或 
+- 或 - 
 在至少一个 <see cref="T:System.Threading.Tasks.Task" /> 实例的执行过程中引发了异常。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="millisecondsTimeout" /> 是一个非 -1 的负数，而 -1 表示无限期超时。</exception>
         <exception cref="T:System.ArgumentException"><paramref name="tasks" /> 参数包含一个 null 元素。</exception>
@@ -4680,6 +4758,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -4696,7 +4775,7 @@ Task t Status: RanToCompletion, Result: 42
       <Docs>
         <param name="tasks">要等待的 <see cref="T:System.Threading.Tasks.Task" /> 实例的数组。</param>
         <summary>等待提供的任一 <see cref="T:System.Threading.Tasks.Task" /> 对象完成执行过程。</summary>
-        <returns><paramref name="tasks" /> 数组中已完成的 <see cref="T:System.Threading.Tasks.Task" /> 对象的所有。</returns>
+        <returns><see cref="T:System.Threading.Tasks.Task" /> 数组中已完成的 <paramref name="tasks" /> 对象的所有。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -4740,6 +4819,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -4786,6 +4866,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -4833,6 +4914,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -4849,9 +4931,9 @@ Task t Status: RanToCompletion, Result: 42
         <remarks>To be added.</remarks>
         <exception cref="T:System.ObjectDisposedException">已释放了 <see cref="T:System.Threading.Tasks.Task" />。</exception>
         <exception cref="T:System.ArgumentNullException"><paramref name="tasks" /> 参数为 <see langword="null" />。</exception>
-        <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="timeout" /> 参数的 <see cref="P:System.TimeSpan.TotalMilliseconds" /> 属性是一个非 -1 的负数，而 -1 表示无限期超时。 
-或 
-<paramref name="timeout" /> 参数的 <see cref="P:System.TimeSpan.TotalMilliseconds" /> 属性大于 <see cref="F:System.Int32.MaxValue" />。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException"><see cref="P:System.TimeSpan.TotalMilliseconds" /> 参数的 <paramref name="timeout" /> 属性是一个非 -1 的负数，而 -1 表示无限期超时。 
+- 或 - 
+<see cref="P:System.TimeSpan.TotalMilliseconds" /> 参数的 <paramref name="timeout" /> 属性大于 <see cref="F:System.Int32.MaxValue" />。</exception>
         <exception cref="T:System.ArgumentException"><paramref name="tasks" /> 参数包含一个 null 元素。</exception>
       </Docs>
     </Member>
@@ -4881,6 +4963,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -4941,16 +5024,17 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="tasks">等待完成的任务。</param>
-        <summary>创建一个任务，该任务将在可枚举集合中的所有 <see cref="T:System.Threading.Tasks.Task" /> 对象都已完成时完成。</summary>
+        <summary>创建一个任务，该任务将在可枚举集合中的所有 <see cref="T:System.Threading.Tasks.Task" /> 对象都完成时完成。</summary>
         <returns>表示所有提供的任务的完成情况的任务。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -4980,7 +5064,7 @@ Task t Status: RanToCompletion, Result: 42
  ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="tasks" /> 参数为 <see langword="null" />。</exception>
-        <exception cref="T:System.ArgumentException"><paramref name="tasks" /> 收集包含 <see langword="null" /> 任务。</exception>
+        <exception cref="T:System.ArgumentException">此 <paramref name="tasks" /> 集合包含 <see langword="null" /> 任务。</exception>
       </Docs>
     </Member>
     <Member MemberName="WhenAll">
@@ -5010,12 +5094,13 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="tasks" Type="System.Threading.Tasks.Task[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
+        <Parameter Name="tasks" Type="System.Threading.Tasks.Task[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
           <Attributes>
             <Attribute FrameworkAlternate="dotnet-uwp-10.0">
               <AttributeName>System.ParamArray</AttributeName>
@@ -5025,7 +5110,7 @@ Task t Status: RanToCompletion, Result: 42
       </Parameters>
       <Docs>
         <param name="tasks">等待完成的任务。</param>
-        <summary>创建一个任务，该任务将在数组中的所有 <see cref="T:System.Threading.Tasks.Task" /> 对象都已完成时完成。</summary>
+        <summary>创建一个任务，该任务将在数组中的所有 <see cref="T:System.Threading.Tasks.Task" /> 对象都完成时完成。</summary>
         <returns>表示所有提供的任务的完成情况的任务。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -5085,6 +5170,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult[]&gt;</ReturnType>
@@ -5093,12 +5179,12 @@ Task t Status: RanToCompletion, Result: 42
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">已完成任务的类型。</typeparam>
         <param name="tasks">等待完成的任务。</param>
-        <summary>创建一个任务，该任务将在可枚举集合中的所有 <see cref="T:System.Threading.Tasks.Task`1" /> 对象都已完成时完成。</summary>
+        <summary>创建一个任务，该任务将在可枚举集合中的所有 <see cref="T:System.Threading.Tasks.Task`1" /> 对象都完成时完成。</summary>
         <returns>表示所有提供的任务的完成情况的任务。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -5110,7 +5196,7 @@ Task t Status: RanToCompletion, Result: 42
   
  如果任何提供的任务都出现故障，但至少其中一项已取消，则返回的任务将以 <xref:System.Threading.Tasks.TaskStatus.Canceled> 状态结束。  
   
- 如果所有任务均出错并且任务都未被取消，则生成的任务将以 <xref:System.Threading.Tasks.TaskStatus.RanToCompletion> 状态结束。  返回任务的 <xref:System.Threading.Tasks.Task%601.Result%2A?displayProperty=nameWithType> 属性将设置为一个数组，其中包含所提供任务的所有结果，这些结果的顺序与提供的任务的顺序相同（例如，如果输入任务数组包含 t1，t2，t3，则输出任务的 <xref:System.Threading.Tasks.Task%601.Result%2A?displayProperty=nameWithType> 属性将返回 `TResult[]` 其中 `arr[0] == t1.Result, arr[1] == t2.Result, and arr[2] == t3.Result)`。  
+ 如果所有任务均出错并且任务都未被取消，则生成的任务将以 <xref:System.Threading.Tasks.TaskStatus.RanToCompletion> 状态结束。  返回的任务的 <xref:System.Threading.Tasks.Task%601.Result%2A?displayProperty=nameWithType> 属性将设置为一个数组，其中包含所提供任务的所有结果，其顺序与提供的任务顺序相同（例如，如果输入任务数组包含 t1，t2，t3，则输出任务的 <xref:System.Threading.Tasks.Task%601.Result%2A?displayProperty=nameWithType> 属性将返回 `TResult[]`，其中 `arr[0] == t1.Result, arr[1] == t2.Result, and arr[2] == t3.Result)`。  
   
  如果 `tasks` 参数不包含任何任务，则返回的任务将在返回到调用方之前立即转换为 <xref:System.Threading.Tasks.TaskStatus.RanToCompletion> 状态。 返回的 `TResult[]` 将是0个元素的数组。  
   
@@ -5157,6 +5243,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;TResult[]&gt;</ReturnType>
@@ -5165,7 +5252,7 @@ Task t Status: RanToCompletion, Result: 42
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="tasks" Type="System.Threading.Tasks.Task&lt;TResult&gt;[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
+        <Parameter Name="tasks" Type="System.Threading.Tasks.Task&lt;TResult&gt;[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
           <Attributes>
             <Attribute FrameworkAlternate="dotnet-uwp-10.0">
               <AttributeName>System.ParamArray</AttributeName>
@@ -5176,7 +5263,7 @@ Task t Status: RanToCompletion, Result: 42
       <Docs>
         <typeparam name="TResult">已完成任务的类型。</typeparam>
         <param name="tasks">等待完成的任务。</param>
-        <summary>创建一个任务，该任务将在数组中的所有 <see cref="T:System.Threading.Tasks.Task`1" /> 对象都已完成时完成。</summary>
+        <summary>创建一个任务，该任务将在数组中的所有 <see cref="T:System.Threading.Tasks.Task`1" /> 对象都完成时完成。</summary>
         <returns>表示所有提供的任务的完成情况的任务。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -5188,7 +5275,7 @@ Task t Status: RanToCompletion, Result: 42
   
  如果任何提供的任务都出现故障，但至少其中一项已取消，则返回的任务将以 <xref:System.Threading.Tasks.TaskStatus.Canceled> 状态结束。  
   
- 如果所有任务均出错并且任务都未被取消，则生成的任务将以 <xref:System.Threading.Tasks.TaskStatus.RanToCompletion> 状态结束。  返回的任务的 <xref:System.Threading.Tasks.Task%601.Result%2A> 将设置为一个数组，其中包含所提供任务的所有结果，这些结果的顺序与提供的任务的顺序相同（例如，如果输入任务数组包含 t1，t2，t3，则输出任务的 <xref:System.Threading.Tasks.Task%601.Result%2A> 会返回 `TResult[]`，其中 `arr[0] == t1.Result, arr[1] == t2.Result, and arr[2] == t3.Result)`.  
+ 如果所有任务均出错并且任务都未被取消，则生成的任务将以 <xref:System.Threading.Tasks.TaskStatus.RanToCompletion> 状态结束。  返回的任务的 <xref:System.Threading.Tasks.Task%601.Result%2A> 将设置为一个数组，其中包含所提供任务的所有结果，其顺序与提供的任务顺序相同（例如，如果输入任务数组包含 t1，t2，t3，则输出任务的 <xref:System.Threading.Tasks.Task%601.Result%2A> 将返回 `TResult[]`，其中 `arr[0] == t1.Result, arr[1] == t2.Result, and arr[2] == t3.Result)`。  
   
  如果提供的数组/可枚举不包含任何任务，则返回的任务将在返回到调用方之前立即转换为 <xref:System.Threading.Tasks.TaskStatus.RanToCompletion> 状态。  返回的 `TResult[]` 将是0个元素的数组。  
   
@@ -5243,12 +5330,13 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <param name="tasks">等待完成的任务。</param>
@@ -5293,12 +5381,13 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="tasks" Type="System.Threading.Tasks.Task[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
+        <Parameter Name="tasks" Type="System.Threading.Tasks.Task[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
           <Attributes>
             <Attribute FrameworkAlternate="dotnet-uwp-10.0">
               <AttributeName>System.ParamArray</AttributeName>
@@ -5349,6 +5438,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;</ReturnType>
@@ -5357,7 +5447,7 @@ Task t Status: RanToCompletion, Result: 42
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+        <Parameter Name="tasks" Type="System.Collections.Generic.IEnumerable&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
         <typeparam name="TResult">已完成任务的类型。</typeparam>
@@ -5403,6 +5493,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Threading.Tasks.Task&lt;TResult&gt;&gt;</ReturnType>
@@ -5411,7 +5502,7 @@ Task t Status: RanToCompletion, Result: 42
         <TypeParameter Name="TResult" />
       </TypeParameters>
       <Parameters>
-        <Parameter Name="tasks" Type="System.Threading.Tasks.Task&lt;TResult&gt;[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
+        <Parameter Name="tasks" Type="System.Threading.Tasks.Task&lt;TResult&gt;[]" Index="0" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0">
           <Attributes>
             <Attribute FrameworkAlternate="dotnet-uwp-10.0">
               <AttributeName>System.ParamArray</AttributeName>
@@ -5463,6 +5554,7 @@ Task t Status: RanToCompletion, Result: 42
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.CompilerServices.YieldAwaitable</ReturnType>
