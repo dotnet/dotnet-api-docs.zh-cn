@@ -1,5 +1,5 @@
 <Type Name="TaskScheduler" FullName="System.Threading.Tasks.TaskScheduler">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="87f581e4666a42d1ea6037aa75f9d64296c41160" /><Meta Name="ms.sourcegitcommit" Value="055a4a82a0b08bfbdc21bd1347fb71f7fe2c099e" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="08/15/2019" /><Meta Name="ms.locfileid" Value="69229840" /></Metadata><TypeSignature Language="C#" Value="public abstract class TaskScheduler" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="59e88bc9b363c87e030660b4cdc70d3f74162419" /><Meta Name="ms.sourcegitcommit" Value="8ae9a18b248625c8e1851e607c00346a64849587" /><Meta Name="ms.translationtype" Value="HT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/17/2019" /><Meta Name="ms.locfileid" Value="75158966" /></Metadata><TypeSignature Language="C#" Value="public abstract class TaskScheduler" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit TaskScheduler extends System.Object" />
   <TypeSignature Language="DocId" Value="T:System.Threading.Tasks.TaskScheduler" />
   <TypeSignature Language="VB.NET" Value="Public MustInherit Class TaskScheduler" />
@@ -24,6 +24,7 @@
     <AssemblyName>System.Runtime</AssemblyName>
     <AssemblyVersion>4.2.0.0</AssemblyVersion>
     <AssemblyVersion>4.2.1.0</AssemblyVersion>
+    <AssemblyVersion>4.2.2.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -43,11 +44,11 @@
       <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Threading.Tasks.TaskScheduler>类的实例表示任务计划程序。 任务计划程序确保最终执行任务作业。  
+ <xref:System.Threading.Tasks.TaskScheduler> 类的实例表示任务计划程序。 任务计划程序确保最终执行任务作业。  
   
  默认的任务计划程序基于 .NET Framework 4 线程池，提供工作窃取实现负载平衡、线程注入/退出以实现最大吞吐量，并提供整体卓越性能。 它应足以满足大多数方案。  
   
- <xref:System.Threading.Tasks.TaskScheduler>类还可作为所有可自定义计划逻辑的扩展点。  这包括一些机制, 例如如何计划任务的执行, 以及应如何向调试器公开计划任务。 如果需要特殊的功能, 可以创建自定义计划程序, 并为特定的任务或查询启用该计划程序。  
+ <xref:System.Threading.Tasks.TaskScheduler> 类还充当所有可自定义计划逻辑的扩展点。  这包括一些机制，例如如何计划任务的执行，以及应如何向调试器公开计划任务。 如果需要特殊的功能，可以创建自定义计划程序，并为特定的任务或查询启用该计划程序。  
   
  本主题内容：  
 [默认的任务计划程序和线程池](#Default)  
@@ -59,62 +60,62 @@
   
 <a name="Default"></a>   
 ## <a name="the-default-task-scheduler-and-the-thread-pool"></a>默认的任务计划程序和线程池  
- 任务并行库和 PLINQ 的默认计划程序使用由<xref:System.Threading.ThreadPool>类表示的 .NET Framework 线程池来排队和执行工作。 线程池使用由<xref:System.Threading.Tasks.Task>类型提供的信息来有效地支持并行任务和查询经常表示的细化并行 (生存期较短的工作单位)。  
+ 任务并行库和 PLINQ 的默认计划程序使用由 <xref:System.Threading.ThreadPool> 类表示的 .NET Framework 线程池来排队和执行工作。 线程池使用由 <xref:System.Threading.Tasks.Task> 类型提供的信息来有效地支持并行任务和查询经常表示的细化并行（生存期较短的工作单位）。  
   
 <a name="Queues"></a>   
 ### <a name="the-global-queue-vs-local-queues"></a>全局队列与本地队列  
- 线程池为每个应用程序域中的线程维护全局 FIFO (先进先出) 工作队列。 每当程序调用<xref:System.Threading.ThreadPool.QueueUserWorkItem%2A?displayProperty=nameWithType> (或<xref:System.Threading.ThreadPool.UnsafeQueueUserWorkItem%2A?displayProperty=nameWithType>) 方法时, 工作就会置于此共享队列上, 并最终取消排队到下一个可用线程。 从 .NET Framework 4 开始, 此队列已进行了改进, 可使用类似<xref:System.Collections.Concurrent.ConcurrentQueue%601>于类的无锁算法。 通过使用此无锁实现, 线程池在对工作项进行排队和取消排队时花费更少的时间。 此性能优势适用于所有使用线程池的程序。  
+ 线程池为每个应用程序域中的线程维护全局 FIFO （先进先出）工作队列。 每当程序调用 <xref:System.Threading.ThreadPool.QueueUserWorkItem%2A?displayProperty=nameWithType> （或 <xref:System.Threading.ThreadPool.UnsafeQueueUserWorkItem%2A?displayProperty=nameWithType>）方法时，工作就会置于此共享队列上，并最终将其取消排队到下一个可用线程中。 从 .NET Framework 4 开始，此队列已进行了改进，可使用类似于 <xref:System.Collections.Concurrent.ConcurrentQueue%601> 类的无锁算法。 通过使用此无锁实现，线程池在对工作项进行排队和取消排队时花费更少的时间。 此性能优势适用于所有使用线程池的程序。  
   
- 最高级任务（即不在其他任务的上下文中创建的任务）与任何其他工作项一样放在全局队列上。 但是，嵌套任务或子任务（在其他任务的上下文中创建）的处理方式大不相同。 子任务或嵌套任务放置在特定于执行父任务的线程的本地队列上。 父任务可能是最高级任务，也可能是其他任务的子任务。 当此线程准备好执行更多工作时，首先查看本地队列。 如果工作项在此处等待，即可快速访问它们。 本地队列按后进先出 (LIFO) 顺序访问, 以保留缓存区域并减少争用情况。 有关子任务和嵌套任务的详细信息, 请参阅[附加和分离的子任务](~/docs/standard/parallel-programming/attached-and-detached-child-tasks.md)。  
+ 最高级任务（即不在其他任务的上下文中创建的任务）与任何其他工作项一样放在全局队列上。 但是，嵌套任务或子任务（在其他任务的上下文中创建）的处理方式大不相同。 子任务或嵌套任务放置在特定于执行父任务的线程的本地队列上。 父任务可能是最高级任务，也可能是其他任务的子任务。 当此线程准备好执行更多工作时，首先查看本地队列。 如果工作项在此处等待，即可快速访问它们。 本地队列按后进先出（LIFO）顺序访问，以保留缓存区域并减少争用情况。 有关子任务和嵌套任务的详细信息，请参阅[附加和分离的子任务](~/docs/standard/parallel-programming/attached-and-detached-child-tasks.md)。  
   
- 使用本地队列不仅会降低全局队列压力, 还可以利用数据位置。 本地队列中的工作项经常引用数据结构, 这些结构在内存中以物理方式彼此接近。 在这些情况下, 数据在第一项任务运行后已在缓存中, 可以快速访问。 [并行 LINQ (PLINQ)](~/docs/standard/parallel-programming/parallel-linq-plinq.md)和<xref:System.Threading.Tasks.Parallel>类都广泛使用嵌套任务和子任务, 并通过使用本地工作队列实现重要的加速。  
+ 使用本地队列不仅会降低全局队列压力，还可以利用数据位置。 本地队列中的工作项经常引用数据结构，这些结构在内存中以物理方式彼此接近。 在这些情况下，数据在第一项任务运行后已在缓存中，可以快速访问。 [并行 LINQ （PLINQ）](~/docs/standard/parallel-programming/parallel-linq-plinq.md)和 <xref:System.Threading.Tasks.Parallel> 类广泛使用嵌套任务和子任务，并通过使用本地工作队列实现重要的加速。  
   
 <a name="Stealing"></a>   
 ### <a name="work-stealing"></a>工作偷窃  
- 从 .NET Framework 4 开始, 线程池还具有工作窃取算法, 以帮助确保没有线程处于空闲状态, 而其他线程仍在队列中工作。 当线程池线程准备好执更多工作时，首先查看其本地队列的开头，再查看全局队列，然后查看其他线程的本地队列。 如果在其他线程的本地队列中找到工作项，它会先应用试探法以确保可有效运行工作。 如果可以, 它将从尾部对工作项取消排队 (按照 FIFO 顺序)。 这样可以减少每个本地队列上的争用并保留数据位置。 与以前的版本相比, 此体系结构可帮助提高线程池的负载平衡工作效率。  
+ 从 .NET Framework 4 开始，线程池还具有工作窃取算法，以帮助确保没有线程处于空闲状态，而其他线程仍在队列中工作。 当线程池线程准备好执更多工作时，首先查看其本地队列的开头，再查看全局队列，然后查看其他线程的本地队列。 如果在其他线程的本地队列中找到工作项，它会先应用试探法以确保可有效运行工作。 如果可以，它将从尾部对工作项取消排队（按照 FIFO 顺序）。 这样可以减少每个本地队列上的争用并保留数据位置。 与以前的版本相比，此体系结构可帮助提高线程池的负载平衡工作效率。  
   
 <a name="LongRunning"></a>   
 ### <a name="long-running-tasks"></a>长时间运行的任务  
- 可能想要显式防止将任务放到本地队列上。 例如，你可能知道特定工作项将运行相对长的时间并可能阻塞本地队列中的所有其他工作项。 在这种情况下，可指定 <xref:System.Threading.Tasks.TaskCreationOptions?displayProperty=nameWithType> 选项，它提示附加线程执行任务时可能需要计划程序，以使此任务不阻塞本地队列中其他线程或工作项的向前推动。 使用此选项可完全避免使用线程池, 包括全局队列和本地队列。  
+ 可能想要显式防止将任务放到本地队列上。 例如，你可能知道特定工作项将运行相对长的时间并可能阻塞本地队列中的所有其他工作项。 在这种情况下，可指定 <xref:System.Threading.Tasks.TaskCreationOptions?displayProperty=nameWithType> 选项，它提示附加线程执行任务时可能需要计划程序，以使此任务不阻塞本地队列中其他线程或工作项的向前推动。 使用此选项可完全避免使用线程池，包括全局队列和本地队列。  
   
 <a name="Inlining"></a>   
 ### <a name="task-inlining"></a>任务内联  
- 在某些情况下, <xref:System.Threading.Tasks.Task>当等待时, 它可能会在执行等待操作的线程上同步执行。 这可以防止需要额外的线程, 而是使用现有线程, 否则会阻止其他线程。 为了防止重入导致的错误, 仅当在相关线程的本地队列中找到等待目标时才会发生任务内联。  
+ 在某些情况下，当 <xref:System.Threading.Tasks.Task> 等待时，它可能会在执行等待操作的线程上同步执行。 这可以防止需要额外的线程，而是使用现有线程，否则会阻止其他线程。 为了防止重入导致的错误，仅当在相关线程的本地队列中找到等待目标时才会发生任务内联。  
   
 <a name="Sync"></a>   
 ## <a name="specifying-a-synchronization-context"></a>指定同步上下文  
  可使用 <xref:System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext%2A?displayProperty=nameWithType> 方法指定任务应计划在特定线程上运行。 在 Windows 窗体和 Windows Presentation Foundation 等框架中此操作非常有用，在此类框架中对用户界面对象的访问限制为只可访问在创建 UI 对象的同一线程上运行的代码。  
   
- 下面的示例使用 Windows Presentation Foundation <xref:System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext%2A?displayProperty=nameWithType> (WPF) 应用程序中的方法, 在创建用户界面 (UI) 控件的同一线程上计划任务。   该示例创建了一个在指定目录中随机选择的图像马赛克。 WPF 对象用于加载图像并调整图像大小。 然后将原始像素传递到一个任务, 该任务使用<xref:System.Threading.Tasks.Parallel.For%2A>循环将像素数据写入到大的单字节数组中。 无需同步, 因为没有两个磁贴占用相同的数组元素。 还可以按任意顺序编写磁贴, 因为这些磁贴的位置独立于任何其他磁贴进行计算。 然后, 将大数组传递给在 UI 线程上运行的任务, 在此任务中, 像素数据加载到图像控件中。  
+ 下面的示例使用 Windows Presentation Foundation （WPF）应用中的 <xref:System.Threading.Tasks.TaskScheduler.FromCurrentSynchronizationContext%2A?displayProperty=nameWithType> 方法，在创建用户界面（UI）控件的同一线程上计划任务。   该示例创建了一个在指定目录中随机选择的图像马赛克。 WPF 对象用于加载图像并调整图像大小。 然后将原始像素传递到一个任务，该任务使用 <xref:System.Threading.Tasks.Parallel.For%2A> 循环将像素数据写入到大的单字节数组中。 无需同步，因为没有两个磁贴占用相同的数组元素。 还可以按任意顺序编写磁贴，因为这些磁贴的位置独立于任何其他磁贴进行计算。 然后，将大数组传递给在 UI 线程上运行的任务，在此任务中，像素数据加载到图像控件中。  
   
- 该示例将数据移出 UI 线程, 通过使用并行循环和<xref:System.Threading.Tasks.Task>对象对其进行修改, 然后将其传递回在 UI 线程上运行的任务。 当你必须使用任务并行库来执行 WPF API 不支持的操作或没有足够的速度时, 此方法非常有用。 在 WPF 中创建图像马赛克的另一种方法是使用<xref:System.Windows.Controls.WrapPanel?displayProperty=nameWithType>控件并向其中添加图像。 <xref:System.Windows.Controls.WrapPanel>处理磁贴的定位工作。 但是, 只能在 UI 线程上执行此操作。  
+ 该示例将数据移出 UI 线程，通过使用并行循环和 <xref:System.Threading.Tasks.Task> 对象对其进行修改，然后将其传递回在 UI 线程上运行的任务。 当你必须使用任务并行库来执行 WPF API 不支持的操作或没有足够的速度时，此方法非常有用。 在 WPF 中创建图像马赛克的另一种方法是使用 <xref:System.Windows.Controls.WrapPanel?displayProperty=nameWithType> 控件并向其中添加图像。 <xref:System.Windows.Controls.WrapPanel> 处理磁贴的定位工作。 但是，只能在 UI 线程上执行此操作。  
   
  [!code-csharp[TPL_SyncContext#01](~/samples/snippets/csharp/VS_Snippets_Misc/tpl_synccontext/cs/mainwindow.xaml.cs#01)]
  [!code-vb[TPL_SyncContext#01](~/samples/snippets/visualbasic/VS_Snippets_Misc/tpl_synccontext/vb/MainWindow.xaml.vb#01)]  
   
- 若要创建此示例, 请在 Visual Studio 中创建一个 WPF 应用程序项目, 并将C#其命名为 WPF_CS1 (适用于 wpf 项目) 或 WPF_VB1 (适用 Visual Basic 于 wpf 项目)。 然后执行以下操作:  
+ 若要创建此示例，请在 Visual Studio 中创建一个 WPF 应用程序项目，并将C#其命名为 WPF_CS1 （对于 wpf 项目）或 WPF_VB1 （对于 Visual Basic wpf 项目）。 然后执行以下操作：  
   
-1. 在 "设计" 视图中<xref:System.Windows.Controls.Image> , 将控件从 "**工具箱**" 拖动到设计图面的左上角。 在 "**属性**" 窗口的 "**名称**" 文本框中, 将控件命名为 "image"。    
+1. 在 "设计" 视图中，将 "<xref:System.Windows.Controls.Image>" 控件从 "**工具箱**" 拖动到设计图面的左上角。 在 "**属性**" 窗口的 "**名称**" 文本框中，将控件命名为 "image"。    
   
-2. 将控件从 "工具箱" 拖动到应用程序窗口的左下部分。  <xref:System.Windows.Controls.Button> 在 XAML 视图中, 将<xref:System.Windows.Controls.ContentControl.Content%2A>按钮的属性指定为 "创建马赛克", 并将其<xref:System.Windows.FrameworkElement.Width>属性指定为 "100"。 通过将添加`<Button>` `button_Click` 到`Click="button_Click"`元素, 将事件与示例的代码<xref:System.Windows.Controls.Primitives.ButtonBase.Click>中定义的事件处理程序连接。 在 "**属性**" 窗口的 "**名称**" 文本框中, 将控件命名为 "button"。  
+2. 将 <xref:System.Windows.Controls.Button> 控件从**工具箱**拖动到应用程序窗口的左下部分。 在 XAML 视图中，将按钮的 "<xref:System.Windows.Controls.ContentControl.Content%2A>" 属性指定为 "创建马赛克"，并将其 <xref:System.Windows.FrameworkElement.Width> 属性指定为 "100"。 通过将 `Click="button_Click"` 添加到 `<Button>` 元素，将 <xref:System.Windows.Controls.Primitives.ButtonBase.Click> 事件与示例的代码中定义的 `button_Click` 事件处理程序进行连接。 在 "**属性**" 窗口的 "**名称**" 文本框中，将控件命名为 "button"。  
   
-3. 将 MainWindow.xaml.cs 或 Mainwindow.xaml 文件的全部内容替换为此示例中的代码。 对于C# WPF 项目, 请确保工作区的名称与项目名称匹配。 
+3. 将 MainWindow.xaml.cs 或 Mainwindow.xaml 文件的全部内容替换为此示例中的代码。 对于C# WPF 项目，请确保工作区的名称与项目名称匹配。 
   
-4. 该示例从名为 C:\Users\Public\Pictures\Sample\\的目录中读取 JPEG 图像。 创建目录并将某些图像放入其中, 或更改路径以引用包含图像的其他目录。 
+4. 该示例从名为 C:\Users\Public\Pictures\Sample 的目录中读取 JPEG 图像\\。 创建目录并将某些图像放入其中，或更改路径以引用包含图像的其他目录。 
   
-此示例有一些限制。 例如, 仅支持32位/像素的图像;在调整大小操作过程中, <xref:System.Windows.Media.Imaging.BitmapImage>对象会损坏其他格式的图像。 此外, 源映像必须都大于磁贴大小。 作为进一步的练习, 您可以添加处理多个像素格式和文件大小的功能。  
+此示例有一些限制。 例如，仅支持32位/像素的图像;在调整大小操作过程中，<xref:System.Windows.Media.Imaging.BitmapImage> 对象损坏了其他格式的图像。 此外，源映像必须都大于磁贴大小。 作为进一步的练习，您可以添加处理多个像素格式和文件大小的功能。  
   
 ## Examples  
- 下面的示例摘自 MSDN 代码库网站上的[.NET Framework 4 进行并行编程](https://go.microsoft.com/fwlink/?LinkID=165717)的示例。  它会创建一个自定义任务计划程序, 该计划程序限制应用程序使用的线程数。 然后, 它将启动两组任务并显示有关任务和执行任务的线程的信息。  
+ 下面的示例摘自 MSDN 代码库网站上的[.NET Framework 4 进行并行编程](https://go.microsoft.com/fwlink/?LinkID=165717)的示例。  它会创建一个自定义任务计划程序，该计划程序限制应用程序使用的线程数。 然后，它将启动两组任务并显示有关任务和执行任务的线程的信息。  
   
  [!code-csharp[TPL_Schedulers#02](~/samples/snippets/csharp/VS_Snippets_Misc/tpl_schedulers/cs/limitex1.cs#02)]
  [!code-vb[TPL_Schedulers#02](~/samples/snippets/visualbasic/VS_Snippets_Misc/tpl_schedulers/vb/module2.vb#02)]  
   
- 此外, 代码库中还提供了几个示例任务计划程序:[.NET Framework 4 的并行编程的示例](https://go.microsoft.com/fwlink/?LinkID=165717)。  
+ 此外，代码库上提供了几个示例任务计划[程序：使用 .NET Framework 4 进行并行编程的示例](https://go.microsoft.com/fwlink/?LinkID=165717)。  
   
  ]]></format>
     </remarks>
-    <threadsafe>抽象<see cref="T:System.Threading.Tasks.TaskScheduler" />类型的所有成员都是线程安全的, 可同时从多个线程使用。</threadsafe>
+    <threadsafe>Abstract <see cref="T:System.Threading.Tasks.TaskScheduler" /> 类型的所有成员都是线程安全的，可同时从多个线程使用。</threadsafe>
     <altmember cref="T:System.Threading.Tasks.TaskScheduler" />
     <related type="Article" href="~/docs/standard/parallel-programming/task-parallel-library-tpl.md">任务并行库 (TPL)</related>
   </Docs>
@@ -145,6 +146,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -181,6 +183,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.TaskScheduler</ReturnType>
@@ -192,7 +195,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果不是从任务中调用, <xref:System.Threading.Tasks.TaskScheduler.Current%2A>将<xref:System.Threading.Tasks.TaskScheduler.Default%2A>返回计划程序。  
+ 如果未从任务中调用，<xref:System.Threading.Tasks.TaskScheduler.Current%2A> 将返回 <xref:System.Threading.Tasks.TaskScheduler.Default%2A> 计划程序。  
   
  有关详细信息，请参阅 <xref:System.Threading.Tasks.TaskScheduler>。  
   
@@ -229,6 +232,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.TaskScheduler</ReturnType>
@@ -305,19 +309,20 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.TaskScheduler</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>创建与当前 <see cref="T:System.Threading.SynchronizationContext" /> 关联的 <see cref="T:System.Threading.Tasks.TaskScheduler" />。</summary>
-        <returns>与当前 <see cref="T:System.Threading.SynchronizationContext" /> 关联的 <see cref="T:System.Threading.Tasks.TaskScheduler" />，由 <see cref="P:System.Threading.SynchronizationContext.Current" /> 确定。</returns>
+        <summary>创建与当前 <see cref="T:System.Threading.Tasks.TaskScheduler" /> 关联的 <see cref="T:System.Threading.SynchronizationContext" />。</summary>
+        <returns>与当前 <see cref="T:System.Threading.Tasks.TaskScheduler" /> 关联的 <see cref="T:System.Threading.SynchronizationContext" />，由 <see cref="P:System.Threading.SynchronizationContext.Current" /> 确定。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 将<xref:System.Threading.Tasks.Task>通过对该上下文的<xref:System.Threading.SynchronizationContext.Post%2A>方法的调用来执行所有排队等待返回的计划程序的实例。  
+ 队列到返回的计划程序的所有 <xref:System.Threading.Tasks.Task> 实例将通过对该上下文的 <xref:System.Threading.SynchronizationContext.Post%2A> 方法的调用来执行。  
   
  有关详细信息，请参阅 <xref:System.Threading.Tasks.TaskScheduler>。  
   
@@ -354,6 +359,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.0;dotnet-uwp-10.0">
@@ -371,9 +377,9 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 派生自<xref:System.Threading.Tasks.TaskScheduler>的类实现此方法以支持与调试器的集成。 仅当调试器请求对数据的访问权限时, .NET Framework 才会调用此方法。 将通过调试实用程序遍历返回的可枚举, 以访问当前排队到此计划程序的任务, 使调试器能够在用户界面中提供此信息的表示形式。  
+ 派生自 <xref:System.Threading.Tasks.TaskScheduler> 的类实现此方法以便支持与调试器的集成。 仅当调试器请求对数据的访问权限时，.NET Framework 才会调用此方法。 将通过调试实用程序遍历返回的可枚举，以访问当前排队到此计划程序的任务，使调试器能够在用户界面中提供此信息的表示形式。  
   
- 请务必注意, 调用此方法时, 进程中的所有其他线程都将被冻结。 因此, 请务必避免与可能导致阻塞的其他线程同步。 如果需要同步, 且无法获取此方法中的锁, 则应该引发异常, 以便调试器不会阻止。 下面的示例演示了中的一C#种可能的方法:
+ 请务必注意，调用此方法时，进程中的所有其他线程都将被冻结。 因此，请务必避免与可能导致阻塞的其他线程同步。 如果需要同步，且无法获取此方法中的锁，则应该引发异常，以便调试器不会阻止。 下面的示例演示了中的一C#种可能的方法：
   
 ```csharp
 protected override IEnumerable<Task> GetScheduledTasks()  
@@ -394,11 +400,11 @@ protected override IEnumerable<Task> GetScheduledTasks()
     }}  
 ```  
   
- 此外, 此方法和返回的可枚举不能修改任何全局可见状态。  
+ 此外，此方法和返回的可枚举不能修改任何全局可见状态。  
   
- 返回的可枚举不应为 null。 如果当前没有排队的任务, 则应改为返回空的可枚举。  
+ 返回的可枚举不应为 null。 如果当前没有排队的任务，则应改为返回空的可枚举。  
   
- 实现自定义调试器的开发人员不应直接调用此方法, 而应改用内部包装`GetScheduledTasksForDebugger`方法: `internal Task[] GetScheduledTasksForDebugger()`。 此包装方法返回一个任务数组, 而不是一个可枚举的。 若要检索活动计划程序的列表, 请使用 internal `internal static TaskScheduler[] GetTaskSchedulersForDebugger()`方法。 此静态方法返回所有活动<xref:System.Threading.Tasks.TaskScheduler>实例的数组。 然后, 你可以`GetScheduledTasksForDebugger`在每个计划程序实例上使用来检索其计划任务的列表。  
+ 实现自定义调试器的开发人员不应直接调用此方法，但应 `GetScheduledTasksForDebugger` 改为使用内部包装方法： `internal Task[] GetScheduledTasksForDebugger()`。 此包装方法返回一个任务数组，而不是一个可枚举的。 若要检索活动计划程序的列表，请使用 internal 方法 `internal static TaskScheduler[] GetTaskSchedulersForDebugger()`。 此静态方法返回所有活动 <xref:System.Threading.Tasks.TaskScheduler> 实例的数组。 然后，你可以使用每个计划程序实例上的 `GetScheduledTasksForDebugger` 来检索其计划任务的列表。  
   
  ]]></format>
         </remarks>
@@ -434,6 +440,7 @@ protected override IEnumerable<Task> GetScheduledTasks()
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -480,6 +487,7 @@ protected override IEnumerable<Task> GetScheduledTasks()
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -525,6 +533,7 @@ protected override IEnumerable<Task> GetScheduledTasks()
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.0;dotnet-uwp-10.0">
@@ -544,11 +553,11 @@ protected override IEnumerable<Task> GetScheduledTasks()
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 派生自<xref:System.Threading.Tasks.TaskScheduler>的类实现此方法, 以接受计划在计划程序上的任务。  
+ 派生自 <xref:System.Threading.Tasks.TaskScheduler> 的类实现此方法，以接受计划在计划程序上的任务。  
   
- 典型的实现会将任务存储在内部数据结构中, 这种情况下, 可能会在将来某个时间执行这些任务的线程提供服务。  
+ 典型的实现会将任务存储在内部数据结构中，这种情况下，可能会在将来某个时间执行这些任务的线程提供服务。  
   
- 此方法仅由 .NET Framework 调用, 不应由派生类直接调用。 这对于维护系统的一致性是必需的。  
+ 此方法仅由 .NET Framework 调用，不应由派生类直接调用。 这对于维护系统的一致性是必需的。  
   
  ]]></format>
         </remarks>
@@ -583,6 +592,7 @@ protected override IEnumerable<Task> GetScheduledTasks()
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.0;dotnet-uwp-10.0">
@@ -605,7 +615,7 @@ protected override IEnumerable<Task> GetScheduledTasks()
 ## Remarks  
  有关详细信息，请参阅 <xref:System.Threading.Tasks.TaskScheduler>。  
   
- 此方法可能在 finally 块中执行;因此, 它应尽快返回, 以便可以及时释放任何资源 ( <xref:System.Threading.CancellationTokenRegistration>例如对象)。  
+ 此方法可能在 finally 块中执行;因此，它应尽快返回，以便可以及时释放 <xref:System.Threading.CancellationTokenRegistration> 对象等任何资源。  
   
  ]]></format>
         </remarks>
@@ -640,6 +650,7 @@ protected override IEnumerable<Task> GetScheduledTasks()
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.0;dotnet-uwp-10.0">
@@ -660,9 +671,9 @@ protected override IEnumerable<Task> GetScheduledTasks()
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 计划程序实现与通过<xref:System.Threading.Tasks.Task> <xref:System.Threading.Tasks.TaskScheduler.QueueTask%2A>方法或<xref:System.Threading.Tasks.TaskScheduler.TryExecuteTaskInline%2A>方法执行的实例一起提供。 当计划程序认为合适运行提供的任务时, <xref:System.Threading.Tasks.TaskScheduler.TryExecuteTask%2A>应使用此方法。 TryExecuteTask 处理执行任务的所有方面, 包括操作调用、异常处理、状态管理和生命周期控制。  
+ 计划程序实现与通过 <xref:System.Threading.Tasks.TaskScheduler.QueueTask%2A> 方法或 <xref:System.Threading.Tasks.TaskScheduler.TryExecuteTaskInline%2A> 方法执行 <xref:System.Threading.Tasks.Task> 实例一起提供。 当计划程序认为合适运行提供的任务时，应使用 <xref:System.Threading.Tasks.TaskScheduler.TryExecuteTask%2A>。 TryExecuteTask 处理执行任务的所有方面，包括操作调用、异常处理、状态管理和生命周期控制。  
   
- <xref:System.Threading.Tasks.TaskScheduler.TryExecuteTask%2A>必须仅用于 .NET Framework 基础结构向此计划程序提供的任务。 不应使用它来执行通过自定义机制获得的任意任务。  
+ <xref:System.Threading.Tasks.TaskScheduler.TryExecuteTask%2A> 必须仅用于 .NET Framework 基础结构向此计划程序提供的任务。 不应使用它来执行通过自定义机制获得的任意任务。  
   
  ]]></format>
         </remarks>
@@ -697,6 +708,7 @@ protected override IEnumerable<Task> GetScheduledTasks()
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netcore-1.0;netcore-1.1;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8;netcore-2.0;dotnet-uwp-10.0">
@@ -719,9 +731,9 @@ protected override IEnumerable<Task> GetScheduledTasks()
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 派生自<xref:System.Threading.Tasks.TaskScheduler>的类实现此函数, 以支持在启动任务对象等待的线程上内联执行任务。 "内联执行" 是可选的, 并且通过返回 false 可能会拒绝该请求。 但是, 可以内联的任务越多, 计划程序的缩放就越好。 事实上, inlines 太少的计划程序可能容易发生死锁。 正确的实现应确保在由计划程序保证的策略下执行的请求可以成功内联。 例如, 如果计划程序使用专用线程来执行任务, 则该线程的任何内联请求都应成功。  
+ 派生自 <xref:System.Threading.Tasks.TaskScheduler> 的类实现此函数，以支持在启动任务对象等待的线程上内联执行任务。 "内联执行" 是可选的，并且通过返回 false 可能会拒绝该请求。 但是，可以内联的任务越多，计划程序的缩放就越好。 事实上，inlines 太少的计划程序可能容易发生死锁。 正确的实现应确保在由计划程序保证的策略下执行的请求可以成功内联。 例如，如果计划程序使用专用线程来执行任务，则该线程的任何内联请求都应成功。  
   
- 如果计划程序决定执行内联执行, 则应通过使用提供的任务对象调用基 TaskScheduler 的<xref:System.Threading.Tasks.TaskScheduler.TryExecuteTask%2A>方法, 传播返回值来执行此操作。 如果计划器决定遵循内联请求, 则它可能还适用于计划程序从其内部数据结构中删除内联的任务。 但请注意, 在某些情况下, 可能会要求计划程序将以前没有提供给它的任务内联到该<xref:System.Threading.Tasks.TaskScheduler.QueueTask%2A>方法。  
+ 如果计划程序决定执行内联执行，则应通过使用所提供的任务对象调用基本 TaskScheduler 的 <xref:System.Threading.Tasks.TaskScheduler.TryExecuteTask%2A> 方法，传播返回值来执行此操作。 如果计划器决定遵循内联请求，则它可能还适用于计划程序从其内部数据结构中删除内联的任务。 但请注意，在某些情况下，可能会要求计划程序将以前没有提供给它的任务内联到 <xref:System.Threading.Tasks.TaskScheduler.QueueTask%2A> 方法。  
   
  派生计划程序负责确保调用线程适用于其自己的计划和执行策略所涉及的任务。  
   
@@ -762,6 +774,7 @@ protected override IEnumerable<Task> GetScheduledTasks()
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0;netframework-4.8">
@@ -780,9 +793,9 @@ protected override IEnumerable<Task> GetScheduledTasks()
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此应用程序域范围内的事件提供一种机制, 用于防止异常升级策略 (默认情况下, 终止进程) 触发。  
+ 此应用程序域范围内的事件提供一种机制，用于防止异常升级策略（默认情况下，终止进程）触发。  
   
- 为了使开发人员可以更轻松地根据任务编写异步代码, [!INCLUDE[net_v45](~/includes/net-v45-md.md)]更改了未观察到异常的默认异常行为。 尽管未观察到异常仍会引发<xref:System.Threading.Tasks.TaskScheduler.UnobservedTaskException>异常, 但默认情况下该过程不会终止。 相反, 引发事件后, 运行时将处理异常, 而不管事件处理程序是否观察到异常。 可以配置此行为。 从开始[`<ThrowUnobservedTaskExceptions>`,可以](~/docs/framework/configure-apps/file-schema/runtime/throwunobservedtaskexceptions-element.md)使用配置元素恢复到的[!INCLUDE[net_v40_long](~/includes/net-v40-long-md.md)]行为, 并终止进程: [!INCLUDE[net_v45](~/includes/net-v45-md.md)]  
+ 为了使开发人员可以更轻松地根据任务编写异步代码，[!INCLUDE[net_v45](~/includes/net-v45-md.md)] 更改未观察到异常的默认异常行为。 尽管未观察到异常仍会引发 <xref:System.Threading.Tasks.TaskScheduler.UnobservedTaskException> 异常，但默认情况下该过程不会终止。 相反，引发事件后，运行时将处理异常，而不管事件处理程序是否观察到异常。 可以配置此行为。 从 [!INCLUDE[net_v45](~/includes/net-v45-md.md)]开始，你可以使用[`<ThrowUnobservedTaskExceptions>`](~/docs/framework/configure-apps/file-schema/runtime/throwunobservedtaskexceptions-element.md)配置元素恢复到 [!INCLUDE[net_v40_long](~/includes/net-v40-long-md.md)] 的行为，并终止进程：  
   
 ```xml  
 <configuration>   
@@ -796,7 +809,7 @@ protected override IEnumerable<Task> GetScheduledTasks()
  ]]></format>
         </remarks>
         <related type="Article" href="~/docs/standard/parallel-programming/task-parallel-library-tpl.md">任务并行库 (TPL)</related>
-        <related type="Article" href="~/docs/framework/configure-apps/file-schema/runtime/throwunobservedtaskexceptions-element.md">&lt;ThrowUnobservedTaskExceptions&gt;元素</related>
+        <related type="Article" href="~/docs/framework/configure-apps/file-schema/runtime/throwunobservedtaskexceptions-element.md">&lt;ThrowUnobservedTaskExceptions&gt; 元素</related>
       </Docs>
     </Member>
   </Members>
