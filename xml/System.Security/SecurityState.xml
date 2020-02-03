@@ -1,5 +1,5 @@
 <Type Name="SecurityState" FullName="System.Security.SecurityState">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="6465db0d7857f55947962366d0c0de6705c84e4f" /><Meta Name="ms.sourcegitcommit" Value="8ae9a18b248625c8e1851e607c00346a64849587" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/17/2019" /><Meta Name="ms.locfileid" Value="75067213" /></Metadata><TypeSignature Language="C#" Value="public abstract class SecurityState" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="1cd58eaf38962c5f260695152fde03f9538181a7" /><Meta Name="ms.sourcegitcommit" Value="8b09499854b5b7b909802126edc1f1fca0054c10" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="02/01/2020" /><Meta Name="ms.locfileid" Value="76960123" /></Metadata><TypeSignature Language="C#" Value="public abstract class SecurityState" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SecurityState extends System.Object" />
   <TypeSignature Language="DocId" Value="T:System.Security.SecurityState" />
   <TypeSignature Language="VB.NET" Value="Public MustInherit Class SecurityState" />
@@ -37,13 +37,13 @@
   
  例如，如果想要在库代码中访问 Web 摄像机，则需要创建一个 `WebcamSecurityState` 对象，并调用 <xref:System.Security.SecurityState.EnsureState%2A> 方法来确定该主机是否允许访问 Web 摄像机，如以下示例中所示。  （您可以在 "示例" 部分中找到 `WebcamSecurityState` 的代码。）  
   
-```  
-WebcamSecurityState securityState = new WebcamSecurityState("Safe access to Webcam", WebcamSecurityOptions.SafeAccess);  
+```csharp
+var securityState = new WebcamSecurityState("Safe access to Webcam", WebcamSecurityOptions.SafeAccess);  
 try  
 {  
-   securityState.EnsureState();  
-   // Allocate memory.  
-   }  
+    securityState.EnsureState();  
+    // Allocate memory.  
+}  
 catch (ApplicationException e)  
 {  
     // Handle any exception that is thrown.  
@@ -53,32 +53,31 @@ catch (ApplicationException e)
   
  若要处理调用，必须通过重写 <xref:System.AppDomainManager.CheckSecuritySettings%2A?displayProperty=nameWithType> 方法使 <xref:System.AppDomainManager> 了解 `WebcamSecurityState`，如下面的示例中所示。  
   
-```  
+```csharp
 [SecurityCritical]  
 public override bool CheckSecuritySettings(System.Security.SecurityState securityState)  
 {  
-   switch (securityState.ToString())  
-   {  
-      case "WebcamSecurityState":  
-      {  
-          if ((securityState as WebcamSecurityState).Options == WebcamSecurityOptions.SafeAccess)  
-              return PromptUser((securityState as WebcamSecurityState).Description);  
-           return false;  
-      }  
-   }  
-      return false;  
+    switch (securityState.ToString())  
+    {  
+        case "WebcamSecurityState":  
+        {  
+            if ((securityState as WebcamSecurityState).Options == WebcamSecurityOptions.SafeAccess)  
+                return PromptUser((securityState as WebcamSecurityState).Description);  
+            return false;  
+        }  
+    }  
+    return false;  
 }  
 private bool PromptUser(string text)  
 {  
-   // Replace the OpenFileDialog with a custom user prompt.  
-   OpenFileDialog o = new OpenFileDialog();  
-   o.Title = text;  
-   if (o.ShowDialog() == DialogResult.OK)  
-      return true;  
-   else  
-      return false;  
-}  
-  
+    // Replace the OpenFileDialog with a custom user prompt.  
+    OpenFileDialog o = new OpenFileDialog();  
+    o.Title = text;  
+    if (o.ShowDialog() == DialogResult.OK)  
+        return true;  
+    else  
+        return false;  
+}   
 ```  
   
    
@@ -86,13 +85,13 @@ private bool PromptUser(string text)
 ## Examples  
  下面的示例演示如何重写 <xref:System.Security.SecurityState> 类。  
   
-```  
+```csharp
 [SecurityCritical]  
-public enum WebcamSecurityOptions  
-    {  
-        SafeAccess,  
-        FullAccess  
-    }  
+public enum WebcamSecurityOptions
+{
+    SafeAccess,  
+    FullAccess  
+}  
 [SecurityCritical]  
 public class WebcamSecurityState : SecurityState  
 {  
@@ -105,11 +104,10 @@ public class WebcamSecurityState : SecurityState
     public string Description { get; set; }  
     public override void EnsureState()  
     {  
-       if (!IsStateAvailable())  
-           throw new ApplicationException("WebcamSecurityState not available");  
+        if (!IsStateAvailable())  
+            throw new ApplicationException("WebcamSecurityState not available");  
     }  
- }  
-  
+}    
 ```  
   
  ]]></format>
@@ -178,7 +176,7 @@ public class WebcamSecurityState : SecurityState
 ## Remarks  
  此方法的实现应与下面的示例类似。  
   
-```  
+```csharp
 public override void EnsureState()  
 {  
     if (!IsStateAvailable())  
