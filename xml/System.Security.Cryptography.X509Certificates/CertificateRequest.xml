@@ -1,5 +1,5 @@
 <Type Name="CertificateRequest" FullName="System.Security.Cryptography.X509Certificates.CertificateRequest">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="4c582bdb9b12659fe81e7286542e65000d895877" /><Meta Name="ms.sourcegitcommit" Value="8ae9a18b248625c8e1851e607c00346a64849587" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/17/2019" /><Meta Name="ms.locfileid" Value="75079134" /></Metadata><TypeSignature Language="C#" Value="public sealed class CertificateRequest" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="391172989cb6ca7802be8289a2df8c8f3c482bff" /><Meta Name="ms.sourcegitcommit" Value="8b09499854b5b7b909802126edc1f1fca0054c10" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="02/01/2020" /><Meta Name="ms.locfileid" Value="76942033" /></Metadata><TypeSignature Language="C#" Value="public sealed class CertificateRequest" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CertificateRequest extends System.Object" />
   <TypeSignature Language="DocId" Value="T:System.Security.Cryptography.X509Certificates.CertificateRequest" />
   <TypeSignature Language="VB.NET" Value="Public NotInheritable Class CertificateRequest" />
@@ -338,7 +338,16 @@
         <param name="serialNumber">用于新证书的序列号。 此值应该是每个颁发者所特有的。 该值将以大端字节顺序被解释为任意大小的无符号整数。 <see href="https://tools.ietf.org/html/rfc3280#section-4.1.2.2">RFC 3280</see> 建议将其限制为 20 个字节或更少。</param>
         <summary>通过将指定证书用作颁发者来创建证书，该证书使用建立的使用者、密钥和可选扩展。</summary>
         <returns>一个具有指定值的 <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" /> 对象。 返回的对象不会证明 <see cref="P:System.Security.Cryptography.X509Certificates.X509Certificate2.HasPrivateKey" />。</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+
+## Remarks
+
+此方法不支持使用 MD5 或 SHA-1 作为证书签名的哈希算法。
+如果需要基于 MD5 或 SHA-1 的证书签名，则需要实现自定义 <xref:System.Security.Cryptography.X509Certificates.X509SignatureGenerator> 并调用 <xref:System.Security.Cryptography.X509Certificates.CertificateRequest.Create(System.Security.Cryptography.X509Certificates.X500DistinguishedName,System.Security.Cryptography.X509Certificates.X509SignatureGenerator,System.DateTimeOffset,System.DateTimeOffset,System.Byte[])>。
+
+ ]]></format>
+        </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="issuerCertificate" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.ArgumentException"><paramref name="issuerCertificate" /> 不包含私钥。
 
@@ -358,6 +367,7 @@
 
 <paramref name="issuerCertificate" /> 具有与请求的证书不同的密钥算法。</exception>
         <exception cref="T:System.InvalidOperationException"><paramref name="issuerCertificate" /> 是 RSA 证书，且当前对象是通过不接受 <paramref name="padding" /> 参数的构造函数创建的。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">不支持 <see cref="P:System.Security.Cryptography.X509Certificates.CertificateRequest.HashAlgorithm" /> 属性值。</exception>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -448,10 +458,20 @@
         <param name="notAfter">此证书不再被视为有效的日期和时间。</param>
         <summary>创建自签名证书，此证书使用建立的使用者、密钥和可选扩展。</summary>
         <returns>一个具有指定值的 <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" /> 对象。 返回的对象将证明 <see cref="P:System.Security.Cryptography.X509Certificates.X509Certificate2.HasPrivateKey" />。</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+
+## Remarks
+
+此方法不支持使用 MD5 或 SHA-1 作为证书签名的哈希算法。
+如果需要基于 MD5 或 SHA-1 的证书签名，则需要实现自定义 <xref:System.Security.Cryptography.X509Certificates.X509SignatureGenerator> 并调用 <xref:System.Security.Cryptography.X509Certificates.CertificateRequest.Create(System.Security.Cryptography.X509Certificates.X500DistinguishedName,System.Security.Cryptography.X509Certificates.X509SignatureGenerator,System.DateTimeOffset,System.DateTimeOffset,System.Byte[])>。
+
+ ]]></format>
+        </remarks>
         <exception cref="T:System.ArgumentException"><paramref name="notAfter" /> 表示早于 <paramref name="notBefore" /> 的某个日期和时间。</exception>
         <exception cref="T:System.InvalidOperationException">当前对象是通过不接受签名密钥的构造函数而创建的。</exception>
         <exception cref="T:System.Security.Cryptography.CryptographicException">创建证书时出现错误。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">不支持 <see cref="P:System.Security.Cryptography.X509Certificates.CertificateRequest.HashAlgorithm" /> 属性值。</exception>
       </Docs>
     </Member>
     <MemberGroup MemberName="CreateSigningRequest">
@@ -496,6 +516,9 @@
   
 ## Remarks  
 
+此方法不支持使用 MD5 或 SHA-1 作为签名请求签名的哈希算法。
+如果需要基于 MD5 或 SHA-1 的签名请求，需要实现自定义 <xref:System.Security.Cryptography.X509Certificates.X509SignatureGenerator> 并调用 <xref:System.Security.Cryptography.X509Certificates.CertificateRequest.CreateSigningRequest(System.Security.Cryptography.X509Certificates.X509SignatureGenerator)>。
+
 通过 web 浏览器或其他图形或文本界面提交证书签名请求时，输入通常应为隐私增强邮件（PEM）格式，而不是 DER 二进制格式。 若要将返回值转换为 PEM 格式，请创建由 `-----BEGIN CERTIFICATE REQUEST-----`、换行符、请求的64编码表示形式的字符串（按惯例，linewrapped 为64个字符）、换行符和 `-----END CERTIFICATE REQUEST-----`。
             
 ```csharp
@@ -526,6 +549,7 @@ public static string PemEncodeSigningRequest(CertificateRequest request, PkcsSig
  ]]></format>
         </remarks>
         <exception cref="T:System.InvalidOperationException">当前对象是通过不接受签名密钥的构造函数而创建的。</exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">不支持 <see cref="P:System.Security.Cryptography.X509Certificates.CertificateRequest.HashAlgorithm" /> 属性值。</exception>
       </Docs>
     </Member>
     <Member MemberName="CreateSigningRequest">
