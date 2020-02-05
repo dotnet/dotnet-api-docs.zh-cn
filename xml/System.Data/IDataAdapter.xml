@@ -1,5 +1,5 @@
 <Type Name="IDataAdapter" FullName="System.Data.IDataAdapter">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="b705c31c52d62066a66b9b37ebd59319776245be" /><Meta Name="ms.sourcegitcommit" Value="8ae9a18b248625c8e1851e607c00346a64849587" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/17/2019" /><Meta Name="ms.locfileid" Value="75140312" /></Metadata><TypeSignature Language="C#" Value="public interface IDataAdapter" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="cc36dee5df4fd7280320a05134b98c2dc1e2da25" /><Meta Name="ms.sourcegitcommit" Value="8b09499854b5b7b909802126edc1f1fca0054c10" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="02/01/2020" /><Meta Name="ms.locfileid" Value="76947860" /></Metadata><TypeSignature Language="C#" Value="public interface IDataAdapter" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDataAdapter" />
   <TypeSignature Language="DocId" Value="T:System.Data.IDataAdapter" />
   <TypeSignature Language="VB.NET" Value="Public Interface IDataAdapter" />
@@ -51,7 +51,7 @@
     <block subset="none" type="overrides"><para>若要提升 .NET Framework 数据提供程序之间的一致性，请将继承类命名为 <paramref name="Prv" /> DataAdapter 格式，其中 <paramref name="Prv" /> 是给定给特定 .NET Framework 数据提供程序命名空间中的所有类的统一前缀。 例如，<paramref name="Sql" /> 是 <see langword="System.Data.SqlClient" /> 命名空间中 <see cref="T:System.Data.SqlClient.SqlDataAdapter" /> 类的前缀。  
   
 当从 <see cref="T:System.Data.IDataAdapter" /> 接口继承时，应实现以下构造函数： 
- <list type="table"><listheader><term> 项 
+ <list type="table"><listheader><term> Item 
  </term><description> 说明 
  </description></listheader><item><term> PrvDataAdapter() 
  </term><description> 初始化 PrvDataAdapter 类的新实例。  
@@ -174,7 +174,7 @@
   
 -   <xref:System.Data.DataColumn.AllowDBNull%2A>  
   
--   <xref:System.Data.DataColumn.AutoIncrement%2A> 您必须单独设置 <xref:System.Data.DataColumn.AutoIncrementStep%2A> 和 <xref:System.Data.DataColumn.AutoIncrementSeed%2A>。  
+-   <xref:System.Data.DataColumn.AutoIncrement%2A> 列中的一个值匹配。 您必须单独设置 <xref:System.Data.DataColumn.AutoIncrementStep%2A> 和 <xref:System.Data.DataColumn.AutoIncrementSeed%2A>。  
   
 -   <xref:System.Data.DataColumn.MaxLength%2A>  
   
@@ -239,25 +239,29 @@
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
-## Remarks  
+## Examples  
   
-```  
-private static void GetParameters(String connectionString) {  
-           using (SqlConnection conn = new SqlConnection(connectionString)) {  
-              String queryString = "Select [CourseID],[Title],[Credits] from [MySchool].[dbo].[Course] where [Year]=@Year and [Credits]>=@Credits";   
-              SqlParameter year = new SqlParameter("@Year", 2012);   
-              SqlParameter credits = new SqlParameter("@Credits", SqlDbType.Int, 4, "Credits");   
-              credits.Value = 4; SqlCommand command = new SqlCommand(queryString, conn);   
-              command.Parameters.Add(year);   
-              command.Parameters.Add(credits);   
-              IDbDataAdapter mySchool = new SqlDataAdapter(command);   
-              IDataParameter[] parameters = mySchool.GetFillParameters();  
-              Console.WriteLine("{0,-15}{1,-15}{2,-15}{3,-15}{4,-15}", "ParameterName", "SourceColumn", "Direction", "DbType", "Value");   
-              foreach (IDataParameter parameter in parameters) {   
-                 Console.WriteLine("{0,-15}{1,-15}{2,-15}{3,-15}{4,-15}", parameter.ParameterName, parameter.SourceColumn, parameter.Direction, parameter.DbType, parameter.Value);   
-              }  
-           }  
-        }  
+```csharp
+private static void GetParameters(string connectionString)
+{
+    using (var conn = new SqlConnection(connectionString))
+    {
+        var queryString = "SELECT [CourseID],[Title],[Credits] FROM [MySchool].[dbo].[Course] WHERE [Year]=@Year AND [Credits]>=@Credits";
+        var year = new SqlParameter("@Year", 2012);
+        var credits = new SqlParameter("@Credits", SqlDbType.Int, 4, "Credits");
+        credits.Value = 4;
+        var command = new SqlCommand(queryString, conn);
+        command.Parameters.Add(year);
+        command.Parameters.Add(credits);
+        IDbDataAdapter mySchool = new SqlDataAdapter(command);
+        IDataParameter[] parameters = mySchool.GetFillParameters();
+        Console.WriteLine("{0,-15}{1,-15}{2,-15}{3,-15}{4,-15}", "ParameterName", "SourceColumn", "Direction", "DbType", "Value");
+        foreach (IDataParameter parameter in parameters)
+        {
+            Console.WriteLine("{0,-15}{1,-15}{2,-15}{3,-15}{4,-15}", parameter.ParameterName, parameter.SourceColumn, parameter.Direction, parameter.DbType, parameter.Value);
+        }
+    }
+}
 ```  
   
  ]]></format>
@@ -295,7 +299,7 @@ private static void GetParameters(String connectionString) {
       </ReturnValue>
       <Docs>
         <summary>指示或指定是否将未映射的源表或列与其源名一起传递以便筛选或引发错误。</summary>
-        <value><see cref="T:System.Data.MissingMappingAction" /> 值之一。 默认值为 <see langword="Passthrough" />。</value>
+        <value><see cref="T:System.Data.MissingMappingAction" /> 值之一。 默认为 <see langword="Passthrough" />。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -339,7 +343,7 @@ private static void GetParameters(String connectionString) {
       </ReturnValue>
       <Docs>
         <summary>指示或指定是否将丢失的源表、列及其关系添加到数据集架构中，是否忽略它们或者它们是否会引发错误。</summary>
-        <value><see cref="T:System.Data.MissingSchemaAction" /> 值之一。 默认值为 <see langword="Add" />。</value>
+        <value><see cref="T:System.Data.MissingSchemaAction" /> 值之一。 默认为 <see langword="Add" />。</value>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentException">设置的值不是 <see cref="T:System.Data.MissingSchemaAction" /> 值之一。</exception>
         <altmember cref="P:System.Data.Common.DataAdapter.MissingMappingAction" />
