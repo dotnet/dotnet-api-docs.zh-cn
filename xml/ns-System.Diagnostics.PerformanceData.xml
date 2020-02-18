@@ -1,43 +1,43 @@
 <Namespace Name="System.Diagnostics.PerformanceData">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="b1c5ad58fc8cb70eeab256e01ab98bfc4478c7cb" /><Meta Name="ms.sourcegitcommit" Value="08fc3691deb7adaf0dfd751b9d9d0b23a3d3a7b8" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="08/09/2019" /><Meta Name="ms.locfileid" Value="68908478" /></Metadata><Docs>
-    <summary>使用此命名空间中的类来提供计数器数据。 计数器用于向用户公开性能指标，如性能监视器。 命名空间不包含用于使用计数器数据的类。 有关性能计数器体系结构的完整说明，请参阅 <see href="https://msdn.microsoft.com/library/windows/desktop/aa373083\(v=vs.85\">Performance Counters</see>.aspx)（性能计数器）。</summary>
+  <Metadata><Meta Name="ms.openlocfilehash" Value="f5a019ddec2c0a3c01602f5347c525eb833fc61d" /><Meta Name="ms.sourcegitcommit" Value="a8ff98b48bda124cfcb2605f5da9b21bc6dcd791" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="02/14/2020" /><Meta Name="ms.locfileid" Value="77218531" /></Metadata><Docs>
+    <summary>使用此命名空间中的类来提供计数器数据。 计数器用于向用户公开性能指标，如性能监视器。 命名空间不包含用于使用计数器数据的类。 有关性能计数器体系结构的完整说明，请参阅<see href="/windows/win32/perfctrs/performance-counters-portal">性能计数器</see>。</summary>
     <remarks>
       <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此命名空间中的类支持 Windows Vista 中引入的性能计数器的新体系结构 (版本 2.0)。 在新的体系结构中, 提供程序不再直接响应使用者请求, 而只是维护计数器数据。 当提供程序创建计数器集的实例时, 系统会将一个线程注入到提供程序的进程中;线程负责处理使用者请求。  
+ 此命名空间中的类支持 Windows Vista 中引入的性能计数器的新体系结构（版本2.0）。 在新的体系结构中，提供程序不再直接响应使用者请求，而只是维护计数器数据。 当提供程序创建计数器集的实例时，系统会将一个线程注入到提供程序的进程中;线程负责处理使用者请求。  
   
  以下步骤显示编写计数器提供程序的过程。  
   
-1.  提供程序提供的计数器是在基于 XML 的清单中定义的。 计数器按逻辑分组为计数器集。 计数器集中的计数器由计数器集内唯一的数字标识符标识。 提供程序可以定义一个或多个计数器集。 计数器集由提供程序的唯一 Guid 标识。 请注意, 如果使用这些类来编写提供程序:  
+1.  提供程序提供的计数器是在基于 XML 的清单中定义的。 计数器按逻辑分组为计数器集。 计数器集中的计数器由计数器集内唯一的数字标识符标识。 提供程序可以定义一个或多个计数器集。 计数器集由提供程序的唯一 Guid 标识。 请注意，如果使用这些类来编写提供程序：  
   
     -   提供程序元素的回调特性被忽略。  
   
     -   忽略 counterAttribute 元素的 name 属性的引用值。  
   
-     有关编写清单的详细信息, 请参阅[性能计数器架构](https://msdn.microsoft.com/library/windows/desktop/aa373092\(v=vs.85\).aspx)。  
+     有关编写清单的详细信息，请参阅[性能计数器架构](/windows/win32/perfctrs/performance-counters-schema)。  
   
-2.  编写清单后, 使用[CTRPP](https://msdn.microsoft.com/library/windows/desktop/aa372128\(v=vs.85\).aspx)工具编译清单 (CTRPP 提供程序)。 该工具生成四个文件: .h、.c、.rc 和 * _r。 您可以忽略 .h 和 .c 文件。 .Rc 文件包含清单中定义的本地化字符串。 使用 .rc 和 * _r 文件可创建项目中包含的已编译资源文件 (res)。 以下调用显示了如何编译资源文件:  
+2.  编写清单后，使用[CTRPP](/windows/win32/perfctrs/ctrpp)工具编译清单（CTRPP 提供程序）。 该工具生成四个文件： .h、.c、.rc 和 * _r .h。 您可以忽略 .h 和 .c 文件。 .Rc 文件包含清单中定义的本地化字符串。 使用 .rc 和 * _r .h 文件创建包含在项目中的已编译资源文件（res）。 以下调用显示了如何编译资源文件：  
   
     ```console  
     rc /r /i "c:\Program Files\Microsoft SDKs\Windows\v6.0\Include" provider.rc  
     ```  
   
-     如果收到引用 sal 的错误, 请将 Microsoft Visual Studio 的 sal .h 文件 (Visual C 包含目录) 复制到为/i 开关指定的目录中。  
+     如果收到引用 sal 的错误，请将 Microsoft Visual Studio 的 sal .h 文件（Visual C 包含目录）复制到为/i 开关指定的目录中。  
   
-     向项目的应用程序属性页添加已编译的资源文件 (res) 的路径。  
+     向项目的应用程序属性页添加已编译的资源文件（res）的路径。  
   
-3.  编写提供程序。 以下步骤说明了提供程序所进行的调用:  
+3.  编写提供程序。 以下步骤说明了提供程序所进行的调用：  
   
-    1.  <xref:System.Diagnostics.PerformanceData.CounterSet.%23ctor%2A?displayProperty=nameWithType>调用构造函数以定义计数器集。 为清单中定义的每个计数器集调用此方法。  
+    1.  调用 <xref:System.Diagnostics.PerformanceData.CounterSet.%23ctor%2A?displayProperty=nameWithType> 构造函数以定义计数器集。 为清单中定义的每个计数器集调用此方法。  
   
-    2.  对于每个计数器集, 请调用<xref:System.Diagnostics.PerformanceData.CounterSet.AddCounter%2A?displayProperty=nameWithType>方法之一, 将计数器添加到该集。 为计数器集中定义的每个计数器调用此方法。  
+    2.  对于每个计数器集，请调用 <xref:System.Diagnostics.PerformanceData.CounterSet.AddCounter%2A?displayProperty=nameWithType> 方法之一，将计数器添加到该集。 为计数器集中定义的每个计数器调用此方法。  
   
-    3.  <xref:System.Diagnostics.PerformanceData.CounterSet.CreateCounterSetInstance%2A?displayProperty=nameWithType>调用方法以创建计数器集的实例 (实例包含计数器数据)。 对于单实例计数器集, 请调用此方法一次。 对于多个实例计数器集, 请为需要为其提供计数器数据的每个实例 (使用每个实例的唯一名称) 调用此方法。  
+    3.  调用 <xref:System.Diagnostics.PerformanceData.CounterSet.CreateCounterSetInstance%2A?displayProperty=nameWithType> 方法来创建计数器集的实例（实例包含计数器数据）。 对于单实例计数器集，请调用此方法一次。 对于多个实例计数器集，请为需要为其提供计数器数据的每个实例（使用每个实例的唯一名称）调用此方法。  
   
-    4.  <xref:System.Diagnostics.PerformanceData.CounterSetInstance.Counters%2A?displayProperty=nameWithType>使用属性可以访问和设置计数器的计数器数据。  
+    4.  使用 <xref:System.Diagnostics.PerformanceData.CounterSetInstance.Counters%2A?displayProperty=nameWithType> 属性访问和设置计数器的计数器数据。  
   
-4.  完成提供程序后, 请使用[LodCtr](https://docs.microsoft.com/windows/desktop/perfctrs/adding-counter-names-and-descriptions-to-the-registry#running-the-lodctr-tool)工具在计算机上注册计数器。 例如，应用于对象的  
+4.  完成提供程序后，请使用[LodCtr](/windows/desktop/perfctrs/adding-counter-names-and-descriptions-to-the-registry#running-the-lodctr-tool)工具在计算机上注册计数器。 例如，  
   
     ```console  
     lodctr /m:provider.man  
@@ -50,7 +50,7 @@
    
   
 ## Examples  
- 下面显示了一个简单的清单:  
+ 下面显示了一个简单的清单：  
   
 ```xml  
 <!-- <?xml version="1.0" encoding="UTF-16"?> -->  
@@ -152,7 +152,7 @@
 </instrumentationManifest>  
 ```  
   
- 下面显示了清单的简单提供程序实现:  
+ 下面显示了清单的简单提供程序实现：  
   
 ```cs  
 using System.Diagnostics.PerformanceData;  
