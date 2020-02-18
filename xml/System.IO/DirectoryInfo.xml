@@ -1,5 +1,5 @@
 <Type Name="DirectoryInfo" FullName="System.IO.DirectoryInfo">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="15a07f7c16903a6da1e60ecc54b8b6f99a04ce05" /><Meta Name="ms.sourcegitcommit" Value="8ae9a18b248625c8e1851e607c00346a64849587" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/17/2019" /><Meta Name="ms.locfileid" Value="75132486" /></Metadata><TypeSignature Language="C#" Value="public sealed class DirectoryInfo : System.IO.FileSystemInfo" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="abb71d42226a6807d21f231a68e7c7c93f4130db" /><Meta Name="ms.sourcegitcommit" Value="a8ff98b48bda124cfcb2605f5da9b21bc6dcd791" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="02/14/2020" /><Meta Name="ms.locfileid" Value="77225291" /></Metadata><TypeSignature Language="C#" Value="public sealed class DirectoryInfo : System.IO.FileSystemInfo" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit DirectoryInfo extends System.IO.FileSystemInfo" />
   <TypeSignature Language="DocId" Value="T:System.IO.DirectoryInfo" />
   <TypeSignature Language="VB.NET" Value="Public NotInheritable Class DirectoryInfo&#xA;Inherits FileSystemInfo" />
@@ -158,7 +158,6 @@
         <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
         <exception cref="T:System.ArgumentException"><paramref name="path" /> 包含无效字符，例如 "、&lt;、&gt; 或 |。</exception>
         <exception cref="T:System.IO.PathTooLongException">指定的路径和/或文件名超过了系统定义的最大长度。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于读取文件和目录。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" /></permission>
         <altmember cref="T:System.IO.DriveInfo" />
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
@@ -229,7 +228,6 @@
  ]]></format>
         </remarks>
         <exception cref="T:System.IO.IOException">无法创建目录。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于写入文件。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -273,6 +271,35 @@
   
  有关常见 i/o 任务的列表，请参阅[常见 I/o 任务](~/docs/standard/io/common-i-o-tasks.md)。  
   
+> [!IMPORTANT]
+> 此方法作为 `System.Security.AccessControl` 程序集的一部分，作为 `FileSystemAclExtensions` 类的扩展方法移植到 .NET Core 3.1： <xref:System.IO.FileSystemAclExtensions.Create(System.IO.DirectoryInfo,System.Security.AccessControl.DirectorySecurity)>。
+
+## Examples
+
+下面的代码示例使用指定的目录安全属性在用户的临时文件夹内创建一个新目录：
+
+```csharp
+using System.IO;
+using System.Security.AccessControl;
+using System.Security.Principal;
+namespace ConsoleApp
+{
+    class Program
+    {
+        static void Main()
+        {
+            DirectorySecurity security = new DirectorySecurity();
+            SecurityIdentifier identity = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+            FileSystemAccessRule accessRule = new FileSystemAccessRule(identity, FileSystemRights.FullControl, AccessControlType.Allow);
+            security.AddAccessRule(accessRule);
+            string path = Path.Combine(Path.GetTempPath(), "directoryToCreate");
+            DirectoryInfo dirInfo = new DirectoryInfo(path);
+            dirInfo.Create(security);
+        }
+    }
+}
+```
+
  ]]></format>
         </remarks>
         <exception cref="T:System.IO.IOException"><paramref name="path" /> 指定的目录为只读或为非空。</exception>
@@ -282,7 +309,6 @@
         <exception cref="T:System.IO.PathTooLongException">指定的路径和/或文件名超过了系统定义的最大长度。</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">指定的路径无效，例如位于未映射的驱动器上。</exception>
         <exception cref="T:System.NotSupportedException">试图创建只带冒号 (:) 字符的目录。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于创建目录的权限。 安全操作： <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举： <see cref="F:System.Security.Permissions.EnvironmentPermissionAccess.Read" /></permission>
       </Docs>
     </Member>
     <MemberGroup MemberName="CreateSubdirectory">
@@ -362,15 +388,14 @@
         <exception cref="T:System.IO.DirectoryNotFoundException">指定的路径无效，例如位于未映射的驱动器上。</exception>
         <exception cref="T:System.IO.IOException">无法创建子目录。  
   
-- 或 - 
+-或- 
 文件或目录已具有 <paramref name="path" /> 指定的名称。</exception>
         <exception cref="T:System.IO.PathTooLongException">指定的路径和/或文件名超过了系统定义的最大长度。</exception>
         <exception cref="T:System.Security.SecurityException">调用方没有代码访问权限来创建目录。  
   
-- 或 - 
+-或- 
 调用方没有代码访问权限来读取返回的 <see cref="T:System.IO.DirectoryInfo" /> 对象所描述的目录。  当 <paramref name="path" /> 参数描述现有目录时，会发生这种情况。</exception>
         <exception cref="T:System.NotSupportedException"><paramref name="path" /> 包含不是驱动器标签（“C:\\”）的一部分的冒号字符 (:)。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于读取和写入文件。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />、<see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -427,15 +452,14 @@
         <exception cref="T:System.IO.DirectoryNotFoundException">指定的路径无效，例如位于未映射的驱动器上。</exception>
         <exception cref="T:System.IO.IOException">无法创建子目录。  
   
-- 或 - 
+-或- 
 文件或目录已具有 <paramref name="path" /> 指定的名称。</exception>
         <exception cref="T:System.IO.PathTooLongException">指定的路径和/或文件名超过了系统定义的最大长度。</exception>
         <exception cref="T:System.Security.SecurityException">调用方没有代码访问权限来创建目录。  
   
-- 或 - 
+-或- 
 调用方没有代码访问权限来读取返回的 <see cref="T:System.IO.DirectoryInfo" /> 对象所描述的目录。  当 <paramref name="path" /> 参数描述现有目录时，会发生这种情况。</exception>
         <exception cref="T:System.NotSupportedException"><paramref name="path" /> 包含不是驱动器标签（“C:\\”）的一部分的冒号字符 (:)。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于读取和写入文件。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />、<see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" /></permission>
       </Docs>
     </Member>
     <MemberGroup MemberName="Delete">
@@ -508,13 +532,12 @@
         <exception cref="T:System.IO.DirectoryNotFoundException">此 <see cref="T:System.IO.DirectoryInfo" /> 对象描述的目录不存在或找不到。</exception>
         <exception cref="T:System.IO.IOException">目录不为空。  
   
-- 或 - 
+-或- 
 该目录是应用程序的当前工作目录。  
   
-- 或 - 
+-或- 
 目录中存在开放句柄，并且操作系统是 Windows XP 或更早版本。 开放句柄可能产生自枚举目录。 有关详细信息，请参阅[如何：枚举目录和文件](~/docs/standard/io/how-to-enumerate-directories-and-files.md)。</exception>
         <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于写入目录。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -585,16 +608,15 @@
         <exception cref="T:System.IO.DirectoryNotFoundException">此 <see cref="T:System.IO.DirectoryInfo" /> 对象描述的目录不存在或找不到。</exception>
         <exception cref="T:System.IO.IOException">目录为只读。  
   
-- 或 - 
+-或- 
 该目录包含一个或多个文件或子目录，且 <paramref name="recursive" /> 为 <see langword="false" />。  
   
-- 或 - 
+-或- 
 该目录是应用程序的当前工作目录。  
   
-- 或 - 
+-或- 
 目录或目录的一个文件存在开放句柄，并且操作系统为 Windows XP 或更早版本。 枚举目录和文件可能会导致此开放句柄出现。 有关详细信息，请参阅[如何：枚举目录和文件](~/docs/standard/io/how-to-enumerate-directories-and-files.md)。</exception>
         <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermissionAccess">写入要删除的 <see langword="DirectoryInfo" /> 和子目录的权限需要写入标志。</permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -746,7 +768,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  <xref:System.IO.DirectoryInfo.EnumerateDirectories%2A> 和 <xref:System.IO.DirectoryInfo.GetDirectories%2A> 方法的区别如下：  
   
@@ -823,7 +845,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  <xref:System.IO.DirectoryInfo.EnumerateDirectories%2A> 和 <xref:System.IO.DirectoryInfo.GetDirectories%2A> 方法的区别如下：  
   
@@ -897,7 +919,7 @@
       </Parameters>
       <Docs>
         <param name="searchPattern">要与目录名匹配的搜索字符串。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
-        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
+        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值是 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
         <summary>返回与指定的搜索模式和搜索子目录选项匹配的目录信息的可枚举集合。</summary>
         <returns>与 <paramref name="searchPattern" /> 和 <paramref name="searchOption" /> 匹配的目录的可枚举集合。</returns>
         <remarks>
@@ -911,7 +933,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  <xref:System.IO.DirectoryInfo.EnumerateDirectories%2A> 和 <xref:System.IO.DirectoryInfo.GetDirectories%2A> 方法的区别如下：  
   
@@ -1108,7 +1130,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  <xref:System.IO.DirectoryInfo.EnumerateFiles%2A> 和 <xref:System.IO.DirectoryInfo.GetFiles%2A> 方法的区别如下：  
   
@@ -1195,7 +1217,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  <xref:System.IO.DirectoryInfo.EnumerateFiles%2A> 和 <xref:System.IO.DirectoryInfo.GetFiles%2A> 方法的区别如下：  
   
@@ -1271,7 +1293,7 @@
       </Parameters>
       <Docs>
         <param name="searchPattern">要与文件名匹配的搜索字符串。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
-        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
+        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值是 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
         <summary>返回与指定的搜索模式和搜索子目录选项匹配的文件信息的可枚举集合。</summary>
         <returns>与 <paramref name="searchPattern" /> 和 <paramref name="searchOption" /> 匹配的文件的可枚举集合。</returns>
         <remarks>
@@ -1285,7 +1307,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  <xref:System.IO.DirectoryInfo.EnumerateFiles%2A> 和 <xref:System.IO.DirectoryInfo.GetFiles%2A> 方法的区别如下：  
   
@@ -1468,7 +1490,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  <xref:System.IO.DirectoryInfo.EnumerateFileSystemInfos%2A> 和 <xref:System.IO.DirectoryInfo.GetFileSystemInfos%2A> 方法的区别如下：  
   
@@ -1546,7 +1568,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  <xref:System.IO.DirectoryInfo.EnumerateFileSystemInfos%2A> 和 <xref:System.IO.DirectoryInfo.GetFileSystemInfos%2A> 方法的区别如下：  
   
@@ -1620,7 +1642,7 @@
       </Parameters>
       <Docs>
         <param name="searchPattern">要与目录名匹配的搜索字符串。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
-        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
+        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值是 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
         <summary>返回与指定的搜索模式和搜索子目录选项匹配的文件系统信息的可枚举集合。</summary>
         <returns>与 <paramref name="searchPattern" /> 和 <paramref name="searchOption" /> 匹配的文件系统信息对象的可枚举集合。</returns>
         <remarks>
@@ -1634,7 +1656,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  <xref:System.IO.DirectoryInfo.EnumerateFileSystemInfos%2A> 和 <xref:System.IO.DirectoryInfo.GetFileSystemInfos%2A> 方法的区别如下：  
   
@@ -1835,16 +1857,14 @@
         <exception cref="T:System.SystemException">未能找到或修改该目录。</exception>
         <exception cref="T:System.UnauthorizedAccessException">目录为只读。  
   
- - 或 -  
+ -或-  
   
  当前平台不支持此操作。  
   
- - 或 -  
+ -或-  
   
  调用方没有所要求的权限。</exception>
         <exception cref="T:System.IO.IOException">打开目录时发生 I/O 错误。</exception>
-        <exception cref="T:System.PlatformNotSupportedException">当前操作系统不是 Microsoft Windows 2000 或更高版本。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于枚举目录的访问控制列表（ACL）的权限。 安全操作： <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.NoAccess" />、<see cref="F:System.Security.AccessControl.AccessControlActions.View" /></permission>
       </Docs>
     </Member>
     <Member MemberName="GetAccessControl">
@@ -1878,8 +1898,8 @@
         <summary>获取一个 <see cref="T:System.Security.AccessControl.DirectorySecurity" /> 对象，该对象封装当前 <see cref="T:System.IO.DirectoryInfo" /> 对象所描述的目录的指定类型的访问控制列表 (ACL) 项。</summary>
         <returns>一个 <see cref="T:System.Security.AccessControl.DirectorySecurity" /> 对象，它封装由 <paramref name="path" /> 参数描述的文件的访问控制规则。  
   
-异常 
- <list type="table"><listheader><term> 例外狀況類型 
+例外 
+ <list type="table"><listheader><term> 异常类型 
  </term><description> 条件 
  </description></listheader><item><term><see cref="T:System.SystemException" /></term><description> 未能找到或修改该目录。  
   
@@ -1887,14 +1907,12 @@
   
  </description></item><item><term><see cref="T:System.IO.IOException" /></term><description> 打开目录时发生 I/O 错误。  
   
- </description></item><item><term><see cref="T:System.PlatformNotSupportedException" /></term><description> 当前操作系统不是 Microsoft Windows 2000 或更高版本。  
-  
  </description></item><item><term><see cref="T:System.UnauthorizedAccessException" /></term><description> 目录为只读。  
   
-- 或 - 
+-或- 
 当前平台不支持此操作。  
   
-- 或 - 
+-或- 
 调用方没有所要求的权限。  
   
  </description></item></list></returns>
@@ -1908,7 +1926,6 @@
   
  ]]></format>
         </remarks>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于枚举目录的访问控制列表（ACL）的权限。 安全操作： <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.NoAccess" />、<see cref="F:System.Security.AccessControl.AccessControlActions.View" /></permission>
       </Docs>
     </Member>
     <MemberGroup MemberName="GetDirectories">
@@ -1960,7 +1977,7 @@
       <Parameters />
       <Docs>
         <summary>返回当前目录的子目录。</summary>
-        <returns><see cref="T:System.IO.DirectoryInfo" /> 对象的数组。</returns>
+        <returns>一个 <see cref="T:System.IO.DirectoryInfo" /> 对象数组。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -1997,7 +2014,6 @@
         <exception cref="T:System.IO.DirectoryNotFoundException">封装在 <see cref="T:System.IO.DirectoryInfo" /> 对象中的路径无效，例如，在未映射的驱动器上。</exception>
         <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
         <exception cref="T:System.UnauthorizedAccessException">调用方没有所要求的权限。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于读取目录。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -2057,7 +2073,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  此方法预先填充以下 <xref:System.IO.DirectoryInfo> 属性的值：  
   
@@ -2090,7 +2106,6 @@
         <exception cref="T:System.ArgumentNullException"><paramref name="searchPattern" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">封装在 <see langword="DirectoryInfo" /> 对象中的路径无效（例如，在未映射的驱动器上）。</exception>
         <exception cref="T:System.UnauthorizedAccessException">调用方没有所要求的权限。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于读取文件和目录以及访问路径。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />、<see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -2138,7 +2153,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  此方法预先填充以下 <xref:System.IO.DirectoryInfo> 属性的值：  
   
@@ -2218,7 +2233,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  如果没有子目录，或者没有与 `searchPattern` 参数匹配的子目录，则此方法将返回一个空数组。  
   
@@ -2254,7 +2269,6 @@
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="searchOption" /> 不是有效的 <see cref="T:System.IO.SearchOption" /> 值。</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">封装在 <see langword="DirectoryInfo" /> 对象中的路径无效（例如，在未映射的驱动器上）。</exception>
         <exception cref="T:System.UnauthorizedAccessException">调用方没有所要求的权限。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于读取文件和目录以及访问路径。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />、<see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -2309,7 +2323,7 @@
       <Parameters />
       <Docs>
         <summary>返回当前目录的文件列表。</summary>
-        <returns><see cref="T:System.IO.FileInfo" /> 类型的数组。</returns>
+        <returns>一个类型为 <see cref="T:System.IO.FileInfo" /> 的数组。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -2355,7 +2369,6 @@
  ]]></format>
         </remarks>
         <exception cref="T:System.IO.DirectoryNotFoundException">路径无效（例如，路径位于未映射的驱动器上）。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于读取目录。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -2403,7 +2416,7 @@
       <Docs>
         <param name="searchPattern">要与文件名匹配的搜索字符串。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
         <summary>返回当前目录中与给定的搜索模式匹配的文件列表。</summary>
-        <returns><see cref="T:System.IO.FileInfo" /> 类型的数组。</returns>
+        <returns>一个类型为 <see cref="T:System.IO.FileInfo" /> 的数组。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -2476,7 +2489,6 @@
         <exception cref="T:System.ArgumentNullException"><paramref name="searchPattern" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">路径无效（例如，它位于未映射的驱动器上）。</exception>
         <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于访问路径和读取文件和目录。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />、<see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -2621,7 +2633,7 @@
         <param name="searchPattern">要与文件名匹配的搜索字符串。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
         <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。</param>
         <summary>返回当前目录的文件列表，该列表与给定的搜索模式匹配并且使用某个值确定是否搜索子目录。</summary>
-        <returns><see cref="T:System.IO.FileInfo" /> 类型的数组。</returns>
+        <returns>一个类型为 <see cref="T:System.IO.FileInfo" /> 的数组。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -2696,7 +2708,6 @@
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="searchOption" /> 不是有效的 <see cref="T:System.IO.SearchOption" /> 值。</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">路径无效（例如，它位于未映射的驱动器上）。</exception>
         <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于访问路径和读取文件和目录。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />、<see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -2848,7 +2859,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  此方法不是递归的。  
   
@@ -2888,7 +2899,6 @@
         <exception cref="T:System.ArgumentNullException"><paramref name="searchPattern" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">指定的路径无效（例如，它位于未映射的驱动器上）。</exception>
         <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于读取文件和目录以及访问路径。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />、<see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" /></permission>
         <altmember cref="T:System.IO.FileSystemInfo" />
         <altmember cref="T:System.IO.FileSystemWatcher" />
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
@@ -2938,7 +2948,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  此方法不是递归的。  
   
@@ -3011,7 +3021,7 @@
       </Parameters>
       <Docs>
         <param name="searchPattern">要与目录和文件的名称匹配的搜索字符串。  此参数可以包含有效文本路径和通配符（* 和 ?）的组合，但不支持正则表达式。</param>
-        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值为 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
+        <param name="searchOption">指定搜索操作是应仅包含当前目录还是应包含所有子目录的枚举值之一。 默认值是 <see cref="F:System.IO.SearchOption.TopDirectoryOnly" />。</param>
         <summary>检索 <see cref="T:System.IO.FileSystemInfo" /> 对象的数组，该数组表示与指定的搜索条件匹配的文件和子目录。</summary>
         <returns>与搜索条件匹配的文件系统项的数组。</returns>
         <remarks>
@@ -3025,7 +3035,7 @@
 |\* （星号）|此位置中的零个或多个字符。|  
 |? （问号）|此位置中的零个或一个字符。|  
   
- 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 也即“”。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
+ 通配符以外的字符为原义字符。 例如，字符串 "\*t" 搜索以字母 "t" 结尾的所有名称。 "。 `searchPattern` 字符串 "s\*" 搜索 `path` 以字母 "s" 开头的所有名称。  
   
  对于子目录，此方法返回的 <xref:System.IO.FileSystemInfo> 对象可以转换为派生类 <xref:System.IO.DirectoryInfo>。 使用 <xref:System.IO.FileSystemInfo.Attributes%2A?displayProperty=nameWithType> 属性返回的 <xref:System.IO.FileAttributes> 值来确定 <xref:System.IO.FileSystemInfo> 是表示文件还是目录。  
   
@@ -3122,17 +3132,16 @@
         <exception cref="T:System.ArgumentException"><paramref name="destDirName" /> 是一个空字符串 (''")。</exception>
         <exception cref="T:System.IO.IOException">尝试将目录移动到不同的卷。  
   
-- 或 - 
+-或- 
  <paramref name="destDirName" /> 已存在。  
   
-- 或 - 
+-或- 
 你没有访问此路径的权限。  
   
-- 或 - 
+-或- 
 要移动的目录和目标目录具有相同的名称。</exception>
         <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">找不到目标目录。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于读取和写入文件和目录以及访问目标目录。 安全操作： <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" />、<see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -3266,7 +3275,6 @@
           ]]></format>
         </remarks>
         <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于读取文件和目录以及访问路径。 关联的枚举： <see cref="T:System.Security.Permissions.FileIOPermissionAccess" />、<see cref="T:System.Security.Permissions.FileIOPermissionAccess" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -3323,7 +3331,6 @@
  ]]></format>
         </remarks>
         <exception cref="T:System.Security.SecurityException">调用方没有所要求的权限。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于读取文件和目录以及访问路径。 关联的枚举： <see cref="T:System.Security.Permissions.FileIOPermissionAccess" />、<see cref="T:System.Security.Permissions.FileIOPermissionAccess" /></permission>
         <related type="Article" href="~/docs/standard/io/index.md">文件和流 I/O</related>
         <related type="Article" href="~/docs/standard/io/how-to-read-text-from-a-file.md">如何：从文件读取文本</related>
         <related type="Article" href="~/docs/standard/io/how-to-write-text-to-a-file.md">如何：向文件写入文本</related>
@@ -3401,8 +3408,6 @@
         <exception cref="T:System.ArgumentNullException"><paramref name="directorySecurity" /> 参数为 <see langword="null" />。</exception>
         <exception cref="T:System.SystemException">未能找到或修改该文件。</exception>
         <exception cref="T:System.UnauthorizedAccessException">当前进程不具有打开该文件的权限。</exception>
-        <exception cref="T:System.PlatformNotSupportedException">当前操作系统不是 Microsoft Windows 2000 或更高版本。</exception>
-        <permission cref="T:System.Security.Permissions.FileIOPermission">用于枚举目录的访问控制列表（ACL）的权限。 安全操作： <see cref="F:System.Security.Permissions.SecurityAction.Demand" />。 关联的枚举： <see cref="F:System.Security.Permissions.FileIOPermissionAccess.NoAccess" />、<see cref="F:System.Security.AccessControl.AccessControlActions.View" /></permission>
       </Docs>
     </Member>
     <Member MemberName="ToString">

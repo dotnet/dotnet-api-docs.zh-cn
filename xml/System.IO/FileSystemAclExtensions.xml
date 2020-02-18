@@ -1,5 +1,5 @@
 <Type Name="FileSystemAclExtensions" FullName="System.IO.FileSystemAclExtensions">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="32e4ecdec828b9bc9641b02c07e388c4e9e8ee8f" /><Meta Name="ms.sourcegitcommit" Value="19810b7f44c3fa6cc5f0af0391e435c59897b089" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="01/07/2020" /><Meta Name="ms.locfileid" Value="75707968" /></Metadata><TypeSignature Language="C#" Value="public static class FileSystemAclExtensions" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="9a3b3bd0405a196652d831086f570865b50aef8d" /><Meta Name="ms.sourcegitcommit" Value="a8ff98b48bda124cfcb2605f5da9b21bc6dcd791" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="02/14/2020" /><Meta Name="ms.locfileid" Value="77225025" /></Metadata><TypeSignature Language="C#" Value="public static class FileSystemAclExtensions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit FileSystemAclExtensions extends System.Object" />
   <TypeSignature Language="DocId" Value="T:System.IO.FileSystemAclExtensions" />
   <TypeSignature Language="VB.NET" Value="Public Module FileSystemAclExtensions" />
@@ -54,7 +54,38 @@
 
 ## Remarks
 
-此扩展方法已添加到 .NET Core，以使 `System.IO.DirectoryInfo.Create(System.Security.AccessControl.DirectorySecurity)` .NET Framework 方法提供的功能。
+此扩展方法已添加到 .NET Core，以使[DirectoryInfo （system.security.accesscontrol.directorysecurity）](https://docs.microsoft.com/dotnet/api/system.io.directoryinfo.create?view=netframework-4.8#System_IO_DirectoryInfo_Create_System_Security_AccessControl_DirectorySecurity_) .NET Framework 方法提供的功能。
+
+## Examples
+
+下面的代码示例使用指定的目录安全属性在用户的临时文件夹内创建一个新目录：
+
+```csharp
+using System.IO;
+using System.Security.AccessControl;
+using System.Security.Principal;
+
+namespace ConsoleApp
+{
+    class Program
+    {
+        static void Main()
+        {
+            DirectorySecurity security = new DirectorySecurity();
+
+            SecurityIdentifier identity = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+            FileSystemAccessRule accessRule = new FileSystemAccessRule(identity, FileSystemRights.FullControl, AccessControlType.Allow);
+            security.AddAccessRule(accessRule);
+
+            string path = Path.Combine(Path.GetTempPath(), "directoryToCreate");
+
+            DirectoryInfo dirInfo = new DirectoryInfo(path);
+
+            dirInfo.Create(security);
+        }
+    }
+}
+```
 
           ]]></format>
         </remarks>
@@ -101,7 +132,41 @@
 
 ## Remarks
 
-此扩展方法已添加到 .NET Core，以使 `System.IO.FileStream.#ctor(System.String,System.IO.FileMode,System.Security.AccessControl.FileSystemRights,System.IO.FileShare,System.Int32,System.IO.FileOptions,System.Security.AccessControl.FileSecurity)` .NET Framework 构造函数提供的功能。
+已将此扩展方法添加到 .NET Core，以引入由提供的功能：
+
+- [FileStream （String、FileSystemRights、文件、FileSecurity）](https://docs.microsoft.com/dotnet/api/system.io.filestream.-ctor?view=netframework-4.8#System_IO_FileStream__ctor_System_String_System_IO_FileMode_System_Security_AccessControl_FileSystemRights_System_IO_FileShare_System_Int32_System_IO_FileOptions_System_Security_AccessControl_FileSecurity_) .NET Framework 构造函数。
+- [File. Create （String，Int32，文件，FileSecurity](https://docs.microsoft.com/en-us/dotnet/api/system.io.file.create?view=netframework-4.8#System_IO_File_Create_System_String_System_Int32_System_IO_FileOptions_System_Security_AccessControl_FileSecurity_) .NET Framework 方法。
+
+## Examples
+
+下面的代码示例使用指定的文件安全特性，在用户的临时文件夹内创建一个新的文本文件（默认缓冲区大小为4096）：
+
+```csharp
+using System.IO;
+using System.Security.AccessControl;
+using System.Security.Principal;
+
+namespace ConsoleApp
+{
+    class Program
+    {
+        static void Main()
+        {
+            FileSecurity security = new FileSecurity();
+
+            SecurityIdentifier identity = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+            FileSystemAccessRule accessRule = new FileSystemAccessRule(identity, FileSystemRights.FullControl, AccessControlType.Allow);
+            security.AddAccessRule(accessRule);
+
+            string path = Path.Combine(Path.GetTempPath(), "fileToCreate.txt");
+
+            FileInfo fileInfo = new FileInfo(path);
+
+            fileInfo.Create(FileMode.Create, FileSystemRights.FullControl, FileShare.Read, 4096, FileOptions.None, security);
+        }
+    }
+}
+```
 
           ]]></format>
         </remarks>
@@ -109,7 +174,7 @@
         <exception cref="T:System.ArgumentNullException"><paramref name="fileInfo" /> 或 <paramref name="fileSecurity" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="mode" /> 和 <paramref name="share" /> 超出其合法的枚举范围。
 
-- 或 -
+-或-
 
 <paramref name="bufferSize" /> 不是正数。</exception>
         <exception cref="T:System.IO.DirectoryNotFoundException">找不到路径的某一部分。</exception>
