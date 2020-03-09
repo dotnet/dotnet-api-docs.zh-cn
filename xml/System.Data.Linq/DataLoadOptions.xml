@@ -1,5 +1,5 @@
 <Type Name="DataLoadOptions" FullName="System.Data.Linq.DataLoadOptions">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="72d660f8470f5e7cca019a9f65faf91310a47c7e" /><Meta Name="ms.sourcegitcommit" Value="a22d0855bbf24d893f43605f8b7e3a44bd9551a5" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70329541" /></Metadata><TypeSignature Language="C#" Value="public sealed class DataLoadOptions" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="8a1785fd4a4f4b0300f325edb3bcc7d28780e48c" /><Meta Name="ms.sourcegitcommit" Value="1b924db57b3a1cf768d98c21f9b988d6966a0f2b" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="03/06/2020" /><Meta Name="ms.locfileid" Value="78688091" /></Metadata><TypeSignature Language="C#" Value="public sealed class DataLoadOptions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DataLoadOptions extends System.Object" />
   <TypeSignature Language="DocId" Value="T:System.Data.Linq.DataLoadOptions" />
   <TypeSignature Language="VB.NET" Value="Public NotInheritable Class DataLoadOptions" />
@@ -24,29 +24,29 @@
 ## <a name="general"></a>常规  
  查询某对象时，实际上您只检索请求的对象。 不会同时自动提取*相关*的对象。 （有关详细信息，请参阅[跨关系查询](~/docs/framework/data/adonet/sql/linq/querying-across-relationships.md)。）  
   
- <xref:System.Data.Linq.DataLoadOptions>类提供两种方法来立即加载指定的相关数据。 <xref:System.Data.Linq.DataLoadOptions.LoadWith%2A>方法允许立即加载与主目标相关的数据。 <xref:System.Data.Linq.DataLoadOptions.AssociateWith%2A>方法允许筛选相关的对象。  
+ <xref:System.Data.Linq.DataLoadOptions> 类提供两种方法来立即加载指定的相关数据。 <xref:System.Data.Linq.DataLoadOptions.LoadWith%2A> 方法允许立即加载与主目标相关的数据。 <xref:System.Data.Linq.DataLoadOptions.AssociateWith%2A> 方法允许筛选相关的对象。  
   
 ## <a name="rules"></a>规则  
- 请注意以下有关<xref:System.Data.Linq.DataLoadOptions>使用情况的规则：  
+ 请注意以下关于 <xref:System.Data.Linq.DataLoadOptions> 用法的规则：  
   
--   在执行第一个<xref:System.Data.Linq.DataContext>查询后将赋值给将生成异常。<xref:System.Data.Linq.DataLoadOptions>  
+-   在执行第一个查询后将 <xref:System.Data.Linq.DataLoadOptions> 分配给 <xref:System.Data.Linq.DataContext> 会生成一个异常。  
   
--   将其分配<xref:System.Data.Linq.DataContext>给后修改会生成异常<xref:System.Data.Linq.DataLoadOptions>  
+-   在将 <xref:System.Data.Linq.DataLoadOptions> 分配给某个 <xref:System.Data.Linq.DataContext> 后，对其进行修改会生成异常  
   
 ## <a name="cycle-handling"></a>周期处理  
- <xref:System.Data.Linq.DataLoadOptions.LoadWith%2A>和<xref:System.Data.Linq.DataLoadOptions.AssociateWith%2A>指令不能创建循环。 下面的示例表示此类图形的示例：  
+ <xref:System.Data.Linq.DataLoadOptions.LoadWith%2A> 和 <xref:System.Data.Linq.DataLoadOptions.AssociateWith%2A> 指令不能创建循环。 下面的示例表示此类图形的示例：  
   
--   示例 1：自递归  
+-   示例1：自递归  
   
     -   `dlo.LoadWith<Employee>(e => e.Reports);`  
   
--   示例 2：后向指针  
+-   示例2：后向指针  
   
     -   `dlo.LoadWith <Customer>(c => C.Orders);`  
   
     -   `dlo.LoadWith <Order>(o => o.Customer);`  
   
--   示例 3：更长循环  
+-   示例3：更长循环  
   
      虽然这不应在规范化的模型中出现，但也可能出现这种情况。  
   
@@ -56,7 +56,7 @@
   
     -   `dlo.LoadWith <C>(c => c.As);`  
   
--   示例 4：自递归子查询  
+-   示例4：自递归子查询  
   
     -   `dlo.AssociateWith<A>(a=>a.As.Where(a=>a.Id=33));`  
   
@@ -68,18 +68,18 @@
   
  下面是一些可帮助你了解这些方案中所发生情况的常规规则。  
   
- **LoadWith**每次调用<xref:System.Data.Linq.DataLoadOptions.LoadWith%2A>都会检查循环是否已引入到图形中。 如果有，如示例1、2和3中所示，将引发异常。  
+ **LoadWith**对的每个调用都将检查是否已在图形中引入循环 <xref:System.Data.Linq.DataLoadOptions.LoadWith%2A>。 如果有，如示例1、2和3中所示，将引发异常。  
   
  **AssociateWith**引擎在运行时不会将现有子查询子句应用到表达式中的关系。  
   
--   在示例4中， `Where`子句是针对所有`A`执行的，而不仅仅是子查询表达式本身的子筛选（因为这会是递归的）  
+-   在示例4中，对所有 `A`（而不仅仅是子查询表达式本身的子筛选）执行 `Where` 子句（因为这会是递归的）  
   
--   在示例5中，第`Where`一个子句应用于`B`所有，即使在上`B`存在子查询。 即使在`Where`上`A`存在子查询，第二个子句也`A`适用于所有。  
+-   在示例5中，第一个 `Where` 子句应用于所有 `B`，即使 `B`上存在子查询。 即使 `A`上存在子查询，第二个 `Where` 子句也适用于所有 `A`。  
   
    
   
 ## Examples  
- 从 Northwind 示例`Customers`数据库检索时，可以使用<xref:System.Data.Linq.DataLoadOptions>来指定`Orders`还将检索。 甚至可以指定`Orders`要检索的子集。  
+ 从 Northwind 示例数据库中检索 `Customers` 时，可以使用 <xref:System.Data.Linq.DataLoadOptions> 来指定还将检索 `Orders`。 甚至可以指定要检索的 `Orders` 子集。  
   
  ]]></format>
     </remarks>
@@ -123,13 +123,13 @@
         <Parameter Name="expression" Type="System.Linq.Expressions.LambdaExpression" />
       </Parameters>
       <Docs>
-        <param name="expression">标识要对特定一对多字段或属性使用的查询。 请注意以下事项：  
+        <param name="expression">标识要对特定一对多字段或属性使用的查询。 注意以下事项：  
   
  如果该表达式不是以表示一对多关系的字段或属性开头，则会引发异常。  
   
  如果无效运算符出现在表达式中，则会引发异常。 有效运算符包括：  
   
- Where  
+ 其中  
   
  OrderBy  
   
@@ -145,7 +145,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 在下面的示例中，内部循环仅`Orders`循环访问当前未发货的。  
+ 在下面的示例中，内部循环只循环访问当前未发货的那些 `Orders`。  
   
    
   
@@ -183,13 +183,13 @@
         <typeparam name="T">要查询的类型。  
   
  如果未映射该类型，则会引发异常。</typeparam>
-        <param name="expression">标识要对特定一对多字段或属性使用的查询。 请注意以下事项：  
+        <param name="expression">标识要对特定一对多字段或属性使用的查询。 注意以下事项：  
   
  如果该表达式不是以表示一对多关系的字段或属性开头，则会引发异常。  
   
  如果无效运算符出现在表达式中，则会引发异常。 有效运算符包括：  
   
- Where  
+ 其中  
   
  OrderBy  
   
@@ -205,12 +205,12 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 有关如何避免周期的信息，请参阅<xref:System.Data.Linq.DataLoadOptions>。  
+ 有关如何避免周期的信息，请参阅 <xref:System.Data.Linq.DataLoadOptions>。  
   
    
   
 ## Examples  
- 在下面的示例中，内部循环仅`Orders`循环访问当前未发货的。  
+ 在下面的示例中，内部循环只循环访问当前未发货的那些 `Orders`。  
   
  [!code-csharp[System.Data.Linq.DataLoadOptions#1](~/samples/snippets/csharp/VS_Snippets_Data/system.data.linq.dataloadoptions/cs/program.cs#1)]
  [!code-vb[System.Data.Linq.DataLoadOptions#1](~/samples/snippets/visualbasic/VS_Snippets_Data/system.data.linq.dataloadoptions/vb/module1.vb#1)]  
@@ -223,6 +223,7 @@
       <MemberSignature Language="C#" Value="public bool GetAssociationCriteria (System.Reflection.MemberInfo memberInfo, out System.Linq.Expressions.LambdaExpression associationCriteria);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool GetAssociationCriteria(class System.Reflection.MemberInfo memberInfo, [out] class System.Linq.Expressions.LambdaExpression&amp; associationCriteria) cil managed" />
       <MemberSignature Language="DocId" Value="M:System.Data.Linq.DataLoadOptions.GetAssociationCriteria(System.Reflection.MemberInfo,System.Linq.Expressions.LambdaExpression@)" />
+      <MemberSignature Language="VB.NET" Value="Public Function GetAssociationCriteria (memberInfo As MemberInfo, ByRef associationCriteria As LambdaExpression) As Boolean" />
       <MemberSignature Language="C++ CLI" Value="public:&#xA; bool GetAssociationCriteria(System::Reflection::MemberInfo ^ memberInfo, [Runtime::InteropServices::Out] System::Linq::Expressions::LambdaExpression ^ % associationCriteria);" />
       <MemberSignature Language="F#" Value="member this.GetAssociationCriteria : System.Reflection.MemberInfo * LambdaExpression -&gt; bool" Usage="dataLoadOptions.GetAssociationCriteria (memberInfo, associationCriteria)" />
       <MemberType>Method</MemberType>
@@ -249,6 +250,7 @@
       <MemberSignature Language="C#" Value="public bool IsImmediate (System.Reflection.MemberInfo memberInfo);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsImmediate(class System.Reflection.MemberInfo memberInfo) cil managed" />
       <MemberSignature Language="DocId" Value="M:System.Data.Linq.DataLoadOptions.IsImmediate(System.Reflection.MemberInfo)" />
+      <MemberSignature Language="VB.NET" Value="Public Function IsImmediate (memberInfo As MemberInfo) As Boolean" />
       <MemberSignature Language="C++ CLI" Value="public:&#xA; bool IsImmediate(System::Reflection::MemberInfo ^ memberInfo);" />
       <MemberSignature Language="F#" Value="member this.IsImmediate : System.Reflection.MemberInfo -&gt; bool" Usage="dataLoadOptions.IsImmediate memberInfo" />
       <MemberType>Method</MemberType>
@@ -341,9 +343,9 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 不能指定两个级别的关系的加载（例如`Orders.OrderDetails`）。 在这些情况下，您必须指定<xref:System.Data.Linq.DataLoadOptions.LoadWith%2A>两个单独的方法。  
+ 不能指定两个级别的关系（例如 `Orders.OrderDetails`）的加载。 在这些情况下，您必须指定两个单独的 <xref:System.Data.Linq.DataLoadOptions.LoadWith%2A> 方法。  
   
- 若要避免循环，请参阅中<xref:System.Data.Linq.DataLoadOptions>的 "备注" 部分。  
+ 若要避免循环，请参阅 <xref:System.Data.Linq.DataLoadOptions>中的 "备注" 部分。  
   
    
   
