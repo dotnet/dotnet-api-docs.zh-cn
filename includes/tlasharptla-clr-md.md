@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 5b02f54ad1c4ffcefb9d41819b32844cc26845cd
-ms.sourcegitcommit: 1bb00d2f4343e73ae8d58668f02297a3cf10a4c1
+ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
 ms.translationtype: HT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 06/15/2019
-ms.locfileid: "63869237"
+ms.lasthandoff: 08/29/2019
+ms.locfileid: "71139036"
 ---
-<span data-ttu-id="d61a4-101">公共语言运行时 (CLR)</span><span class="sxs-lookup"><span data-stu-id="d61a4-101">common language runtime (CLR)</span></span>
+<span data-ttu-id="15afe-101">公共语言运行时 (CLR)</span><span class="sxs-lookup"><span data-stu-id="15afe-101">common language runtime (CLR)</span></span>

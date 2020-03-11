@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: c7d16926fb184f3e5ce32ee9da528af872a75ca8
-ms.sourcegitcommit: 1bb00d2f4343e73ae8d58668f02297a3cf10a4c1
+ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
 ms.translationtype: HT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 06/15/2019
-ms.locfileid: "63871593"
+ms.lasthandoff: 08/29/2019
+ms.locfileid: "71139186"
 ---
-<span data-ttu-id="d1e7b-101">二维</span><span class="sxs-lookup"><span data-stu-id="d1e7b-101">2-D</span></span>
+<span data-ttu-id="26e4e-101">二维</span><span class="sxs-lookup"><span data-stu-id="26e4e-101">2-D</span></span>
