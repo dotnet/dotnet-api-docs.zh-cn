@@ -1,5 +1,5 @@
 <Type Name="WindowsIdentity" FullName="System.Security.Principal.WindowsIdentity">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="efb81cca121fd42dad63f6d43d263c861088b9ab" /><Meta Name="ms.sourcegitcommit" Value="1b924db57b3a1cf768d98c21f9b988d6966a0f2b" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="03/06/2020" /><Meta Name="ms.locfileid" Value="78753834" /></Metadata><TypeSignature Language="C#" Value="public class WindowsIdentity : System.Security.Claims.ClaimsIdentity, IDisposable, System.Runtime.Serialization.IDeserializationCallback, System.Runtime.Serialization.ISerializable" FrameworkAlternate="dotnet-plat-ext-2.1;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0;dotnet-plat-ext-3.1;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="860eeff0f860781f895acf9679aa48e2ce39642a" /><Meta Name="ms.sourcegitcommit" Value="2b887f321b7927795128f58bb327e63b089cbe3d" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="03/19/2020" /><Meta Name="ms.locfileid" Value="79547689" /></Metadata><TypeSignature Language="C#" Value="public class WindowsIdentity : System.Security.Claims.ClaimsIdentity, IDisposable, System.Runtime.Serialization.IDeserializationCallback, System.Runtime.Serialization.ISerializable" FrameworkAlternate="dotnet-plat-ext-2.1;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0;dotnet-plat-ext-3.1;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit WindowsIdentity extends System.Security.Claims.ClaimsIdentity implements class System.IDisposable, class System.Runtime.Serialization.IDeserializationCallback, class System.Runtime.Serialization.ISerializable" FrameworkAlternate="dotnet-plat-ext-2.1;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0;dotnet-plat-ext-3.1;netcore-3.0;netcore-3.1" />
   <TypeSignature Language="DocId" Value="T:System.Security.Principal.WindowsIdentity" />
   <TypeSignature Language="VB.NET" Value="Public Class WindowsIdentity&#xA;Inherits ClaimsIdentity&#xA;Implements IDeserializationCallback, IDisposable, ISerializable" FrameworkAlternate="dotnet-plat-ext-2.1;dotnet-plat-ext-2.2;dotnet-plat-ext-3.0;dotnet-plat-ext-3.1;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
@@ -1228,6 +1228,9 @@
 ## Remarks  
  在 Windows NT 平台上，当前用户必须有足够的权限来允许进行模拟。  
   
+> [!WARNING]
+>  避免将此方法与 async/await 模式结合使用。 在某些情况下，它可能会导致由于模拟不会还原而导致的可靠性问题，即使生成的 `WindowsImpersonationContext` 被释放。 请改用 `RunImpersonated`。  
+  
    
   
 ## Examples  
@@ -1288,6 +1291,9 @@
 >  使用 `userToken` 值 <xref:System.IntPtr.Zero> 调用 <xref:System.Security.Principal.WindowsIdentity.Impersonate%28System.IntPtr%29> 方法等效于调用 Win32 `RevertToSelf` 函数。 如果当前正在模拟其他用户，则控件会恢复为原始用户。  
   
  有关非托管代码调用的详细信息，请参阅[使用非托管 DLL 函数](~/docs/framework/interop/consuming-unmanaged-dll-functions.md)。  
+  
+> [!WARNING]
+>  避免将此方法与 async/await 模式结合使用。 在某些情况下，它可能会导致由于模拟不会还原而导致的可靠性问题，即使生成的 `WindowsImpersonationContext` 被释放。 请改用 `RunImpersonated`。  
   
    
   
@@ -1684,6 +1690,13 @@
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
+## Remarks  
+  
+> [!NOTE]
+>  与 `Impersonate`相比，此方法可与 async/await 模式可靠地一起使用。 在异步方法中，此方法的泛型重载可与 async 委托参数一起使用，以便生成的任务可能会等待。  
+  
+   
+  
 ## Examples  
  下面的示例演示如何使用 <xref:System.Security.Principal.WindowsIdentity> 类来模拟用户。  
   
@@ -1808,6 +1821,13 @@ public class ImpersonationDemo
         <returns>函数的结果。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+  
+> [!NOTE]
+>  与 `Impersonate`相比，此方法可与 async/await 模式可靠地一起使用。 在异步方法中，此方法可与 async 委托参数一起使用，以便生成的任务可能会等待。  
+  
+   
   
 ## Examples  
  下面的示例演示如何使用 <xref:System.Security.Principal.WindowsIdentity> 类来模拟用户。  
