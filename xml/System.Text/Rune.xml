@@ -1,5 +1,5 @@
 <Type Name="Rune" FullName="System.Text.Rune">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="ccd800c394b1cec987d6e6d9159e72f5b0385984" /><Meta Name="ms.sourcegitcommit" Value="8ae9a18b248625c8e1851e607c00346a64849587" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="12/17/2019" /><Meta Name="ms.locfileid" Value="75118654" /></Metadata><TypeSignature Language="C#" Value="public struct Rune : IComparable&lt;System.Text.Rune&gt;, IEquatable&lt;System.Text.Rune&gt;" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="ff9c267452a86e0b4821e842a90dedf5d05b6760" /><Meta Name="ms.sourcegitcommit" Value="b0947fed0227b6b2e292d7efb43705b488b130aa" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="04/29/2020" /><Meta Name="ms.locfileid" Value="82303966" /></Metadata><TypeSignature Language="C#" Value="public struct Rune : IComparable&lt;System.Text.Rune&gt;, IEquatable&lt;System.Text.Rune&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit Rune extends System.ValueType implements class System.IComparable`1&lt;valuetype System.Text.Rune&gt;, class System.IEquatable`1&lt;valuetype System.Text.Rune&gt;" />
   <TypeSignature Language="DocId" Value="T:System.Text.Rune" />
   <TypeSignature Language="VB.NET" Value="Public Structure Rune&#xA;Implements IComparable(Of Rune), IEquatable(Of Rune)" />
@@ -9,6 +9,7 @@
     <AssemblyName>System.Runtime</AssemblyName>
     <AssemblyVersion>4.2.1.0</AssemblyVersion>
     <AssemblyVersion>4.2.2.0</AssemblyVersion>
+    <AssemblyVersion>5.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ValueType</BaseTypeName>
@@ -33,7 +34,200 @@
 
 ## Remarks
 
-此类型的构造函数和转换运算符将验证输入，因此使用者可以调用 Api，假定基础 <xref:System.Text.Rune> 实例的格式正确。
+<xref:System.Text.Rune> 实例表示一个 Unicode 标量值，这意味着任何不包括代理项范围（U + D800）的码位。U + DFFF）。 类型的构造函数和转换运算符验证输入，因此使用者可以调用 Api，假定基础 <xref:System.Text.Rune> 实例的格式正确。
+
+如果你不熟悉 Unicode 标量值、代码点、代理项范围和格式正确的术语，请参阅[.net 中的字符编码简介](/dotnet/standard/base-types/character-encoding-introduction)。
+
+以下各节将对此进行说明：
+
+* [何时使用 Rune 类型](#when-to-use-the-rune-type)
+* [何时不使用 Rune 类型](#when-not-to-use-rune)
+* [如何实例化 Rune](#how-to-instantiate-a-rune)
+* [如何查询 Rune 实例的属性](#query-properties-of-a-rune)
+* [将 `Rune` 转换为 UTF-8 或 UTF-16](#convert-a-rune-to-utf-8-or-utf-16)
+* [.NET 中的 Rune 与其他语言](#rune-in-net-vs-other-languages)
+
+### <a name="when-to-use-the-rune-type"></a>何时使用 Rune 类型
+
+如果你的代码，请考虑使用 `Rune` 类型：
+
+* 调用需要 Unicode 标量值的 Api
+* 显式处理代理项对
+
+#### <a name="apis-that-require-unicode-scalar-values"></a>需要 Unicode 标量值的 Api
+
+如果代码循环访问 `string` 或 `ReadOnlySpan<char>`中的 `char` 实例，则某些 `char` 方法将无法在代理项范围内的 `char` 实例上正常工作。 例如，以下 Api 需要标量值 `char` 才能正常工作：
+
+* <xref:System.Char.GetNumericValue%2A?displayProperty=nameWithType>
+* <xref:System.Char.GetUnicodeCategory%2A?displayProperty=nameWithType>
+* <xref:System.Char.IsDigit%2A?displayProperty=nameWithType>
+* <xref:System.Char.IsLetter%2A?displayProperty=nameWithType>
+* <xref:System.Char.IsLetterOrDigit%2A?displayProperty=nameWithType>
+* <xref:System.Char.IsLower%2A?displayProperty=nameWithType>
+* <xref:System.Char.IsNumber%2A?displayProperty=nameWithType>
+* <xref:System.Char.IsPunctuation%2A?displayProperty=nameWithType>
+* <xref:System.Char.IsSymbol%2A?displayProperty=nameWithType>
+* <xref:System.Char.IsUpper%2A?displayProperty=nameWithType>
+
+下面的示例演示如果有任何 `char` 实例是代理项码位，则无法正常工作的代码：
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/CountLettersInString.cs" id="SnippetBadExample":::
+
+下面是适用于 `ReadOnlySpan<char>`的等效代码：
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/CountLettersInSpan.cs" id="SnippetBadExample":::
+
+前面的代码使用某些语言（如英语）正常工作：
+
+```csharp
+CountLettersInString("Hello")
+// Returns 5
+```
+
+但对于基本多语言平面以外的语言（如 Osage），它将无法正常工作：
+
+```csharp
+CountLettersInString("𐓏𐓘𐓻𐓘𐓻𐓟 𐒻𐓟")
+// Returns 0
+```
+
+此方法返回不正确的 Osage 文本结果的原因是 Osage 字母的 `char` 实例是代理项码位。 没有单个代理项码位具有足够的信息来确定它是否是字母。
+
+如果将此代码更改为使用 `Rune` 而不是 `char`，则方法将与基本多语言平面之外的代码点一起正常工作：
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/CountLettersInString.cs" id="SnippetGoodExample":::
+
+下面是适用于 `ReadOnlySpan<char>`的等效代码：
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/CountLettersInSpan.cs" id="SnippetGoodExample":::
+
+前面的代码会正确统计 Osage 字母：
+
+```csharp
+CountLettersInString("𐓏𐓘𐓻𐓘𐓻𐓟 𐒻𐓟")
+// Returns 8
+```
+
+#### <a name="code-that-explicitly-handles-surrogate-pairs"></a>显式处理代理项对的代码
+
+如果你的代码调用显式操作代理项码位的 Api，请考虑使用 `Rune` 类型，如以下方法：
+
+* <xref:System.Char.IsSurrogate%2A?displayProperty=nameWithType>
+* <xref:System.Char.IsSurrogatePair%2A?displayProperty=nameWithType>
+* <xref:System.Char.IsHighSurrogate%2A?displayProperty=nameWithType>
+* <xref:System.Char.IsLowSurrogate%2A?displayProperty=nameWithType>
+* <xref:System.Char.ConvertFromUtf32%2A?displayProperty=nameWithType>
+* <xref:System.Char.ConvertToUtf32%2A?displayProperty=nameWithType>
+
+例如，下面的方法具有用于处理代理项 `char` 对的特殊逻辑：
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/WorkWithSurrogates.cs" id="SnippetUseChar":::
+
+如果此类代码使用 `Rune`，则更简单，如以下示例中所示：
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/WorkWithSurrogates.cs" id="SnippetUseRune":::
+
+### <a name="when-not-to-use-rune"></a>何时不使用 `Rune`
+
+如果你的代码不需要使用 `Rune` 类型：
+
+* 查找确切 `char` 匹配项
+* 拆分已知 char 值上的字符串
+
+如果代码为，则使用 `Rune` 类型可能会返回不正确的结果：
+
+* 计算 `string` 中显示字符的数量
+
+#### <a name="look-for-exact-char-matches"></a>查找确切 `char` 匹配项
+
+下面的代码循环访问 `string` 查找特定字符，并返回第一个匹配项的索引。 在代码查找由单个 `char`表示的字符时，无需更改此代码即可使用 `Rune`。
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/FindFirstLetter.cs" id="SnippetExample":::
+
+#### <a name="split-a-string-on-a-known-char"></a>在已知 `char` 上拆分字符串
+
+通常调用 `string.Split` 并使用分隔符（如 `' '` （空格）或 `','` （逗号）），如以下示例中所示：
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/SplitStringOnChar.cs" id="SnippetExample":::
+
+此处无需使用 `Rune`，因为该代码查找由单个 `char`表示的字符。
+
+#### <a name="count-the-number-of-display-characters-in-a-string"></a>计算 `string` 中显示字符的数量
+
+字符串中 `Rune` 实例的数目可能与显示字符串时所显示的用户可识别字符的数目不匹配。
+
+由于 `Rune` 实例表示 Unicode 标量值，因此遵循[unicode 文本分段指导原则](https://www.unicode.org/reports/tr29/)的组件可以将 `Rune` 用作统计显示字符的构建基块。
+
+<xref:System.Globalization.StringInfo> 类型可用于统计显示字符，但在 .net 以外的 .NET 实现中，它不会在所有方案中正确计数。
+
+有关详细信息，请参阅[字形群集](/dotnet/standard/base-types/character-encoding-introduction#grapheme-clusters)。
+
+### <a name="how-to-instantiate-a-rune"></a>如何实例化 `Rune`
+
+有多种方法可获取 `Rune` 实例。 可以使用构造函数直接从中创建 `Rune`：
+
+* 码位。
+
+  :::code language="csharp" source="~/snippets/System.Text/Rune/csharp/InstantiateRunes.cs" id="SnippetCodePoint":::
+
+* 单个 `char`。
+
+  :::code language="csharp" source="~/snippets/System.Text/Rune/csharp/InstantiateRunes.cs" id="SnippetChar":::
+
+* 代理项 `char` 对。
+
+  :::code language="csharp" source="~/snippets/System.Text/Rune/csharp/InstantiateRunes.cs" id="SnippetSurrogate":::
+
+如果输入不表示有效的 Unicode 标量值，则所有构造函数都将引发 `ArgumentException`。
+
+对于不希望在失败时引发异常的调用方，可以使用 <xref:System.Text.Rune.TryCreate%2A?displayProperty=nameWithType> 方法。
+
+也可以从现有的输入序列中读取 `Rune` 的实例。 例如，给定表示 UTF-16 数据的 `ReadOnlySpan<char>`，<xref:System.Text.Rune.DecodeFromUtf16%2A?displayProperty=nameWithType> 方法返回输入范围开始处的第一个 `Rune` 实例。 <xref:System.Text.Rune.DecodeFromUtf8%2A?displayProperty=nameWithType> 方法的操作方式类似，接受表示 UTF-8 数据的 `ReadOnlySpan<byte>` 参数。 可以从跨度的末尾而不是在范围的开头读取等效的方法。
+
+### <a name="query-properties-of-a-rune"></a>`Rune` 的查询属性
+
+若要获取 `Rune` 实例的整数码位值，请使用 <xref:System.Text.Rune.Value?displayProperty=nameWithType> 属性。
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/InstantiateRunes.cs" id="SnippetValue":::
+
+`Rune` 类型上还提供了许多 `char` 类型上可用的静态 Api。 例如，<xref:System.Text.Rune.IsWhiteSpace%2A?displayProperty=nameWithType> 和 <xref:System.Text.Rune.GetUnicodeCategory%2A?displayProperty=nameWithType> 与 <xref:System.Char.IsWhiteSpace%2A?displayProperty=nameWithType> 和 <xref:System.Char.GetUnicodeCategory%2A?displayProperty=nameWithType> 方法等效。 `Rune` 方法正确处理代理项对。
+
+下面的示例代码将 `ReadOnlySpan<char>` 作为输入，并从跨距的开头和末尾裁剪，每 `Rune` 不是字母或数字。
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/TrimNonLettersAndNonDigits.cs" id="SnippetExample":::
+
+`char` 和 `Rune`之间存在一些 API 差异。 例如：
+
+* 没有 `Rune` 等效于 <xref:System.Char.IsSurrogate(System.Char)?displayProperty=nameWithType>，因为按定义 `Rune` 实例永远不能是代理项码位。
+* <xref:System.Text.Rune.GetUnicodeCategory%2A?displayProperty=nameWithType> 并不总是返回与 <xref:System.Char.GetUnicodeCategory%2A?displayProperty=nameWithType>相同的结果。 它会返回与 <xref:System.Globalization.CharUnicodeInfo.GetUnicodeCategory%2A?displayProperty=nameWithType>相同的值。 有关详细信息，请参阅 <xref:System.Char.GetUnicodeCategory%2A?displayProperty=nameWithType>上的 "**备注**"。
+
+### <a name="convert-a-rune-to-utf-8-or-utf-16"></a>将 `Rune` 转换为 UTF-8 或 UTF-16
+
+由于 `Rune` 是 Unicode 标量值，因此可将其转换为 UTF-8、UTF-16 或 UTF-32 编码。 `Rune` 类型具有到 UTF-8 和 UTF-16 的转换的内置支持。
+
+<xref:System.Text.Rune.EncodeToUtf16%2A?displayProperty=nameWithType> 将 `Rune` 实例转换为 `char` 的实例。 若要查询将 `Rune` 实例转换为 UTF-16 而产生 `char` 实例的数目，请使用 <xref:System.Text.Rune.Utf16SequenceLength?displayProperty=nameWithType> 属性。 对于 UTF-8 转换，存在类似的方法。
+
+下面的示例将 `Rune` 实例转换为 `char` 的数组。 此代码假定 `rune` 变量中有 `Rune` 实例：
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/EncodeRune.cs" id="SnippetUtf16CharArray":::
+
+由于 `string` 是 UTF-16 字符的序列，因此下面的示例还将 `Rune` 实例转换为 UTF-16：
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/EncodeRune.cs" id="SnippetUtf16String":::
+
+下面的示例将 `Rune` 实例转换为 `UTF-8` 字节数组：
+
+:::code language="csharp" source="~/snippets/System.Text/Rune/csharp/EncodeRune.cs" id="SnippetUtf8ByteArray":::
+
+<xref:System.Text.Rune.EncodeToUtf16%2A?displayProperty=nameWithType> 和 <xref:System.Text.Rune.EncodeToUtf8%2A?displayProperty=nameWithType> 方法返回已写入的实际元素数。 如果目标缓冲区太短而无法包含结果，它们将引发异常。 对于想要避免异常的调用方，还存在非引发 <xref:System.Text.Rune.TryEncodeToUtf8%2A> 和 <xref:System.Text.Rune.EncodeToUtf16%2A> 方法。
+
+### <a name="rune-in-net-vs-other-languages"></a>.NET 中的 Rune 与其他语言
+
+Unicode 标准中未定义 "rune" 一词。 术语 "日期" 改回[创建 utf-8](https://www.cl.cam.ac.uk/~mgk25/ucs/utf-8-history.txt)。 讨论涌现和 Ken Thompson 正在寻找一项术语来描述最终成为一个码位的内容。 [它们是在 "rune" 一词上结算](https://twitter.com/rob_pike/status/732353233474064384)的，而且在涌现的更高版本中，对中转编程语言的影响将会帮助 popularize。
+
+但是，.NET `Rune` 类型不等同于 "中转 `rune` 类型。 在 "开始" 中，`rune` 类型是[`int32`的别名](https://blog.golang.org/strings)。 中转 rune 用于表示 Unicode 码位，但它可以是任何32位值，其中包括代理项码位和不是合法 Unicode 码位的值。
+
+对于其他编程语言中类似的类型，请参阅[Rust 的基元 `char` 类型](https://doc.rust-lang.org/std/primitive.char.html)或[Swift `Unicode.Scalar` 类型](https://developer.apple.com/documentation/swift/unicode/scalar)，两者都表示 Unicode 标量值。 它们提供类似于的功能。NET 的 `Rune` 类型，并且不允许对不是合法 Unicode 标量值的值进行实例化。
 
           ]]></format>
     </remarks>
@@ -51,6 +245,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="ch" Type="System.Char" />
@@ -74,6 +269,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="value" Type="System.Int32" />
@@ -97,6 +293,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -125,6 +322,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="highSurrogate" Type="System.Char" />
@@ -157,6 +355,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -185,6 +384,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Buffers.OperationStatus</ReturnType>
@@ -228,6 +428,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Buffers.OperationStatus</ReturnType>
@@ -271,6 +472,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Buffers.OperationStatus</ReturnType>
@@ -314,6 +516,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Buffers.OperationStatus</ReturnType>
@@ -357,6 +560,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -384,6 +588,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -411,6 +616,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -440,6 +646,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -466,6 +673,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -489,6 +697,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
@@ -523,6 +732,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Rune</ReturnType>
@@ -554,6 +764,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.UnicodeCategory</ReturnType>
@@ -588,6 +799,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -610,6 +822,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -632,6 +845,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -670,6 +884,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -706,6 +921,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -742,6 +958,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -778,6 +995,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -814,6 +1032,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -850,6 +1069,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -886,6 +1106,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -922,6 +1143,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -958,6 +1180,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -994,6 +1217,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1020,6 +1244,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -1051,6 +1276,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1087,6 +1313,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1115,6 +1342,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Rune</ReturnType>
@@ -1142,6 +1370,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Rune</ReturnType>
@@ -1169,6 +1398,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -1201,6 +1431,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1229,6 +1460,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1257,6 +1489,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1285,6 +1518,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1313,6 +1547,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1341,6 +1576,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -1363,6 +1599,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Rune</ReturnType>
@@ -1385,6 +1622,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Rune</ReturnType>
@@ -1413,6 +1651,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Rune</ReturnType>
@@ -1439,6 +1678,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1462,6 +1702,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Rune</ReturnType>
@@ -1490,6 +1731,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Rune</ReturnType>
@@ -1516,6 +1758,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1544,6 +1787,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1572,6 +1816,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -1605,6 +1850,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1635,6 +1881,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1671,6 +1918,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1707,6 +1955,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1739,6 +1988,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -1769,6 +2019,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -1799,6 +2050,7 @@
         <AssemblyName>System.Runtime</AssemblyName>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
