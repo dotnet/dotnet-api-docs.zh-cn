@@ -1,5 +1,5 @@
 <Type Name="HttpClientHandler" FullName="System.Net.Http.HttpClientHandler">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="8e483ea0ca7c0cf4e84b46a9478523f99a63c215" /><Meta Name="ms.sourcegitcommit" Value="1b924db57b3a1cf768d98c21f9b988d6966a0f2b" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="03/06/2020" /><Meta Name="ms.locfileid" Value="78820370" /></Metadata><TypeSignature Language="C#" Value="public class HttpClientHandler : System.Net.Http.HttpMessageHandler" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="2be51220d19dd0447e57256b30f76c596d0a22b0" /><Meta Name="ms.sourcegitcommit" Value="b0947fed0227b6b2e292d7efb43705b488b130aa" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="04/29/2020" /><Meta Name="ms.locfileid" Value="82361270" /></Metadata><TypeSignature Language="C#" Value="public class HttpClientHandler : System.Net.Http.HttpMessageHandler" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HttpClientHandler extends System.Net.Http.HttpMessageHandler" />
   <TypeSignature Language="DocId" Value="T:System.Net.Http.HttpClientHandler" />
   <TypeSignature Language="VB.NET" Value="Public Class HttpClientHandler&#xA;Inherits HttpMessageHandler" />
@@ -13,6 +13,7 @@
     <AssemblyVersion>4.2.0.0</AssemblyVersion>
     <AssemblyVersion>4.2.1.0</AssemblyVersion>
     <AssemblyVersion>4.2.2.0</AssemblyVersion>
+    <AssemblyVersion>5.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <AssemblyInfo>
     <AssemblyName>netstandard</AssemblyName>
@@ -29,13 +30,16 @@
       <format type="text/markdown"><![CDATA[
 
 ## Remarks
- `HttpClientHandler` 类和派生自的类使开发人员能够配置各种选项，包括从代理到身份验证。
+
+`HttpClientHandler` 类和派生自的类使开发人员能够配置各种选项，包括从代理到身份验证。
 
 ### <a name="httpclienthandler-in-net-core"></a>.NET Core 中的 HttpClientHandler
 
-从 .NET Core 2.1 开始，<xref:System.Net.Http.SocketsHttpHandler?displayProperty=nameWithType> 类而不是 `HttpClientHandler` 提供更高级别的 HTTP 网络 Api 使用的实现。 可以通过以下任一方式将应用程序配置为使用 `HttpClientHandler`：
+从 .NET Core 2.1 开始，`HttpClientHandler` 类的实现已更改为基于 <xref:System.Net.Http.SocketsHttpHandler?displayProperty=nameWithType> 类使用的跨平台 HTTP 协议堆栈。 在 .NET Core 2.1 之前，`HttpClientHandler` 类使用较旧的 HTTP 协议堆栈（<xref:System.Net.Http.WinHttpHandler> 在 Windows 和 `CurlHandler`上，这是在 linux 上 Linux 的本机 libcurl 组件上实现的一个内部类。
 
-- 通过调用 <xref:System.AppContext.SetSwitch%2A?displayProperty=nameWithType> 方法，如下所示：
+可以通过以下三种方式之一将应用程序配置为使用较旧的 HTTP 协议堆栈：
+
+- 调用 <xref:System.AppContext.SetSwitch%2A?displayProperty=nameWithType> 方法：
 
   ```csharp
   AppContext.SetSwitch("System.Net.Http.UseSocketsHttpHandler", false);
@@ -45,7 +49,7 @@
   AppContext.SetSwitch("System.Net.Http.UseSocketsHttpHandler", False)
   ```
 
-- 通过在*netcore. runtimeconfig.template.json*配置文件中定义 `System.Net.Http.UseSocketsHttpHandler` 开关：
+- 在*netcore. runtimeconfig.template.json*配置文件中定义 `System.Net.Http.UseSocketsHttpHandler` 开关：
 
   ```json
   "runtimeOptions": {
@@ -55,7 +59,7 @@
   }
   ```
 
-- 通过定义名为 `DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER` 的环境变量，并将其设置为 `false` 或0。
+- 定义名为 `DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER` 的环境变量，并将其设置为 `false` 或**0**。
 
 ## Examples
  [!code-csharp[System.Net.Http.HttpClientHandler#1](~/samples/snippets/csharp/VS_Snippets_Misc/system.net.http.httpclienthandler/cs/source.cs#1)]
@@ -86,6 +90,7 @@
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -114,6 +119,7 @@
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -124,8 +130,8 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>获取或设置一个值，该值指示处理程序是否应跟随重定向响应。</summary>
-        <value><see langword="true" /> 如果处理程序应跟随重定向响应，则为;否则 <see langword="false" />。 默认值为 <see langword="true" />。</value>
+        <summary>获取或设置一个值，该值指示处理程序是否应遵循重定向响应。</summary>
+        <value><see langword="true" /> 如果处理程序应跟随重定向响应，则为;否则 <see langword="false" />。 默认值是 <see langword="true" />。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[
 
@@ -160,6 +166,7 @@
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -202,6 +209,7 @@
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -239,6 +247,7 @@
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -270,6 +279,7 @@
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -306,6 +316,7 @@
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -316,7 +327,7 @@
         <ReturnType>System.Net.CookieContainer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>获取或设置用于通过处理程序存储服务器 Cookie 的 Cookie 容器。</summary>
+        <summary>获取或设置处理程序用于存储服务器 Cookie 的 Cookie 容器。</summary>
         <value>用于通过处理程序存储服务器 Cookie 的 Cookie 容器。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[
@@ -346,6 +357,7 @@
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -356,8 +368,8 @@
         <ReturnType>System.Net.ICredentials</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>获取或设置此处理程序使用的身份验证信息。</summary>
-        <value>与该处理程序关联的身份验证凭据。 默认值为 <see langword="null" />。</value>
+        <summary>获取或设置此处理程序所使用的身份验证信息。</summary>
+        <value>与该处理程序关联的身份验证凭据。 默认为 <see langword="null" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -374,6 +386,7 @@
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -421,6 +434,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -457,6 +471,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -478,7 +493,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
 ## Remarks
  此方法由 public `Dispose()` 方法和 <xref:System.Object.Finalize%2A> 方法调用。 `Dispose()` 调用受保护的 `Dispose(Boolean)` 方法，并将 `disposing` 参数设置为 `true`。 <xref:System.Object.Finalize%2A> 调用 `disposing` 设置为 `false`的 `Dispose`。
 
- 当 `disposing` 参数为 `true` 时，此方法释放该 <xref:System.Net.Http.HttpClientHandler> 引用的、由任何托管对象持有的全部资源。 此方法调用每个引用对象的 `Dispose()` 方法。
+ 当 `disposing` 参数为 `true` 时，此方法释放该 <xref:System.Net.Http.HttpClientHandler> 引用的、由任何托管对象持有的全部资源。 此方法将调用每个被引用对象的 `Dispose()` 方法。
 
  ]]></format>
         </remarks>
@@ -500,6 +515,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -510,7 +526,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>获取或设置处理程序遵循的重定向的最大数目。</summary>
+        <summary>获取或设置处理程序遵循的最大重定向次数。</summary>
         <value>处理程序遵循的重定向响应的最大数目。 默认值为 50。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[
@@ -538,6 +554,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -574,6 +591,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -612,6 +630,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -648,6 +667,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -658,8 +678,8 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>获取或设置一个值，该值指示处理程序是否随请求发送授权标头。</summary>
-        <value><see langword="true" /> 表示处理程序在发生身份验证之后随请求一起发送 HTTP 授权标头；否则为 <see langword="false" />。 默认值为 <see langword="false" />。</value>
+        <summary>获取或设置一个值，该值指示处理程序是否将授权标头与请求一起发送。</summary>
+        <value><see langword="true" /> 表示处理程序在发生身份验证之后随请求一起发送 HTTP 授权标头；否则为 <see langword="false" />。 默认为 <see langword="false" />。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[
 
@@ -690,6 +710,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -726,6 +747,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -741,8 +763,8 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <ReturnType>System.Net.IWebProxy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>获取或设置处理程序使用的代理信息。</summary>
-        <value>处理程序使用的代理信息。 默认值为 <see langword="null" />。</value>
+        <summary>获取或设置此处理程序所使用的代理信息。</summary>
+        <value>处理程序使用的代理信息。 默认值是 <see langword="null" />。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[
 
@@ -781,6 +803,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -831,6 +854,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -867,6 +891,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -904,6 +929,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -915,7 +941,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
       </ReturnValue>
       <Docs>
         <summary>获取一个值，该值指示处理程序是否支持自动响应内容解压缩。</summary>
-        <value>如果该处理程序支持自动响应内容解压缩，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="true" />。</value>
+        <value>如果该处理程序支持自动响应内容解压缩，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值是 <see langword="true" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -935,6 +961,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -945,8 +972,8 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>获取一个值，该值指示处理程序是否支持代理设置。</summary>
-        <value>如果处理程序支持代理设置，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="true" />。</value>
+        <summary>获取一个指示处理程序是否支持代理设置的值。</summary>
+        <value>如果处理程序支持代理设置，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值是 <see langword="true" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -966,6 +993,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -977,7 +1005,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
       </ReturnValue>
       <Docs>
         <summary>获取一个值，该值表示处理程序是否支持 <see cref="P:System.Net.Http.HttpClientHandler.AllowAutoRedirect" /> 和 <see cref="P:System.Net.Http.HttpClientHandler.MaxAutomaticRedirections" /> 属性的配置设置。</summary>
-        <value>如果处理程序支持 <see langword="true" /> 和 <see cref="P:System.Net.Http.HttpClientHandler.AllowAutoRedirect" /> 属性的配置设置，则为 <see cref="P:System.Net.Http.HttpClientHandler.MaxAutomaticRedirections" />；否则为 <see langword="false" />。 默认值为 <see langword="true" />。</value>
+        <value>如果处理程序支持 <see langword="true" /> 和 <see cref="P:System.Net.Http.HttpClientHandler.AllowAutoRedirect" /> 属性的配置设置，则为 <see cref="P:System.Net.Http.HttpClientHandler.MaxAutomaticRedirections" />；否则为 <see langword="false" />。 默认值是 <see langword="true" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -997,6 +1025,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -1008,7 +1037,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
       </ReturnValue>
       <Docs>
         <summary>获取或设置一个值，该值指示处理程序是否使用 <see cref="P:System.Net.Http.HttpClientHandler.CookieContainer" /> 属性来存储服务器 Cookie 并在发送请求时使用这些 Cookie。</summary>
-        <value>如果处理程序支持使用 <see langword="true" /> 属性来存储服务器 Cookie 并在发送请求时使用这些 Cookie，则为 <see cref="P:System.Net.Http.HttpClientHandler.CookieContainer" />；否则为 <see langword="false" />。 默认值为 <see langword="true" />。</value>
+        <value>如果处理程序支持使用 <see langword="true" /> 属性来存储服务器 Cookie 并在发送请求时使用这些 Cookie，则为 <see cref="P:System.Net.Http.HttpClientHandler.CookieContainer" />；否则为 <see langword="false" />。 默认值是 <see langword="true" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1028,6 +1057,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -1038,8 +1068,8 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>获取或设置一个值，该值控制处理程序是否随请求一起发送默认凭据。</summary>
-        <value>如果使用默认凭据，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="false" />。</value>
+        <summary>获取或设置指示处理程序是否与请求一起发送默认凭据的值。</summary>
+        <value>如果使用默认凭据，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值是 <see langword="false" />。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[
 
@@ -1066,6 +1096,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
         <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>netstandard</AssemblyName>
@@ -1076,8 +1107,8 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>获取或设置一个值，该值表示处理程序是否对请求使用代理。</summary>
-        <value>如果处理程序应对请求使用代理，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="true" />。</value>
+        <summary>获取或设置一个值，该值指示处理程序是否对请求使用代理。</summary>
+        <value>如果处理程序应对请求使用代理，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值是 <see langword="true" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
