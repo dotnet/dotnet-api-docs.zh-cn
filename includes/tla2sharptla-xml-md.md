@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: c0aa9ef764d832b80428d756a731a94251b0e3a1
-ms.sourcegitcommit: 1bb00d2f4343e73ae8d58668f02297a3cf10a4c1
+ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
 ms.translationtype: HT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 06/15/2019
-ms.locfileid: "63869612"
+ms.lasthandoff: 08/29/2019
+ms.locfileid: "71139216"
 ---
-<span data-ttu-id="9abff-101">XML</span><span class="sxs-lookup"><span data-stu-id="9abff-101">XML</span></span>
+<span data-ttu-id="5a5ea-101">XML</span><span class="sxs-lookup"><span data-stu-id="5a5ea-101">XML</span></span>
