@@ -1,5 +1,5 @@
 <Type Name="Uri" FullName="System.Uri">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="d183fa8f0e433b79fea8517dace8dd25199b6ff7" /><Meta Name="ms.sourcegitcommit" Value="b0947fed0227b6b2e292d7efb43705b488b130aa" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="04/29/2020" /><Meta Name="ms.locfileid" Value="82482885" /></Metadata><TypeSignature Language="C#" Value="public class Uri" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="e6e9d7ac553f17d52bee3fb9adcca6f425b6862b" /><Meta Name="ms.sourcegitcommit" Value="b6b9d5f3f9c7eb43f14a8a1a68d044603cb8ed73" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="05/18/2020" /><Meta Name="ms.locfileid" Value="83446038" /></Metadata><TypeSignature Language="C#" Value="public class Uri" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Uri extends System.Object" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6" />
   <TypeSignature Language="DocId" Value="T:System.Uri" />
   <TypeSignature Language="VB.NET" Value="Public Class Uri" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.5;netstandard-1.6" />
@@ -41,6 +41,7 @@
   </AssemblyInfo>
   <TypeForwardingChain>
     <TypeForwarding From="System" FromVersion="4.0.0.0" To="System.Runtime" ToVersion="0.0.0.0" FrameworkAlternate="dotnet-uwp-10.0" />
+    <TypeForwarding From="netstandard" FromVersion="2.1.0.0" To="System.Runtime" ToVersion="5.0.0.0" FrameworkAlternate="net-5.0" />
   </TypeForwardingChain>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -187,6 +188,36 @@ Uri uri1 = new Uri("C:/test/path/file.txt") // Implicit file path.
 Uri uri2 = new Uri("file:///C:/test/path/file.txt") // Explicit file path.
 ```
  这些隐式文件路径不符合 URI 规范，应尽可能避免这样的情况。 在基于 Unix 的系统上使用 .NET Core 时，隐式文件路径可能会特别出现问题，因为绝对的隐式文件路径与相对路径没有*区别*。 如果存在这种含糊性，<xref:System.Uri> 默认为将路径解释为绝对 URI。
+
+## <a name="security-considerations"></a>安全注意事项
+
+出于安全方面的考虑，应用程序在接受来自不受信任的源的 <xref:System.Uri> 实例，并在[构造函数](xref:System.Uri.%23ctor(System.String,System.Boolean))中将 `dontEscape` 设置为 `true` 时应谨慎。 可以通过调用 <xref:System.Uri.IsWellFormedOriginalString%2A> 方法来检查 URI 字符串的有效性。
+
+处理不受信任的用户输入时，请先确认有关新创建的 `Uri` 实例的假设，然后再对其属性进行信任。
+可以通过以下方式完成此操作：
+
+```csharp
+string userInput = ...;
+
+Uri baseUri = new Uri("https://myWebsite/files/");
+
+if (!Uri.TryCreate(baseUri, userInput, out Uri newUri))
+{
+    // Fail: invalid input.
+}
+
+if (!baseUri.IsBaseOf(newUri))
+{
+    // Fail: the Uri base has been modified - the created Uri is not rooted in the original directory.
+}
+```
+
+此验证可在其他情况下使用，例如处理 UNC 路径时，只需更改 `baseUri`：
+
+```csharp
+Uri baseUri = new Uri(@"\\host\share\some\directory\name\");
+```
+
   
 ## <a name="performance-considerations"></a>性能注意事项  
  如果你使用的 * Web.config * 文件包含用于初始化应用程序的 Uri，则需要额外的时间来处理 Uri （如果它们的方案标识符是非标准的）。 在这种情况下，在需要 Uri 时（而不是在启动时）初始化应用程序受影响的部分。  
@@ -202,7 +233,6 @@ Uri uri2 = new Uri("file:///C:/test/path/file.txt") // Explicit file path.
   
  ]]></format>
     </remarks>
-    <block subset="none" type="usage"><para>出于安全方面的考虑，应用程序在接受来自不受信任的源的 <see cref="T:System.Uri" /> 实例，并将 <paramref name="dontEscape" /> 设置为 <see langword="true" />时，应小心。可以通过调用 <see cref="M:System.Uri.IsWellFormedOriginalString" /> 方法来检查 URI 字符串的有效性。</para></block>
     <altmember cref="T:System.Configuration.IdnElement" />
     <altmember cref="T:System.Configuration.IriParsingElement" />
     <altmember cref="T:System.Configuration.UriSection" />
