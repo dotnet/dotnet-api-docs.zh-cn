@@ -1,5 +1,5 @@
 <Type Name="ISinglePhaseNotification" FullName="System.Transactions.ISinglePhaseNotification">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="84b657e12444c9e729da0d8e25ce3c9a531429ca" /><Meta Name="ms.sourcegitcommit" Value="b6b9d5f3f9c7eb43f14a8a1a68d044603cb8ed73" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="05/18/2020" /><Meta Name="ms.locfileid" Value="83541596" /></Metadata><TypeSignature Language="C#" Value="public interface ISinglePhaseNotification : System.Transactions.IEnlistmentNotification" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="84b657e12444c9e729da0d8e25ce3c9a531429ca" /><Meta Name="ms.sourcegitcommit" Value="9506e50ec7beb4fa30206b9840dc546b035a6600" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="07/23/2020" /><Meta Name="ms.locfileid" Value="83541596" /></Metadata><TypeSignature Language="C#" Value="public interface ISinglePhaseNotification : System.Transactions.IEnlistmentNotification" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISinglePhaseNotification implements class System.Transactions.IEnlistmentNotification" />
   <TypeSignature Language="DocId" Value="T:System.Transactions.ISinglePhaseNotification" />
   <TypeSignature Language="VB.NET" Value="Public Interface ISinglePhaseNotification&#xA;Implements IEnlistmentNotification" />
@@ -39,11 +39,11 @@
 ## Remarks  
  请注意，即使资源管理器实现此接口以支持单阶段提交优化，也不能保证它收到单阶段提交。 事务管理器仍可以改为发送两阶段提交通知。  
   
- 若要在事务中登记资源管理器作为参与者，请调用 <xref:System.Transactions.Transaction.EnlistVolatile%2A> 方法或 <xref:System.Transactions.Transaction> 类的 <xref:System.Transactions.Transaction.EnlistDurable%2A> 方法。 具体而言，`EnlistmentOptions` 参数应该等于 <xref:System.Transactions.EnlistmentOptions.None>，以确保执行单阶段提交。 如果错误地将其设置为 <xref:System.Transactions.EnlistmentOptions.EnlistDuringPrepareRequired>，则不会发生单阶段提交。  
+ 若要在事务中登记资源管理器作为参与者，请调用 <xref:System.Transactions.Transaction.EnlistVolatile%2A> 方法或 <xref:System.Transactions.Transaction.EnlistDurable%2A> 类的方法 <xref:System.Transactions.Transaction> 。 具体而言， `EnlistmentOptions` 参数应该等于， <xref:System.Transactions.EnlistmentOptions.None> 以确保执行单阶段提交。 如果错误地将其设置为 <xref:System.Transactions.EnlistmentOptions.EnlistDuringPrepareRequired> ，则不会发生单阶段提交。  
   
  由于 <xref:System.Transactions.ISinglePhaseNotification> 接口派生自 <xref:System.Transactions.IEnlistmentNotification> 接口，因此，资源管理器还必须实现后两阶段提交通知的所有方法。  事务管理器的选择是将两阶段提交还是单阶段提交优化用于此资源管理器。  但是，实现此接口会使资源管理器有机会在可用时使用优化。  
   
- 如果使用了优化并且事务管理器调用了登记资源的 <xref:System.Transactions.ISinglePhaseNotification.SinglePhaseCommit%2A> 方法，则资源管理器应使用 <xref:System.Transactions.SinglePhaseEnlistment> 类的各种方法来响应此调用，以便在事务提交或回滚时通知事务管理器。  
+ 如果使用了优化并且事务管理器调用 <xref:System.Transactions.ISinglePhaseNotification.SinglePhaseCommit%2A> 了登记资源的方法，则资源管理器应使用类的各种方法来响应此调用， <xref:System.Transactions.SinglePhaseEnlistment> 以便在事务提交或回滚时通知事务管理器。  
   
  ]]></format>
     </remarks>
@@ -98,11 +98,11 @@
 ## Remarks  
  事务管理器的选择是将两阶段提交还是单阶段提交优化用于此资源管理器。  有关单阶段和两阶段提交的详细信息，请参阅[在单阶段和多阶段提交事务](https://msdn.microsoft.com/library/74b3cfe1-d33a-45b8-91f4-dfd6f6598c4d)。  
   
- 因此，在资源管理器的这一登记上，将调用 <xref:System.Transactions.ISinglePhaseNotification.SinglePhaseCommit%2A> 方法，或者调用 <xref:System.Transactions.IEnlistmentNotification> 接口中定义的两阶段提交方法。  
+ 因此，在资源管理器的这一登记上，调用了 <xref:System.Transactions.ISinglePhaseNotification.SinglePhaseCommit%2A> 方法，或在接口中定义的两阶段提交方法被 <xref:System.Transactions.IEnlistmentNotification> 调用。  
   
- 此方法的实现应调用 `singlePhaseEnlistment` 参数的 <xref:System.Transactions.SinglePhaseEnlistment.Committed%2A> 方法或 <xref:System.Transactions.SinglePhaseEnlistment.Aborted%2A> 方法，以指示应提交还是回滚事务。  
+ 此方法的实现应调用 <xref:System.Transactions.SinglePhaseEnlistment.Committed%2A> 方法或 <xref:System.Transactions.SinglePhaseEnlistment.Aborted%2A> 参数的方法 `singlePhaseEnlistment` ，以指示应提交还是回滚事务。  
   
- 当只有一个可变登记支持单阶段提交时，或者当有零个或多个可变登记和一个持久登记时，事务管理器将调用此方法。 在后一种情况下，易失性登记接收两阶段提交 <xref:System.Transactions.IEnlistmentNotification.Prepare%2A> 通知，并且唯一持久登记接收单阶段提交通知。  
+ 当只有一个可变登记支持单阶段提交时，或者当有零个或多个可变登记和一个持久登记时，事务管理器将调用此方法。 在后一种情况下，易失性登记接收 <xref:System.Transactions.IEnlistmentNotification.Prepare%2A> 两阶段提交的通知，并且唯一持久登记收到单阶段提交通知。  
   
  ]]></format>
         </remarks>
