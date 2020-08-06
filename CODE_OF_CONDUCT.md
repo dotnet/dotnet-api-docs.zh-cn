@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 045fd47d3392cd1a382b59c704d65ce208072644
-ms.sourcegitcommit: 1bb00d2f4343e73ae8d58668f02297a3cf10a4c1
-ms.translationtype: HT
+ms.sourcegitcommit: 397961a0164281b579f68064c3bb66c071f374d9
+ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 06/15/2019
+ms.lasthandoff: 07/14/2020
 ms.locfileid: "80894542"
 ---
 # <a name="code-of-conduct"></a>行为准则
