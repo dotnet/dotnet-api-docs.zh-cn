@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 5df0f04938c6553b0ec8b4f2463c54fe00b9dfc0
-ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
-ms.translationtype: HT
+ms.sourcegitcommit: 397961a0164281b579f68064c3bb66c071f374d9
+ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 08/29/2019
+ms.lasthandoff: 07/14/2020
 ms.locfileid: "71140186"
 ---
-<span data-ttu-id="e9028-101">LINQ to DataSet</span><span class="sxs-lookup"><span data-stu-id="e9028-101">LINQ to DataSet</span></span>
+<span data-ttu-id="b2834-101">LINQ to DataSet</span><span class="sxs-lookup"><span data-stu-id="b2834-101">LINQ to DataSet</span></span>

@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71138306"
 ---
-<span data-ttu-id="a0d4d-101">可扩展应用程序标记语言 (XAML)</span><span class="sxs-lookup"><span data-stu-id="a0d4d-101">Extensible Application Markup Language (XAML)</span></span>
+<span data-ttu-id="fc569-101">可扩展应用程序标记语言 (XAML)</span><span class="sxs-lookup"><span data-stu-id="fc569-101">Extensible Application Markup Language (XAML)</span></span>
