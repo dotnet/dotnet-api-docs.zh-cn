@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: bb75a2a23a64410e91081cb41cd21dc77da190c3
-ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
-ms.translationtype: HT
+ms.sourcegitcommit: 397961a0164281b579f68064c3bb66c071f374d9
+ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 08/29/2019
+ms.lasthandoff: 07/14/2020
 ms.locfileid: "71138636"
 ---
 可移植网络图形 (PNG)

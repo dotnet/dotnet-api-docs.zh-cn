@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 5b02f54ad1c4ffcefb9d41819b32844cc26845cd
-ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
-ms.translationtype: HT
+ms.sourcegitcommit: 397961a0164281b579f68064c3bb66c071f374d9
+ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 08/29/2019
+ms.lasthandoff: 07/14/2020
 ms.locfileid: "71139036"
 ---
 公共语言运行时 (CLR)
