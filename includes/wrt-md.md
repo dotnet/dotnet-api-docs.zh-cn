@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71137566"
 ---
-<span data-ttu-id="9991b-101">Windows 运行时</span><span class="sxs-lookup"><span data-stu-id="9991b-101">Windows Runtime</span></span>
+<span data-ttu-id="e94a7-101">Windows 运行时</span><span class="sxs-lookup"><span data-stu-id="e94a7-101">Windows Runtime</span></span>

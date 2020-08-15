@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71139166"
 ---
-<span data-ttu-id="fb3ba-101">Microsoft Active Accessibility</span><span class="sxs-lookup"><span data-stu-id="fb3ba-101">Microsoft Active Accessibility</span></span>
+<span data-ttu-id="12f70-101">Microsoft Active Accessibility</span><span class="sxs-lookup"><span data-stu-id="12f70-101">Microsoft Active Accessibility</span></span>

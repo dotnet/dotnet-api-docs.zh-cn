@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71139286"
 ---
-<span data-ttu-id="f69a7-101">Win32</span><span class="sxs-lookup"><span data-stu-id="f69a7-101">Win32</span></span>
+<span data-ttu-id="8b6c9-101">Win32</span><span class="sxs-lookup"><span data-stu-id="8b6c9-101">Win32</span></span>

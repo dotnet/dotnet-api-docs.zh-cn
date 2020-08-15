@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71139876"
 ---
-<span data-ttu-id="636d3-101">.NET Framework 版本 4</span><span class="sxs-lookup"><span data-stu-id="636d3-101">.NET Framework version 4</span></span>
+<span data-ttu-id="de000-101">.NET Framework 版本 4</span><span class="sxs-lookup"><span data-stu-id="de000-101">.NET Framework version 4</span></span>
