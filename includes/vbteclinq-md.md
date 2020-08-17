@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71138076"
 ---
-<span data-ttu-id="6c240-101">LINQ</span><span class="sxs-lookup"><span data-stu-id="6c240-101">LINQ</span></span>
+<span data-ttu-id="6e5ec-101">LINQ</span><span class="sxs-lookup"><span data-stu-id="6e5ec-101">LINQ</span></span>

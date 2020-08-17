@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 08/29/2019
 ms.locfileid: "71140006"
 ---
-<span data-ttu-id="b377a-101">.NET Framework 3.5</span><span class="sxs-lookup"><span data-stu-id="b377a-101">.NET Framework 3.5</span></span>
+<span data-ttu-id="a430f-101">.NET Framework 3.5</span><span class="sxs-lookup"><span data-stu-id="a430f-101">.NET Framework 3.5</span></span>

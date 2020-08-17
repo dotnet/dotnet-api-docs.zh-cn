@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71139396"
 ---
-<span data-ttu-id="65e7b-101">SDK 中 IsInRole 中的声明</span><span class="sxs-lookup"><span data-stu-id="65e7b-101">SDK</span></span>
+<span data-ttu-id="350de-101">SDK 中 IsInRole 中的声明</span><span class="sxs-lookup"><span data-stu-id="350de-101">SDK</span></span>

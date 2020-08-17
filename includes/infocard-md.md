@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 08/29/2019
 ms.locfileid: "71140226"
 ---
-<span data-ttu-id="73bae-101">CardSpace</span><span class="sxs-lookup"><span data-stu-id="73bae-101">CardSpace</span></span>
+<span data-ttu-id="b77f4-101">CardSpace</span><span class="sxs-lookup"><span data-stu-id="b77f4-101">CardSpace</span></span>

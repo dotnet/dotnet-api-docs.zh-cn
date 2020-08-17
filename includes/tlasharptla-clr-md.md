@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71139036"
 ---
-<span data-ttu-id="684b8-101">公共语言运行时 (CLR)</span><span class="sxs-lookup"><span data-stu-id="684b8-101">common language runtime (CLR)</span></span>
+<span data-ttu-id="6e96e-101">公共语言运行时 (CLR)</span><span class="sxs-lookup"><span data-stu-id="6e96e-101">common language runtime (CLR)</span></span>

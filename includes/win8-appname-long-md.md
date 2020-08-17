@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71137766"
 ---
-<span data-ttu-id="9b218-101">Windows 8.x 应用商店</span><span class="sxs-lookup"><span data-stu-id="9b218-101">Windows 8.x Store</span></span>
+<span data-ttu-id="261cd-101">Windows 8.x 应用商店</span><span class="sxs-lookup"><span data-stu-id="261cd-101">Windows 8.x Store</span></span>
