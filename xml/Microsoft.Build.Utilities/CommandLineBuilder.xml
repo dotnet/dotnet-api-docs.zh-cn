@@ -1,5 +1,5 @@
 <Type Name="CommandLineBuilder" FullName="Microsoft.Build.Utilities.CommandLineBuilder">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="5fb7a1f65507dbec789d6507c2ee0795417b6d00" /><Meta Name="ms.sourcegitcommit" Value="11d168140aa8fade0768c2a9dde3e3bcacfdfb7d" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="05/27/2020" /><Meta Name="ms.locfileid" Value="83955035" /></Metadata><TypeSignature Language="C#" Value="public class CommandLineBuilder" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="6120a4c154138c73795b279e908074772ad3d8ef" /><Meta Name="ms.sourcegitcommit" Value="b53d35b4a410c949742abd4c6a989d1af5357bca" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="07/21/2020" /><Meta Name="ms.locfileid" Value="86709252" /></Metadata><TypeSignature Language="C#" Value="public class CommandLineBuilder" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CommandLineBuilder extends System.Object" />
   <TypeSignature Language="DocId" Value="T:Microsoft.Build.Utilities.CommandLineBuilder" />
   <TypeSignature Language="VB.NET" Value="Public Class CommandLineBuilder" />
@@ -17,23 +17,33 @@
     <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
   </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+    <AssemblyVersion>15.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
-    <summary>包含用于构造命令行的实用工具方法。</summary>
-    <remarks>
-      <format type="text/markdown"><![CDATA[  
-  
-## Examples  
- 下面的示例创建一个运行[Ilasm （IL 汇编程序）](/dotnet/framework/tools/ilasm-exe-il-assembler)的 <xref:Microsoft.Build.Utilities.ToolTask>。 <xref:Microsoft.Build.Utilities.CommandLineBuilder>、<xref:Microsoft.Build.Utilities.ToolLocationHelper>和 <xref:Microsoft.Build.Utilities.TaskLoggingHelper> 类用于生成运行任务所需的信息。  
-  
- [!code-csharp[msbuild_ToolTask#1](~/samples/snippets/csharp/VS_Snippets_Misc/msbuild_ToolTask/CS/ILAsm.cs#1)]
- [!code-vb[msbuild_ToolTask#1](~/samples/snippets/visualbasic/VS_Snippets_Misc/msbuild_ToolTask/VB/ILAsm.vb#1)]  
-  
- ]]></format>
-    </remarks>
+    <summary> (1) 确保包含连字符的值 (RC 括起来至少需要此)  (2) 转义任何嵌入的引号。 --应将文字双引号编写为 \" ""--doublequotes 前的反斜杠必须成对。
+--原义双引号只能成对出现 (无法传递单字面值双引号) --函数双引号 (例如，处理空间) 最好将名称和值放在开关中，如/Dname = value。</summary>
+    <remarks>下面是一些报价试验，将/D 开关与 CL 和 RC 预处理器一起使用。
+/D 开关比大多数开关稍微复杂一些，因为它具有名称 = 值对。
+下表包含了在第一列中传递交换机时预处理器实际嵌入的内容： 
+CL 通过 cmd line CL via response file RC/DFOO = "A" a   
+                 /D "FOO =" A "" A A/DFOO = A A   
+                 /D "FOO = A" A   
+                 /DFOO = "A" 
+/DFOO = a "a" " \" \"             a"/DFOO = "" "a" "" "a" ""。 "" 是一个 " \" " \" ，"a" 是 "/d" foo = 
+/DFOO = "A B" A B A B/D "FOO = A B" A B A B 
+/D "FOO =" A B "" 中断      
+                 /DFOO = \" a B \"          中断      
+                 /D "FOO = \" A b \" " "a b" "a b" "a b"/D "FOO =" "a b" "" a b "中断中断 
+从我的试验 (仅包含 CL 和 RC) 似乎--文字双引号最可靠地以不 "" 的形式编写，而 \" doublequotes 之前的反斜杠必须加倍。
+--包含原义双引号的值必须用引号引起来。
+--原义双引号只能成对出现 (无法传递单个字面双引号) --对于/Dname = 值样式开关，函数双引号 (例如，若要处理空间) 最好同时用于名称和值 (，则这些类型的开关不需要对它们的 "=" 符号进行特殊处理。
+--包含连字符的值应带引号;RC 需要这样做，而 CL 则没关系。</remarks>
   </Docs>
   <Members>
     <MemberGroup MemberName=".ctor">
@@ -64,14 +74,18 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>初始化 <see cref="T:Microsoft.Build.Utilities.CommandLineBuilder" /> 类的新实例。</summary>
+        <summary>默认构造函数</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Examples  
- 下面的示例创建一个运行[Ilasm （IL 汇编程序）](/dotnet/framework/tools/ilasm-exe-il-assembler)的 <xref:Microsoft.Build.Utilities.ToolTask>。 <xref:Microsoft.Build.Utilities.CommandLineBuilder>、<xref:Microsoft.Build.Utilities.ToolLocationHelper>和 <xref:Microsoft.Build.Utilities.TaskLoggingHelper> 类用于生成运行任务所需的信息。  
+ 下面的示例创建一个 <xref:Microsoft.Build.Utilities.ToolTask> [Ilasm.exe (IL 汇编程序) ](/dotnet/framework/tools/ilasm-exe-il-assembler)运行的。 <xref:Microsoft.Build.Utilities.CommandLineBuilder>、 <xref:Microsoft.Build.Utilities.ToolLocationHelper> 和 <xref:Microsoft.Build.Utilities.TaskLoggingHelper> 类用于生成运行任务所需的信息。  
   
  [!code-csharp[msbuild_ToolTask#1](~/samples/snippets/csharp/VS_Snippets_Misc/msbuild_ToolTask/CS/ILAsm.cs#1)]
  [!code-vb[msbuild_ToolTask#1](~/samples/snippets/visualbasic/VS_Snippets_Misc/msbuild_ToolTask/VB/ILAsm.vb#1)]  
@@ -81,12 +95,12 @@
       </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public CommandLineBuilder (bool quoteHyphensOnCommandLine);" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool quoteHyphensOnCommandLine) cil managed" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="DocId" Value="M:Microsoft.Build.Utilities.CommandLineBuilder.#ctor(System.Boolean)" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="VB.NET" Value="Public Sub New (quoteHyphensOnCommandLine As Boolean)" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="C++ CLI" Value="public:&#xA; CommandLineBuilder(bool quoteHyphensOnCommandLine);" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="F#" Value="new Microsoft.Build.Utilities.CommandLineBuilder : bool -&gt; Microsoft.Build.Utilities.CommandLineBuilder" Usage="new Microsoft.Build.Utilities.CommandLineBuilder quoteHyphensOnCommandLine" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="C#" Value="public CommandLineBuilder (bool quoteHyphensOnCommandLine);" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool quoteHyphensOnCommandLine) cil managed" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="DocId" Value="M:Microsoft.Build.Utilities.CommandLineBuilder.#ctor(System.Boolean)" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (quoteHyphensOnCommandLine As Boolean)" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; CommandLineBuilder(bool quoteHyphensOnCommandLine);" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="F#" Value="new Microsoft.Build.Utilities.CommandLineBuilder : bool -&gt; Microsoft.Build.Utilities.CommandLineBuilder" Usage="new Microsoft.Build.Utilities.CommandLineBuilder quoteHyphensOnCommandLine" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
@@ -96,12 +110,39 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
-        <Parameter Name="quoteHyphensOnCommandLine" Type="System.Boolean" Index="0" FrameworkAlternate="netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="quoteHyphensOnCommandLine" Type="System.Boolean" Index="0" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
       </Parameters>
       <Docs>
         <param name="quoteHyphensOnCommandLine">如果为 true，连字符应该用引号括起来。</param>
-        <summary>无参数构造函数</summary>
+        <summary>默认构造函数</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CommandLineBuilder (bool quoteHyphensOnCommandLine, bool useNewLineSeparator);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool quoteHyphensOnCommandLine, bool useNewLineSeparator) cil managed" />
+      <MemberSignature Language="DocId" Value="M:Microsoft.Build.Utilities.CommandLineBuilder.#ctor(System.Boolean,System.Boolean)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New (quoteHyphensOnCommandLine As Boolean, useNewLineSeparator As Boolean)" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; CommandLineBuilder(bool quoteHyphensOnCommandLine, bool useNewLineSeparator);" />
+      <MemberSignature Language="F#" Value="new Microsoft.Build.Utilities.CommandLineBuilder : bool * bool -&gt; Microsoft.Build.Utilities.CommandLineBuilder" Usage="new Microsoft.Build.Utilities.CommandLineBuilder (quoteHyphensOnCommandLine, useNewLineSeparator)" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="quoteHyphensOnCommandLine" Type="System.Boolean" Index="0" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore" />
+        <Parameter Name="useNewLineSeparator" Type="System.Boolean" Index="1" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore" />
+      </Parameters>
+      <Docs>
+        <param name="quoteHyphensOnCommandLine">To be added.</param>
+        <param name="useNewLineSeparator">To be added.</param>
+        <summary>默认构造函数</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -116,7 +157,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Examples  
- 下面的示例创建一个运行[Ilasm （IL 汇编程序）](/dotnet/framework/tools/ilasm-exe-il-assembler)的 <xref:Microsoft.Build.Utilities.ToolTask>。 <xref:Microsoft.Build.Utilities.CommandLineBuilder>、<xref:Microsoft.Build.Utilities.ToolLocationHelper>和 <xref:Microsoft.Build.Utilities.TaskLoggingHelper> 类用于生成运行任务所需的信息。  
+ 下面的示例创建一个 <xref:Microsoft.Build.Utilities.ToolTask> [Ilasm.exe (IL 汇编程序) ](/dotnet/framework/tools/ilasm-exe-il-assembler)运行的。 <xref:Microsoft.Build.Utilities.CommandLineBuilder>、 <xref:Microsoft.Build.Utilities.ToolLocationHelper> 和 <xref:Microsoft.Build.Utilities.TaskLoggingHelper> 类用于生成运行任务所需的信息。  
   
  [!code-csharp[msbuild_ToolTask#1](~/samples/snippets/csharp/VS_Snippets_Misc/msbuild_ToolTask/CS/ILAsm.cs#1)]
  [!code-vb[msbuild_ToolTask#1](~/samples/snippets/visualbasic/VS_Snippets_Misc/msbuild_ToolTask/VB/ILAsm.vb#1)]  
@@ -145,6 +186,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -152,8 +197,9 @@
         <Parameter Name="fileItem" Type="Microsoft.Build.Framework.ITaskItem" />
       </Parameters>
       <Docs>
-        <param name="fileItem">要追加到命令行的任务项规范。 如果为 <see langword="null" />，则此方法不起作用。</param>
-        <summary>在命令行的后面追加指定的 <see cref="T:Microsoft.Build.Framework.ITaskItem" /> 对象。</summary>
+        <param name="fileItem">要追加的文件名，如果为 null，则此方法不起作用</param>
+        <summary>如有必要，追加文件名引用它。
+此方法在命令行的后面追加一个空格 (如果它当前在文件名之前不为空) 。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -165,13 +211,14 @@
    
   
 ## Examples  
- 下面的示例创建一个运行[Ilasm （IL 汇编程序）](/dotnet/framework/tools/ilasm-exe-il-assembler)的 <xref:Microsoft.Build.Utilities.ToolTask>。 <xref:Microsoft.Build.Utilities.CommandLineBuilder>、<xref:Microsoft.Build.Utilities.ToolLocationHelper>和 <xref:Microsoft.Build.Utilities.TaskLoggingHelper> 类用于生成运行任务所需的信息。  
+ 下面的示例创建一个 <xref:Microsoft.Build.Utilities.ToolTask> [Ilasm.exe (IL 汇编程序) ](/dotnet/framework/tools/ilasm-exe-il-assembler)运行的。 <xref:Microsoft.Build.Utilities.CommandLineBuilder>、 <xref:Microsoft.Build.Utilities.ToolLocationHelper> 和 <xref:Microsoft.Build.Utilities.TaskLoggingHelper> 类用于生成运行任务所需的信息。  
   
  [!code-csharp[msbuild_ToolTask#1](~/samples/snippets/csharp/VS_Snippets_Misc/msbuild_ToolTask/CS/ILAsm.cs#1)]
  [!code-vb[msbuild_ToolTask#1](~/samples/snippets/visualbasic/VS_Snippets_Misc/msbuild_ToolTask/VB/ILAsm.vb#1)]  
   
  ]]></format>
         </remarks>
+        <example>查看字符串重载版本</example>
       </Docs>
     </Member>
     <Member MemberName="AppendFileNameIfNotNull">
@@ -194,6 +241,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -201,25 +252,27 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">要追加的文件名。 如果为 <see langword="null" />，则此方法不起作用。</param>
-        <summary>在命令行后面附加用参数表示的文件名（如有必要插入引号）。</summary>
+        <param name="fileName">要追加的文件名，如果为 null，则此方法不起作用</param>
+        <summary>如有必要，追加文件名引用它。
+此方法在命令行的后面追加一个空格 (如果它当前在文件名之前不为空) 。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
  此方法在命令行的后面追加文件名，并在必要时在文件名的两侧加上引号。  
   
- 如果文件名的第一个字符是短划线，则会将 `.\` 添加到文件名的开头，以便将其与交换机区分开来。  
+ 如果文件名的第一个字符是短划线，则 `.\` 会将添加到文件名的开头，以将其与开关区分开来。  
   
  如果命令行不为空，则此方法还在命令行的后面追加一个空格。  
   
    
   
 ## Examples  
- `AppendFileNameIfNotNull("-StrangeFileName.cs")` 生成 `.\-StrangeFileName.cs`。  
+ `AppendFileNameIfNotNull("-StrangeFileName.cs")` 生成 `.\-StrangeFileName.cs` 。  
   
  ]]></format>
         </remarks>
+        <example>AppendFileNameIfNotNull ( "-StrangeFileName.cs" ) = &gt; "。 \-StrangeFileName.cs "</example>
       </Docs>
     </Member>
     <MemberGroup MemberName="AppendFileNamesIfNotNull">
@@ -251,6 +304,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -259,9 +316,10 @@
         <Parameter Name="delimiter" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileItems">要追加的任务项规范。 如果数组为 <see langword="null" />，则此方法不起作用。</param>
-        <param name="delimiter">要放置在命令行中任务项规范之间的分隔符。</param>
-        <summary>向命令行中追加指定的 <see cref="T:Microsoft.Build.Framework.ITaskItem" /> 数组中的文件名列表，名称由指定的分隔符分隔。</summary>
+        <param name="fileItems">要追加的任务项，如果为 null，则此方法不起作用</param>
+        <param name="delimiter">要放置在命令行中各项之间的分隔符</param>
+        <summary>将 ITaskItem 规范数组作为文件名追加，如有必要，将其括起来，并用分隔符分隔。
+此方法在命令行的后面追加一个空格 (如果它当前在文件名之前不为空) 。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -273,10 +331,11 @@
    
   
 ## Examples  
- 请参阅 <xref:Microsoft.Build.Utilities.CommandLineBuilder.AppendFileNamesIfNotNull%2A>中的示例。  
+ 请参阅中的示例 <xref:Microsoft.Build.Utilities.CommandLineBuilder.AppendFileNamesIfNotNull%2A> 。  
   
  ]]></format>
         </remarks>
+        <example>请参阅 string [] 重载版本</example>
       </Docs>
     </Member>
     <Member MemberName="AppendFileNamesIfNotNull">
@@ -299,6 +358,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -307,9 +370,10 @@
         <Parameter Name="delimiter" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileNames">要追加的文件名。 如果数组为 <see langword="null" />，则此方法不起作用。</param>
-        <param name="delimiter">要在命令行中的文件名之间放置的分隔符。</param>
-        <summary>向命令行中追加指定的 <see langword="string" /> 数组中的文件名列表，名称由指定的分隔符分隔。</summary>
+        <param name="fileNames">要追加的文件名，如果为 null，则此方法不起作用</param>
+        <param name="delimiter">文件名称之间的分隔符</param>
+        <summary>追加文件名字符串的数组，如有必要，将其括在引号中，并用分隔符分隔。
+此方法在命令行的后面追加一个空格 (如果它当前在文件名之前不为空) 。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -321,10 +385,11 @@
    
   
 ## Examples  
- `AppendFileNamesIfNotNull(new string[] {"Alpha.cs", "Beta.cs"}, ",")` 生成 `Alpha.cs,Beta.cs`。  
+ `AppendFileNamesIfNotNull(new string[] {"Alpha.cs", "Beta.cs"}, ",")` 生成 `Alpha.cs,Beta.cs` 。  
   
  ]]></format>
         </remarks>
+        <example>AppendFileNamesIfNotNull (new string [] {"Alpha.cs"，"Beta.cs"}，"，" ) = &gt; "，"</example>
       </Docs>
     </Member>
     <Member MemberName="AppendFileNameWithQuoting">
@@ -347,6 +412,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -354,32 +423,19 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="fileName">要追加的文件名。</param>
-        <summary>在命令行的后面追加文件名，并在必要时在文件名的两侧加上引号。</summary>
-        <remarks>
-          <format type="text/markdown"><![CDATA[  
-  
-## Remarks  
- 如果文件名的第一个字符是短划线，则会将 `.\` 添加到文件名的开头，以便将其与交换机区分开来。  
-  
- 在执行前，此方法不会在命令行的后面追加空格。  
-  
-   
-  
-## Examples  
- `AppendFileNameWithQuoting("-StrangeFileName.cs")` 生成 `.\-StrangeFileName.cs`。  
-  
- ]]></format>
-        </remarks>
+        <param name="fileName">要追加的文件名</param>
+        <summary>追加文件名。 如果需要，则添加引号。 如果文件名的第一个字符为短划线，则为 ""。 \" 为避免混淆文件名与开关混淆，此方法不会在执行前将空格追加到命令行。</summary>
+        <remarks>将来，此函数可能会修复 "text" 以处理嵌入的引号。</remarks>
+        <example>AppendFileNameWithQuoting ( "-StrangeFileName.cs" ) = &gt; "。 \-StrangeFileName.cs "</example>
       </Docs>
     </Member>
     <Member MemberName="AppendQuotedTextToBuffer">
-      <MemberSignature Language="C#" Value="protected void AppendQuotedTextToBuffer (System.Text.StringBuilder buffer, string unquotedTextToAppend);" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void AppendQuotedTextToBuffer(class System.Text.StringBuilder buffer, string unquotedTextToAppend) cil managed" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="DocId" Value="M:Microsoft.Build.Utilities.CommandLineBuilder.AppendQuotedTextToBuffer(System.Text.StringBuilder,System.String)" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="VB.NET" Value="Protected Sub AppendQuotedTextToBuffer (buffer As StringBuilder, unquotedTextToAppend As String)" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void AppendQuotedTextToBuffer(System::Text::StringBuilder ^ buffer, System::String ^ unquotedTextToAppend);" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="F#" Value="member this.AppendQuotedTextToBuffer : System.Text.StringBuilder * string -&gt; unit" Usage="commandLineBuilder.AppendQuotedTextToBuffer (buffer, unquotedTextToAppend)" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="C#" Value="protected void AppendQuotedTextToBuffer (System.Text.StringBuilder buffer, string unquotedTextToAppend);" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void AppendQuotedTextToBuffer(class System.Text.StringBuilder buffer, string unquotedTextToAppend) cil managed" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="DocId" Value="M:Microsoft.Build.Utilities.CommandLineBuilder.AppendQuotedTextToBuffer(System.Text.StringBuilder,System.String)" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="VB.NET" Value="Protected Sub AppendQuotedTextToBuffer (buffer As StringBuilder, unquotedTextToAppend As String)" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="C++ CLI" Value="protected:&#xA; void AppendQuotedTextToBuffer(System::Text::StringBuilder ^ buffer, System::String ^ unquotedTextToAppend);" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="F#" Value="member this.AppendQuotedTextToBuffer : System.Text.StringBuilder * string -&gt; unit" Usage="commandLineBuilder.AppendQuotedTextToBuffer (buffer, unquotedTextToAppend)" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
@@ -389,16 +445,20 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
+        <ReturnType FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8">System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="buffer" Type="System.Text.StringBuilder" Index="0" FrameworkAlternate="netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-        <Parameter Name="unquotedTextToAppend" Type="System.String" Index="1" FrameworkAlternate="netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="buffer" Type="System.Text.StringBuilder" Index="0" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+        <Parameter Name="unquotedTextToAppend" Type="System.String" Index="1" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
       </Parameters>
       <Docs>
-        <param name="buffer">要追加到的缓冲区。</param>
-        <param name="unquotedTextToAppend">要用引号引起来的文本。</param>
+        <param name="buffer" />
+        <param name="unquotedTextToAppend" />
         <summary>必要时在缓冲区的第一个用引号引起来的文本后面追加给定文本。</summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -423,20 +483,17 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>将空间添加到指定字符串，前提是该字符串为非空。</summary>
-        <remarks>
-          <format type="text/markdown"><![CDATA[  
-  
-## Remarks  
- 此方法仅适用于继承类。  
-  
- ]]></format>
-        </remarks>
+        <summary>当且仅当指定的字符串不为空时，将其添加到指定的字符串。</summary>
+        <remarks>这是一个非常模糊的方法，因此仅适用于继承类。</remarks>
       </Docs>
     </Member>
     <Member MemberName="AppendSwitch">
@@ -459,6 +516,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -466,8 +527,9 @@
         <Parameter Name="switchName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="switchName">要追加到命令行后面的开关的名称。 此值不能为 <see langword="null" />。</param>
-        <summary>在命令行的后面追加指定的开关。</summary>
+        <param name="switchName">要追加到命令行的开关不能为 null</param>
+        <summary>追加一个没有任何引号的命令行开关，该开关不包含任何值。
+此方法在命令行 (后面追加一个空格，如果在开关之前) 当前不为空。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -477,13 +539,14 @@
    
   
 ## Examples  
- 下面的示例创建一个运行[Ilasm （IL 汇编程序）](/dotnet/framework/tools/ilasm-exe-il-assembler)的 <xref:Microsoft.Build.Utilities.ToolTask>。 <xref:Microsoft.Build.Utilities.CommandLineBuilder>、<xref:Microsoft.Build.Utilities.ToolLocationHelper>和 <xref:Microsoft.Build.Utilities.TaskLoggingHelper> 类用于生成运行任务所需的信息。  
+ 下面的示例创建一个 <xref:Microsoft.Build.Utilities.ToolTask> [Ilasm.exe (IL 汇编程序) ](/dotnet/framework/tools/ilasm-exe-il-assembler)运行的。 <xref:Microsoft.Build.Utilities.CommandLineBuilder>、 <xref:Microsoft.Build.Utilities.ToolLocationHelper> 和 <xref:Microsoft.Build.Utilities.TaskLoggingHelper> 类用于生成运行任务所需的信息。  
   
  [!code-csharp[msbuild_ToolTask#1](~/samples/snippets/csharp/VS_Snippets_Misc/msbuild_ToolTask/CS/ILAsm.cs#1)]
  [!code-vb[msbuild_ToolTask#1](~/samples/snippets/visualbasic/VS_Snippets_Misc/msbuild_ToolTask/VB/ILAsm.vb#1)]  
   
  ]]></format>
         </remarks>
+        <example>AppendSwitch ( "/utf8output" ) = &gt; "/utf8output"</example>
       </Docs>
     </Member>
     <MemberGroup MemberName="AppendSwitchIfNotNull">
@@ -515,6 +578,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -523,9 +590,9 @@
         <Parameter Name="parameter" Type="Microsoft.Build.Framework.ITaskItem" />
       </Parameters>
       <Docs>
-        <param name="switchName">要追加到命令行后面的开关的名称。 此值不能为 <see langword="null" />。</param>
-        <param name="parameter">要追加到命令行后面的开关参数。 将在必要时添加引号。 如果此值为 <see langword="null" />，则此方法不起作用。</param>
-        <summary>在命令行的后面追加一个采用作为单个字符串参数的任务项规范的开关。</summary>
+        <param name="switchName">要追加到命令行的开关不能为 null</param>
+        <param name="parameter">要追加的开关参数，如有必要，用引号括起来。 如果为 null，则此方法不起作用。</param>
+        <summary>追加开关 [重载] 此方法在命令行 (后面追加一个空格，如果在开关之前) 当前不为空。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -537,10 +604,11 @@
    
   
 ## Examples  
- 请参阅 <xref:Microsoft.Build.Utilities.CommandLineBuilder.AppendSwitchIfNotNull%2A>中的示例。  
+ 请参阅中的示例 <xref:Microsoft.Build.Utilities.CommandLineBuilder.AppendSwitchIfNotNull%2A> 。  
   
  ]]></format>
         </remarks>
+        <example>查看字符串重载版本</example>
       </Docs>
     </Member>
     <Member MemberName="AppendSwitchIfNotNull">
@@ -563,6 +631,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -571,9 +643,10 @@
         <Parameter Name="parameter" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="switchName">要追加到命令行后面的开关的名称。 此值不能为 <see langword="null" />。</param>
-        <param name="parameter">要追加到命令行后面的开关参数。 将在必要时添加引号。 如果此值为 <see langword="null" />，则此方法不起作用。</param>
-        <summary>在命令行的后面追加一个采用单个字符串参数的开关。</summary>
+        <param name="switchName">要追加到命令行的开关不能为 null</param>
+        <param name="parameter">要追加的开关参数，如有必要，用引号括起来。 如果为 null，则此方法不起作用。</param>
+        <summary>追加一个命令行开关，该开关采用单个字符串参数，如有必要，将参数括起来。
+此方法在命令行 (后面追加一个空格，如果在开关之前) 当前不为空。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -585,10 +658,11 @@
    
   
 ## Examples  
- `AppendSwitchIfNotNull("/source:", "File Name.cs")` 生成 `/source:\"File Name.cs\"`。  
+ `AppendSwitchIfNotNull("/source:", "File Name.cs")` 生成 `/source:\"File Name.cs\"` 。  
   
  ]]></format>
         </remarks>
+        <example>AppendSwitchIfNotNull ( "/source："、"File Name.cs" ) = &gt; "/source： \" File Name.cs \" "</example>
       </Docs>
     </Member>
     <Member MemberName="AppendSwitchIfNotNull">
@@ -611,6 +685,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -620,10 +698,11 @@
         <Parameter Name="delimiter" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="switchName">要追加到命令行后面的开关的名称。 此值不能为 <see langword="null" />。</param>
-        <param name="parameters">要追加到命令行的开关参数数组。 将在必要时添加引号。 如果数组为 <see langword="null" />，则此方法不起作用。</param>
-        <param name="delimiter">分隔各个参数的分隔符。 此值可以为空，但不能为 <see langword="null" />。</param>
-        <summary>在命令行的后面追加一个开关，该开关采用充当字符串参数的任务项规范数组。</summary>
+        <param name="switchName">要追加到命令行的开关不能为 null</param>
+        <param name="parameters">如果需要，可将参数切换为追加，用引号括起来。 如果为 null，则此方法不起作用。</param>
+        <param name="delimiter">要放置在各个参数之间的分隔符， (可能为空) </param>
+        <summary>追加一个命令行开关，该开关采用 ITaskItem [] 参数，并在必要时在各个文件名两侧加上双引号。
+此方法在命令行 (后面追加一个空格，如果在开关之前) 当前不为空。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -635,10 +714,11 @@
    
   
 ## Examples  
- 请参阅 <xref:Microsoft.Build.Utilities.CommandLineBuilder.AppendSwitchIfNotNull%2A>中的示例。  
+ 请参阅中的示例 <xref:Microsoft.Build.Utilities.CommandLineBuilder.AppendSwitchIfNotNull%2A> 。  
   
  ]]></format>
         </remarks>
+        <example>请参阅 string [] 重载版本</example>
       </Docs>
     </Member>
     <Member MemberName="AppendSwitchIfNotNull">
@@ -661,6 +741,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -670,10 +754,11 @@
         <Parameter Name="delimiter" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="switchName">要追加到命令行后面的开关的名称。 此值不能为 <see langword="null" />。</param>
-        <param name="parameters">要追加到命令行的开关参数数组。 将在必要时添加引号。 如果数组为 <see langword="null" />，则此方法不起作用。</param>
-        <param name="delimiter">分隔各个参数的分隔符。 此值可以为空，但不能为 <see langword="null" />。</param>
-        <summary>在命令行的后面追加一个采用字符串参数数组的开关。</summary>
+        <param name="switchName">要追加到命令行的开关不能为 null</param>
+        <param name="parameters">如果需要，可将参数切换为追加，用引号括起来。 如果为 null，则此方法不起作用。</param>
+        <param name="delimiter">要放置在各个参数之间的分隔符， (可能为空) </param>
+        <summary>追加一个命令行开关，该开关采用 string [] 参数，并在必要时在各个文件名的两侧加上双引号。
+此方法在命令行 (后面追加一个空格，如果在开关之前) 当前不为空。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -685,10 +770,11 @@
    
   
 ## Examples  
- `AppendSwitchIfNotNull("/sources:", new string[] {"Alpha.cs", "Be ta.cs"}, ";")` 生成 `/sources:Alpha.cs;\"Be ta.cs\"`。  
+ `AppendSwitchIfNotNull("/sources:", new string[] {"Alpha.cs", "Be ta.cs"}, ";")` 生成 `/sources:Alpha.cs;\"Be ta.cs\"` 。  
   
  ]]></format>
         </remarks>
+        <example>AppendSwitchIfNotNull ( "/sources："、new string [] {"Alpha.cs"、"ta.cs"}、";") = &gt; "/sources： .cs; \"Ta.cs \" "</example>
       </Docs>
     </Member>
     <MemberGroup MemberName="AppendSwitchUnquotedIfNotNull">
@@ -720,6 +806,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -728,9 +818,10 @@
         <Parameter Name="parameter" Type="Microsoft.Build.Framework.ITaskItem" />
       </Parameters>
       <Docs>
-        <param name="switchName">要追加到命令行后面的开关的名称。 此值不能为 <see langword="null" />。</param>
-        <param name="parameter">要追加到命令行后面的开关参数。 将不会添加引号。 如果此值为 <see langword="null" />，则此方法不起作用。</param>
-        <summary>在命令行的后面追加一个开关（该开关采用充当单个字符串参数的任务项规范），但不尝试在开关参数的两侧加上引号。</summary>
+        <param name="switchName">要追加到命令行的开关不能为 null</param>
+        <param name="parameter">将参数切换为追加，不带引号。 如果为 null，则此方法不起作用。</param>
+        <summary>追加文本参数，而不尝试用引号引起来。
+此方法在命令行 (后面追加一个空格，如果在开关之前) 当前不为空。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -740,10 +831,11 @@
    
   
 ## Examples  
- 请参阅 <xref:Microsoft.Build.Utilities.CommandLineBuilder.AppendSwitchUnquotedIfNotNull%2A>中的示例。  
+ 请参阅中的示例 <xref:Microsoft.Build.Utilities.CommandLineBuilder.AppendSwitchUnquotedIfNotNull%2A> 。  
   
  ]]></format>
         </remarks>
+        <example>查看字符串重载版本</example>
       </Docs>
     </Member>
     <Member MemberName="AppendSwitchUnquotedIfNotNull">
@@ -766,6 +858,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -774,9 +870,10 @@
         <Parameter Name="parameter" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="switchName">要追加到命令行后面的开关的名称。 此值不能为 <see langword="null" />。</param>
-        <param name="parameter">要追加到命令行后面的开关参数。 将不会添加引号。 如果此值为 <see langword="null" />，则此方法不起作用。</param>
-        <summary>在命令行的后面追加采用单字符串参数的开关，但不尝试在开关参数的两侧加上引号。</summary>
+        <param name="switchName">要追加到命令行的开关不能为 null</param>
+        <param name="parameter">将参数切换为追加，不带引号。 如果为 null，则此方法不起作用。</param>
+        <summary>追加文本参数，而不尝试用引号引起来。
+此方法在命令行 (后面追加一个空格，如果在开关之前) 当前不为空。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -786,10 +883,11 @@
    
   
 ## Examples  
- `AppendSwitchUnquotedIfNotNull("/source:", "File Name.cs")` 生成 `/source:File Name.cs`。  
+ `AppendSwitchUnquotedIfNotNull("/source:", "File Name.cs")` 生成 `/source:File Name.cs` 。  
   
  ]]></format>
         </remarks>
+        <example>AppendSwitchUnquotedIfNotNull ( "/source："、"File Name.cs" ) = &gt; "/source： File Name.cs"</example>
       </Docs>
     </Member>
     <Member MemberName="AppendSwitchUnquotedIfNotNull">
@@ -812,6 +910,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -821,10 +923,10 @@
         <Parameter Name="delimiter" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="switchName">要追加到命令行后面的开关的名称。 此值不能为 <see langword="null" />。</param>
-        <param name="parameters">要追加到命令行的开关参数数组。 将不会添加引号。 如果数组为 <see langword="null" />，则此方法不起作用。</param>
-        <param name="delimiter">分隔各个参数的分隔符。 此值可以为空，但不能为 <see langword="null" />。</param>
-        <summary>在命令行的后面追加一个采用作为单个字符串参数的任务项规范的开关，但不尝试在其两侧加上引号。</summary>
+        <param name="switchName">要追加到命令行的开关不能为 null</param>
+        <param name="parameters">将参数切换为追加，不带引号。 如果为 null，则此方法不起作用。</param>
+        <param name="delimiter">要放置在各个参数之间的分隔符， (可能为空) </param>
+        <summary>追加一个命令行开关，该开关采用 ITaskItem [] 参数，而不是将单个参数引起来，此方法在命令行后面追加一个空格 (如果在开关之前) 当前不为空。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -834,10 +936,11 @@
    
   
 ## Examples  
- 请参阅 <xref:Microsoft.Build.Utilities.CommandLineBuilder.AppendSwitchUnquotedIfNotNull%2A>中的示例。  
+ 请参阅中的示例 <xref:Microsoft.Build.Utilities.CommandLineBuilder.AppendSwitchUnquotedIfNotNull%2A> 。  
   
  ]]></format>
         </remarks>
+        <example>请参阅 string [] 重载版本</example>
       </Docs>
     </Member>
     <Member MemberName="AppendSwitchUnquotedIfNotNull">
@@ -860,6 +963,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -869,10 +976,10 @@
         <Parameter Name="delimiter" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="switchName">要追加到命令行后面的开关的名称。 此值不能为 <see langword="null" />。</param>
-        <param name="parameters">要追加到命令行的开关参数数组。 将不会添加引号。 如果数组为 <see langword="null" />，则此方法不起作用。</param>
-        <param name="delimiter">分隔各个参数的分隔符。 此值可以为空，但不能为 <see langword="null" />。</param>
-        <summary>在命令行的后面追加一个采用字符串参数数组的开关，但不尝试在开关参数的两侧加上引号。</summary>
+        <param name="switchName">要追加到命令行的开关不能为 null</param>
+        <param name="parameters">将参数切换为追加，不带引号。 如果为 null，则此方法不起作用。</param>
+        <param name="delimiter">要放置在各个参数之间的分隔符， (可能为空) </param>
+        <summary>追加一个命令行开关，该开关采用 string [] 参数，而不是将单个参数括起来此方法在命令行后面追加一个空格 (如果在开关之前) 当前不为空。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
@@ -882,23 +989,24 @@
    
   
 ## Examples  
- `AppendSwitchUnquotedIfNotNull("/sources:", new string[] {"Alpha.cs", "Be ta.cs"}, ";")` 生成 `/sources:Alpha.cs;Be ta.cs`。  
+ `AppendSwitchUnquotedIfNotNull("/sources:", new string[] {"Alpha.cs", "Be ta.cs"}, ";")` 生成 `/sources:Alpha.cs;Be ta.cs` 。  
   
  ]]></format>
         </remarks>
+        <example>AppendSwitchUnquotedIfNotNull ( "/sources："、new string [] {"Alpha.cs"、"ta.cs"}、";") = &gt; "/sources： .cs;Ta.cs "</example>
       </Docs>
     </Member>
     <Member MemberName="AppendTextUnquoted">
+      <MemberSignature Language="C#" Value="public void AppendTextUnquoted (string textToAppend);" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AppendTextUnquoted(string textToAppend) cil managed" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="DocId" Value="M:Microsoft.Build.Utilities.CommandLineBuilder.AppendTextUnquoted(System.String)" />
+      <MemberSignature Language="VB.NET" Value="Public Sub AppendTextUnquoted (textToAppend As String)" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; void AppendTextUnquoted(System::String ^ textToAppend);" FrameworkAlternate="msbuild-15;msbuild-15-netcore;msbuild-16;msbuild-16-netcore;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
+      <MemberSignature Language="F#" Value="member this.AppendTextUnquoted : string -&gt; unit" Usage="commandLineBuilder.AppendTextUnquoted textToAppend" />
       <MemberSignature Language="C#" Value="protected void AppendTextUnquoted (string textToAppend);" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5" />
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void AppendTextUnquoted(string textToAppend) cil managed" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5" />
-      <MemberSignature Language="DocId" Value="M:Microsoft.Build.Utilities.CommandLineBuilder.AppendTextUnquoted(System.String)" />
       <MemberSignature Language="VB.NET" Value="Protected Sub AppendTextUnquoted (textToAppend As String)" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5" />
       <MemberSignature Language="C++ CLI" Value="protected:&#xA; void AppendTextUnquoted(System::String ^ textToAppend);" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5" />
-      <MemberSignature Language="F#" Value="member this.AppendTextUnquoted : string -&gt; unit" Usage="commandLineBuilder.AppendTextUnquoted textToAppend" />
-      <MemberSignature Language="C#" Value="public void AppendTextUnquoted (string textToAppend);" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AppendTextUnquoted(string textToAppend) cil managed" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="VB.NET" Value="Public Sub AppendTextUnquoted (textToAppend As String)" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
-      <MemberSignature Language="C++ CLI" Value="public:&#xA; void AppendTextUnquoted(System::String ^ textToAppend);" FrameworkAlternate="netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
@@ -912,6 +1020,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -919,21 +1031,11 @@
         <Parameter Name="textToAppend" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="textToAppend">要追加到命令行中的字符串。</param>
-        <summary>在命令行中追加字符串，而不尝试将字符串封装在引号中。</summary>
-        <remarks>
-          <format type="text/markdown"><![CDATA[  
-  
-## Remarks  
- 在执行前，此方法不会在命令行的后面追加空格。  
-  
-   
-  
-## Examples  
- `AppendTextUnquoted(@"Folder name\filename.cs")` 生成 `Folder name\\filename.cs`。  
-  
- ]]></format>
-        </remarks>
+        <param name="textToAppend">要追加的字符串</param>
+        <summary>追加字符串。 不添加任何引号。
+此方法不会在执行之前向命令行追加空格。</summary>
+        <remarks>将来，此函数可能会修复 "textToAppend" 以处理嵌入引号。</remarks>
+        <example>AppendTextUnquoted (@"Folder name\filename.cs") = &gt; "Folder name \\ filename.cs"</example>
       </Docs>
     </Member>
     <Member MemberName="AppendTextWithQuoting">
@@ -956,6 +1058,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -963,21 +1069,10 @@
         <Parameter Name="textToAppend" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="textToAppend">要追加到命令行中的字符串。</param>
-        <summary>在命令行后追加字符串，并在必要时用引号将字符串引起来。</summary>
-        <remarks>
-          <format type="text/markdown"><![CDATA[  
-  
-## Remarks  
- 在执行前，此方法不会在命令行的后面追加空格。  
-  
-   
-  
-## Examples  
- `AppendTextWithQuoting(@"Folder name\filename.cs")` 生成 `\"Folder name\\filename.cs\"`。  
-  
- ]]></format>
-        </remarks>
+        <param name="textToAppend">要追加的字符串</param>
+        <summary>追加字符串。 如果需要，则添加引号。
+此方法不会在执行之前向命令行追加空格。</summary>
+        <remarks>对字符串中的任何双引号进行转义。</remarks>
       </Docs>
     </Member>
     <Member MemberName="CommandLine">
@@ -1000,16 +1095,21 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netframework-4.0">
-          <AttributeName>get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+          <AttributeName Language="C#">[get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]</AttributeName>
+          <AttributeName Language="F#">[&lt;get: System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")&gt;]</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Text.StringBuilder</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>获取表示用于继承类的命令行的 <see cref="T:System.Text.StringBuilder" /> 实例。</summary>
+        <summary>检索继承类的私有 StringBuilder 实例</summary>
         <value>用于继承类的 <see cref="T:System.Text.StringBuilder" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -1034,6 +1134,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1041,9 +1145,9 @@
         <Parameter Name="parameter" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="parameter">要检查是否存在需要使用引号的字符的字符串。</param>
-        <summary>确定指定的字符串参数是否应用引号括起来，因为它包含空格。</summary>
-        <returns>如果应使用引号将开关参数括起来，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <param name="parameter">要检查是否需要引用引号的字符的字符串</param>
+        <summary>检查给定的开关参数，以确定它是否必须为引号。</summary>
+        <returns>如果应将参数括起来，则为 true</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1059,11 +1163,15 @@
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>表示命令行的长度。</summary>
+        <summary>返回当前命令的长度</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
@@ -1088,20 +1196,24 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
         <summary>以字符串形式返回命令行。</summary>
-        <returns>表示命令行的 <see cref="T:System.String" />。</returns>
+        <returns />
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Examples  
- 下面的示例创建一个运行[Ilasm （IL 汇编程序）](/dotnet/framework/tools/ilasm-exe-il-assembler)的 <xref:Microsoft.Build.Utilities.ToolTask>。 <xref:Microsoft.Build.Utilities.CommandLineBuilder>、<xref:Microsoft.Build.Utilities.ToolLocationHelper>和 <xref:Microsoft.Build.Utilities.TaskLoggingHelper> 类用于生成运行任务所需的信息。  
+ 下面的示例创建一个 <xref:Microsoft.Build.Utilities.ToolTask> [Ilasm.exe (IL 汇编程序) ](/dotnet/framework/tools/ilasm-exe-il-assembler)运行的。 <xref:Microsoft.Build.Utilities.CommandLineBuilder>、 <xref:Microsoft.Build.Utilities.ToolLocationHelper> 和 <xref:Microsoft.Build.Utilities.TaskLoggingHelper> 类用于生成运行任务所需的信息。  
   
- msbuild_ToolTask#1  
+ msbuild_ToolTask # 1  
   
  ]]></format>
         </remarks>
@@ -1127,6 +1239,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v3.5</AssemblyName>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1135,14 +1251,14 @@
         <Parameter Name="parameter" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="switchName">表示错误消息的开关名称的字符串。</param>
-        <param name="parameter">一个字符串，表示用于扫描双引号的开关参数。</param>
-        <summary>如果命令行参数包含双引号 (") 字符，则返回错误。 因为在命令行参数中双引号是非法字符，此方法可帮助防止参数注入攻击。</summary>
+        <param name="switchName">错误消息的开关名称</param>
+        <param name="parameter">切换参数以进行扫描</param>
+        <summary>如果参数中有双引号，则引发。 这用于防止参数注入。 它是虚拟的，因此，如果需要在文件名中转义引号，则工具可以重写此方法</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:Microsoft.Build.Utilities.CommandLineBuilder.VerifyThrowNoEmbeddedDoubleQuotes%2A> 是一种虚拟方法，如果想要允许在文件名中使用双引号，则应用程序可以重写此方法。  
+ <xref:Microsoft.Build.Utilities.CommandLineBuilder.VerifyThrowNoEmbeddedDoubleQuotes%2A> 是一个虚拟方法，如果要允许在文件名中转义双引号，则应用程序可以重写此方法。  
   
  ]]></format>
         </remarks>
