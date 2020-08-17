@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 9214c15b02ef7b3ee3057fc099b5d261d861f118
-ms.sourcegitcommit: 1bb00d2f4343e73ae8d58668f02297a3cf10a4c1
-ms.translationtype: HT
+ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
+ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 06/15/2019
-ms.locfileid: "63868966"
+ms.lasthandoff: 08/29/2019
+ms.locfileid: "71139016"
 ---
-<span data-ttu-id="334fc-101">动态 HTML (DHTML)</span><span class="sxs-lookup"><span data-stu-id="334fc-101">Dynamic HTML (DHTML)</span></span>
+<span data-ttu-id="bc985-101">动态 HTML (DHTML)</span><span class="sxs-lookup"><span data-stu-id="bc985-101">Dynamic HTML (DHTML)</span></span>
