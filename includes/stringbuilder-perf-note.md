@@ -1,10 +1,10 @@
 ---
 ms.openlocfilehash: 903ac4ecb57e3a8e02a4f65ecfa6f9e77a552f45
-ms.sourcegitcommit: 1bb00d2f4343e73ae8d58668f02297a3cf10a4c1
-ms.translationtype: HT
+ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
+ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 06/15/2019
-ms.locfileid: "63872205"
+ms.lasthandoff: 08/29/2019
+ms.locfileid: "71139676"
 ---
 在以下情况下，通过 <xref:System.Text.StringBuilder.Chars%2A> 属性使用基于字符的索引可能会非常缓慢：
 
@@ -14,13 +14,13 @@ ms.locfileid: "63872205"
 因为每次字符访问都会遍历区块的整个链接列表以查找要索引到的正确缓冲区，所以性能受到严重影响。
 
 > [!NOTE]
->  即使对于大型“笨重的”<xref:System.Text.StringBuilder> 对象，使用 <xref:System.Text.StringBuilder.Chars%2A> 属性对一个或少量字符进行基于索引的访问几乎不影响性能；一般情况下，它是 0(n) 操作  。 当迭代 <xref:System.Text.StringBuilder> 对象中的字符时，会对性能造成显著的影响，这是 O(n^2) 操作  。 
+>  即使对于大型“笨重的”<xref:System.Text.StringBuilder> 对象，使用 <xref:System.Text.StringBuilder.Chars%2A> 属性对一个或少量字符进行基于索引的访问几乎不影响性能；一般情况下，它是 0(n) 操作****。 当迭代 <xref:System.Text.StringBuilder> 对象中的字符时，会对性能造成显著的影响，这是 O(n^2) 操作****。 
 
 如果通过 <xref:System.Text.StringBuilder> 对象在使用基于字符的索引时遇到性能问题，可以使用以下任一解决方法：
 
 - 通过调用 <xref:System.Text.StringBuilder.ToString%2A> 方法，将 <xref:System.Text.StringBuilder> 实例转换为 <xref:System.String>，然后访问字符串中的字符。
 
-- 将现有的 <xref:System.Text.StringBuilder> 对象的内容复制到新的预调整大小的 <xref:System.Text.StringBuilder> 对象。 由于新的 <xref:System.Text.StringBuilder> 对象并不笨重，因此可以提升性能。 例如:
+- 将现有的 <xref:System.Text.StringBuilder> 对象的内容复制到新的预调整大小的 <xref:System.Text.StringBuilder> 对象。 由于新的 <xref:System.Text.StringBuilder> 对象并不笨重，因此可以提升性能。 例如：
 
    ```csharp
    // sbOriginal is the existing StringBuilder object
