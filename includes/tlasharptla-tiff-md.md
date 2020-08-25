@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71138596"
 ---
-<span data-ttu-id="afd98-101">标记图像文件格式 (TIFF)</span><span class="sxs-lookup"><span data-stu-id="afd98-101">Tagged Image File Format (TIFF)</span></span>
+<span data-ttu-id="f5cab-101">标记图像文件格式 (TIFF)</span><span class="sxs-lookup"><span data-stu-id="f5cab-101">Tagged Image File Format (TIFF)</span></span>

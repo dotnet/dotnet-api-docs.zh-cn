@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 08/29/2019
 ms.locfileid: "71139726"
 ---
-<span data-ttu-id="3947c-101">WCF 数据服务</span><span class="sxs-lookup"><span data-stu-id="3947c-101">WCF Data Services</span></span>
+<span data-ttu-id="6ef5f-101">WCF 数据服务</span><span class="sxs-lookup"><span data-stu-id="6ef5f-101">WCF Data Services</span></span>

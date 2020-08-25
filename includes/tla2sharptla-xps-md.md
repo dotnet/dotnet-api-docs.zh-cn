@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71139206"
 ---
-<span data-ttu-id="fba2b-101">XPS</span><span class="sxs-lookup"><span data-stu-id="fba2b-101">XPS</span></span>
+<span data-ttu-id="81f7d-101">XPS</span><span class="sxs-lookup"><span data-stu-id="81f7d-101">XPS</span></span>

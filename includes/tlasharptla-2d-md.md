@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71139186"
 ---
-<span data-ttu-id="cf72c-101">二维</span><span class="sxs-lookup"><span data-stu-id="cf72c-101">2-D</span></span>
+<span data-ttu-id="bbad7-101">二维</span><span class="sxs-lookup"><span data-stu-id="bbad7-101">2-D</span></span>

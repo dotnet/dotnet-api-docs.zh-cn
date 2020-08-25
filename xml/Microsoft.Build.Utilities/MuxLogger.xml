@@ -1,5 +1,5 @@
 <Type Name="MuxLogger" FullName="Microsoft.Build.Utilities.MuxLogger">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="f0c1bac8025c518b15c3a4195610e83185d7213e" /><Meta Name="ms.sourcegitcommit" Value="055a4a82a0b08bfbdc21bd1347fb71f7fe2c099e" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="08/15/2019" /><Meta Name="ms.locfileid" Value="69298559" /></Metadata><TypeSignature Language="C#" Value="public class MuxLogger : Microsoft.Build.Framework.INodeLogger" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="c037fb8f480f5c1333bda7055a455b07d7bee02a" /><Meta Name="ms.sourcegitcommit" Value="397961a0164281b579f68064c3bb66c071f374d9" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="07/14/2020" /><Meta Name="ms.locfileid" Value="86341924" /></Metadata><TypeSignature Language="C#" Value="public class MuxLogger : Microsoft.Build.Framework.INodeLogger" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MuxLogger extends System.Object implements class Microsoft.Build.Framework.ILogger, class Microsoft.Build.Framework.INodeLogger" />
   <TypeSignature Language="DocId" Value="T:Microsoft.Build.Utilities.MuxLogger" />
   <TypeSignature Language="VB.NET" Value="Public Class MuxLogger&#xA;Implements INodeLogger" />
@@ -8,6 +8,10 @@
   <AssemblyInfo>
     <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <AssemblyInfo>
+    <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+    <AssemblyVersion>15.1.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -21,46 +25,64 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary><span data-ttu-id="d0fb3-101">表示多路复用记录器。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-101">Represents a multiplexing logger.</span></span> <span data-ttu-id="d0fb3-102">在生成过程中，该记录器的用途是注册和注销多个记录器。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-102">The purpose of this logger is to register and unregister multiple loggers during the build.</span></span> <span data-ttu-id="d0fb3-103">支持 Visual Studio IDE 方案，通过该方案为每个项目系统的生成请求注册和注销记录器。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-103">Supports the Visual Studio IDE scenario in which loggers are registered and unregistered for each project system's build request.</span></span> <span data-ttu-id="d0fb3-104">一个物理生成能拥有多个逻辑生成，每个都带有它自己的记录器集。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-104">One physical build can have multiple logical builds, each with its own set of loggers.</span></span>  
-  
-<span data-ttu-id="d0fb3-105"><see langword="MuxLogger" /> 作为一般中心/l 样式记录器向生成管理器注册自身。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-105">The <see langword="MuxLogger" /> registers itself with the build manager as a regular central /l style logger.</span></span> <span data-ttu-id="d0fb3-106">根据消息来自的逻辑生成，它从生成管理器中接收消息并将它们发送到正确的记录器上。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-106">It receives messages from the build manager and routes them to the correct logger, based on the logical build that the message came from.</span></span></summary>
+    <summary><span data-ttu-id="945ac-101">这是一个多路复用记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-101">This is a multiplexing logger.</span></span> <span data-ttu-id="945ac-102">此记录器的用途是允许在生成过程中注册和注销多个记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-102">The purpose of this logger is to allow the registration and deregistration of multiple loggers during the build.</span></span> <span data-ttu-id="945ac-103">这是为了支持 VS IDE 方案，其中为每个项目系统的生成请求注册和注销记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-103">This is to support the VS IDE scenario where loggers are registered and unregistered for each project system's build request.</span></span> <span data-ttu-id="945ac-104">这意味着一个物理生成可能有多个每个逻辑生成，每个都具有自己的记录器集。</span><span class="sxs-lookup"><span data-stu-id="945ac-104">This means one physical build may have multiple logical builds each with their own set of loggers.</span></span> 
+            
+<span data-ttu-id="945ac-105">Mux 记录器会将其自身注册为生成管理器，作为常规中部/l 样式记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-105">The Mux logger will register itself with the build manager as a regular central /l style logger.</span></span> <span data-ttu-id="945ac-106">它负责接收来自生成管理器的消息，并根据消息来自的逻辑生成将消息路由到正确的记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-106">It will be responsible for receiving messages from the build manager and route them to the correct logger based on the logical build the message came from.</span></span>
+            
+<span data-ttu-id="945ac-107">要求： 1) 多路复用记录器将在生成管理器的开始生成之前注册在生成管理器实际开始生成之前注册的任何记录器，并在生成管理器启动生成后，将生成 "生成已启动" 事件，该事件在生成管理器启动后，将会收到 "生成已启动" 事件。</span><span class="sxs-lookup"><span data-stu-id="945ac-107">Requirements: 1) Multiplexing logger will be registered at the beginning of the build manager's Begin build Any loggers registered before the build manager actually started building will get the build started event at the same time as the MUX logger Any loggers registered after the build manager starts the build will get a synthesised build started event.</span></span> <span data-ttu-id="945ac-108">无法缓存事件，因为在创建事件时确定生成已启动事件的时间戳，因此缓存事件会在注册到 MUX 的记录器中产生错误的生成时间。</span><span class="sxs-lookup"><span data-stu-id="945ac-108">The event cannot be cached because the timestamp of the build started event is determined when the event is created, caching the event would give incorrect build times in the loggers registered to the MUX.</span></span>
+                    
+<span data-ttu-id="945ac-109">2) 将由生成管理器初始化 MUX 记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-109">2) The MUX logger will be initialized by the build manager.</span></span>
+<span data-ttu-id="945ac-110">Mux 将从生成管理器侦听事件源中的所有事件，并将事件正确路由到已注册的记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-110">The mux will listen to all events on the event source from the build manager and will route events correctly to the registered loggers.</span></span>
+                
+<span data-ttu-id="945ac-111">3) 在结束生成中完成生成时，MUX 记录器将关闭。</span><span class="sxs-lookup"><span data-stu-id="945ac-111">3) The MUX logger will be shutdown when the build is finished in end build .</span></span> <span data-ttu-id="945ac-112">此时，它将取消注册附加到它的所有记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-112">At this time it will un-register any loggers attached to it.</span></span>
+                
+<span data-ttu-id="945ac-113">4) 在为每个记录器显示第一个项目 "已启动" 事件的 "项目已完成" 事件时，MUX 记录器将记录 "生成完成" 事件。</span><span class="sxs-lookup"><span data-stu-id="945ac-113">4) The MUX logger will log the build finished event when the project finished event for the first project started event is seen for each logger.</span></span>
+               
+<span data-ttu-id="945ac-114">正在注册记录器：</span><span class="sxs-lookup"><span data-stu-id="945ac-114">Registering Loggers:</span></span> 
+<span data-ttu-id="945ac-115">多路复用记录器的工作方式如下：将使用提交 ID 将记录器传递到 MUX 注册记录器方法，该 ID 用于将消息路由到正确的记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-115">The multiplexing logger will function in the following way: A logger will be passed to the MUX Register logger method with a submission ID which will be used to route a the message to the correct logger.</span></span>
+<span data-ttu-id="945ac-116">将创建一个新的事件源，以便在已记录生成已启动事件时，可以将传入的记录器注册到该事件源。 MUX 记录器会创建一个新的 BuildStartedEvent 并将其发送到事件源。</span><span class="sxs-lookup"><span data-stu-id="945ac-116">A new event source will be created so that the logger passed in can be registered to that event source If the build started event has already been logged the MUX logger will create a new BuildStartedEvent and send that to the event source.</span></span>
+                
+<span data-ttu-id="945ac-117">UnregisterLoggers：生成提交完成后，将使用提交 ID 调用 UnregisterLoggers 方法。</span><span class="sxs-lookup"><span data-stu-id="945ac-117">UnregisterLoggers: When a build submission is completed the UnregisterLoggers method will be called with the submission ID.</span></span>
+<span data-ttu-id="945ac-118">此时，我们将查找提交 ID 的项目已完成事件的成功状态，并将生成完成事件记录到记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-118">At this point we will look up the success state of the project finished event for the submission ID and log a build finished event to the logger.</span></span>
+<span data-ttu-id="945ac-119">将清理事件源。</span><span class="sxs-lookup"><span data-stu-id="945ac-119">The event source will be cleaned up.</span></span>  <span data-ttu-id="945ac-120">这可能很有趣，因为取消注册操作将来自执行日志记录的其他线程。</span><span class="sxs-lookup"><span data-stu-id="945ac-120">This may be interesting because the unregister will come from a thread other than what is doing the logging.</span></span>
+<span data-ttu-id="945ac-121">如果在记录事件时调用了 "注销"，这可能会导致同步问题。</span><span class="sxs-lookup"><span data-stu-id="945ac-121">This may create a Synchronization issue, if unregister is called while events are being logged.</span></span></summary>
     <remarks>
       <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <span data-ttu-id="d0fb3-107">`MuxLogger`一般函数如下所示:</span><span class="sxs-lookup"><span data-stu-id="d0fb3-107">The `MuxLogger` generally functions as follows:</span></span>  
+ <span data-ttu-id="945ac-122">`MuxLogger`一般函数如下所示：</span><span class="sxs-lookup"><span data-stu-id="945ac-122">The `MuxLogger` generally functions as follows:</span></span>  
   
--   <span data-ttu-id="d0fb3-108">`MuxLogger`在生成管理器的开始生成时注册。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-108">The `MuxLogger` is registered at the beginning of the build manager's Begin build.</span></span>  
+-   <span data-ttu-id="945ac-123">在 `MuxLogger` 生成管理器的开始生成时注册。</span><span class="sxs-lookup"><span data-stu-id="945ac-123">The `MuxLogger` is registered at the beginning of the build manager's Begin build.</span></span>  
   
-     <span data-ttu-id="d0fb3-109">在生成管理器启动生成之前注册的任何记录器都将以与相同的时间`MuxLogger`获取生成启动事件。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-109">Any loggers registered before the build manager starts the build get the build-started event at the same time as the `MuxLogger`.</span></span>  
+     <span data-ttu-id="945ac-124">在生成管理器启动生成之前注册的任何记录器都将以与相同的时间获取生成启动事件 `MuxLogger` 。</span><span class="sxs-lookup"><span data-stu-id="945ac-124">Any loggers registered before the build manager starts the build get the build-started event at the same time as the `MuxLogger`.</span></span>  
   
-     <span data-ttu-id="d0fb3-110">生成管理器启动生成后注册的任何记录器都将获取合成生成启动事件。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-110">Any loggers registered after the build manager starts the build get a synthesized build-started event.</span></span> <span data-ttu-id="d0fb3-111">无法缓存事件, 因为在创建事件时确定了生成启动事件的时间戳, 而缓存事件会在注册到的`MuxLogger`记录器中产生错误的生成时间。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-111">The event cannot be cached because the timestamp of the build-started event is determined when the event is created, and caching the event would give incorrect build times in the loggers registered to the `MuxLogger`.</span></span>  
+     <span data-ttu-id="945ac-125">生成管理器启动生成后注册的任何记录器都将获取合成生成启动事件。</span><span class="sxs-lookup"><span data-stu-id="945ac-125">Any loggers registered after the build manager starts the build get a synthesized build-started event.</span></span> <span data-ttu-id="945ac-126">无法缓存事件，因为在创建事件时确定了生成启动事件的时间戳，而缓存事件会在注册到的记录器中产生错误的生成时间 `MuxLogger` 。</span><span class="sxs-lookup"><span data-stu-id="945ac-126">The event cannot be cached because the timestamp of the build-started event is determined when the event is created, and caching the event would give incorrect build times in the loggers registered to the `MuxLogger`.</span></span>  
   
--   <span data-ttu-id="d0fb3-112">`MuxLogger`由生成管理器初始化</span><span class="sxs-lookup"><span data-stu-id="d0fb3-112">The `MuxLogger` is initialized by the build manager</span></span>  
+-   <span data-ttu-id="945ac-127">`MuxLogger`由生成管理器初始化</span><span class="sxs-lookup"><span data-stu-id="945ac-127">The `MuxLogger` is initialized by the build manager</span></span>  
   
-     <span data-ttu-id="d0fb3-113">从生成管理器侦听来自事件源的所有事件,并将事件正确路由到已注册的记录器。`MuxLogger`</span><span class="sxs-lookup"><span data-stu-id="d0fb3-113">The `MuxLogger` listens to all events on the event source from the build manager and routes events correctly to the registered loggers.</span></span>  
+     <span data-ttu-id="945ac-128">`MuxLogger`从生成管理器侦听来自事件源的所有事件，并将事件正确路由到已注册的记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-128">The `MuxLogger` listens to all events on the event source from the build manager and routes events correctly to the registered loggers.</span></span>  
   
--   <span data-ttu-id="d0fb3-114">当生成在结束生成中完成时,将关闭。`MuxLogger`</span><span class="sxs-lookup"><span data-stu-id="d0fb3-114">The `MuxLogger` is shutdown when the build is finished in end build.</span></span> <span data-ttu-id="d0fb3-115">此时, 它会取消注册附加到它的所有记录器。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-115">At this time, it unregisters any loggers attached to it.</span></span>  
+-   <span data-ttu-id="945ac-129">`MuxLogger`当生成在结束生成中完成时，将关闭。</span><span class="sxs-lookup"><span data-stu-id="945ac-129">The `MuxLogger` is shutdown when the build is finished in end build.</span></span> <span data-ttu-id="945ac-130">此时，它会取消注册附加到它的所有记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-130">At this time, it unregisters any loggers attached to it.</span></span>  
   
--   <span data-ttu-id="d0fb3-116">为`MuxLogger`每个记录器显示第一个项目开始事件的项目完成事件时, 将记录生成完成事件。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-116">The `MuxLogger` logs the build-finished event when the project-finished event for the first project-started event is seen for each logger.</span></span>  
+-   <span data-ttu-id="945ac-131">为 `MuxLogger` 每个记录器显示第一个项目开始事件的项目完成事件时，将记录生成完成事件。</span><span class="sxs-lookup"><span data-stu-id="945ac-131">The `MuxLogger` logs the build-finished event when the project-finished event for the first project-started event is seen for each logger.</span></span>  
   
- <span data-ttu-id="d0fb3-117">`MuxLogger`注册记录器的方法如下:</span><span class="sxs-lookup"><span data-stu-id="d0fb3-117">The `MuxLogger` registers loggers in the following way:</span></span>  
+ <span data-ttu-id="945ac-132">`MuxLogger`注册记录器的方法如下：</span><span class="sxs-lookup"><span data-stu-id="945ac-132">The `MuxLogger` registers loggers in the following way:</span></span>  
   
-1.  <span data-ttu-id="d0fb3-118">记录器传递`MuxLogger.RegisterLogger`给方法, 其中包含用于将消息路由到记录器的提交 ID。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-118">The logger is passed to the `MuxLogger.RegisterLogger` method with a submission ID that is used to route a message to that logger.</span></span>  
+1.  <span data-ttu-id="945ac-133">记录器传递给 `MuxLogger.RegisterLogger` 方法，其中包含用于将消息路由到记录器的提交 ID。</span><span class="sxs-lookup"><span data-stu-id="945ac-133">The logger is passed to the `MuxLogger.RegisterLogger` method with a submission ID that is used to route a message to that logger.</span></span>  
   
-2.  <span data-ttu-id="d0fb3-119">将`MuxLogger`记录器注册`MuxLogger`到事件源。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-119">The `MuxLogger` registers the logger to the `MuxLogger` event source.</span></span>  
+2.  <span data-ttu-id="945ac-134">将 `MuxLogger` 记录器注册到 `MuxLogger` 事件源。</span><span class="sxs-lookup"><span data-stu-id="945ac-134">The `MuxLogger` registers the logger to the `MuxLogger` event source.</span></span>  
   
-3.  <span data-ttu-id="d0fb3-120">如果已记录生成已启动的事件, 则`MuxLogger`会创建一个新的生成启动事件, 并将其发送到记录器的事件源。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-120">If the build-started event has already been logged, the `MuxLogger` creates a new build-started event and sends it to the logger's event source.</span></span>  
+3.  <span data-ttu-id="945ac-135">如果已记录生成已启动的事件，则 `MuxLogger` 会创建一个新的生成启动事件，并将其发送到记录器的事件源。</span><span class="sxs-lookup"><span data-stu-id="945ac-135">If the build-started event has already been logged, the `MuxLogger` creates a new build-started event and sends it to the logger's event source.</span></span>  
   
- <span data-ttu-id="d0fb3-121">`MuxLogger`注销记录器的方法如下:</span><span class="sxs-lookup"><span data-stu-id="d0fb3-121">The `MuxLogger` unregisters loggers in the following way:</span></span>  
+ <span data-ttu-id="945ac-136">`MuxLogger`注销记录器的方法如下：</span><span class="sxs-lookup"><span data-stu-id="945ac-136">The `MuxLogger` unregisters loggers in the following way:</span></span>  
   
-1.  <span data-ttu-id="d0fb3-122">完成生成提交后, `MuxLogger.UnregisterLogger`将使用记录器的提交 ID 调用方法。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-122">When a build submission is completed, the `MuxLogger.UnregisterLogger` method is called with the submission ID for the logger.</span></span>  
+1.  <span data-ttu-id="945ac-137">完成生成提交后，将 `MuxLogger.UnregisterLogger` 使用记录器的提交 ID 调用方法。</span><span class="sxs-lookup"><span data-stu-id="945ac-137">When a build submission is completed, the `MuxLogger.UnregisterLogger` method is called with the submission ID for the logger.</span></span>  
   
-2.  <span data-ttu-id="d0fb3-123">将`MuxLogger`查找提交 ID 的项目完成事件的成功状态, 并将生成结束事件记录到记录器。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-123">The `MuxLogger` looks up the success state of the project-finished event for the submission ID and logs a build-finished event to the logger.</span></span>  
+2.  <span data-ttu-id="945ac-138">将 `MuxLogger` 查找提交 ID 的项目完成事件的成功状态，并将生成结束事件记录到记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-138">The `MuxLogger` looks up the success state of the project-finished event for the submission ID and logs a build-finished event to the logger.</span></span>  
   
-3.  <span data-ttu-id="d0fb3-124">`MuxLogger`清理事件源。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-124">The `MuxLogger` cleans up the event source.</span></span>  
+3.  <span data-ttu-id="945ac-139">`MuxLogger`清理事件源。</span><span class="sxs-lookup"><span data-stu-id="945ac-139">The `MuxLogger` cleans up the event source.</span></span>  
   
-     <span data-ttu-id="d0fb3-125">请注意, 取消注册来自记录线程以外的线程, 如果在记录事件时调用了 "取消注册", 则可能会出现同步问题。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-125">Note that the unregister comes from a thread other than the logging thread and a synchronization issue could occur if unregister is called while events are being logged.</span></span>  
+     <span data-ttu-id="945ac-140">请注意，取消注册来自记录线程以外的线程，如果在记录事件时调用了 "取消注册"，则可能会出现同步问题。</span><span class="sxs-lookup"><span data-stu-id="945ac-140">Note that the unregister comes from a thread other than the logging thread and a synchronization issue could occur if unregister is called while events are being logged.</span></span>  
   
  ]]></format>
     </remarks>
@@ -77,9 +99,76 @@
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary><span data-ttu-id="d0fb3-126">创建多路记录器的新实例。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-126">Creates a new instance of the multiplexing logger.</span></span></summary>
+        <summary><span data-ttu-id="945ac-141">构造函数。</span><span class="sxs-lookup"><span data-stu-id="945ac-141">Constructor.</span></span></summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IncludeEvaluationMetaprojects">
+      <MemberSignature Language="C#" Value="public bool IncludeEvaluationMetaprojects { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeEvaluationMetaprojects" />
+      <MemberSignature Language="DocId" Value="P:Microsoft.Build.Utilities.MuxLogger.IncludeEvaluationMetaprojects" />
+      <MemberSignature Language="VB.NET" Value="Public Property IncludeEvaluationMetaprojects As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IncludeEvaluationMetaprojects { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.IncludeEvaluationMetaprojects : bool with get, set" Usage="Microsoft.Build.Utilities.MuxLogger.IncludeEvaluationMetaprojects" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="945ac-142">评估事件是否应包括生成的元项目？</span><span class="sxs-lookup"><span data-stu-id="945ac-142">Should evaluation events include generated metaprojects?</span></span></summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IncludeEvaluationProfiles">
+      <MemberSignature Language="C#" Value="public bool IncludeEvaluationProfiles { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeEvaluationProfiles" />
+      <MemberSignature Language="DocId" Value="P:Microsoft.Build.Utilities.MuxLogger.IncludeEvaluationProfiles" />
+      <MemberSignature Language="VB.NET" Value="Public Property IncludeEvaluationProfiles As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IncludeEvaluationProfiles { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.IncludeEvaluationProfiles : bool with get, set" Usage="Microsoft.Build.Utilities.MuxLogger.IncludeEvaluationProfiles" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="945ac-143">评估事件是否应包括分析信息？</span><span class="sxs-lookup"><span data-stu-id="945ac-143">Should evaluation events include profiling information?</span></span></summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IncludeTaskInputs">
+      <MemberSignature Language="C#" Value="public bool IncludeTaskInputs { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeTaskInputs" />
+      <MemberSignature Language="DocId" Value="P:Microsoft.Build.Utilities.MuxLogger.IncludeTaskInputs" />
+      <MemberSignature Language="VB.NET" Value="Public Property IncludeTaskInputs As Boolean" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property bool IncludeTaskInputs { bool get(); void set(bool value); };" />
+      <MemberSignature Language="F#" Value="member this.IncludeTaskInputs : bool with get, set" Usage="Microsoft.Build.Utilities.MuxLogger.IncludeTaskInputs" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary><span data-ttu-id="945ac-144">任务事件是否应包括任务输入？</span><span class="sxs-lookup"><span data-stu-id="945ac-144">Should task events include task inputs?</span></span></summary>
+        <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -89,7 +178,7 @@
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Docs>
-        <summary><span data-ttu-id="d0fb3-127">初始化 <see langword="MuxLogger" /> 实例。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-127">Initializes the <see langword="MuxLogger" /> instance.</span></span></summary>
+        <summary><span data-ttu-id="945ac-145">初始化 <see langword="MuxLogger" /> 实例。</span><span class="sxs-lookup"><span data-stu-id="945ac-145">Initializes the <see langword="MuxLogger" /> instance.</span></span></summary>
       </Docs>
     </MemberGroup>
     <Member MemberName="Initialize">
@@ -107,6 +196,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -114,8 +207,8 @@
         <Parameter Name="eventSource" Type="Microsoft.Build.Framework.IEventSource" />
       </Parameters>
       <Docs>
-        <param name="eventSource"><span data-ttu-id="d0fb3-128">事件源。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-128">The event source.</span></span></param>
-        <summary><span data-ttu-id="d0fb3-129">用指定的事件源初始化该 <see langword="MuxLogger" /> 实例。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-129">Initialize the <see langword="MuxLogger" /> instance with the specified event source.</span></span></summary>
+        <param name="eventSource"><span data-ttu-id="945ac-146">事件源。</span><span class="sxs-lookup"><span data-stu-id="945ac-146">The event source.</span></span></param>
+        <summary><span data-ttu-id="945ac-147">初始化记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-147">Initialize the logger.</span></span></summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -134,6 +227,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -142,9 +239,9 @@
         <Parameter Name="maxNodeCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="eventSource"><span data-ttu-id="d0fb3-130">事件源。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-130">The event source.</span></span></param>
-        <param name="maxNodeCount"><span data-ttu-id="d0fb3-131">最大节点数。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-131">The maximum number of nodes.</span></span></param>
-        <summary><span data-ttu-id="d0fb3-132">用指定事件源和指定节点的最大数目来初始化该 <see langword="MuxLogger" /> 实例。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-132">Initialize the <see langword="MuxLogger" /> instance with the specified event source and specified maximum number of nodes.</span></span></summary>
+        <param name="eventSource"><span data-ttu-id="945ac-148">事件源。</span><span class="sxs-lookup"><span data-stu-id="945ac-148">The event source.</span></span></param>
+        <param name="maxNodeCount"><span data-ttu-id="945ac-149">最大节点数。</span><span class="sxs-lookup"><span data-stu-id="945ac-149">The maximum number of nodes.</span></span></param>
+        <summary><span data-ttu-id="945ac-150">初始化记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-150">Initialize the logger.</span></span></summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -163,12 +260,16 @@
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary><span data-ttu-id="d0fb3-133">获取或设置 <see langword="ILogger" /> 接口需要的参数属性。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-133">Gets or sets the Parameters attribute, required by the <see langword="ILogger" /> interface.</span></span></summary>
-        <value><span data-ttu-id="d0fb3-134">Parameters 特性。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-134">The Parameters attribute.</span></span></value>
+        <summary><span data-ttu-id="945ac-151">ILoggerInterface 必需的</span><span class="sxs-lookup"><span data-stu-id="945ac-151">Required for the ILoggerInterface</span></span></summary>
+        <value><span data-ttu-id="945ac-152">Parameters 特性。</span><span class="sxs-lookup"><span data-stu-id="945ac-152">The Parameters attribute.</span></span></value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -184,6 +285,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -192,9 +297,9 @@
         <Parameter Name="logger" Type="Microsoft.Build.Framework.ILogger" />
       </Parameters>
       <Docs>
-        <param name="submissionId"><span data-ttu-id="d0fb3-135">注册的记录器的提交 ID。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-135">The submission ID of the logger being registered.</span></span></param>
-        <param name="logger"><span data-ttu-id="d0fb3-136">要注册的记录器。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-136">The logger to register.</span></span></param>
-        <summary><span data-ttu-id="d0fb3-137">注册在 <see langword="MuxLogger" /> 的一个记录器和引发一个生成开始的事件，如果该生成开始的事件已记录了。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-137">Registers a logger on the <see langword="MuxLogger" /> and raises a build-started event if the build-started event has already been logged.</span></span></summary>
+        <param name="submissionId"><span data-ttu-id="945ac-153">注册的记录器的提交 ID。</span><span class="sxs-lookup"><span data-stu-id="945ac-153">The submission ID of the logger being registered.</span></span></param>
+        <param name="logger"><span data-ttu-id="945ac-154">要注册的记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-154">The logger to register.</span></span></param>
+        <summary><span data-ttu-id="945ac-155">此方法将在 MUX 记录器上注册记录器，并在已记录生成已启动事件时引发生成开始事件</span><span class="sxs-lookup"><span data-stu-id="945ac-155">This method will register a logger on the MUX logger and then raise a build started event if the build started event has already been logged</span></span></summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -213,12 +318,16 @@
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary><span data-ttu-id="d0fb3-138">关闭 <see langword="MuxLogger" /> 并清除任何状态。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-138">Shuts down the <see langword="MuxLogger" /> and clears out any state.</span></span></summary>
+        <summary><span data-ttu-id="945ac-156">关闭 mux 记录器并清除任何状态</span><span class="sxs-lookup"><span data-stu-id="945ac-156">Shutdown the mux logger and clear out any state</span></span></summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -234,6 +343,10 @@
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -241,9 +354,9 @@
         <Parameter Name="submissionId" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="submissionId"><span data-ttu-id="d0fb3-139">要移除的记录器的提交 ID。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-139">The submission ID of the logger to be removed.</span></span></param>
-        <summary><span data-ttu-id="d0fb3-140">从 MuxLogger 中移除指定的记录器。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-140">Removes the specified logger from the MuxLogger.</span></span></summary>
-        <returns><span data-ttu-id="d0fb3-141">如果方法成功移除记录器，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-141"><see langword="true" /> if the method is successful in removing the logger; otherwise, <see langword="false" />.</span></span></returns>
+        <param name="submissionId"><span data-ttu-id="945ac-157">要移除的记录器的提交 ID。</span><span class="sxs-lookup"><span data-stu-id="945ac-157">The submission ID of the logger to be removed.</span></span></param>
+        <summary><span data-ttu-id="945ac-158">注销给定提交 id 的所有记录器。</span><span class="sxs-lookup"><span data-stu-id="945ac-158">Unregisters all the loggers for a given submission id.</span></span></summary>
+        <returns><span data-ttu-id="945ac-159">如果方法成功移除记录器，则为 <see langword="true" />；否则为 <see langword="false" />。</span><span class="sxs-lookup"><span data-stu-id="945ac-159"><see langword="true" /> if the method is successful in removing the logger; otherwise, <see langword="false" />.</span></span></returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -262,12 +375,16 @@
         <AssemblyName>Microsoft.Build.Utilities.v4.0</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>Microsoft.Build.Utilities.Core</AssemblyName>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Microsoft.Build.Framework.LoggerVerbosity</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary><span data-ttu-id="d0fb3-142">获取或设置 <see langword="ILogger" /> 接口需要的详细级别属性。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-142">Gets or sets the Verbosity attribute, required by the <see langword="ILogger" /> interface.</span></span></summary>
-        <value><span data-ttu-id="d0fb3-143">详细级别特性。</span><span class="sxs-lookup"><span data-stu-id="d0fb3-143">The Verbosity attribute.</span></span></value>
+        <summary><span data-ttu-id="945ac-160">ILogger 接口需要</span><span class="sxs-lookup"><span data-stu-id="945ac-160">Required for ILogger interface</span></span></summary>
+        <value><span data-ttu-id="945ac-161">详细级别特性。</span><span class="sxs-lookup"><span data-stu-id="945ac-161">The Verbosity attribute.</span></span></value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

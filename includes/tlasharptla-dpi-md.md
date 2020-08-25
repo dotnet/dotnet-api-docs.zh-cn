@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 08/29/2019
 ms.locfileid: "71138976"
 ---
-<span data-ttu-id="3ad39-101">每英寸点数 (dpi)</span><span class="sxs-lookup"><span data-stu-id="3ad39-101">dots per inch (dpi)</span></span>
+<span data-ttu-id="6524b-101">每英寸点数 (dpi)</span><span class="sxs-lookup"><span data-stu-id="6524b-101">dots per inch (dpi)</span></span>

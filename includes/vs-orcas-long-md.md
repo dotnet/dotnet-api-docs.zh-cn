@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 08/29/2019
 ms.locfileid: "71137996"
 ---
-<span data-ttu-id="32e7d-101">Visual Studio 2008</span><span class="sxs-lookup"><span data-stu-id="32e7d-101">Visual Studio 2008</span></span>
+<span data-ttu-id="8d6db-101">Visual Studio 2008</span><span class="sxs-lookup"><span data-stu-id="8d6db-101">Visual Studio 2008</span></span>
