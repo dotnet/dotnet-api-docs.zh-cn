@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71138636"
 ---
-<span data-ttu-id="50181-101">可移植网络图形 (PNG)</span><span class="sxs-lookup"><span data-stu-id="50181-101">Portable Network Graphics (PNG)</span></span>
+<span data-ttu-id="227c3-101">可移植网络图形 (PNG)</span><span class="sxs-lookup"><span data-stu-id="227c3-101">Portable Network Graphics (PNG)</span></span>

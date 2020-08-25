@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71137786"
 ---
-<span data-ttu-id="f5148-101">Windows 2000</span><span class="sxs-lookup"><span data-stu-id="f5148-101">Windows 2000</span></span>
+<span data-ttu-id="05fb2-101">Windows 2000</span><span class="sxs-lookup"><span data-stu-id="05fb2-101">Windows 2000</span></span>

@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 08/29/2019
 ms.locfileid: "71140216"
 ---
-<span data-ttu-id="bcb48-101">IIS 7.0</span><span class="sxs-lookup"><span data-stu-id="bcb48-101">IIS 7.0</span></span>
+<span data-ttu-id="257b2-101">IIS 7.0</span><span class="sxs-lookup"><span data-stu-id="257b2-101">IIS 7.0</span></span>
