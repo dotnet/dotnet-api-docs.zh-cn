@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71138686"
 ---
-<span data-ttu-id="7f5d6-101">.NET Framework 特性</span><span class="sxs-lookup"><span data-stu-id="7f5d6-101">.NET Framework attribute</span></span>
+<span data-ttu-id="10990-101">.NET Framework 特性</span><span class="sxs-lookup"><span data-stu-id="10990-101">.NET Framework attribute</span></span>
