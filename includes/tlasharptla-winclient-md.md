@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71138426"
 ---
-<span data-ttu-id="66a2b-101">Windows Presentation Foundation (WPF)</span><span class="sxs-lookup"><span data-stu-id="66a2b-101">Windows Presentation Foundation (WPF)</span></span>
+<span data-ttu-id="5e326-101">Windows Presentation Foundation (WPF)</span><span class="sxs-lookup"><span data-stu-id="5e326-101">Windows Presentation Foundation (WPF)</span></span>

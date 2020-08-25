@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71138266"
 ---
-<span data-ttu-id="25d2b-101">XML</span><span class="sxs-lookup"><span data-stu-id="25d2b-101">XML</span></span>
+<span data-ttu-id="3ead6-101">XML</span><span class="sxs-lookup"><span data-stu-id="3ead6-101">XML</span></span>
