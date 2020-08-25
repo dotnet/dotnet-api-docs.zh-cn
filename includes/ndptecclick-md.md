@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71140166"
 ---
-<span data-ttu-id="f5aea-101">ClickOnce</span><span class="sxs-lookup"><span data-stu-id="f5aea-101">ClickOnce</span></span>
+<span data-ttu-id="c20d5-101">ClickOnce</span><span class="sxs-lookup"><span data-stu-id="c20d5-101">ClickOnce</span></span>
