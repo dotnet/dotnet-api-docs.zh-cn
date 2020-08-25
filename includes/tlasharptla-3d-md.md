@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71139176"
 ---
-<span data-ttu-id="b57fa-101">三维</span><span class="sxs-lookup"><span data-stu-id="b57fa-101">3-D</span></span>
+<span data-ttu-id="c77c0-101">三维</span><span class="sxs-lookup"><span data-stu-id="c77c0-101">3-D</span></span>

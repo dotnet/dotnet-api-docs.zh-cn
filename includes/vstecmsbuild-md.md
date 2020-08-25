@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 08/29/2019
 ms.locfileid: "71137906"
 ---
-<span data-ttu-id="ae891-101">MSBuild</span><span class="sxs-lookup"><span data-stu-id="ae891-101">MSBuild</span></span>
+<span data-ttu-id="6594b-101">MSBuild</span><span class="sxs-lookup"><span data-stu-id="6594b-101">MSBuild</span></span>

@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71137776"
 ---
-<span data-ttu-id="d0c15-101">Windows 7</span><span class="sxs-lookup"><span data-stu-id="d0c15-101">Windows 7</span></span>
+<span data-ttu-id="0414a-101">Windows 7</span><span class="sxs-lookup"><span data-stu-id="0414a-101">Windows 7</span></span>
