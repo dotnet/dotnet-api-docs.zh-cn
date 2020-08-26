@@ -7,4 +7,4 @@ ms.lasthandoff: 07/21/2020
 ms.locfileid: "86755129"
 ---
 > [!WARNING]
-> <span data-ttu-id="920e2-101">`BinaryFormatter`是不安全的，无法使其安全。</span><span class="sxs-lookup"><span data-stu-id="920e2-101">`BinaryFormatter` is insecure and can't be made secure.</span></span> <span data-ttu-id="920e2-102">有关详细信息，请参阅[BinaryFormatter security guide （安全指南](/dotnet/standard/serialization/binaryformatter-security-guide)）。</span><span class="sxs-lookup"><span data-stu-id="920e2-102">For more information, see the [BinaryFormatter security guide](/dotnet/standard/serialization/binaryformatter-security-guide).</span></span>
+> <span data-ttu-id="9f283-101">`BinaryFormatter` 是不安全的，无法使其安全。</span><span class="sxs-lookup"><span data-stu-id="9f283-101">`BinaryFormatter` is insecure and can't be made secure.</span></span> <span data-ttu-id="9f283-102">有关详细信息，请参阅 [BinaryFormatter security guide （安全指南](/dotnet/standard/serialization/binaryformatter-security-guide)）。</span><span class="sxs-lookup"><span data-stu-id="9f283-102">For more information, see the [BinaryFormatter security guide](/dotnet/standard/serialization/binaryformatter-security-guide).</span></span>
