@@ -7,4 +7,4 @@ ms.lasthandoff: 07/21/2020
 ms.locfileid: "86755129"
 ---
 > [!WARNING]
-> `BinaryFormatter`是不安全的，无法使其安全。 有关详细信息，请参阅[BinaryFormatter security guide （安全指南](/dotnet/standard/serialization/binaryformatter-security-guide)）。
+> `BinaryFormatter` 是不安全的，无法使其安全。 有关详细信息，请参阅 [BinaryFormatter security guide （安全指南](/dotnet/standard/serialization/binaryformatter-security-guide)）。
