@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 07/14/2020
 ms.locfileid: "71138936"
 ---
-<span data-ttu-id="af7a5-101">图形交换格式 (GIF)</span><span class="sxs-lookup"><span data-stu-id="af7a5-101">Graphics Interchange Format (GIF)</span></span>
+<span data-ttu-id="a1a38-101">图形交换格式 (GIF)</span><span class="sxs-lookup"><span data-stu-id="a1a38-101">Graphics Interchange Format (GIF)</span></span>
