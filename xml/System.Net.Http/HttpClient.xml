@@ -1,5 +1,5 @@
 <Type Name="HttpClient" FullName="System.Net.Http.HttpClient">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="a255f281927c43b0a13b7f57d78225e6fd8d3825" /><Meta Name="ms.sourcegitcommit" Value="b53d35b4a410c949742abd4c6a989d1af5357bca" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="07/21/2020" /><Meta Name="ms.locfileid" Value="86801674" /></Metadata><TypeSignature Language="C#" Value="public class HttpClient : System.Net.Http.HttpMessageInvoker" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="5bf40c798ee352c20cf8da4ed644ba12f3741232" /><Meta Name="ms.sourcegitcommit" Value="80274aaa1f2e220209486886b5cd74a54203d795" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/03/2020" /><Meta Name="ms.locfileid" Value="89416952" /></Metadata><TypeSignature Language="C#" Value="public class HttpClient : System.Net.Http.HttpMessageInvoker" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HttpClient extends System.Net.Http.HttpMessageInvoker" />
   <TypeSignature Language="DocId" Value="T:System.Net.Http.HttpClient" />
   <TypeSignature Language="VB.NET" Value="Public Class HttpClient&#xA;Inherits HttpMessageInvoker" />
@@ -94,7 +94,7 @@ End Class
 
 在每个平台上， <xref:System.Net.Http.HttpClient> 尝试使用最佳的可用传输：
 
-| **主机/运行时**            | **把**                                                                               |
+| **主机/运行时**            | **后端**                                                                               |
 | --------------------------- | ----------------------------------------------------------------------------------------- |
 | Windows/.NET Framework      | <xref:System.Net.HttpWebRequest>                                                          |
 | Windows/Mono                | <xref:System.Net.HttpWebRequest>                                                          |
@@ -304,7 +304,7 @@ End Class
       </Parameters>
       <Docs>
         <param name="handler">负责处理 HTTP 响应消息的 <see cref="T:System.Net.Http.HttpMessageHandler" />。</param>
-        <param name="disposeHandler"><see langword="true" />如果内部处理程序应由 HttpClient 释放，则为; 否则为[。](xref:System.Net.Http.HttpMessageInvoker.Dispose)<see langword="false" />如果要重用内部处理程序，则为。</param>
+        <param name="disposeHandler">如果内部处理程序应由 [HttpClient.Dispose](xref:System.Net.Http.HttpMessageInvoker.Dispose) 释放，则为 <see langword="true" />；如果希望重新使用内部处理程序，则为 <see langword="false" />。</param>
         <summary>使用提供的处理程序初始化 <see cref="T:System.Net.Http.HttpClient" /> 类的新实例，并指定在释放此实例时是否应释放该处理程序。</summary>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="handler" /> 为 <see langword="null" />。</exception>
@@ -345,6 +345,8 @@ End Class
   
 ## Remarks  
  当 <xref:System.Net.Http.HttpRequestMessage> 使用相对 Uri 发送时，消息 Uri 将添加到 <xref:System.Net.Http.HttpClient.BaseAddress%2A> 属性中以创建绝对 uri。  
+ 
+ 请注意，在基本 URI 中，最右侧的 "/" 后面的所有字符都将在与消息 URI 结合时排除。 请参阅 [RFC 3986](https://tools.ietf.org/html/rfc3986) 统一资源标识符 (URI) 通用语法规范。
   
  ]]></format>
         </remarks>
@@ -426,11 +428,14 @@ End Class
 * **对于 Linux：** 从环境变量读取代理配置，或者，如果未定义这些配置，此属性将初始化绕过所有地址的非配置实例。
 
 用于 `DefaultProxy` 在 Windows 和基于 Unix 的平台上进行初始化的环境变量包括：
-* HTTP_PROXY：用于 HTTP 请求的代理服务器的主机名或 IP 地址。
-* HTTPS_PROXY：在 HTTPS 请求上使用的代理服务器的主机名或 IP 地址。
-* ALL_PROXY：在未定义 HTTP_PROXY 和/或 HTTPS_PROXY 的情况下，在 HTTP 和/或 HTTPS 请求上使用的代理服务器的主机名或 IP 地址。
+* HTTP_PROXY： HTTP 请求上使用的代理服务器。
+* HTTPS_PROXY：对 HTTPS 请求使用的代理服务器。
+* ALL_PROXY：未定义 HTTP_PROXY 和/或 HTTPS_PROXY 时，在 HTTP 和/或 HTTPS 请求上使用的代理服务器。
 * NO_PROXY：应从代理中排除的主机名的逗号分隔列表。
 
+在环境变量区分大小写的系统上，变量名称可以全部小写或全部大写。  首先检查小写名称。
+
+代理服务器可以是主机名或 IP 地址，可以后跟冒号和端口号，也可以是 http URL （可选），其中包括用于代理身份验证的用户名和密码。 URL 必须以开头，而 `http` 不 `https` 能在主机名、IP 或端口后面包含任何文本。
  ]]></format>
         </remarks>
         <exception cref="T:System.ArgumentNullException">传递的值不能为 <see langword="null" />。</exception>
@@ -575,9 +580,16 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。
+
+- 或 -
+
+<paramref name="requestUri" /> 不是一个绝对 URI。
+
+- 或 -
+
+未设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -628,9 +640,16 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。
+
+- 或 -
+
+<paramref name="requestUri" /> 不是一个绝对 URI。
+
+- 或 -
+
+未设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -683,9 +702,16 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。
+
+- 或 -
+
+<paramref name="requestUri" /> 不是一个绝对 URI。
+
+- 或 -
+
+未设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -738,9 +764,16 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。
+
+- 或 -
+
+<paramref name="requestUri" /> 不是一个绝对 URI。
+
+- 或 -
+
+未设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -782,7 +815,7 @@ End Class
 ## Remarks  
  此方法由公共 `Dispose()` 方法和 <xref:System.Object.Finalize%2A> 方法调用。 `Dispose()` 调用受保护的 `Dispose(Boolean)` 方法，并将 `disposing` 参数设置为 `true` 。 <xref:System.Object.Finalize%2A>`Dispose`在设置为的情况调用 `disposing` `false` 。  
   
- 当 `disposing` 参数为 `true` 时，此方法释放该 <xref:System.Net.Http.HttpClient> 引用的、由任何托管对象持有的全部资源。 此方法将调用每个被引用对象的 `Dispose()` 方法。  
+ 当 `disposing` 参数为 `true` 时，此方法释放该 <xref:System.Net.Http.HttpClient> 引用的、由任何托管对象持有的全部资源。 此方法调用每个引用对象的 `Dispose()` 方法。  
   
  调用此方法时，将 <xref:System.Net.Http.HttpClient.CancelPendingRequests%2A> 调用方法以中止所有挂起的请求。  
   
@@ -856,8 +889,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -908,8 +941,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -962,8 +995,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1016,8 +1049,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1070,8 +1103,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1124,8 +1157,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1180,8 +1213,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1236,8 +1269,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1313,8 +1346,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1365,14 +1398,15 @@ End Class
  此操作不会阻止。 在 <xref:System.Threading.Tasks.Task%601> 读取整个响应正文后，返回的对象将完成。  
 
 > [!NOTE]
-> 在超时情况下，不同的 .NET 实现会引发不同的异常。
-> - <xref:System.Net.Http.HttpRequestException> 所有适用的 .NET Framework 版本都将引发。
-> - <xref:System.Threading.Tasks.TaskCanceledException> 在所有适用的 .NET Core 版本上都不会引发任何内部异常。
-> - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
- ]]></format>
+> 如果超时，则：
+> - .NET Framework 引发 <xref:System.Net.Http.HttpRequestException> 。
+> - .NET Core 引发 <xref:System.Threading.Tasks.TaskCanceledException> 无任何内部异常的。
+> - .NET 5.0 和更高版本引发了 <xref:System.Threading.Tasks.TaskCanceledException> 嵌套的 <xref:System.TimeoutException> 。
+
+          ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或仅 .NET Framework 超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1399,11 +1433,26 @@ End Class
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="net-5.0" />
       </Parameters>
       <Docs>
-        <param name="requestUri">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="requestUri">请求发送到的 URI。</param>
+        <param name="cancellationToken">用于取消操作的取消令牌。</param>
+        <summary>将 GET 请求发送到指定 URI 并在异步操作中以字节数组的形式返回响应正文。</summary>
+        <returns>表示异步操作的任务对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此操作不会阻止。 在 <xref:System.Threading.Tasks.Task%601> 读取整个响应正文后，返回的对象将完成。  
+
+> [!NOTE]
+> 如果超时，则：
+> - .NET Framework 引发 <xref:System.Net.Http.HttpRequestException> 。
+> - .NET Core 引发 <xref:System.Threading.Tasks.TaskCanceledException> 无任何内部异常的。
+> - .NET 5.0 和更高版本引发了 <xref:System.Threading.Tasks.TaskCanceledException> 嵌套的 <xref:System.TimeoutException> 。
+
+          ]]></format>
+        </remarks>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或仅 .NET Framework 超时），请求失败。</exception>
+        <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
     <Member MemberName="GetByteArrayAsync">
@@ -1429,11 +1478,26 @@ End Class
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="net-5.0" />
       </Parameters>
       <Docs>
-        <param name="requestUri">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="requestUri">请求发送到的 URI。</param>
+        <param name="cancellationToken">用于取消操作的取消令牌。</param>
+        <summary>将 GET 请求发送到指定 URI 并在异步操作中以字节数组的形式返回响应正文。</summary>
+        <returns>表示异步操作的任务对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此操作不会阻止。 在 <xref:System.Threading.Tasks.Task%601> 读取整个响应正文后，返回的对象将完成。  
+
+> [!NOTE]
+> 如果超时，则：
+> - .NET Framework 引发 <xref:System.Net.Http.HttpRequestException> 。
+> - .NET Core 引发 <xref:System.Threading.Tasks.TaskCanceledException> 无任何内部异常的。
+> - .NET 5.0 和更高版本引发了 <xref:System.Threading.Tasks.TaskCanceledException> 嵌套的 <xref:System.TimeoutException> 。
+
+          ]]></format>
+        </remarks>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或仅 .NET Framework 超时），请求失败。</exception>
+        <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
     <MemberGroup MemberName="GetStreamAsync">
@@ -1502,14 +1566,14 @@ End Class
  此操作不会阻止。 在 <xref:System.Threading.Tasks.Task%601> 读取响应标头后，返回的对象将完成。 此方法不读取或缓冲响应正文。  
 
 > [!NOTE]
-> 在超时情况下，不同的 .NET 实现会引发不同的异常。
-> - <xref:System.Net.Http.HttpRequestException> 所有适用的 .NET Framework 版本都将引发。
-> - <xref:System.Threading.Tasks.TaskCanceledException> 在所有适用的 .NET Core 版本上都不会引发任何内部异常。
-> - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
+> 如果超时，则：
+> - .NET Framework 引发 <xref:System.Net.Http.HttpRequestException> 。
+> - .NET Core 引发 <xref:System.Threading.Tasks.TaskCanceledException> 无任何内部异常的。
+> - .NET 5.0 和更高版本引发了 <xref:System.Threading.Tasks.TaskCanceledException> 嵌套的 <xref:System.TimeoutException> 。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或仅 .NET Framework 超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1560,14 +1624,14 @@ End Class
  此操作不会阻止。 在 <xref:System.Threading.Tasks.Task%601> 读取响应标头后，返回的对象将完成。 此方法不读取或缓冲响应正文。  
 
 > [!NOTE]
-> 在超时情况下，不同的 .NET 实现会引发不同的异常。
-> - <xref:System.Net.Http.HttpRequestException> 所有适用的 .NET Framework 版本都将引发。
-> - <xref:System.Threading.Tasks.TaskCanceledException> 在所有适用的 .NET Core 版本上都不会引发任何内部异常。
-> - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
+> 如果超时，则：
+> - .NET Framework 引发 <xref:System.Net.Http.HttpRequestException> 。
+> - .NET Core 引发 <xref:System.Threading.Tasks.TaskCanceledException> 无任何内部异常的。
+> - .NET 5.0 和更高版本引发了 <xref:System.Threading.Tasks.TaskCanceledException> 嵌套的 <xref:System.TimeoutException> 。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或仅 .NET Framework 超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1594,12 +1658,27 @@ End Class
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="net-5.0" />
       </Parameters>
       <Docs>
-        <param name="requestUri">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="requestUri">请求发送到的 URI。</param>
+        <param name="cancellationToken">用于取消操作的取消令牌。</param>
+        <summary>将 GET 请求发送到指定 URI 并在异步操作中以流的形式返回响应正文。</summary>
+        <returns>表示异步操作的任务对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+  
+## Remarks  
+ 此操作不会阻止。 在 <xref:System.Threading.Tasks.Task%601> 读取响应标头后，返回的对象将完成。 此方法不读取或缓冲响应正文。  
+
+> [!NOTE]
+> 如果超时，则：
+> - .NET Framework 引发 <xref:System.Net.Http.HttpRequestException> 。
+> - .NET Core 引发 <xref:System.Threading.Tasks.TaskCanceledException> 无任何内部异常的。
+> - .NET 5.0 和更高版本引发了 <xref:System.Threading.Tasks.TaskCanceledException> 嵌套的 <xref:System.TimeoutException> 。
+ ]]></format>
+        </remarks>
       </Docs>
+      <exception cref="T:System.ArgumentNullException">The <paramref name="requestUri" /> is <see langword="null" />.</exception>
+      <exception cref="T:System.Net.Http.HttpRequestException">The request failed due to an underlying issue such as network connectivity, DNS failure, server certificate validation (or timeout for .NET Framework only).</exception>
+      <exception cref="T:System.Threading.Tasks.TaskCanceledException">.NET Core and .NET 5.0 and later only: The request failed due to timeout.</exception>
     </Member>
     <Member MemberName="GetStreamAsync">
       <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.IO.Stream&gt; GetStreamAsync (Uri? requestUri, System.Threading.CancellationToken cancellationToken);" />
@@ -1624,11 +1703,26 @@ End Class
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="net-5.0" />
       </Parameters>
       <Docs>
-        <param name="requestUri">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="requestUri">请求发送到的 URI。</param>
+        <param name="cancellationToken">用于取消操作的取消令牌。</param>
+        <summary>将 GET 请求发送到指定 URI 并在异步操作中以流的形式返回响应正文。</summary>
+        <returns>表示异步操作的任务对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此操作不会阻止。 在 <xref:System.Threading.Tasks.Task%601> 读取响应标头后，返回的对象将完成。 此方法不读取或缓冲响应正文。  
+
+> [!NOTE]
+> 如果超时，则：
+> - .NET Framework 引发 <xref:System.Net.Http.HttpRequestException> 。
+> - .NET Core 引发 <xref:System.Threading.Tasks.TaskCanceledException> 无任何内部异常的。
+> - .NET 5.0 和更高版本引发了 <xref:System.Threading.Tasks.TaskCanceledException> 嵌套的 <xref:System.TimeoutException> 。
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或仅 .NET Framework 超时），请求失败。</exception>
+        <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
     <MemberGroup MemberName="GetStringAsync">
@@ -1697,14 +1791,14 @@ End Class
  此操作不会阻止。 在 <xref:System.Threading.Tasks.Task%601> 读取整个响应正文后，返回的对象将完成。  
 
 > [!NOTE]
-> 在超时情况下，不同的 .NET 实现会引发不同的异常。
-> - <xref:System.Net.Http.HttpRequestException> 所有适用的 .NET Framework 版本都将引发。
-> - <xref:System.Threading.Tasks.TaskCanceledException> 在所有适用的 .NET Core 版本上都不会引发任何内部异常。
-> - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
+> 如果超时，则：
+> - .NET Framework 引发 <xref:System.Net.Http.HttpRequestException> 。
+> - .NET Core 引发 <xref:System.Threading.Tasks.TaskCanceledException> 无任何内部异常的。
+> - .NET 5.0 和更高版本引发了 <xref:System.Threading.Tasks.TaskCanceledException> 嵌套的 <xref:System.TimeoutException> 。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或仅 .NET Framework 超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1755,14 +1849,14 @@ End Class
  此操作不会阻止。 在 <xref:System.Threading.Tasks.Task%601> 读取整个响应正文后，返回的对象将完成。  
 
 > [!NOTE]
-> 在超时情况下，不同的 .NET 实现会引发不同的异常。
-> - <xref:System.Net.Http.HttpRequestException> 所有适用的 .NET Framework 版本都将引发。
-> - <xref:System.Threading.Tasks.TaskCanceledException> 在所有适用的 .NET Core 版本上都不会引发任何内部异常。
-> - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
+> 如果超时，则：
+> - .NET Framework 引发 <xref:System.Net.Http.HttpRequestException> 。
+> - .NET Core 引发 <xref:System.Threading.Tasks.TaskCanceledException> 无任何内部异常的。
+> - .NET 5.0 和更高版本引发了 <xref:System.Threading.Tasks.TaskCanceledException> 嵌套的 <xref:System.TimeoutException> 。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或仅 .NET Framework 超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -1789,11 +1883,26 @@ End Class
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="net-5.0" />
       </Parameters>
       <Docs>
-        <param name="requestUri">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="requestUri">请求发送到的 URI。</param>
+        <param name="cancellationToken">用于取消操作的取消令牌。</param>
+        <summary>将 GET 请求发送到指定 URI 并在异步操作中以字符串的形式返回响应正文。</summary>
+        <returns>表示异步操作的任务对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此操作不会阻止。 在 <xref:System.Threading.Tasks.Task%601> 读取整个响应正文后，返回的对象将完成。  
+
+> [!NOTE]
+> 如果超时，则：
+> - .NET Framework 引发 <xref:System.Net.Http.HttpRequestException> 。
+> - .NET Core 引发 <xref:System.Threading.Tasks.TaskCanceledException> 无任何内部异常的。
+> - .NET 5.0 和更高版本引发了 <xref:System.Threading.Tasks.TaskCanceledException> 嵌套的 <xref:System.TimeoutException> 。
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或仅 .NET Framework 超时），请求失败。</exception>
+        <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
     <Member MemberName="GetStringAsync">
@@ -1819,11 +1928,26 @@ End Class
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="net-5.0" />
       </Parameters>
       <Docs>
-        <param name="requestUri">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="requestUri">请求发送到的 URI。</param>
+        <param name="cancellationToken">用于取消操作的取消令牌。</param>
+        <summary>将 GET 请求发送到指定 URI 并在异步操作中以字符串的形式返回响应正文。</summary>
+        <returns>表示异步操作的任务对象。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[  
+  
+## Remarks  
+ 此操作不会阻止。 在 <xref:System.Threading.Tasks.Task%601> 读取整个响应正文后，返回的对象将完成。  
+
+> [!NOTE]
+> 如果超时，则：
+> - .NET Framework 引发 <xref:System.Net.Http.HttpRequestException> 。
+> - .NET Core 引发 <xref:System.Threading.Tasks.TaskCanceledException> 无任何内部异常的。
+> - .NET 5.0 和更高版本引发了 <xref:System.Threading.Tasks.TaskCanceledException> 嵌套的 <xref:System.TimeoutException> 。
+ ]]></format>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或仅 .NET Framework 超时），请求失败。</exception>
+        <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
     <Member MemberName="MaxResponseContentBufferSize">
@@ -2104,8 +2228,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -2158,8 +2282,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -2214,8 +2338,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -2270,8 +2394,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -2343,8 +2467,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -2397,8 +2521,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -2453,8 +2577,8 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -2509,9 +2633,129 @@ End Class
 > - <xref:System.Threading.Tasks.TaskCanceledException><xref:System.TimeoutException>在 .net 5.0 和更高版本上，将引发嵌套的。
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="requestUri" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.InvalidOperationException"><paramref name="requestUri" /> 必须为绝对 URI 或必须设置 <see cref="P:System.Net.Http.HttpClient.BaseAddress" />。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public System.Net.Http.HttpResponseMessage Send (System.Net.Http.HttpRequestMessage request);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.Http.HttpResponseMessage Send(class System.Net.Http.HttpRequestMessage request) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Net.Http.HttpClient.Send(System.Net.Http.HttpRequestMessage)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Send (request As HttpRequestMessage) As HttpResponseMessage" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Net::Http::HttpResponseMessage ^ Send(System::Net::Http::HttpRequestMessage ^ request);" />
+      <MemberSignature Language="F#" Value="override this.Send : System.Net.Http.HttpRequestMessage -&gt; System.Net.Http.HttpResponseMessage" Usage="httpClient.Send request" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Http</AssemblyName>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Http.HttpResponseMessage</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="request" Type="System.Net.Http.HttpRequestMessage" Index="0" FrameworkAlternate="net-5.0" />
+      </Parameters>
+      <Docs>
+        <param name="request">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public System.Net.Http.HttpResponseMessage Send (System.Net.Http.HttpRequestMessage request, System.Net.Http.HttpCompletionOption completionOption);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.Http.HttpResponseMessage Send(class System.Net.Http.HttpRequestMessage request, valuetype System.Net.Http.HttpCompletionOption completionOption) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Net.Http.HttpClient.Send(System.Net.Http.HttpRequestMessage,System.Net.Http.HttpCompletionOption)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Send (request As HttpRequestMessage, completionOption As HttpCompletionOption) As HttpResponseMessage" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Net::Http::HttpResponseMessage ^ Send(System::Net::Http::HttpRequestMessage ^ request, System::Net::Http::HttpCompletionOption completionOption);" />
+      <MemberSignature Language="F#" Value="override this.Send : System.Net.Http.HttpRequestMessage * System.Net.Http.HttpCompletionOption -&gt; System.Net.Http.HttpResponseMessage" Usage="httpClient.Send (request, completionOption)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Http</AssemblyName>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Http.HttpResponseMessage</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="request" Type="System.Net.Http.HttpRequestMessage" Index="0" FrameworkAlternate="net-5.0" />
+        <Parameter Name="completionOption" Type="System.Net.Http.HttpCompletionOption" Index="1" FrameworkAlternate="net-5.0" />
+      </Parameters>
+      <Docs>
+        <param name="request">To be added.</param>
+        <param name="completionOption">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public override System.Net.Http.HttpResponseMessage Send (System.Net.Http.HttpRequestMessage request, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Net.Http.HttpResponseMessage Send(class System.Net.Http.HttpRequestMessage request, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Net.Http.HttpClient.Send(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)" />
+      <MemberSignature Language="VB.NET" Value="Public Overrides Function Send (request As HttpRequestMessage, cancellationToken As CancellationToken) As HttpResponseMessage" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; override System::Net::Http::HttpResponseMessage ^ Send(System::Net::Http::HttpRequestMessage ^ request, System::Threading::CancellationToken cancellationToken);" />
+      <MemberSignature Language="F#" Value="override this.Send : System.Net.Http.HttpRequestMessage * System.Threading.CancellationToken -&gt; System.Net.Http.HttpResponseMessage" Usage="httpClient.Send (request, cancellationToken)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Http</AssemblyName>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Http.HttpResponseMessage</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="request" Type="System.Net.Http.HttpRequestMessage" Index="0" FrameworkAlternate="net-5.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="net-5.0" />
+      </Parameters>
+      <Docs>
+        <param name="request">To be added.</param>
+        <param name="cancellationToken">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public System.Net.Http.HttpResponseMessage Send (System.Net.Http.HttpRequestMessage request, System.Net.Http.HttpCompletionOption completionOption, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Net.Http.HttpResponseMessage Send(class System.Net.Http.HttpRequestMessage request, valuetype System.Net.Http.HttpCompletionOption completionOption, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Net.Http.HttpClient.Send(System.Net.Http.HttpRequestMessage,System.Net.Http.HttpCompletionOption,System.Threading.CancellationToken)" />
+      <MemberSignature Language="VB.NET" Value="Public Function Send (request As HttpRequestMessage, completionOption As HttpCompletionOption, cancellationToken As CancellationToken) As HttpResponseMessage" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Net::Http::HttpResponseMessage ^ Send(System::Net::Http::HttpRequestMessage ^ request, System::Net::Http::HttpCompletionOption completionOption, System::Threading::CancellationToken cancellationToken);" />
+      <MemberSignature Language="F#" Value="override this.Send : System.Net.Http.HttpRequestMessage * System.Net.Http.HttpCompletionOption * System.Threading.CancellationToken -&gt; System.Net.Http.HttpResponseMessage" Usage="httpClient.Send (request, completionOption, cancellationToken)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Net.Http</AssemblyName>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <AssemblyInfo>
+        <AssemblyName>netstandard</AssemblyName>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Net.Http.HttpResponseMessage</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="request" Type="System.Net.Http.HttpRequestMessage" Index="0" FrameworkAlternate="net-5.0" />
+        <Parameter Name="completionOption" Type="System.Net.Http.HttpCompletionOption" Index="1" FrameworkAlternate="net-5.0" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="2" FrameworkAlternate="net-5.0" />
+      </Parameters>
+      <Docs>
+        <param name="request">To be added.</param>
+        <param name="completionOption">To be added.</param>
+        <param name="cancellationToken">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <MemberGroup MemberName="SendAsync">
@@ -2581,7 +2825,7 @@ End Class
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="request" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -2635,7 +2879,7 @@ End Class
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="request" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -2689,7 +2933,7 @@ End Class
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="request" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>
@@ -2745,7 +2989,7 @@ End Class
         </remarks>
         <exception cref="T:System.ArgumentNullException"><paramref name="request" /> 为 <see langword="null" />。</exception>
         <exception cref="T:System.InvalidOperationException">请求消息已由 <see cref="T:System.Net.Http.HttpClient" /> 实例发送。</exception>
-        <exception cref="T:System.Net.Http.HttpRequestException">某个根本问题（例如网络连接、DNS 失败、服务器证书验证或超时）导致请求失败。</exception>
+        <exception cref="T:System.Net.Http.HttpRequestException">由于基础问题（如网络连接性、DNS 失败、服务器证书验证或超时），请求失败。</exception>
         <exception cref="T:System.Threading.Tasks.TaskCanceledException">仅限 .NET Core 和 .NET 5.0 及更高版本：请求因超时而失败。</exception>
       </Docs>
     </Member>

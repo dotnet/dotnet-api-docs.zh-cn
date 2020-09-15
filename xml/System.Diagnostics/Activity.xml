@@ -1,5 +1,5 @@
 <Type Name="Activity" FullName="System.Diagnostics.Activity">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="96c6d93a37ba0079aca470fa62b644098124c57f" /><Meta Name="ms.sourcegitcommit" Value="b53d35b4a410c949742abd4c6a989d1af5357bca" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="07/21/2020" /><Meta Name="ms.locfileid" Value="86851373" /></Metadata><TypeSignature Language="C#" Value="public class Activity : IDisposable" FrameworkAlternate="net-5.0" />
+  <TypeSignature Language="C#" Value="public class Activity : IDisposable" FrameworkAlternate="net-5.0" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Activity extends System.Object implements class System.IDisposable" FrameworkAlternate="net-5.0" />
   <TypeSignature Language="DocId" Value="T:System.Diagnostics.Activity" />
   <TypeSignature Language="VB.NET" Value="Public Class Activity&#xA;Implements IDisposable" FrameworkAlternate="net-5.0" />
@@ -167,10 +167,45 @@
         <Parameter Name="e" Type="System.Diagnostics.ActivityEvent" Index="0" FrameworkAlternate="net-5.0" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="e">要添加的活动事件。</param>
+        <summary>将指定的活动事件添加到事件列表。</summary>
+        <returns>便于链接的 <see langword="this" />。</returns>
         <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddTag">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.Activity AddTag (string key, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Diagnostics.Activity AddTag(string key, object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Activity.AddTag(System.String,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Function AddTag (key As String, value As Object) As Activity" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Diagnostics::Activity ^ AddTag(System::String ^ key, System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="member this.AddTag : string * obj -&gt; System.Diagnostics.Activity" Usage="activity.AddTag (key, value)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.DiagnosticSource</AssemblyName>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.Activity</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.String" Index="0" FrameworkAlternate="net-5.0" />
+        <Parameter Name="value" Type="System.Object" Index="1" FrameworkAlternate="net-5.0" />
+      </Parameters>
+      <Docs>
+        <param name="key">标记键名称。</param>
+        <param name="value">映射到输入键的标记值。</param>
+        <summary>更新活动，使标记具有额外的 <paramref name="key" /> 和 <paramref name="value" />。</summary>
+        <returns>便于链接的 <see langword="this" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks
+
+这会在枚举中显示 <xref:System.Diagnostics.Activity.TagObjects> 。 这适用于记录的信息，但对于后 (不需要这样的信息， <xref:System.Diagnostics.Activity.Baggage>) 。
+
+          ]]></format>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="AddTag">
@@ -204,13 +239,14 @@
         <summary>更新 <see cref="T:System.Diagnostics.Activity" />，使用所提供的 <paramref name="key" /> 和 <paramref name="value" /> 获取新标记。</summary>
         <returns>便于链接的 <see langword="this" />。</returns>
         <remarks>
-          <format type="text/markdown"><![CDATA[
+          <format type="text/markdown">
+  <![CDA
 
 ## Remarks
 
-此键/值对包含在由属性返回的集合中 <xref:System.Diagnostics.Activity.Tags> 。
+此键/值对包含在或属性返回的集合中 <xref:System.Diagnostics.Activity.Tags> <xref:System.Diagnostics.Activity.TagObjects> 。
 
-<xref:System.Diagnostics.Activity.Tags> 适用于用来登录的信息 <xref:System.Diagnostics.Activity> 。 有关运行时控制所需的信息，请使用 <xref:System.Diagnostics.Activity.Baggage> 属性。
+<xref:System.Diagnostics.Activity.Tags>适用 <xref:System.Diagnostics.Activity.TagObjects> 于用来登录的信息 <xref:System.Diagnostics.Activity> 。 有关运行时控制所需的信息，请使用 <xref:System.Diagnostics.Activity.Baggage> 属性。
 
 ]]></format>
         </remarks>
@@ -267,8 +303,8 @@
         <ReturnType>System.Diagnostics.ActivityContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <summary>获取活动的上下文。 仅当活动启动时，上下文才会生效。</summary>
+        <value>活动的上下文（如果活动已启动）;否则，将返回默认上下文。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -350,9 +386,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>获取或设置活动的显示名称。</summary>
+        <value>表示活动显示名称的字符串。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks
+
+`DisplayName` 用于在用户界面中使用，不需要与相同 `OperationName` 。
+
+如果 `DisplayName` 未设置该属性，它将返回与相同的值 `OperationName` 。
+
+          ]]></format>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -375,7 +421,7 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>如果活动已启动，则停止该活动，并通知任何事件侦听器。 否则，不会有任何操作。</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -445,8 +491,8 @@
         <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Diagnostics.ActivityEvent&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <summary>获取附加到此活动的所有活动事件的列表。</summary>
+        <value>附加到此活动的活动事件的枚举。 如果活动没有事件，则返回空枚举。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -529,9 +575,9 @@
         <Parameter Name="propertyName" Type="System.String" Index="0" FrameworkAlternate="net-5.0" />
       </Parameters>
       <Docs>
-        <param name="propertyName">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="propertyName">获取与对象关联的名称。</param>
+        <summary>返回映射到指定属性名称的对象。</summary>
+        <returns>映射到属性名称的对象（如果找到的话）；否则为 <see langword="null" />。</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -609,9 +655,17 @@ ID 具有层次结构： `root-id.id1_id2.id3_` 。 当 <xref:System.Diagnostics
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>指示此活动是否应用所有传播信息以及所有其他属性（如链接、标记和事件）进项填充。</summary>
+        <value><see langword="true" /> 如果应填充活动，则为; 否则为。 <see langword="false" /> 否则为。</value>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks
+
+库作者的最佳做法不尝试设置此属性。 创建活动时，将自动设置此属性。 只有在使用活动构造函数创建了活动对象并希望重写默认值的情况下，setter 才有用。 使用自动创建的活动对象 <xref:System.Diagnostics.ActivitySource.StartActivity%2A> 会将此属性设置为正确的值。
+
+          ]]></format>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Kind">
@@ -630,8 +684,8 @@ ID 具有层次结构： `root-id.id1_id2.id3_` 。 当 <xref:System.Diagnostics
         <ReturnType>System.Diagnostics.ActivityKind</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <summary>获取跟踪中的活动、其父活动和子活动之间的关系。</summary>
+        <value>枚举值之一，指示在跟踪中的活动、其父项及其子级之间的关系。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -651,8 +705,8 @@ ID 具有层次结构： `root-id.id1_id2.id3_` 。 当 <xref:System.Diagnostics
         <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Diagnostics.ActivityLink&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <summary>获取附加到此活动的所有活动链接的列表。</summary>
+        <value>附加到此活动的活动链接的枚举。 如果活动没有链接，则返回空枚举。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -861,9 +915,9 @@ ID 具有层次结构： `root-id.id1_id2.id3_` 。 当 <xref:System.Diagnostics
         <Parameter Name="propertyValue" Type="System.Object" Index="1" FrameworkAlternate="net-5.0" />
       </Parameters>
       <Docs>
-        <param name="propertyName">To be added.</param>
-        <param name="propertyValue">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="propertyName">要与值关联的名称。</param>
+        <param name="propertyValue">要附加并映射到属性名称的对象。</param>
+        <summary>将任何自定义对象附加到此活动。 如果指定的 <paramref name="propertyName" /> 之前与另一个对象关联，则会将属性更新为与新的 <paramref name="propertyValue" /> 关联。 建议使用唯一属性名称，以避免与使用相同值的任何用户冲突。</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1038,6 +1092,47 @@ ID 具有层次结构： `root-id.id1_id2.id3_` 。 当 <xref:System.Diagnostics
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="SetTag">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.Activity SetTag (string key, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Diagnostics.Activity SetTag(string key, object value) cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Diagnostics.Activity.SetTag(System.String,System.Object)" />
+      <MemberSignature Language="VB.NET" Value="Public Function SetTag (key As String, value As Object) As Activity" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; System::Diagnostics::Activity ^ SetTag(System::String ^ key, System::Object ^ value);" />
+      <MemberSignature Language="F#" Value="member this.SetTag : string * obj -&gt; System.Diagnostics.Activity" Usage="activity.SetTag (key, value)" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.DiagnosticSource</AssemblyName>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Diagnostics.Activity</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.String" Index="0" FrameworkAlternate="net-5.0" />
+        <Parameter Name="value" Type="System.Object" Index="1" FrameworkAlternate="net-5.0" />
+      </Parameters>
+      <Docs>
+        <param name="key">标记键名称。</param>
+        <param name="value">映射到输入键的标记值。</param>
+        <summary>使用输入键和值添加或更新活动标记。</summary>
+        <returns>便于链接的 <see langword="this" />。</returns>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks
+
+
+- 如果输入值为 `null` ：
+    - 如果集合中有任何标记具有相同的键，则将从集合中删除此标记。
+    - 否则，将不会发生任何情况，并且集合不会更改。
+- 如果输入值不是 `null` ：
+    - 如果集合中有任何标记具有相同的键，则映射到此项的值将更新为新的输入值。
+    - 否则，键和值将作为新标记添加到集合中。
+
+          ]]></format>
+        </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Source">
       <MemberSignature Language="C#" Value="public System.Diagnostics.ActivitySource Source { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class System.Diagnostics.ActivitySource Source" />
@@ -1054,9 +1149,17 @@ ID 具有层次结构： `root-id.id1_id2.id3_` 。 当 <xref:System.Diagnostics
         <ReturnType>System.Diagnostics.ActivitySource</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>获取与此活动关联的活动源。</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks
+
+从公共构造函数创建的所有活动都将具有一个单一源，其中源名称为空字符串。 否则，源将保存通过创建活动的对象 <xref:System.Diagnostics.ActivitySource.StartActivity%2A> 。
+
+          ]]></format>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="SpanId">
@@ -1195,6 +1298,27 @@ ID 具有层次结构： `root-id.id1_id2.id3_` 。 当 <xref:System.Diagnostics
 
 ]]></format>
         </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TagObjects">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;string,object&gt;&gt;? TagObjects { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;string, object&gt;&gt; TagObjects" />
+      <MemberSignature Language="DocId" Value="P:System.Diagnostics.Activity.TagObjects" />
+      <MemberSignature Language="VB.NET" Value="Public ReadOnly Property TagObjects As IEnumerable(Of KeyValuePair(Of String, Object))" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; property System::Collections::Generic::IEnumerable&lt;System::Collections::Generic::KeyValuePair&lt;System::String ^, System::Object ^&gt;&gt; ^ TagObjects { System::Collections::Generic::IEnumerable&lt;System::Collections::Generic::KeyValuePair&lt;System::String ^, System::Object ^&gt;&gt; ^ get(); };" />
+      <MemberSignature Language="F#" Value="member this.TagObjects : seq&lt;System.Collections.Generic.KeyValuePair&lt;string, obj&gt;&gt;" Usage="System.Diagnostics.Activity.TagObjects" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyName>System.Diagnostics.DiagnosticSource</AssemblyName>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.String,System.Object&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>返回表示要与活动一起记录的信息的标记列表。 此信息不会传递给该活动的子级。</summary>
+        <value>标记和对象的键/值对枚举。</value>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Tags">
