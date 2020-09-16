@@ -1,0 +1,1 @@
+<span data-ttu-id="08da6-101">组件对象模型 (COM)</span><span class="sxs-lookup"><span data-stu-id="08da6-101">Component Object Model (COM)</span></span>

@@ -1,0 +1,1 @@
+<span data-ttu-id="d46c3-101">Windows Embedded CE</span><span class="sxs-lookup"><span data-stu-id="d46c3-101">Windows Embedded CE</span></span>
