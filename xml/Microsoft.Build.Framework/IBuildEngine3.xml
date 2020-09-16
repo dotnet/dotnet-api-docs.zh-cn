@@ -1,5 +1,5 @@
 <Type Name="IBuildEngine3" FullName="Microsoft.Build.Framework.IBuildEngine3">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="72535430a472c28762db6558c8a118071c92bbc9" /><Meta Name="ms.sourcegitcommit" Value="0084afad1b3b1cb2c8ad2c142ae3597d08bad4a7" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="10/31/2019" /><Meta Name="ms.locfileid" Value="73364967" /></Metadata><TypeSignature Language="C#" Value="public interface IBuildEngine3 : Microsoft.Build.Framework.IBuildEngine2" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="14de4de2514a91c80985480719293e0777662d3b" /><Meta Name="ms.sourcegitcommit" Value="c982ad9e10a242d90f1e631b5981570f9e5d9f34" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/10/2020" /><Meta Name="ms.locfileid" Value="89808225" /></Metadata><TypeSignature Language="C#" Value="public interface IBuildEngine3 : Microsoft.Build.Framework.IBuildEngine2" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IBuildEngine3 implements class Microsoft.Build.Framework.IBuildEngine, class Microsoft.Build.Framework.IBuildEngine2" />
   <TypeSignature Language="DocId" Value="T:Microsoft.Build.Framework.IBuildEngine3" />
   <TypeSignature Language="VB.NET" Value="Public Interface IBuildEngine3&#xA;Implements IBuildEngine2" />
@@ -8,6 +8,7 @@
   <AssemblyInfo>
     <AssemblyName>Microsoft.Build.Framework</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>15.1.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -33,6 +34,7 @@
       <AssemblyInfo>
         <AssemblyName>Microsoft.Build.Framework</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Microsoft.Build.Framework.BuildEngineResult</ReturnType>
@@ -48,15 +50,13 @@
       <Docs>
         <param name="projectFileNames">要生成的项目。</param>
         <param name="targetNames">要生成的项目中的目标（可以为 null）。</param>
-        <param name="globalProperties">要应用于子项目的附加全局属性的 <see cref="T:System.Collections.IDictionary" /> 数组（数组项可以为 null）。  
-  
-键应为字符串。</param>
+        <param name="globalProperties">要应用于子项目的其他全局属性的哈希表数组， (数组项可以为 null) 。 哈希表中的键和值都应为字符串。</param>
         <param name="removeGlobalProperties">应移除的全局属性的列表。</param>
         <param name="toolsVersion">引擎所识别的工具版本，将在此生成期间使用（可以为 null）。</param>
-        <param name="returnTargetOutputs">是否应返回 BuildEngineResult 中的目标输出。</param>
-        <summary>允许任务对某个项目文件启动生成。</summary>
-        <returns>如果生成成功，则将返回指定目标的输出。</returns>
-        <remarks>To be added.</remarks>
+        <param name="returnTargetOutputs">是否应在 BuildEngineResult 中返回目标输出</param>
+        <summary>此方法允许任务启动对特定项目文件的生成。 如果生成成功，则在返回指定目标的任何)  (输出。</summary>
+        <returns>返回一个结构，该结构包含生成的成功或失败以及项目的目标输出。</returns>
+        <remarks>1) 可接受同时为 <c>targetNames</c> 和 <c>targetOutputs</c> 2) 传递 null，如果未指定任何目标，则生成默认目标</remarks>
       </Docs>
     </Member>
     <Member MemberName="Reacquire">
@@ -70,6 +70,7 @@
       <AssemblyInfo>
         <AssemblyName>Microsoft.Build.Framework</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -91,6 +92,7 @@
       <AssemblyInfo>
         <AssemblyName>Microsoft.Build.Framework</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -102,7 +104,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 每个 CPU 只有一个节点（msbuild.exe 进程）。 在任何时候，都只能在节点上构建一个项目、目标和任务。 例如，如果某个任务等待生成的工具或其他某个事件完成，则该任务可以调用 Yield，这会立即返回。 这允许节点在其他项目中生成目标（如果有）。  当任务准备好继续时，应调用 <xref:Microsoft.Build.Framework.IBuildEngine3.Reacquire%2A>。 粗略的规则是，如果任务预计某个操作将需要20到30秒以上，则可以选择在启动操作之前调用 `Yield`，并在操作完成后 `Reacquire`。  
+ 每个 CPU 只有一个节点 ( # A0) 进程。 在任何时候，都只能在节点上构建一个项目、目标和任务。 例如，如果某个任务等待生成的工具或其他某个事件完成，则该任务可以调用 Yield，这会立即返回。 这允许节点在其他项目中生成目标（如果有）。  当任务准备好继续时，应调用 <xref:Microsoft.Build.Framework.IBuildEngine3.Reacquire%2A> 。 粗略的规则是，如果任务预计某个操作将需要20或30秒以上，则可以选择在 `Yield` 启动操作之前调用，并在 `Reacquire` 操作完成时进行调用。  
   
  ]]></format>
         </remarks>
