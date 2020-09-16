@@ -1,5 +1,5 @@
 <Type Name="ITaskFactory2" FullName="Microsoft.Build.Framework.ITaskFactory2">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="261806e53f366a1346cfe1c3e1d8449a139d38aa" /><Meta Name="ms.sourcegitcommit" Value="0084afad1b3b1cb2c8ad2c142ae3597d08bad4a7" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="10/31/2019" /><Meta Name="ms.locfileid" Value="73364955" /></Metadata><TypeSignature Language="C#" Value="public interface ITaskFactory2 : Microsoft.Build.Framework.ITaskFactory" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="85f72d2a1281340ff2b0b47c4bfa7ff0b6df46a3" /><Meta Name="ms.sourcegitcommit" Value="c982ad9e10a242d90f1e631b5981570f9e5d9f34" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/10/2020" /><Meta Name="ms.locfileid" Value="89837842" /></Metadata><TypeSignature Language="C#" Value="public interface ITaskFactory2 : Microsoft.Build.Framework.ITaskFactory" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITaskFactory2 implements class Microsoft.Build.Framework.ITaskFactory" />
   <TypeSignature Language="DocId" Value="T:Microsoft.Build.Framework.ITaskFactory2" />
   <TypeSignature Language="VB.NET" Value="Public Interface ITaskFactory2&#xA;Implements ITaskFactory" />
@@ -8,6 +8,7 @@
   <AssemblyInfo>
     <AssemblyName>Microsoft.Build.Framework</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <AssemblyVersion>15.1.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -15,7 +16,7 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>描述并展任务工厂实例应实现的 <see cref="T:Microsoft.Build.Framework.ITaskFactory" /> 接口。</summary>
+    <summary>如果任务工厂实例希望能够使用运行时和体系结构等新的 UsingTask 参数，则应实现的接口。</summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -30,6 +31,7 @@
       <AssemblyInfo>
         <AssemblyName>Microsoft.Build.Framework</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>Microsoft.Build.Framework.ITask</ReturnType>
@@ -40,17 +42,11 @@
       </Parameters>
       <Docs>
         <param name="taskFactoryLoggingHost">任务工厂的日志记录主机将记录任务上下文中的消息。</param>
-        <param name="taskIdentityParameters">任务工厂的特殊参数可用于修改它怎么执行任务，例如运行时和建筑学。</param>
-        <summary>创建要使用的任务的实例，具有在单个任务中设置的“特殊”参数的可选集，该任务使用 MSBuildRuntime 和 MSBuildArchitecture 默认任务参数调用。 MSBuild 提供此接口的实现，TaskHostFactory，用值 “CLR2”、“CLR4”、“CurrentRuntime”、“*”(Any)、“MSBuildArchitecture”、和值 “x86”、“x64”、“CurrentArchitecture”、“\*”(Any)使用“MSBuildRuntime”。 ITaskFactory2 的实现可以选择使用这些预定义的 MSBuildRuntime 和 MSBuildArchitecture 值，或可以为这些参数指定新值。</summary>
-        <returns>生成的任务；如果任务创建失败，则为 <see langword="null" />。</returns>
-        <remarks>
-          <format type="text/markdown"><![CDATA[  
-  
-## Remarks  
- 如果任务工厂实现 ITaskFactory2，则 MSBuild 将调用此方法，而不是 ITaskFactory. CreateTask。  
-  
- ]]></format>
-        </remarks>
+        <param name="taskIdentityParameters">任务工厂的特殊参数可用于修改它怎么执行任务，例如运行时和建筑学。  
+            密钥是参数的名称并且值是参数值。  这是设置为任务调用本身的参数集，例如特殊的 MSBuildRuntime 和 MSBuildArchitecture 参数。</param>
+        <summary>创建要使用的任务的实例，具有在单个任务中设置的“特殊”参数的可选集，该任务使用 MSBuildRuntime 和 MSBuildArchitecture 默认任务参数调用。  MSBuild 提供此接口的实现，该 TaskHostFactory 使用 "MSBuildRuntime"，其值为 "CLR2"、"CLR4"、"CurrentRuntime" 和 "*" (任何) ;和 "MSBuildArchitecture"，值为 "x86"、"x64"、"CurrentArchitecture" 和 "*" (任何) 。  ITaskFactory2 的实现可以选择使用这些预定义的 MSBuildRuntime 和 MSBuildArchitecture 值，或可以为这些参数指定新值。</summary>
+        <returns>生成的任务；如果任务创建失败，则为 <c>null</c>。</returns>
+        <remarks>如果任务工厂实现 ITaskFactory2，则 MSBuild 将调用此方法，而不是 ITaskFactory. CreateTask。</remarks>
       </Docs>
     </Member>
     <Member MemberName="Initialize">
@@ -64,6 +60,7 @@
       <AssemblyInfo>
         <AssemblyName>Microsoft.Build.Framework</AssemblyName>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
+        <AssemblyVersion>15.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -77,22 +74,16 @@
       </Parameters>
       <Docs>
         <param name="taskName">任务的名称。</param>
-        <param name="factoryIdentityParameters">任务工厂的特殊参数可用于修改它怎么执行任务，例如运行时和建筑学。 密钥是参数的名称并且值是参数值。 这是使用一些参数（如 UsingTask Runtime 和 Architecture）在 UsingTask 上设置的参数集。</param>
+        <param name="factoryIdentityParameters">任务工厂的特殊参数可用于修改它怎么执行任务，例如运行时和建筑学。  密钥是参数的名称并且值是参数值。 这是使用一些参数（如 UsingTask Runtime 和 Architecture）在 UsingTask 上设置的参数集。</param>
         <param name="parameterGroup">参数组。</param>
         <param name="taskBody">任务正文。</param>
         <param name="taskFactoryLoggingHost">任务工厂日志记录主机。</param>
-        <summary>初始化此工厂，以对带特定内联任务块的任务和一组 UsingTask 参数进行实例化。 MSBuild 提供此接口的实现，TaskHostFactory，用值“CLR2”、“CLR4”、“CurrentRuntime”、“*”(Any)、“Architecture”和值“x86”、“x64”、“CurrentArchitecture”、“\*”(Any) 使用“Runtime”。 ITaskFactory2 的实现可以选择使用这些预定义的运行时和体系结构值，或可以为这些参数指定新值。</summary>
+        <summary>初始化此工厂，以对带特定内联任务块的任务和一组 UsingTask 参数进行实例化。  MSBuild 提供此接口的实现，该 TaskHostFactory 使用 "Runtime"，其值为 "CLR2"、"CLR4"、"CurrentRuntime" 和 "*" (任意) ;"体系结构"，值为 "x86"、"x64"、"CurrentArchitecture" 和 "*" (任何) 。  ITaskFactory2 的实现可以选择使用这些预定义的运行时和体系结构值，或可以为这些参数指定新值。</summary>
         <returns>一个指示初始化是否成功的值。</returns>
-        <remarks>
-          <format type="text/markdown"><![CDATA[  
-  
-## Remarks  
- MSBuild 引擎将调用此方法来初始化工厂。 此方法应足以初始化工厂，以便可以询问工厂是否可以由工厂创建任务名称。 如果任务工厂实现 ITaskFactory2，则将调用此 Initialize 方法来替代 ITaskFactory。  
-  
- TaskFactoryLoggingHost 会将消息记录到首次使用该任务的目标的上下文中。  
-  
- ]]></format>
-        </remarks>
+        <remarks><para>MSBuild 引擎将调用此方法来初始化工厂。 此方法应足以初始化工厂，以便可以询问工厂是否可以由工厂创建任务名称。  如果任务工厂实现 ITaskFactory2，则将调用此 Initialize 方法来代替 ITaskFactory.Initialize。</para>
+          <para>
+TaskFactoryLoggingHost 会将消息记录到首次使用该任务的目标的上下文中。
+            </para></remarks>
       </Docs>
     </Member>
   </Members>
