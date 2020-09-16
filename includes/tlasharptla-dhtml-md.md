@@ -1,0 +1,1 @@
+<span data-ttu-id="d398a-101">动态 HTML (DHTML)</span><span class="sxs-lookup"><span data-stu-id="d398a-101">Dynamic HTML (DHTML)</span></span>
