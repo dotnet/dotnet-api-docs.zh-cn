@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 08/29/2019
 ms.locfileid: "71138096"
 ---
-<span data-ttu-id="2c430-101">Visual Basic 2005</span><span class="sxs-lookup"><span data-stu-id="2c430-101">Visual Basic 2005</span></span>
+<span data-ttu-id="3d05a-101">Visual Basic 2005</span><span class="sxs-lookup"><span data-stu-id="3d05a-101">Visual Basic 2005</span></span>
