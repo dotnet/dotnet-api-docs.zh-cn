@@ -1,0 +1,1 @@
+<span data-ttu-id="edca6-101">多文档界面 (MDI)</span><span class="sxs-lookup"><span data-stu-id="edca6-101">multiple-document interface (MDI)</span></span>

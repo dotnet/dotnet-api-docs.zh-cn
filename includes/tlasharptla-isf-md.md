@@ -1,0 +1,1 @@
+<span data-ttu-id="ce221-101">墨迹序列化格式 (ISF)</span><span class="sxs-lookup"><span data-stu-id="ce221-101">Ink Serialized Format (ISF)</span></span>
