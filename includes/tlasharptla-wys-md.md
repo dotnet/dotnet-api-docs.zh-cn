@@ -1,0 +1,1 @@
+<span data-ttu-id="2bfe0-101">“所见即所得”(WYSIWYG)</span><span class="sxs-lookup"><span data-stu-id="2bfe0-101">"what you see is what you get" (WYSIWYG)</span></span>
