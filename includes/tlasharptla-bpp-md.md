@@ -1,0 +1,1 @@
+<span data-ttu-id="8a3f0-101">每像素位数 (BPP)</span><span class="sxs-lookup"><span data-stu-id="8a3f0-101">bits per pixel (BPP)</span></span>

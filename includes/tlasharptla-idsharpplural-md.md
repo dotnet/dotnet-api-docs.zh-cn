@@ -1,0 +1,1 @@
+<span data-ttu-id="6503d-101">标识符 (ID)</span><span class="sxs-lookup"><span data-stu-id="6503d-101">identifiers (IDs)</span></span>
