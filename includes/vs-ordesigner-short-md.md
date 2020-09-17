@@ -1,0 +1,1 @@
+<span data-ttu-id="b8830-101">O/R 设计器</span><span class="sxs-lookup"><span data-stu-id="b8830-101">O/R Designer</span></span>

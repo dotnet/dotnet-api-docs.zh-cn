@@ -1,0 +1,1 @@
+<span data-ttu-id="7e7f0-101">标记图像文件格式 (TIFF)</span><span class="sxs-lookup"><span data-stu-id="7e7f0-101">Tagged Image File Format (TIFF)</span></span>

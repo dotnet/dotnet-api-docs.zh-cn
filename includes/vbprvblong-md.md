@@ -1,0 +1,1 @@
+<span data-ttu-id="13c1a-101">Visual Basic 2005</span><span class="sxs-lookup"><span data-stu-id="13c1a-101">Visual Basic 2005</span></span>
