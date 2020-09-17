@@ -1,0 +1,1 @@
+<span data-ttu-id="a95c1-101">Windows XP SP2</span><span class="sxs-lookup"><span data-stu-id="a95c1-101">Windows XP SP2</span></span>

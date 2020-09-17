@@ -1,0 +1,1 @@
+<span data-ttu-id="e2218-101">Windows Server 2003</span><span class="sxs-lookup"><span data-stu-id="e2218-101">Windows Server 2003</span></span>
