@@ -1,0 +1,1 @@
+<span data-ttu-id="c28d9-101">Windows Media 照片</span><span class="sxs-lookup"><span data-stu-id="c28d9-101">Windows Media Photo</span></span>

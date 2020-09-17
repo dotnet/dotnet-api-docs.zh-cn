@@ -1,0 +1,2 @@
+> [!NOTE]
+>  <span data-ttu-id="99504-101">此代码示例使用此重载方法的重载，该重载与本主题介绍的特定重载不同。</span><span class="sxs-lookup"><span data-stu-id="99504-101">This code example uses an overload of this overloaded method that is different from the specific overload that this topic describes.</span></span> <span data-ttu-id="99504-102">若要将此示例扩展到此主题，请将源序列的元素替换为相应数字类型的元素。</span><span class="sxs-lookup"><span data-stu-id="99504-102">To extend the example to this topic, substitute the elements of the source sequence with elements of the appropriate numerical type.</span></span>

@@ -1,0 +1,1 @@
+<span data-ttu-id="c55de-101">通用命名约定 (UNC)</span><span class="sxs-lookup"><span data-stu-id="c55de-101">Universal Naming Convention (UNC)</span></span>
