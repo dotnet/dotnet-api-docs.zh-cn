@@ -1,0 +1,1 @@
+<span data-ttu-id="c40e9-101">受控序列中的元素的类型。</span><span class="sxs-lookup"><span data-stu-id="c40e9-101">The type of an element in the controlled sequence.</span></span>
