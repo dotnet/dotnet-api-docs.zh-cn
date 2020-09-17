@@ -1,11 +1,3 @@
----
-ms.openlocfilehash: 5feab3f469ed6d7017ee0fdc20e78822b5ed4834
-ms.sourcegitcommit: 1bb00d2f4343e73ae8d58668f02297a3cf10a4c1
-ms.translationtype: HT
-ms.contentlocale: zh-CN
-ms.lasthandoff: 06/15/2019
-ms.locfileid: "63867687"
----
  .NET 维护自己的字符表及其相应的类别，这可确保在不同平台上运行的特定版本的 .NET 实现返回相同的字符类别信息。 Linux 和 macOS 上运行的 .NET Core 上，字符类别信息由 [Unicode 国际组件](http://site.icu-project.org/)库提供。
  
  下表列出了 .NET 版本及其字符类别所基于的 Unicode 标准。   
