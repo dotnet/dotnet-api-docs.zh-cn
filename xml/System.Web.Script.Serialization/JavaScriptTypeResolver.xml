@@ -1,5 +1,5 @@
 <Type Name="JavaScriptTypeResolver" FullName="System.Web.Script.Serialization.JavaScriptTypeResolver">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="4dc31196e934281669ede6b17126f8707740c3e9" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70510958" /></Metadata><TypeSignature Language="C#" Value="public abstract class JavaScriptTypeResolver" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="dc4d361a43ced23669530a32d2b8051850a4dd1c" /><Meta Name="ms.sourcegitcommit" Value="c982ad9e10a242d90f1e631b5981570f9e5d9f34" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/10/2020" /><Meta Name="ms.locfileid" Value="89998388" /></Metadata><TypeSignature Language="C#" Value="public abstract class JavaScriptTypeResolver" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit JavaScriptTypeResolver extends System.Object" />
   <TypeSignature Language="DocId" Value="T:System.Web.Script.Serialization.JavaScriptTypeResolver" />
   <TypeSignature Language="VB.NET" Value="Public MustInherit Class JavaScriptTypeResolver" />
@@ -22,27 +22,249 @@
 ## Remarks  
  <xref:System.Web.Script.Serialization.JavaScriptTypeResolver>类为提供以下服务：  
   
--   通过<xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveTypeId%2A>方法将托管类型信息转换为字符串值。  
+-   通过方法将托管类型信息转换为字符串值 <xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveTypeId%2A> 。  
   
--   通过<xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveType%2A>方法将字符串值解析回适当的托管类型。  
+-   通过方法将字符串值解析回适当的托管类型 <xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveType%2A> 。  
   
- <xref:System.Web.Script.Serialization.JavaScriptSerializer>当对象序列化自定义类型时，它可以选择性地包括在序列化的 JavaScript 对象表示法（JSON）字符串中包含类型信息的值。 在反序列<xref:System.Web.Script.Serialization.JavaScriptSerializer>化过程中，可以引用此字符串值，以确定要将 JSON 字符串转换成的适当托管类型。  
+ 当 <xref:System.Web.Script.Serialization.JavaScriptSerializer> 对象序列化自定义类型时，它可以选择性地包括在序列化的 JavaScript 对象表示法 (JSON) string a 包含类型信息的值。 在反序列化过程中， <xref:System.Web.Script.Serialization.JavaScriptSerializer> 可以引用此字符串值，以确定要将 JSON 字符串转换成的适当托管类型。  
   
- 如果向<xref:System.Web.Script.Serialization.JavaScriptSerializer>实例提供类型解析程序，则序列化程序将<xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveTypeId%2A>使用和<xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveType%2A>方法在序列化和反序列化过程中的托管类型和字符串值之间进行映射。  
+ 如果向实例提供类型解析程序 <xref:System.Web.Script.Serialization.JavaScriptSerializer> ，则序列化程序将使用 <xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveTypeId%2A> 和方法在 <xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveType%2A> 序列化和反序列化过程中的托管类型和字符串值之间进行映射。  
   
- 类是<xref:System.Web.Script.Serialization.SimpleTypeResolver>类的基类，该类提供使用托管类型程序集限定名称的类型解析程序的实现。 <xref:System.Web.Script.Serialization.JavaScriptTypeResolver>  
-  
-   
-  
+ <xref:System.Web.Script.Serialization.JavaScriptTypeResolver>类是类的基类 <xref:System.Web.Script.Serialization.SimpleTypeResolver> ，该类提供使用托管类型程序集限定名称的类型解析程序的实现。  
+
+> [!NOTE]
+> 使用时 `JavaScriptTypeResolver` ，生成的 JSON 负载包含特殊 `__type` 属性。 此属性包括目标类型的完整类型名称（包括命名空间）。 使用自定义冲突解决程序之前，请验证目标类型的全名不包含敏感或特权信息。
+
 ## Examples  
- 下面的示例演示如何创建自定义类型解析程序。  
-  
- [!code-csharp[System.Web.Script.Serialization.TypeResolver#2](~/samples/snippets/csharp/VS_Snippets_Atlas/System.Web.Script.Serialization.TypeResolver/CS/App_Code/TypeResolver.cs#2)]
- [!code-vb[System.Web.Script.Serialization.TypeResolver#2](~/samples/snippets/visualbasic/VS_Snippets_Atlas/System.Web.Script.Serialization.TypeResolver/VB/App_Code/TypeResolver.vb#2)]  
+
+下面的示例演示如何创建自定义 `JavaScriptTypeResolver` 以及如何使用它对对象进行序列化或反序列化。
+
+```cs
+using System;
+using System.Linq;
+using System.Web.Script.Serialization;
+
+namespace SampleApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // The object array to serialize.
+            Person[] people = new Person[]
+            {
+                new Person()
+                {
+                    Name = "Kristen Solstad",
+                    Age = 15,
+                    HomeAddress = new Address()
+                    {
+                        Street1 = "123 Palm Ave",
+                        City = "Some City",
+                        StateOrProvince = "ST",
+                        Country = "United States",
+                        PostalCode = "00000"
+                    }
+                },
+                new Adult()
+                {
+                    Name = "Alex Johnson",
+                    Age = 39,
+                    Occupation = "Mechanic",
+                    HomeAddress = new Address()
+                    {
+                        Street1 = "445 Lorry Way",
+                        Street2 = "Unit 3A",
+                        City = "Some City",
+                        Country = "United Kingdom",
+                        PostalCode = "AA0 A00"
+                    }
+                }
+            };
+
+            // Serialize the object array, then write it to the console.
+            string serializedData = SerializePeopleArray(people);
+            Console.WriteLine("Serialized:");
+            Console.WriteLine(serializedData);
+            Console.WriteLine();
+
+            // Now deserialize the object array.
+            Person[] deserializedArray = DeserializePeopleArray(serializedData);
+            Console.WriteLine("Deserialized " + deserializedArray.Length + " people.");
+            foreach (Person person in deserializedArray)
+            {
+                Console.WriteLine(person.Name + " (Age " + person.Age + ") [" + person.GetType() + "]");
+            }
+        }
+
+        static string SerializePeopleArray(Person[] people)
+        {
+            // The custom type resolver to use.
+            // Note: Except for primitives like int and string, *every* type that
+            // we might see in the object graph must be listed here.
+            CustomTypeResolver resolver = new CustomTypeResolver(
+                typeof(Person),
+                typeof(Adult),
+                typeof(Address));
+
+            // Instantiate the serializer.
+            JavaScriptSerializer serializer = new JavaScriptSerializer(resolver);
+
+            // Serialize the object array, then return it.
+            string serialized = serializer.Serialize(people);
+            return serialized;
+        }
+
+        static Person[] DeserializePeopleArray(string serializedData)
+        {
+            // The custom type resolver to use.
+            // Note: This is the same list that was provided to the Serialize routine.
+            CustomTypeResolver resolver = new CustomTypeResolver(
+                typeof(Person),
+                typeof(Adult),
+                typeof(Address));
+
+            // Instantiate the serializer.
+            JavaScriptSerializer serializer = new JavaScriptSerializer(resolver);
+
+            // Deserialize the object array, then return it.
+            Person[] deserialized = serializer.Deserialize<Person[]>(serializedData);
+            return deserialized;
+        }
+    }
+
+    public class Person
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public Address HomeAddress { get; set; }
+    }
+
+    public class Adult : Person
+    {
+        public string Occupation { get; set; }
+    }
+
+    public class Address
+    {
+        public string Street1 { get; set; }
+        public string Street2 { get; set; }
+        public string City { get; set; }
+        public string StateOrProvince { get; set; }
+        public string Country { get; set; }
+        public string PostalCode { get; set; }
+    }
+
+    // A custom JavaScriptTypeResolver that restricts the payload
+    // to a set of known good types.
+    class CustomTypeResolver : JavaScriptTypeResolver
+    {
+        private readonly Type[] _allowedTypes;
+
+        public CustomTypeResolver(params Type[] allowedTypes)
+        {
+            if (allowedTypes == null)
+            {
+                throw new ArgumentNullException("allowedTypes");
+            }
+
+            // Make a copy of the array the caller gave us.
+            _allowedTypes = (Type[])allowedTypes.Clone();
+        }
+
+        public override Type ResolveType(string id)
+        {
+            // Iterate over all of the allowed types, looking for a match
+            // for the 'id' parameter. Calling Type.GetType(id) is dangerous,
+            // so we instead perform a match on the Type.FullName property.
+            foreach (Type allowedType in _allowedTypes)
+            {
+                if (allowedType.FullName == id)
+                {
+                    return allowedType;
+                }
+            }
+
+            // The caller provided a type we don't recognize. This could be
+            // dangerous, so we'll fail the operation immediately.
+            throw new ArgumentException("Unknown type: " + id, "id");
+        }
+
+        public override string ResolveTypeId(Type type)
+        {
+            // Before we serialize data, quickly double-check to make
+            // sure we're allowed to deserialize the data. Otherwise it's
+            // no good serializing something if we can't deserialize it.
+            if (_allowedTypes.Contains(type))
+            {
+                return type.FullName;
+            }
+
+            throw new InvalidOperationException("Cannot serialize an object of type " + type + ". Did you forget to add it to the allow list?");
+        }
+    }
+}
+```
+
+前面的应用程序将以下输出输出到控制台，并为可读性进行了格式化。
+
+```txt
+Serialized:
+[
+    {
+        "__type": "SampleApp.Person",
+        "Name": "Kristen Solstad",
+        "Age": 15,
+        "HomeAddress": {
+            "__type": "SampleApp.Address",
+            "Street1": "123 Palm Ave",
+            "Street2": null,
+            "City": "Some City",
+            "StateOrProvince": "ST",
+            "Country": "United States",
+            "PostalCode": "00000"
+        }
+    },
+    {
+        "__type": "SampleApp.Adult",
+        "Occupation": "Mechanic",
+        "Name": "Alex Johnson",
+        "Age": 39,
+        "HomeAddress": {
+            "__type": "SampleApp.Address",
+            "Street1": "445 Lorry Way",
+            "Street2": "Unit 3A",
+            "City": "Some City",
+            "StateOrProvince": null,
+            "Country": "United Kingdom",
+            "PostalCode": "AA0 A00"
+        }
+    }
+]
+
+Deserialized 2 people.
+Kristen Solstad (Age 15) [SampleApp.Person]
+Alex Johnson (Age 39) [SampleApp.Adult]
+```
+
+在上面的示例中， `Adult` 类型为 `Person` 类型键入子类。 自定义 `JavaScriptTypeResolver` 用于在生成的 JSON 有效负载中包含类型信息。 这允许在将 JSON 有效负载反序列化为 .NET 对象图时使用多态。 负载可以控制是将基 `Person` 实例还是返回派生 `Adult` 实例返回给调用方。
+
+此示例是安全的，因为它使用 `allow-list` 机制来控制反序列化。 代码：
+
+* `CustomTypeResolver`用允许类型的显式列表初始化。
+* 将反序列化过程限制为仅限已批准的类型列表。 此限制可防止 [反序列化攻击](https://owasp.org/www-community/vulnerabilities/Deserialization_of_untrusted_data)，其中远程客户端 `__type` 在 JSON 有效负载中指定恶意并使服务器反序列化危险类型。
+
+即使应用只 `Person` `Adult` 需作为顶级数组的一部分进行反序列化，但仍需要将其添加 `Address` 到允许列表，因为：
+
+* 序列化 `Person` 或 `Adult` 还会将序列化为 `Address` 对象图的一部分。
+* 对象图中可能存在的所有类型需要在允许列表中进行考虑。 和等 `int` 基元 `string` 不需要指定。
+
+> [!WARNING]
+>  不要 `Type.GetType(id)` 在方法中调用 `ResolveType` 。 这可能会在应用中引入安全 vunerability。 相反，循环访问允许类型的列表，并将其 `Type.FullName` 属性与传入的属性进行比较 `id` ，如前面的示例所示。
   
  ]]></format>
     </remarks>
-    <block subset="none" type="overrides"><para>实现类型解析程序时，当字符串值传递<see cref="M:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveTypeId(System.Type)" /> <see cref="M:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveType(System.String)" />到方法时，该方法返回的字符串必须映射回同一托管类型。</para></block>
+    <block subset="none" type="overrides"><para>实现类型解析程序时， <see cref="M:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveTypeId(System.Type)" /> 当字符串值传递到方法时，该方法返回的字符串必须映射回同一托管类型 <see cref="M:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveType(System.String)" /> 。</para></block>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -59,7 +281,8 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute FrameworkAlternate="netframework-4.0">
-          <AttributeName>System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")</AttributeName>
+          <AttributeName Language="C#">[System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]</AttributeName>
+          <AttributeName Language="F#">[&lt;System.Runtime.TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")&gt;]</AttributeName>
         </Attribute>
       </Attributes>
       <Parameters />
@@ -95,17 +318,18 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 当类型解析程序与<xref:System.Web.Script.Serialization.JavaScriptSerializer>实例关联时，序列化程序将在循环访问 json 字符串时<xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveType%2A>使用方法，以确定 JSON 类型应转换为的特定托管类型。  
-  
+ 当类型解析程序与实例关联时 <xref:System.Web.Script.Serialization.JavaScriptSerializer> ，序列化程序将 <xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveType%2A> 在循环访问 json 字符串时使用方法，以确定 JSON 类型应转换为的特定托管类型。  
+
  ]]></format>
         </remarks>
-        <block subset="none" type="overrides"><para>给定一个字符串值，类型解析程序必须返回一个<see cref="T:System.Type" />表示相应托管类型的对象。</para></block>
+        <block subset="none" type="overrides"><para>给定一个字符串值，类型解析程序必须返回一个 <see cref="T:System.Type" /> 表示相应托管类型的对象。</para></block>
       </Docs>
     </Member>
     <Member MemberName="ResolveTypeId">
       <MemberSignature Language="C#" Value="public abstract string ResolveTypeId (Type type);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string ResolveTypeId(class System.Type type) cil managed" />
       <MemberSignature Language="DocId" Value="M:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveTypeId(System.Type)" />
+      <MemberSignature Language="VB.NET" Value="Public MustOverride Function ResolveTypeId (type As Type) As String" />
       <MemberSignature Language="C++ CLI" Value="public:&#xA; abstract System::String ^ ResolveTypeId(Type ^ type);" />
       <MemberSignature Language="F#" Value="abstract member ResolveTypeId : Type -&gt; string" Usage="javaScriptTypeResolver.ResolveTypeId type" />
       <MemberType>Method</MemberType>
@@ -128,7 +352,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果该<xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveTypeId%2A>方法`null`返回或<xref:System.String.Empty>，则类型解析程序不支持该类型。  
+ 如果该 <xref:System.Web.Script.Serialization.JavaScriptTypeResolver.ResolveTypeId%2A> 方法返回 `null` 或 <xref:System.String.Empty> ，则类型解析程序不支持该类型。  
   
  ]]></format>
         </remarks>
