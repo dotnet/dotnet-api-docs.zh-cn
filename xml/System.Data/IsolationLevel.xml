@@ -1,5 +1,5 @@
 <Type Name="IsolationLevel" FullName="System.Data.IsolationLevel">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="002b53aa0e59ff3b4a6ec0dc2ab31502cff9e3f0" /><Meta Name="ms.sourcegitcommit" Value="88014e1c5440e3df4f66ef04393854d15b1fd534" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/05/2019" /><Meta Name="ms.locfileid" Value="70449523" /></Metadata><TypeSignature Language="C#" Value="public enum IsolationLevel" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="bab26f7c3ee367bc221da782e14e9cd23740de55" /><Meta Name="ms.sourcegitcommit" Value="c982ad9e10a242d90f1e631b5981570f9e5d9f34" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/10/2020" /><Meta Name="ms.locfileid" Value="89995608" /></Metadata><TypeSignature Language="C#" Value="public enum IsolationLevel" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed IsolationLevel extends System.Enum" />
   <TypeSignature Language="DocId" Value="T:System.Data.IsolationLevel" />
   <TypeSignature Language="VB.NET" Value="Public Enum IsolationLevel" />
@@ -11,6 +11,8 @@
     <AssemblyVersion>4.1.0.0</AssemblyVersion>
     <AssemblyVersion>4.2.0.0</AssemblyVersion>
     <AssemblyVersion>4.2.1.0</AssemblyVersion>
+    <AssemblyVersion>4.2.2.0</AssemblyVersion>
+    <AssemblyVersion>5.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <AssemblyInfo>
     <AssemblyName>System.Data</AssemblyName>
@@ -24,12 +26,16 @@
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyVersion>2.1.0.0</AssemblyVersion>
   </AssemblyInfo>
+  <TypeForwardingChain>
+    <TypeForwarding From="netstandard" FromVersion="2.1.0.0" To="System.Data.Common" ToVersion="5.0.0.0" FrameworkAlternate="net-5.0" />
+  </TypeForwardingChain>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Attributes>
     <Attribute FrameworkAlternate="netframework-1.1">
-      <AttributeName>System.Flags</AttributeName>
+      <AttributeName Language="C#">[System.Flags]</AttributeName>
+      <AttributeName Language="F#">[&lt;System.Flags&gt;]</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
@@ -39,14 +45,14 @@
   
 ## Remarks
 
-当`IsolationLevel`执行事务时，.net 数据提供程序使用这些值。
+`IsolationLevel`当执行事务时，.net 数据提供程序使用这些值。
 
-在`IsolationLevel`显式更改之前，将一直有效，但可以随时对其进行更改。 新值在执行时使用，而不是在分析时使用。 如果在事务中发生更改，服务器的预期行为是将新的锁定级别应用于所有剩余的语句。  
+在 `IsolationLevel` 显式更改之前，将一直有效，但可以随时对其进行更改。 新值在执行时使用，而不是在分析时使用。 如果在事务中发生更改，服务器的预期行为是将新的锁定级别应用于所有剩余的语句。  
   
-使用<xref:System.Data.Odbc.OdbcTransaction>时，如果未设置<xref:System.Data.Odbc.OdbcTransaction.IsolationLevel?displayProperty=nameWithType>或将其设置为`Unspecified`，则将根据所使用的驱动程序确定的隔离级别执行事务。  
+使用时 <xref:System.Data.Odbc.OdbcTransaction> ，如果未设置 <xref:System.Data.Odbc.OdbcTransaction.IsolationLevel?displayProperty=nameWithType> 或将其设置为 `Unspecified` ，则将根据所使用的驱动程序确定的隔离级别执行事务。  
 
 ## Examples  
- 此应用程序演示如何在<xref:System.Data.IsolationLevel>中<xref:System.Data.Common.DbTransaction>使用。 该示例演示了在不同的隔离级别中允许以下哪些行为：  
+ 此应用程序演示如何 <xref:System.Data.IsolationLevel> 在中使用 <xref:System.Data.Common.DbTransaction> 。 该示例演示了在不同的隔离级别中允许以下哪些行为：  
   
 -   脏读。  
   
@@ -62,13 +68,13 @@
   
 -   RepeatableRead  
   
--   序列  
+-   可序列化  
   
 -   快照  
   
  PhantomReadThreads 类演示特定事务是否允许虚拟读取行为。 如果事务允许此行为，则线程将按以下顺序运行：  
   
--   在第一个线程中，选择 "产品（全部）"。  
+-   在第一个线程中，选择 "所有) 的产品 (。  
   
 -   在第二个线程中，插入新产品。  
   
@@ -82,9 +88,9 @@
   
  NonrepeatableReadThreads 类演示特定事务是否允许不可重复读取行为。 如果事务允许此行为，则线程将按以下顺序运行：  
   
--   在第一个线程中，选择产品（ProductId = 1）。  
+-   在第一个线程中，选择产品 (ProductId = 1) 。  
   
--   在第二个线程中，更新 "数量" 值（ProductId = 1）。  
+-   在第二个线程中，更新 (ProductId = 1) 的数量值。  
   
 -   在第二个线程中提交事务。  
   
@@ -96,39 +102,39 @@
   
  ExchangeValuesThreads 类演示可序列化和快照事务之间的差异。 对于可序列化事务，线程将按以下顺序进行操作：  
   
--   在第一个线程中，获取产品（ProductId = 2）的价格，并将其存储在变量中。  
+-   在第一个线程中，获取 product (ProductId = 2) 的价格，并将其存储在变量中。  
   
--   在第一个线程中，用产品价格（ProductId = 2）更新产品价格（ProductId = 1）。  
+-   在第一个线程中，将 product (ProductId = 1) 的价格更新为产品 (ProductId = 2) 的价格。  
   
 -   在第一个线程中提交事务。  
   
--   在第二个线程中，获取产品价格（ProductId = 1），并将其存储在变量中。  
+-   在第二个线程中，获取 product (ProductId = 1) 的价格，并将其存储在变量中。  
   
--   在第二个线程中，用产品价格（ProductId = 1）更新产品价格（ProductId = 2）。  
+-   在第二个线程中，将 product (ProductId = 2) 的价格更新为产品 (ProductId = 1) 。  
   
 -   在第二个线程中提交事务。  
   
- 现在，价格（ProductId = 1，ProductId = 2）的值与产品（ProductId = 2）的原始价格相同。  
+ 现在，Price = 1 和 ProductId = 2)  (价格的值与产品 (ProductId = 2) 的原始价格相同。  
   
  对于快照事务，线程将按以下顺序进行操作：  
   
--   在第一个线程中，获取产品（ProductId = 2）的价格，并将其存储在变量中;  
+-   在第一个线程中，获取 product (ProductId = 2) 的价格，并将其存储在变量中;  
   
--   在第一个线程中，用产品价格（ProductId = 2）更新产品价格（ProductId = 1）。  
+-   在第一个线程中，将 product (ProductId = 1) 的价格更新为产品 (ProductId = 2) 的价格。  
   
--   在第二个线程中，从快照获取产品价格（ProductId = 1），并将其存储在变量中。  
+-   在第二个线程中，从快照获取 product (ProductId = 1) 的价格，并将其存储在变量中。  
   
--   在第二个线程中，用产品价格（ProductId = 1）更新产品价格（ProductId = 2）。  
+-   在第二个线程中，将 product (ProductId = 2) 的价格更新为产品 (ProductId = 1) 。  
   
 -   在第二个线程中提交事务。  
   
 -   在第一个线程中提交事务。  
   
- 现交换产品价格（ProductId = 1，ProductId = 2）。  
+ 现在， (ProductId = 1 和 ProductId = 2) 产品的价格。  
   
  DirtyReadThreads 类演示特定事务是否允许脏读行为。 如果事务允许此行为，则线程将按以下顺序运行：  
   
--   在第一个线程中，开始一个事务并添加数量值（ProductId = 1）。  
+-   在第一个线程中，开始一个事务，并 (ProductId = 1) 添加数量值。  
   
 -   在第二个线程中，读取 "数量" 值并再次添加值。  
   
@@ -138,7 +144,7 @@
   
  如果事务允许该行为，则将添加两次数量值。  
   
- C#可以在[开发人员代码示例](https://code.msdn.microsoft.com/site/search?query=How%20to%20use%20IsolationLevel%20Enumeration%20in%20DbTransaction&f%5B0%5D.Value=How%20to%20use%20IsolationLevel%20Enumeration%20in%20DbTransaction&f%5B0%5D.Type=SearchText&ac=4)中找到带有此代码示例的 Visual Basic 项目。  
+ 带有此代码示例的 c # 和 Visual Basic 项目可在 [开发人员代码示例](https://code.msdn.microsoft.com/site/search?query=How%20to%20use%20IsolationLevel%20Enumeration%20in%20DbTransaction&f%5B0%5D.Value=How%20to%20use%20IsolationLevel%20Enumeration%20in%20DbTransaction&f%5B0%5D.Type=SearchText&ac=4)中找到。  
   
  [!code-csharp[system_data_IsolationLevel#1](~/samples/snippets/csharp/VS_Snippets_ADO.NET/system_data_isolationlevel/cs/source.cs#1)]
  [!code-vb[system_data_IsolationLevel#1](~/samples/snippets/visualbasic/VS_Snippets_ADO.NET/system_data_isolationlevel/vb/source.vb#1)]  
@@ -161,6 +167,8 @@
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Data</AssemblyName>
@@ -196,6 +204,8 @@
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Data</AssemblyName>
@@ -231,6 +241,8 @@
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Data</AssemblyName>
@@ -266,6 +278,8 @@
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Data</AssemblyName>
@@ -301,6 +315,8 @@
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Data</AssemblyName>
@@ -336,6 +352,8 @@
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Data</AssemblyName>
@@ -370,6 +388,8 @@
         <AssemblyVersion>4.1.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.0.0</AssemblyVersion>
         <AssemblyVersion>4.2.1.0</AssemblyVersion>
+        <AssemblyVersion>4.2.2.0</AssemblyVersion>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <AssemblyInfo>
         <AssemblyName>System.Data</AssemblyName>
