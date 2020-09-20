@@ -1,0 +1,2 @@
+> [!WARNING]
+> <span data-ttu-id="8e543-101">`BinaryFormatter` 不安全，无法确保安全。</span><span class="sxs-lookup"><span data-stu-id="8e543-101">`BinaryFormatter` is insecure and can't be made secure.</span></span> <span data-ttu-id="8e543-102">有关详细信息，请参阅 [BinaryFormatter security guide （安全指南](/dotnet/standard/serialization/binaryformatter-security-guide)）。</span><span class="sxs-lookup"><span data-stu-id="8e543-102">For more information, see the [BinaryFormatter security guide](/dotnet/standard/serialization/binaryformatter-security-guide).</span></span>
