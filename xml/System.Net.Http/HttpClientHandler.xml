@@ -1,5 +1,5 @@
 <Type Name="HttpClientHandler" FullName="System.Net.Http.HttpClientHandler">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="85c52f0452b8076858672d5bcaffc7419cac65a8" /><Meta Name="ms.sourcegitcommit" Value="c982ad9e10a242d90f1e631b5981570f9e5d9f34" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/10/2020" /><Meta Name="ms.locfileid" Value="89861562" /></Metadata><TypeSignature Language="C#" Value="public class HttpClientHandler : System.Net.Http.HttpMessageHandler" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="d366562f7ef96cec63aace9ee8348652cbe83f66" /><Meta Name="ms.sourcegitcommit" Value="930a2e90be5bc29a285f5df9da5cd44a74574596" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/23/2020" /><Meta Name="ms.locfileid" Value="91129227" /></Metadata><TypeSignature Language="C#" Value="public class HttpClientHandler : System.Net.Http.HttpMessageHandler" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HttpClientHandler extends System.Net.Http.HttpMessageHandler" />
   <TypeSignature Language="DocId" Value="T:System.Net.Http.HttpClientHandler" />
   <TypeSignature Language="VB.NET" Value="Public Class HttpClientHandler&#xA;Inherits HttpMessageHandler" />
@@ -134,7 +134,7 @@
       </ReturnValue>
       <Docs>
         <summary>获取或设置一个值，该值指示处理程序是否应跟随重定向响应。</summary>
-        <value><see langword="true" /> 如果处理程序应跟随重定向响应，则为;否则为 <see langword="false" /> 。 默认值是 <see langword="true" />。</value>
+        <value><see langword="true" /> 如果处理程序应跟随重定向响应，则为;否则为 <see langword="false" /> 。 默认值为 <see langword="true" />。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[
 
@@ -502,7 +502,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
 ## Remarks
  此方法由公共 `Dispose()` 方法和 <xref:System.Object.Finalize%2A> 方法调用。 `Dispose()` 调用受保护的 `Dispose(Boolean)` 方法，并将 `disposing` 参数设置为 `true` 。 <xref:System.Object.Finalize%2A>`Dispose`在设置为的情况调用 `disposing` `false` 。
 
- 当 `disposing` 参数为 `true` 时，此方法释放该 <xref:System.Net.Http.HttpClientHandler> 引用的、由任何托管对象持有的全部资源。 此方法将调用每个被引用对象的 `Dispose()` 方法。
+ 当 `disposing` 参数为 `true` 时，此方法释放该 <xref:System.Net.Http.HttpClientHandler> 引用的、由任何托管对象持有的全部资源。 此方法调用每个引用对象的 `Dispose()` 方法。
 
  ]]></format>
         </remarks>
@@ -778,7 +778,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
       </ReturnValue>
       <Docs>
         <summary>获取或设置处理程序使用的代理信息。</summary>
-        <value>处理程序使用的代理信息。 默认值是 <see langword="null" />。</value>
+        <value>处理程序使用的代理信息。 默认值为 <see langword="null" />。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[
 
@@ -824,11 +824,26 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" Index="1" FrameworkAlternate="net-5.0" />
       </Parameters>
       <Docs>
-        <param name="request">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="request">HTTP 请求消息。</param>
+        <param name="cancellationToken">用于取消操作的取消标记。</param>
+        <summary>基于在 <see cref="T:System.Net.Http.HttpRequestMessage" /> 中提供的信息创建 <see cref="T:System.Net.Http.HttpResponseMessage" /> 的实例。</summary>
+        <returns>HTTP 响应消息。</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException"><paramref name="request" /> 是 <see langword="null" />。</exception>
+        <exception cref="T:System.NotSupportedException">用于 HTTP/2 和更高版本，或者 <see cref="F:System.Net.Http.HttpVersionPolicy.RequestVersionOrHigher" /> 启用了请求版本升级时。
+
+- 或 -
+
+如果使用派生自 <see cref="T:System.Net.Http.HttpContent" /> 的自定义类不重写 <see cref="M:System.Net.Http.HttpContent.SerializeToStream(System.IO.Stream,System.Net.TransportContext,System.Threading.CancellationToken)" /> 方法。
+
+- 或 -
+
+如果使用自定义 <see cref="T:System.Net.Http.HttpMessageHandler" /> 不重写 <see cref="M:System.Net.Http.HttpMessageHandler.Send(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)" /> 方法。</exception>
+        <exception cref="T:System.Threading.Tasks.TaskCanceledException">请求已被取消。
+
+- 或 -
+
+如果 <see cref="T:System.Threading.Tasks.TaskCanceledException" /> 异常会嵌套 <see cref="T:System.TimeoutException" />：请求因超时而失败。</exception>
       </Docs>
     </Member>
     <Member MemberName="SendAsync">
@@ -989,7 +1004,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
       </ReturnValue>
       <Docs>
         <summary>获取一个值，该值指示处理程序是否支持自动响应内容解压缩。</summary>
-        <value>如果该处理程序支持自动响应内容解压缩，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值是 <see langword="true" />。</value>
+        <value>如果该处理程序支持自动响应内容解压缩，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="true" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1021,7 +1036,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
       </ReturnValue>
       <Docs>
         <summary>获取一个值，该值指示处理程序是否支持代理设置。</summary>
-        <value>如果处理程序支持代理设置，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值是 <see langword="true" />。</value>
+        <value>如果处理程序支持代理设置，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="true" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1053,7 +1068,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
       </ReturnValue>
       <Docs>
         <summary>获取一个值，该值表示处理程序是否支持 <see cref="P:System.Net.Http.HttpClientHandler.AllowAutoRedirect" /> 和 <see cref="P:System.Net.Http.HttpClientHandler.MaxAutomaticRedirections" /> 属性的配置设置。</summary>
-        <value>如果处理程序支持 <see cref="P:System.Net.Http.HttpClientHandler.AllowAutoRedirect" /> 和 <see cref="P:System.Net.Http.HttpClientHandler.MaxAutomaticRedirections" /> 属性的配置设置，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值是 <see langword="true" />。</value>
+        <value>如果处理程序支持 <see cref="P:System.Net.Http.HttpClientHandler.AllowAutoRedirect" /> 和 <see cref="P:System.Net.Http.HttpClientHandler.MaxAutomaticRedirections" /> 属性的配置设置，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="true" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1085,7 +1100,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
       </ReturnValue>
       <Docs>
         <summary>获取或设置一个值，该值指示处理程序是否使用 <see cref="P:System.Net.Http.HttpClientHandler.CookieContainer" /> 属性来存储服务器 Cookie 并在发送请求时使用这些 Cookie。</summary>
-        <value>如果处理程序支持使用 <see cref="P:System.Net.Http.HttpClientHandler.CookieContainer" /> 属性来存储服务器 Cookie 并在发送请求时使用这些 Cookie，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值是 <see langword="true" />。</value>
+        <value>如果处理程序支持使用 <see cref="P:System.Net.Http.HttpClientHandler.CookieContainer" /> 属性来存储服务器 Cookie 并在发送请求时使用这些 Cookie，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="true" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1117,7 +1132,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
       </ReturnValue>
       <Docs>
         <summary>获取或设置一个值，该值控制处理程序是否随请求一起发送默认凭据。</summary>
-        <value>如果使用默认凭据，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值是 <see langword="false" />。</value>
+        <value>如果使用默认凭据，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="false" />。</value>
         <remarks>
           <format type="text/markdown"><![CDATA[
 
@@ -1157,7 +1172,7 @@ handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousA
       </ReturnValue>
       <Docs>
         <summary>获取或设置一个值，该值表示处理程序是否对请求使用代理。</summary>
-        <value>如果处理程序应对请求使用代理，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值是 <see langword="true" />。</value>
+        <value>如果处理程序应对请求使用代理，则为 <see langword="true" />；否则为 <see langword="false" />。 默认值为 <see langword="true" />。</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
