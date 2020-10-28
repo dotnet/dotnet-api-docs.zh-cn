@@ -1,5 +1,5 @@
 <Type Name="ExecutionContext" FullName="System.Threading.ExecutionContext">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="ffb92234551bd814e0ea147c6e46b955a00caa3b" /><Meta Name="ms.sourcegitcommit" Value="0bd9d099f2522ef14c6f48a8ea5f2c0650df0f6f" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="10/15/2020" /><Meta Name="ms.locfileid" Value="92085971" /></Metadata><TypeSignature Language="C#" Value="public sealed class ExecutionContext" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.3;netstandard-1.4;netstandard-1.6" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="656d6388d19d6f245031c9cb8b7034d977f8d832" /><Meta Name="ms.sourcegitcommit" Value="ccc48e19312cba144dcf374688c1060950398ec9" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="10/28/2020" /><Meta Name="ms.locfileid" Value="92887149" /></Metadata><TypeSignature Language="C#" Value="public sealed class ExecutionContext" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.3;netstandard-1.4;netstandard-1.6" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ExecutionContext extends System.Object" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.3;netstandard-1.4;netstandard-1.6" />
   <TypeSignature Language="DocId" Value="T:System.Threading.ExecutionContext" />
   <TypeSignature Language="VB.NET" Value="Public NotInheritable Class ExecutionContext" FrameworkAlternate="dotnet-uwp-10.0;netcore-1.0;netcore-1.1;netstandard-1.3;netstandard-1.4;netstandard-1.6" />
@@ -61,10 +61,12 @@
       <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Threading.ExecutionContext>类为与执行的逻辑线程相关的所有信息提供单个容器。 这包括安全上下文、调用上下文和同步上下文。  
+ <xref:System.Threading.ExecutionContext>类为与执行的逻辑线程相关的所有信息提供单个容器。 在 .NET Framework 中，这包括安全上下文、调用上下文和同步上下文。 在 .NET Core 中，不支持安全上下文和调用上下文，但模拟上下文和区域性通常会与执行上下文一起流动。 此外，在 .NET Core 中，同步上下文不与执行上下文一起流动，而在 .NET Framework 它可能会在某些情况下出现。 有关详细信息，请参阅 [ExecutionContext 与 SynchronizationContext](https://devblogs.microsoft.com/pfxteam/executioncontext-vs-synchronizationcontext/)。
   
  <xref:System.Threading.ExecutionContext>类提供用户代码用于跨用户定义的异步点捕获和传输此上下文的功能。 公共语言运行时确保在 <xref:System.Threading.ExecutionContext> 托管进程内的运行时定义的异步点之间一致传输。  
-  
+ 
+ - 以下仅适用于 .NET Framework。 -
+ 
  执行上下文是 COM 单元的托管等效项。 在应用程序域中，只要传输线程，就必须传输整个执行上下文。 这种情况发生在方法进行的传输过程中 <xref:System.Threading.Thread.Start%2A?displayProperty=nameWithType> ，大多数线程池操作和通过 Windows 消息泵 Windows 窗体线程封送处理。 它不会在不安全的线程池操作中出现 (如 <xref:System.Threading.ThreadPool.UnsafeQueueUserWorkItem%2A> 方法) ，这不会传输压缩的堆栈。 在压缩堆栈流动的任何位置，托管的主体、同步、区域设置和用户上下文也会流动。 <xref:System.Threading.ExecutionContext>类提供 <xref:System.Threading.ExecutionContext.Capture%2A> 和 <xref:System.Threading.ExecutionContext.CreateCopy%2A> 方法来获取执行上下文和 <xref:System.Threading.ExecutionContext.Run%2A> 方法，以设置当前线程的执行上下文。  
   
  <xref:System.Threading.ExecutionContext>无法在另一个线程上设置与线程关联的。 尝试这样做将导致引发异常。 若要将 <xref:System.Threading.ExecutionContext> 从一个线程传播到另一个线程，请创建的副本 <xref:System.Threading.ExecutionContext> 。  
@@ -281,7 +283,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- <xref:System.Threading.ExecutionContext.GetObjectData%2A><xref:System.Runtime.Serialization.SerializationInfo>使用逻辑调用上下文信息设置。 在反序列化期间，将从通过流传输的执行上下文对象重建 <xref:System.Runtime.Serialization.SerializationInfo> 。  
+ 仅 .NET Framework： <xref:System.Threading.ExecutionContext.GetObjectData%2A> <xref:System.Runtime.Serialization.SerializationInfo> 使用逻辑调用上下文信息设置。 在反序列化期间，将从通过流传输的执行上下文对象重建 <xref:System.Runtime.Serialization.SerializationInfo> 。  
   
  有关详细信息，请参阅 <xref:System.Runtime.Serialization.SerializationInfo>。  
   
@@ -368,6 +370,7 @@
 
           ]]></format>
         </remarks>
+        <exception cref="T:System.InvalidOperationException"><paramref name="executionContext" /> 上声明的默认值为 <see langword="null" />。</exception>
       </Docs>
     </Member>
     <Member MemberName="RestoreFlow">
@@ -472,7 +475,7 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 当方法完成时，执行上下文将恢复为其以前的状态。  
+ 当方法完成时，调用线程的执行上下文和同步上下文将返回到它们以前的状态。  
   
  ]]></format>
         </remarks>
