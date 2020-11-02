@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 8ce989cc72db21fa7eef56897ec23c16798f2a4f
-ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 08/29/2019
-ms.locfileid: "71140346"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92228032"
 ---
 .NET Compact Framework
