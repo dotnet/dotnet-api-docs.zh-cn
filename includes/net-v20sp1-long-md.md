@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 10/20/2020
 ms.locfileid: "92226040"
 ---
-<span data-ttu-id="3c55a-101">.NET Framework 2.0 Service Pack 1</span><span class="sxs-lookup"><span data-stu-id="3c55a-101">.NET Framework 2.0 Service Pack 1</span></span>
+<span data-ttu-id="d5706-101">.NET Framework 2.0 Service Pack 1</span><span class="sxs-lookup"><span data-stu-id="d5706-101">.NET Framework 2.0 Service Pack 1</span></span>

@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 10/20/2020
 ms.locfileid: "92234712"
 ---
-<span data-ttu-id="f1ee6-101">Windows XP</span><span class="sxs-lookup"><span data-stu-id="f1ee6-101">Windows XP</span></span>
+<span data-ttu-id="68753-101">Windows XP</span><span class="sxs-lookup"><span data-stu-id="68753-101">Windows XP</span></span>

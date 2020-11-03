@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 10/20/2020
 ms.locfileid: "92228032"
 ---
-<span data-ttu-id="889d8-101">.NET Compact Framework</span><span class="sxs-lookup"><span data-stu-id="889d8-101">.NET Compact Framework</span></span>
+<span data-ttu-id="7095b-101">.NET Compact Framework</span><span class="sxs-lookup"><span data-stu-id="7095b-101">.NET Compact Framework</span></span>
