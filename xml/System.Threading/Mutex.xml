@@ -1,5 +1,5 @@
 <Type Name="Mutex" FullName="System.Threading.Mutex">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="0d0c70b9d93ffe0d929708d6d35082f41883a416" /><Meta Name="ms.sourcegitcommit" Value="5333cc87886ffbd7d048590c0f7c7b0f90d4c32c" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="08/04/2020" /><Meta Name="ms.locfileid" Value="87564749" /></Metadata><TypeSignature Language="C#" Value="public sealed class Mutex : System.Threading.WaitHandle" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="d1a60975957982c6aa90a14f1f947b4cb522835a" /><Meta Name="ms.sourcegitcommit" Value="ccc48e19312cba144dcf374688c1060950398ec9" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="10/28/2020" /><Meta Name="ms.locfileid" Value="92887227" /></Metadata><TypeSignature Language="C#" Value="public sealed class Mutex : System.Threading.WaitHandle" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit Mutex extends System.Threading.WaitHandle" />
   <TypeSignature Language="DocId" Value="T:System.Threading.Mutex" />
   <TypeSignature Language="VB.NET" Value="Public NotInheritable Class Mutex&#xA;Inherits WaitHandle" />
@@ -46,7 +46,7 @@
       <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 当两个或多个线程同时访问共享资源时，系统需要一个同步机制来确保每次只有一个线程使用资源。 <xref:System.Threading.Mutex>是一个同步基元，该基元仅向一个线程授予对共享资源的独占访问权限。 如果线程获取互斥体，则需要获取该互斥体的第二个线程将挂起，直到第一个线程释放该互斥体。  
+ 当两个或多个线程同时访问共享资源时，系统需要一个同步机制来确保每次只有一个线程使用资源。 <xref:System.Threading.Mutex> 是一个同步基元，该基元仅向一个线程授予对共享资源的独占访问权限。 如果线程获取互斥体，则需要获取该互斥体的第二个线程将挂起，直到第一个线程释放该互斥体。  
   
 > [!IMPORTANT]
 >  此类型实现 <xref:System.IDisposable> 接口。 在使用完类型后，您应直接或间接释放类型。 若要直接释放类型，请在 `try`/`catch` 块中调用其 <xref:System.IDisposable.Dispose%2A> 方法。 若要间接释放类型，请使用 `using`（在 C# 中）或 `Using`（在 Visual Basic 中）等语言构造。 有关详细信息，请参阅 <xref:System.IDisposable> 接口主题中的“使用实现 IDisposable 的对象”一节。  
@@ -279,12 +279,16 @@
       </Parameters>
       <Docs>
         <param name="initiallyOwned">如果为 <see langword="true" />，则给予调用线程已命名的系统互斥体的初始所属权（如果已命名的系统互斥体是通过此调用创建的）；否则为 <see langword="false" />。</param>
-        <param name="name"><see cref="T:System.Threading.Mutex" /> 的名称。 如果值为 <see langword="null" />，则 <see cref="T:System.Threading.Mutex" /> 是未命名的。</param>
+        <param name="name">如果要与其他进程共享同步对象，则为名称；否则为 <see langword="null" /> 或空字符串。 该名称区分大小写。</param>
         <summary>使用 Boolean 值（指示调用线程是否应具有互斥体的初始所有权以及字符串是否为互斥体的名称）初始化 <see cref="T:System.Threading.Mutex" /> 类的新实例。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果提供了， `name` 并且命名空间中已存在请求类型的同步对象，则使用现有的同步对象。 如果命名空间中已存在另一个类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。 否则，将创建一个新的同步对象。
+
  如果不 `name` 为 `null` `initiallyOwned` ，并且为，则 `true` 只有当命名系统 mutex 作为此调用的结果而创建时，调用线程才拥有互斥体。 由于没有用于确定是否已创建命名系统 mutex 的机制，因此最好指定 `false` `initiallyOwned` 何时调用此构造函数重载。 <xref:System.Threading.Mutex.%23ctor%28System.Boolean%2CSystem.String%2CSystem.Boolean%40%29>如果需要确定初始所有权，可以使用构造函数。  
   
  此构造函数初始化 <xref:System.Threading.Mutex> 对象，该对象表示已命名的系统互斥体。 可以创建多个 <xref:System.Threading.Mutex> 表示同一命名系统 mutex 的对象。  
@@ -314,9 +318,15 @@
  ]]></format>
         </remarks>
         <exception cref="T:System.UnauthorizedAccessException">命名互斥体存在且具有访问控制安全性，但用户不具备 <see cref="F:System.Security.AccessControl.MutexRights.FullControl" />。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名互斥体，可能是由于其他类型的等待句柄具有相同名称。</exception>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。</exception>
+        <exception cref="T:System.ArgumentException">仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
         <related type="Article" href="/dotnet/standard/threading/mutexes">Mutexes</related>
       </Docs>
@@ -367,13 +377,17 @@
       </Parameters>
       <Docs>
         <param name="initiallyOwned">如果为 <see langword="true" />，则给予调用线程已命名的系统互斥体的初始所属权（如果已命名的系统互斥体是通过此调用创建的）；否则为 <see langword="false" />。</param>
-        <param name="name"><see cref="T:System.Threading.Mutex" /> 的名称。 如果值为 <see langword="null" />，则 <see cref="T:System.Threading.Mutex" /> 是未命名的。</param>
+        <param name="name">如果要与其他进程共享同步对象，则为名称；否则为 <see langword="null" /> 或空字符串。 该名称区分大小写。</param>
         <param name="createdNew">在此方法返回时，如果创建了局部互斥体（即，如果 <paramref name="name" /> 为 <see langword="null" /> 或空字符串）或指定的命名系统互斥体，则包含布尔值 <see langword="true" />；如果指定的命名系统互斥体已存在，则为 <see langword="false" />。 此参数未经初始化即被传递。</param>
         <summary>使用可指示调用线程是否应具有互斥体的初始所有权以及字符串是否为互斥体的名称的 Boolean 值和当线程返回时可指示调用线程是否已赋予互斥体的初始所有权的 Boolean 值初始化 <see cref="T:System.Threading.Mutex" /> 类的新实例。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果提供了， `name` 并且命名空间中已存在请求类型的同步对象，则使用现有的同步对象。 如果命名空间中已存在另一个类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。 否则，将创建一个新的同步对象。
+
  如果不 `name` 为， `null` 并且 `initiallyOwned` 为，则只有在 `true` `createdNew` `true` 调用之后，调用线程才拥有已命名的互斥体。 否则，线程可以通过调用方法来请求互斥体 <xref:System.Threading.WaitHandle.WaitOne%2A> 。  
   
  此构造函数初始化 <xref:System.Threading.Mutex> 对象，该对象表示已命名的系统互斥体。 可以创建多个 <xref:System.Threading.Mutex> 表示同一命名系统 mutex 的对象。  
@@ -399,9 +413,15 @@
  ]]></format>
         </remarks>
         <exception cref="T:System.UnauthorizedAccessException">命名互斥体存在且具有访问控制安全性，但用户不具备 <see cref="F:System.Security.AccessControl.MutexRights.FullControl" />。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名互斥体，可能是由于其他类型的等待句柄具有相同名称。</exception>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。</exception>
+        <exception cref="T:System.ArgumentException">仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
         <related type="Article" href="/dotnet/standard/threading/mutexes">Mutexes</related>
       </Docs>
@@ -444,7 +464,7 @@
       </Parameters>
       <Docs>
         <param name="initiallyOwned">如果为 <see langword="true" />，则给予调用线程已命名的系统互斥体的初始所属权（如果已命名的系统互斥体是通过此调用创建的）；否则为 <see langword="false" />。</param>
-        <param name="name">系统互斥体的名称。 如果值为 <see langword="null" />，则 <see cref="T:System.Threading.Mutex" /> 是未命名的。</param>
+        <param name="name">如果要与其他进程共享同步对象，则为名称；否则为 <see langword="null" /> 或空字符串。 该名称区分大小写。</param>
         <param name="createdNew">在此方法返回时，如果创建了局部互斥体（即，如果 <paramref name="name" /> 为 <see langword="null" /> 或空字符串）或指定的命名系统互斥体，则包含布尔值 <see langword="true" />；如果指定的命名系统互斥体已存在，则为 <see langword="false" />。 此参数未经初始化即被传递。</param>
         <param name="mutexSecurity">一个 <see cref="T:System.Security.AccessControl.MutexSecurity" /> 对象，表示应用于已命名的系统互斥体的访问控制安全性。</param>
         <summary>使用可指示调用线程是否应具有互斥体的初始所有权以及字符串是否为互斥体的名称的 Boolean 值和当线程返回时可指示调用线程是否已赋予互斥体的初始所有权以及访问控制安全是否已应用到命名互斥体的 Boolean 变量初始化 <see cref="T:System.Threading.Mutex" /> 类的新实例。</summary>
@@ -452,6 +472,10 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果提供了， `name` 并且命名空间中已存在请求类型的同步对象，则使用现有的同步对象。 如果命名空间中已存在另一个类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。 否则，将创建一个新的同步对象。
+
  如果不 `name` 为， `null` 并且 `initiallyOwned` 为，则只有在 `true` `createdNew` `true` 调用之后，调用线程才拥有已命名的互斥体。 否则，线程可以通过调用方法来请求互斥体 <xref:System.Threading.WaitHandle.WaitOne%2A> 。  
   
  使用此构造函数在创建已命名的系统互斥体时对其应用访问控制安全性，防止其他代码控制互斥体。  
@@ -490,10 +514,16 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">命名互斥体存在且具有访问控制安全性，但用户不具备 <see cref="F:System.Security.AccessControl.MutexRights.FullControl" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名互斥体，可能是由于其他类型的等待句柄具有相同名称。</exception>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。</exception>
+        <exception cref="T:System.ArgumentException">仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
       </Docs>
     </Member>
     <Member MemberName="GetAccessControl">
@@ -555,7 +585,7 @@
         </remarks>
         <exception cref="T:System.UnauthorizedAccessException">当前 <see cref="T:System.Threading.Mutex" /> 对象表示一个已命名的系统互斥体，但用户不具备 <see cref="F:System.Security.AccessControl.MutexRights.ReadPermissions" />。  
   
-\- 或 - 
+或 
 当前 <see cref="T:System.Threading.Mutex" /> 对象表示一个已命名的系统互斥体，但它未用 <see cref="F:System.Security.AccessControl.MutexRights.ReadPermissions" /> 打开。</exception>
         <exception cref="T:System.NotSupportedException">不支持 Windows 98 或 Windows Millennium Edition。</exception>
       </Docs>
@@ -612,14 +642,18 @@
         <Parameter Name="name" Type="System.String" Index="0" FrameworkAlternate="dotnet-uwp-10.0;net-5.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="name">要打开的系统互斥体的名称。</param>
+        <param name="name">要与其他进程共享的同步对象的名称。 该名称区分大小写。</param>
         <summary>打开指定的已命名的互斥体（如果已经存在）。</summary>
         <returns>表示已命名的系统互斥体的对象。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此 <xref:System.Threading.Mutex.OpenExisting%2A> 方法尝试打开指定的命名系统互斥体。 如果系统互斥体不存在，此方法将引发异常，而不是创建系统对象。 若要创建不存在的系统互斥体，请使用 <xref:System.Threading.Mutex.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。
+
+ 此 <xref:System.Threading.Mutex.OpenExisting%2A> 方法尝试打开指定的命名系统互斥体。 若要创建不存在的系统互斥体，请使用 <xref:System.Threading.Mutex.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
   
  对此方法使用相同值的多个调用 `name` 不一定会返回相同的 <xref:System.Threading.Mutex> 对象，即使返回的对象表示相同的命名系统 mutex。  
   
@@ -646,13 +680,20 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-\- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">命名的 mutex 不存在。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。 在某些情况下，对于无效名称，可能会引发此异常。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">存在命名的互斥，但用户没有使用它时所需的安全访问权限。</exception>
       </Docs>
     </Member>
@@ -690,17 +731,21 @@
         <Parameter Name="rights" Type="System.Security.AccessControl.MutexRights" Index="1" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="name">要打开的系统互斥体的名称。</param>
+        <param name="name">要与其他进程共享的同步对象的名称。 该名称区分大小写。</param>
         <param name="rights">表示所需的安全访问权限的枚举值的按位组合。</param>
-        <summary>利用所需的安全访问权限，打开指定的已命名的互斥体（如果已经存在）。</summary>
+        <summary>用安全访问权限打开指定名称为 mutex（如果已经存在），并返回指示操作是否成功的值。</summary>
         <returns>表示已命名的系统互斥体的对象。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。
+
  `rights`参数必须包括 <xref:System.Security.AccessControl.MutexRights.Synchronize?displayProperty=nameWithType> 允许线程在互斥体上等待的标志，以及 <xref:System.Security.AccessControl.MutexRights.Modify?displayProperty=nameWithType> 允许线程调用方法的标志 <xref:System.Threading.Mutex.ReleaseMutex%2A> 。  
   
- 此 <xref:System.Threading.Mutex.OpenExisting%2A> 方法尝试打开现有的已命名的互斥体。 如果系统互斥体不存在，此方法将引发异常，而不是创建系统对象。 若要创建不存在的系统互斥体，请使用 <xref:System.Threading.Mutex.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ 此 <xref:System.Threading.Mutex.OpenExisting%2A> 方法尝试打开现有的已命名的互斥体。 若要创建不存在的系统互斥体，请使用 <xref:System.Threading.Mutex.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
   
  对此方法使用相同值的多个调用 `name` 不一定会返回相同的 <xref:System.Threading.Mutex> 对象，即使返回的对象表示相同的命名系统 mutex。  
   
@@ -723,13 +768,20 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-\- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">命名的 mutex 不存在。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。 在某些情况下，对于无效名称，可能会引发此异常。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">已命名的 mutex 存在，但是用户不具备所需的安全访问权。</exception>
       </Docs>
     </Member>
@@ -870,10 +922,10 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="mutexSecurity" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="mutexSecurity" /> 上声明的默认值为 <see langword="null" />。</exception>
         <exception cref="T:System.UnauthorizedAccessException">用户不具备 <see cref="F:System.Security.AccessControl.MutexRights.ChangePermissions" />。  
   
-\- 或 - 
+或 
 互斥体未用 <see cref="F:System.Security.AccessControl.MutexRights.ChangePermissions" /> 打开。</exception>
         <exception cref="T:System.SystemException">当前 <see cref="T:System.Threading.Mutex" /> 对象不表示已命名的系统互斥体。</exception>
       </Docs>
@@ -931,15 +983,19 @@
         <Parameter Name="result" Type="System.Threading.Mutex" RefType="out" Index="1" FrameworkAlternate="dotnet-uwp-10.0;net-5.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="name">要打开的系统互斥体的名称。</param>
+        <param name="name">要与其他进程共享的同步对象的名称。 该名称区分大小写。</param>
         <param name="result">当此方法返回时，如果调用成功，则包含表示命名互斥体的 <see cref="T:System.Threading.Mutex" /> 对象；否则为 <see langword="null" />。 该参数未经初始化即被处理。</param>
         <summary>打开指定的已命名的互斥体（如果已经存在），并返回指示操作是否成功的值。</summary>
-        <returns>如果命名互斥体成功打开，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <returns>如果命名互斥体成功打开，则为 <see langword="true" />；否则为 <see langword="false" />。 在某些情况下，对于无效名称，可能会返回 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果命名互斥体不存在，则此方法不会创建它。 若要创建不存在的系统互斥体，请使用 <xref:System.Threading.Mutex.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `false` 则返回。
+
+ 若要创建不存在的系统互斥体，请使用 <xref:System.Threading.Mutex.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
   
  如果不确定是否存在已命名的互斥体，请使用此方法重载，而不是 <xref:System.Threading.Mutex.OpenExisting%28System.String%29> 方法重载，这会在互斥体不存在时引发异常。  
   
@@ -951,12 +1007,18 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-\- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。 对于某些无效名称，该方法可能返回 <see langword="false" />。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">存在命名的互斥，但用户没有使用它时所需的安全访问权限。</exception>
       </Docs>
     </Member>
@@ -994,16 +1056,20 @@
         <Parameter Name="result" Type="System.Threading.Mutex" RefType="out" Index="2" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="name">要打开的系统互斥体的名称。</param>
+        <param name="name">要与其他进程共享的同步对象的名称。 该名称区分大小写。</param>
         <param name="rights">表示所需的安全访问权限的枚举值的按位组合。</param>
         <param name="result">当此方法返回时，如果调用成功，则包含表示命名互斥体的 <see cref="T:System.Threading.Mutex" /> 对象；否则为 <see langword="null" />。 该参数未经初始化即被处理。</param>
         <summary>利用所需的安全访问权限，打开指定的已命名的互斥体（如果已经存在），并返回指示操作是否成功的值。</summary>
-        <returns>如果命名互斥体成功打开，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <returns>如果命名互斥体成功打开，则为 <see langword="true" />；否则为 <see langword="false" />。 在某些情况下，对于无效名称，可能会返回 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果命名互斥体不存在，则此方法不会创建它。 若要创建不存在的系统互斥体，请使用 <xref:System.Threading.Mutex.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `false` 则返回。
+
+ 若要创建不存在的系统互斥体，请使用 <xref:System.Threading.Mutex.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
   
  如果不确定是否存在已命名的互斥体，请使用此方法重载，而不是 <xref:System.Threading.Mutex.OpenExisting%28System.String%2CSystem.Security.AccessControl.MutexRights%29> 方法重载，这会在互斥体不存在时引发异常。  
   
@@ -1015,12 +1081,18 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-\- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。 对于某些无效名称，该方法可能返回 <see langword="false" />。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">存在命名的互斥，但用户没有使用它时所需的安全访问权限。</exception>
       </Docs>
     </Member>

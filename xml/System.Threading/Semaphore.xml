@@ -1,5 +1,5 @@
 <Type Name="Semaphore" FullName="System.Threading.Semaphore">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="6b79f0749c316566fc7e258017a2613d84c33b18" /><Meta Name="ms.sourcegitcommit" Value="5484acfd78fc29edb48fc1ca6925046c4672954a" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/16/2020" /><Meta Name="ms.locfileid" Value="90689942" /></Metadata><TypeSignature Language="C#" Value="public sealed class Semaphore : System.Threading.WaitHandle" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="503c754af5b1db309d22bc651c0f698e99a1e740" /><Meta Name="ms.sourcegitcommit" Value="ccc48e19312cba144dcf374688c1060950398ec9" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="10/28/2020" /><Meta Name="ms.locfileid" Value="92887240" /></Metadata><TypeSignature Language="C#" Value="public sealed class Semaphore : System.Threading.WaitHandle" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit Semaphore extends System.Threading.WaitHandle" />
   <TypeSignature Language="DocId" Value="T:System.Threading.Semaphore" />
   <TypeSignature Language="VB.NET" Value="Public NotInheritable Class Semaphore&#xA;Inherits WaitHandle" />
@@ -154,7 +154,7 @@
         <exception cref="T:System.ArgumentException"><paramref name="initialCount" /> 大于 <paramref name="maximumCount" />。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maximumCount" /> 小于 1。  
   
-- 或 - 
+或 
  <paramref name="initialCount" /> 小于 0。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
         <related type="Article" href="/dotnet/standard/threading/semaphore-and-semaphoreslim">Semaphore</related>
@@ -196,7 +196,7 @@
       <Docs>
         <param name="initialCount">可以同时授予的信号量的初始请求数。</param>
         <param name="maximumCount">可以同时授予的信号量的最大请求数。</param>
-        <param name="name">信号灯的名称。 如果是 <see langword="null" /> 或为空，则创建一个进程本地的信号灯。 如果名称以“Global\"为前缀，则会创建一个计算机范围的信号灯（或返回的现有信号灯）。 如果以“Local\"为前缀，则会创建一个会话范围的信号灯（或返回的现有信号灯）。 如果名称不带任何前缀，则会创建一个会话范围的信号灯（与带前缀“Local\"时相同）。 前缀和名称都区分大小写。</param>
+        <param name="name">如果要与其他进程共享同步对象，则为名称；否则为 <see langword="null" /> 或空字符串。 该名称区分大小写。</param>
         <summary>初始化 <see cref="T:System.Threading.Semaphore" /> 类的新实例，并指定初始入口数和最大并发入口数，可以选择指定系统信号量对象的名称。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -204,6 +204,10 @@
 ## Remarks  
  此构造函数初始化 <xref:System.Threading.Semaphore> 对象，该对象表示已命名的系统信号量。 可以创建多个 <xref:System.Threading.Semaphore> 表示同一命名系统信号量的对象。  
   
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果提供了， `name` 并且命名空间中已存在请求类型的同步对象，则使用现有的同步对象。 如果命名空间中已存在另一个类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。 否则，将创建一个新的同步对象。
+
  如果已命名的系统信号量不存在，则将使用和指定的初始计数和最大计数来创建它 `initialCount` `maximumCount` 。 如果已命名的系统信号量已存在， `initialCount` `maximumCount` 则不使用和，尽管无效值仍然会导致异常。 如果需要确定是否创建了已命名的系统信号量，请改用 <xref:System.Threading.Semaphore.%23ctor%28System.Int32%2CSystem.Int32%2CSystem.String%2CSystem.Boolean%40%29> 构造函数重载。  
   
 > [!IMPORTANT]
@@ -226,17 +230,24 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="initialCount" /> 大于 <paramref name="maximumCount" />。  
-  
-- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="initialCount" /> 大于 <paramref name="maximumCount" />。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maximumCount" /> 小于 1。  
   
-- 或 - 
+或 
  <paramref name="initialCount" /> 小于 0。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">命名信号量存在且具有访问控制安全性，用户不具有 <see cref="F:System.Security.AccessControl.SemaphoreRights.FullControl" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名信号量，可能是由于其他类型的等待句柄具有相同名称。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
         <related type="Article" href="/dotnet/standard/threading/semaphore-and-semaphoreslim">Semaphore</related>
       </Docs>
@@ -284,13 +295,17 @@
       <Docs>
         <param name="initialCount">可以同时满足的信号量的初始请求数。</param>
         <param name="maximumCount">可以同时满足的信号量的最大请求数。</param>
-        <param name="name">信号灯的名称。 如果是 <see langword="null" /> 或为空，则创建一个进程本地的信号灯。 如果名称以“Global\"为前缀，则会创建一个计算机范围的信号灯（或返回的现有信号灯）。 如果以“Local\"为前缀，则会创建一个会话范围的信号灯（或返回的现有信号灯）。 如果名称不带任何前缀，则会创建一个会话范围的信号灯（与带前缀“Local\"时相同）。 前缀和名称都区分大小写。</param>
+        <param name="name">如果要与其他进程共享同步对象，则为名称；否则为 <see langword="null" /> 或空字符串。 该名称区分大小写。</param>
         <param name="createdNew">在此方法返回时，如果创建了本地信号量（即，如果 <paramref name="name" /> 为 <see langword="null" /> 或空字符串）或指定的命名系统信号量，则包含 <see langword="true" />；如果指定的命名系统信号量已存在，则为 <see langword="false" />。 此参数未经初始化即被传递。</param>
         <summary>初始化 <see cref="T:System.Threading.Semaphore" /> 类的新实例，并指定初始入口数和最大并发入口数，还可以选择指定系统信号量对象的名称，以及指定一个变量来接收指示是否创建了新系统信号量的值。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果提供了， `name` 并且命名空间中已存在请求类型的同步对象，则使用现有的同步对象。 如果命名空间中已存在另一个类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。 否则，将创建一个新的同步对象。
+
  此构造函数初始化 <xref:System.Threading.Semaphore> 对象，该对象表示已命名的系统信号量。 可以创建多个 <xref:System.Threading.Semaphore> 表示同一命名系统信号量的对象。  
   
  如果已命名的系统信号量不存在，则将使用和指定的初始计数和最大计数来创建它 `initialCount` `maximumCount` 。 如果已命名的系统信号量已存在， `initialCount` `maximumCount` 则不使用和，尽管无效值仍然会导致异常。 使用 `createdNew` 确定是否已创建系统信号量。  
@@ -312,17 +327,24 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="initialCount" /> 大于 <paramref name="maximumCount" />。  
-  
-- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="initialCount" /> 大于 <paramref name="maximumCount" />。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maximumCount" /> 小于 1。  
   
-- 或 - 
+或 
  <paramref name="initialCount" /> 小于 0。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">命名信号量存在且具有访问控制安全性，用户不具有 <see cref="F:System.Security.AccessControl.SemaphoreRights.FullControl" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名信号量，可能是由于其他类型的等待句柄具有相同名称。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
         <related type="Article" href="/dotnet/standard/threading/semaphore-and-semaphoreslim">Semaphore</related>
       </Docs>
@@ -357,7 +379,7 @@
       <Docs>
         <param name="initialCount">可以同时满足的信号量的初始请求数。</param>
         <param name="maximumCount">可以同时满足的信号量的最大请求数。</param>
-        <param name="name">信号灯的名称。 如果是 <see langword="null" /> 或为空，则创建一个进程本地的信号灯。 如果名称以“Global\"为前缀，则会创建一个计算机范围的信号灯（或返回的现有信号灯）。 如果以“Local\"为前缀，则会创建一个会话范围的信号灯（或返回的现有信号灯）。 如果名称不带任何前缀，则会创建一个会话范围的信号灯（与带前缀“Local\"时相同）。 前缀和名称都区分大小写。</param>
+        <param name="name">如果要与其他进程共享同步对象，则为名称；否则为 <see langword="null" /> 或空字符串。 该名称区分大小写。</param>
         <param name="createdNew">在此方法返回时，如果创建了本地信号量（即，如果 <paramref name="name" /> 为 <see langword="null" /> 或空字符串）或指定的命名系统信号量，则包含 <see langword="true" />；如果指定的命名系统信号量已存在，则为 <see langword="false" />。 此参数未经初始化即被传递。</param>
         <param name="semaphoreSecurity">一个 <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> 对象，表示应用于已命名的系统信号量的访问控制安全性。</param>
         <summary>初始化 <see cref="T:System.Threading.Semaphore" /> 类的新实例，并指定初始入口数和最大并发入口数，可以选择指定系统信号量对象的名称，指定一个变量来接收指示是否创建了新系统信号量的值，以及指定系统信号量的安全访问控制。</summary>
@@ -367,6 +389,10 @@
 ## Remarks  
  使用此构造函数可在创建已命名的系统信号量时对其应用访问控制安全性，从而阻止其他代码控制信号量。  
   
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果提供了， `name` 并且命名空间中已存在请求类型的同步对象，则使用现有的同步对象。 如果命名空间中已存在另一个类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。 否则，将创建一个新的同步对象。
+
  此构造函数初始化 <xref:System.Threading.Semaphore> 对象，该对象表示已命名的系统信号量。 可以创建多个 <xref:System.Threading.Semaphore> 表示同一命名系统信号量的对象。  
   
  如果已命名的系统信号量不存在，则将使用指定的访问控制安全性来创建它。 如果已命名的信号量存在，则将忽略指定的访问控制安全性。  
@@ -395,17 +421,24 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="initialCount" /> 大于 <paramref name="maximumCount" />。  
-  
-- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="initialCount" /> 大于 <paramref name="maximumCount" />。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
         <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="maximumCount" /> 小于 1。  
   
-- 或 - 
+或 
  <paramref name="initialCount" /> 小于 0。</exception>
         <exception cref="T:System.UnauthorizedAccessException">命名信号量存在且具有访问控制安全性，用户不具有 <see cref="F:System.Security.AccessControl.SemaphoreRights.FullControl" />。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名信号量，可能是由于其他类型的等待句柄具有相同名称。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
         <related type="Article" href="/dotnet/standard/threading/semaphore-and-semaphoreslim">Semaphore</related>
       </Docs>
@@ -466,7 +499,7 @@
         </remarks>
         <exception cref="T:System.UnauthorizedAccessException">当前的 <see cref="T:System.Threading.Semaphore" /> 对象表示已命名的系统信号灯，且用户不具备 <see cref="F:System.Security.AccessControl.SemaphoreRights.ReadPermissions" /> 权限。  
   
-- 或 - 
+或 
 当前的 <see cref="T:System.Threading.Semaphore" /> 对象表示已命名的系统信号灯，且 <see cref="F:System.Security.AccessControl.SemaphoreRights.ReadPermissions" /> 权限不开放。</exception>
         <exception cref="T:System.NotSupportedException">不支持 Windows 98 或 Windows Millennium Edition。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
@@ -529,14 +562,18 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">信号灯的名称。 如果名称以“Global\"为前缀，则表示计算机范围的信号灯。 如果名称以“Local\"为前缀，或者不包含前缀，则表示会话范围的信号灯。 前缀和名称都区分大小写。</param>
+        <param name="name">要与其他进程共享的同步对象的名称。 该名称区分大小写。</param>
         <summary>打开指定名称为信号量（如果已经存在）。</summary>
         <returns>一个对象，表示已命名的系统信号量。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此 <xref:System.Threading.Semaphore.OpenExisting%2A> 方法尝试打开指定的命名信号量。 如果系统信号量不存在，此方法将引发异常，而不是创建系统信号量。 若要在不存在系统信号量时创建它，请使用 <xref:System.Threading.Semaphore.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。
+
+ 此 <xref:System.Threading.Semaphore.OpenExisting%2A> 方法尝试打开指定的命名信号量。 若要在不存在系统信号量时创建它，请使用 <xref:System.Threading.Semaphore.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
   
  `name` <xref:System.Threading.Semaphore> 即使返回的对象表示相同的命名系统信号量，对此方法使用与相同的值的多个调用不一定会返回相同的对象。  
   
@@ -561,13 +598,19 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">命名的信号量不存在。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。 在某些情况下，对于无效名称，可能会引发此异常。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">存在该命名信号量，但用户没有使用它时所需的安全访问权限。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
         <related type="Article" href="/dotnet/standard/threading/semaphore-and-semaphoreslim">Semaphore</related>
@@ -601,7 +644,7 @@
         <Parameter Name="rights" Type="System.Security.AccessControl.SemaphoreRights" Index="1" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="name">信号灯的名称。 如果名称以“Global\"为前缀，则表示计算机范围的信号灯。 如果名称以“Local\"为前缀，或者不包含前缀，则表示会话范围的信号灯。 前缀和名称都区分大小写。</param>
+        <param name="name">要与其他进程共享的同步对象的名称。 该名称区分大小写。</param>
         <param name="rights">表示所需的安全访问权限的枚举值的按位组合。</param>
         <summary>用安全访问权限打开指定名称为信号量（如果已经存在）。</summary>
         <returns>一个对象，表示已命名的系统信号量。</returns>
@@ -609,9 +652,13 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。
+
  `rights`参数必须包括 <xref:System.Security.AccessControl.SemaphoreRights.Synchronize?displayProperty=nameWithType> 允许线程进入信号量的标志，以及 <xref:System.Security.AccessControl.SemaphoreRights.Modify?displayProperty=nameWithType> 允许线程调用方法的标志 <xref:System.Threading.Semaphore.Release%2A> 。  
   
- 此 <xref:System.Threading.Semaphore.OpenExisting%2A> 方法尝试打开现有的已命名信号量。 如果系统信号量不存在，此方法将引发异常，而不是创建系统信号量。 若要在不存在系统信号量时创建它，请使用 <xref:System.Threading.Semaphore.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ 此 <xref:System.Threading.Semaphore.OpenExisting%2A> 方法尝试打开现有的已命名信号量。 若要在不存在系统信号量时创建它，请使用 <xref:System.Threading.Semaphore.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
   
  `name` <xref:System.Threading.Semaphore> 即使返回的对象表示相同的命名系统信号量，对此方法使用与相同的值的多个调用不一定会返回相同的对象。  
   
@@ -632,13 +679,19 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">命名的信号量不存在。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。 在某些情况下，对于无效名称，可能会引发此异常。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">已命名的信号量存在，但用户不具备所需的安全访问权限。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
         <related type="Article" href="/dotnet/standard/threading/semaphore-and-semaphoreslim">Semaphore</related>
@@ -731,7 +784,7 @@
         <exception cref="T:System.IO.IOException">发生已命名信号量的 Win32 错误。</exception>
         <exception cref="T:System.UnauthorizedAccessException">当前信号量表示一个已命名的系统信号量，但用户不具备 <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" />。  
   
-- 或 - 
+或 
 当前信号量表示一个已命名的系统信号量，但它未用 <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> 打开。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
         <related type="Article" href="/dotnet/standard/threading/semaphore-and-semaphoreslim">Semaphore</related>
@@ -809,7 +862,7 @@
         <exception cref="T:System.IO.IOException">发生已命名信号量的 Win32 错误。</exception>
         <exception cref="T:System.UnauthorizedAccessException">当前信号量表示一个已命名的系统信号量，但用户不具备 <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> 权限。  
   
-- 或 - 
+或 
 当前信号量表示一个已命名的系统信号量，但它不是以 <see cref="F:System.Security.AccessControl.SemaphoreRights.Modify" /> 权限打开的。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
         <related type="Article" href="/dotnet/standard/threading/semaphore-and-semaphoreslim">Semaphore</related>
@@ -869,10 +922,10 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="semaphoreSecurity" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="semaphoreSecurity" /> 上声明的默认值为 <see langword="null" />。</exception>
         <exception cref="T:System.UnauthorizedAccessException">用户不具备 <see cref="F:System.Security.AccessControl.SemaphoreRights.ChangePermissions" /> 权限。  
   
-- 或 - 
+或 
 信号量不是以 <see cref="F:System.Security.AccessControl.SemaphoreRights.ChangePermissions" /> 权限打开的。</exception>
         <exception cref="T:System.NotSupportedException">当前 <see cref="T:System.Threading.Semaphore" /> 对象不表示已命名的系统信号量。</exception>
         <related type="Article" href="/dotnet/standard/threading/">托管线程处理</related>
@@ -932,15 +985,19 @@
         <Parameter Name="result" Type="System.Threading.Semaphore" RefType="out" Index="1" FrameworkAlternate="dotnet-uwp-10.0;net-5.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="name">信号灯的名称。 如果名称以“Global\"为前缀，则表示计算机范围的信号灯。 如果名称以“Local\"为前缀，或者不包含前缀，则表示会话范围的信号灯。 前缀和名称都区分大小写。</param>
+        <param name="name">要与其他进程共享的同步对象的名称。 该名称区分大小写。</param>
         <param name="result">当此方法返回时，如果调用成功，则包含表示命名信号的 <see cref="T:System.Threading.Semaphore" /> 对象；否则为 <see langword="null" />。 该参数未经初始化即被处理。</param>
         <summary>打开指定名称为信号量（如果已经存在），并返回指示操作是否成功的值。</summary>
-        <returns>如果命名信号量成功打开，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <returns>如果命名信号量成功打开，则为 <see langword="true" />；否则为 <see langword="false" />。 在某些情况下，对于无效名称，可能会返回 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果命名信号量不存在，则此方法不会创建它。 若要在不存在系统信号量时创建它，请使用 <xref:System.Threading.Semaphore.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `false` 则返回。
+
+ 若要在不存在系统信号量时创建它，请使用 <xref:System.Threading.Semaphore.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
   
  如果不确定是否存在已命名的信号量，请使用此方法重载，而不是 <xref:System.Threading.Semaphore.OpenExisting%28System.String%29> 方法重载，这会在信号量不存在时引发异常。  
   
@@ -948,12 +1005,18 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。 对于某些无效名称，该方法可能返回 <see langword="false" />。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">存在该命名信号量，但用户没有使用它时所需的安全访问权限。</exception>
       </Docs>
     </Member>
@@ -985,16 +1048,20 @@
         <Parameter Name="result" Type="System.Threading.Semaphore" RefType="out" Index="2" FrameworkAlternate="netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="name">信号灯的名称。 如果名称以“Global\"为前缀，则表示计算机范围的信号灯。 如果名称以“Local\"为前缀，或者不包含前缀，则表示会话范围的信号灯。 前缀和名称都区分大小写。</param>
+        <param name="name">要与其他进程共享的同步对象的名称。 该名称区分大小写。</param>
         <param name="rights">表示所需的安全访问权限的枚举值的按位组合。</param>
         <param name="result">当此方法返回时，如果调用成功，则包含表示命名信号的 <see cref="T:System.Threading.Semaphore" /> 对象；否则为 <see langword="null" /> 。 该参数未经初始化即被处理。</param>
         <summary>用安全访问权限打开指定名称为信号量（如果已经存在），并返回指示操作是否成功的值。</summary>
-        <returns>如果命名信号量成功打开，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <returns>如果命名信号量成功打开，则为 <see langword="true" />；否则为 <see langword="false" />。 在某些情况下，对于无效名称，可能会返回 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果命名信号量不存在，则此方法不会创建它。 若要在不存在系统信号量时创建它，请使用 <xref:System.Threading.Semaphore.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `false` 则返回。
+
+ 若要在不存在系统信号量时创建它，请使用 <xref:System.Threading.Semaphore.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
   
  如果不确定是否存在已命名的信号量，请使用此方法重载，而不是 <xref:System.Threading.Semaphore.OpenExisting%28System.String%2CSystem.Security.AccessControl.SemaphoreRights%29> 方法重载，这会在信号量不存在时引发异常。  
   
@@ -1004,12 +1071,18 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+         <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。 对于某些无效名称，该方法可能返回 <see langword="false" />。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">存在该命名信号量，但用户没有使用它时所需的安全访问权限。</exception>
       </Docs>
     </Member>

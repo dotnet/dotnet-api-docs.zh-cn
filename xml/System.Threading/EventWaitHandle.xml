@@ -1,5 +1,5 @@
 <Type Name="EventWaitHandle" FullName="System.Threading.EventWaitHandle">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="7920a09a7b53214ce644a6853d6bd44da20e61f2" /><Meta Name="ms.sourcegitcommit" Value="5484acfd78fc29edb48fc1ca6925046c4672954a" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/16/2020" /><Meta Name="ms.locfileid" Value="90692385" /></Metadata><TypeSignature Language="C#" Value="public class EventWaitHandle : System.Threading.WaitHandle" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="6777d5968596d840dd8ad115f30131ebcd96f40e" /><Meta Name="ms.sourcegitcommit" Value="ccc48e19312cba144dcf374688c1060950398ec9" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="10/28/2020" /><Meta Name="ms.locfileid" Value="92887175" /></Metadata><TypeSignature Language="C#" Value="public class EventWaitHandle : System.Threading.WaitHandle" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit EventWaitHandle extends System.Threading.WaitHandle" />
   <TypeSignature Language="DocId" Value="T:System.Threading.EventWaitHandle" />
   <TypeSignature Language="VB.NET" Value="Public Class EventWaitHandle&#xA;Inherits WaitHandle" />
@@ -153,6 +153,7 @@
   
  ]]></format>
         </remarks>
+        <exception cref="T:System.ArgumentException"><paramref name="mode" /> 枚举值超出了合法范围。</exception>
         <related type="Article" href="/dotnet/standard/threading/overview-of-synchronization-primitives">同步基元概述</related>
       </Docs>
     </Member>
@@ -193,18 +194,20 @@
       <Parameters>
         <Parameter Name="initialState" Type="System.Boolean" />
         <Parameter Name="mode" Type="System.Threading.EventResetMode" />
-        <Parameter Name="name" Type="System.String" />
+        <param name="name">The name, if the synchronization object is to be shared with other processes; otherwise, <see langword="null" /> or an empty string. The name is case-sensitive.</param>
       </Parameters>
       <Docs>
         <param name="initialState">如果将命名事件作为此调用的结果创建时将初始状态设置为通过信号通知，则为 <see langword="true" />；如果将其设置为不通过信号通知，则为 <see langword="false" />。</param>
         <param name="mode">其中一个 <see cref="T:System.Threading.EventResetMode" /> 值，它确定是自动还是手动重置事件。</param>
-        <param name="name">系统范围的同步事件名称。</param>
+        <param name="name">如果要与其他进程共享同步对象，则为名称；否则为 <see langword="null" /> 或空字符串。 该名称区分大小写。</param>
         <summary>初始化 <see cref="T:System.Threading.EventWaitHandle" /> 类的新实例，并指定在此调用后创建的等待句柄最初是否处于终止状态，它是自动重置还是手动重置，以及系统同步事件的名称。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果 `name` 是 `null` 或空字符串， <xref:System.Threading.EventWaitHandle> 则创建一个本地。  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果提供了， `name` 并且命名空间中已存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中已存在另一个类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。 否则，将创建一个新的同步对象。
   
  如果为参数指定了名称的系统事件 `name` 已存在，则忽略该 `initialState` 参数。  
   
@@ -215,10 +218,20 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">命名事件存在且具有访问控制安全性，但用户不具有 <see cref="F:System.Security.AccessControl.EventWaitHandleRights.FullControl" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名事件，可能是因为其他类型的等待句柄具有相同名称。</exception>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="mode" /> 枚举值超出了合法范围。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
         <related type="Article" href="/dotnet/standard/threading/overview-of-synchronization-primitives">同步基元概述</related>
       </Docs>
     </Member>
@@ -265,23 +278,37 @@
       <Docs>
         <param name="initialState">如果将命名事件作为此调用的结果创建时将初始状态设置为通过信号通知，则为 <see langword="true" />；如果将其设置为不通过信号通知，则为 <see langword="false" />。</param>
         <param name="mode">其中一个 <see cref="T:System.Threading.EventResetMode" /> 值，它确定是自动还是手动重置事件。</param>
-        <param name="name">系统范围的同步事件名称。</param>
+        <param name="name">如果要与其他进程共享同步对象，则为名称；否则为 <see langword="null" /> 或空字符串。 该名称区分大小写。</param>
         <param name="createdNew">在此方法返回时，如果创建了本地事件（即，如果 <paramref name="name" /> 为 <see langword="true" /> 或空字符串）或指定的命名系统事件，则包含 <see langword="null" />；如果指定的命名系统事件已存在，则为 <see langword="false" />。 此参数未经初始化即被传递。</param>
         <summary>初始化 <see cref="T:System.Threading.EventWaitHandle" /> 类的新实例，指定如果将等待句柄作为此调用的结果而创建，最初是否通过信号通知此句柄；指定是否自动或手动重置系统同步事件的名称，以及一个布尔变量，在调用后其值指示是否创建了命名的系统事件。</summary>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果提供了， `name` 并且命名空间中已存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中已存在另一个类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。 否则，将创建一个新的同步对象。
+
  如果为参数指定了名称的系统事件 `name` 已存在，则忽略该 `initialState` 参数。 调用此构造函数后，在 Visual Basic) 中为参数 (参数指定的变量中的值， `ref` `ByRef` `createdNew` 以确定已存在还是已创建已命名的系统事件。  
   
  如果事件的初始状态为非终止，则等待事件的线程将会阻止。 如果初始状态为 "已终止" 并且为 <xref:System.Threading.EventResetMode.ManualReset> 指定了标志 `mode` ，则等待事件的线程不会阻塞。 如果初始状态为 "已终止"，并且 `mode` 为 <xref:System.Threading.EventResetMode.AutoReset> ，则将立即释放等待事件的第一个线程，在此之后，事件将被重置，后续线程将被阻止。  
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">命名事件存在且具有访问控制安全性，但用户不具有 <see cref="F:System.Security.AccessControl.EventWaitHandleRights.FullControl" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名事件，可能是因为其他类型的等待句柄具有相同名称。</exception>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="mode" /> 枚举值超出了合法范围。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
         <related type="Article" href="/dotnet/standard/threading/overview-of-synchronization-primitives">同步基元概述</related>
       </Docs>
     </Member>
@@ -321,7 +348,7 @@
       <Docs>
         <param name="initialState">如果将命名事件作为此调用的结果创建时将初始状态设置为通过信号通知，则为 <see langword="true" />；如果将其设置为不通过信号通知，则为 <see langword="false" />。</param>
         <param name="mode">其中一个 <see cref="T:System.Threading.EventResetMode" /> 值，它确定是自动还是手动重置事件。</param>
-        <param name="name">系统范围的同步事件名称。</param>
+        <param name="name">如果要与其他进程共享同步对象，则为名称；否则为 <see langword="null" /> 或空字符串。 该名称区分大小写。</param>
         <param name="createdNew">在此方法返回时，如果创建了本地事件（即，如果 <paramref name="name" /> 为 <see langword="true" /> 或空字符串）或指定的命名系统事件，则包含 <see langword="null" />；如果指定的命名系统事件已存在，则为 <see langword="false" />。 此参数未经初始化即被传递。</param>
         <param name="eventSecurity">一个 <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> 对象，该对象表示应用到命名系统事件的访问控制安全性。</param>
         <summary>初始化 <see cref="T:System.Threading.EventWaitHandle" /> 类的新实例，指定如果等待句柄作为此调用的结果而创建，最初是否通过信号通知此句柄；指定是否自动或手动重置系统同步事件的名称和布尔变量，其值在该调用后将指示是否创建了已命名系统事件，以及是否将访问控制安全性应用到命名事件（如果已创建该事件）。</summary>
@@ -338,6 +365,10 @@
 > [!NOTE]
 >  调用方对新创建的对象拥有完全控制权， <xref:System.Threading.EventWaitHandle> 即使 `eventSecurity` 拒绝或无法向当前用户授予某些访问权限。 但是，如果当前用户尝试 <xref:System.Threading.EventWaitHandle> 使用构造函数或方法获取表示相同命名事件的另一个对象， <xref:System.Threading.EventWaitHandle.OpenExisting%2A> 则应用 Windows 访问控制安全性。  
   
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果提供了， `name` 并且命名空间中已存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中已存在另一个类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。 否则，将创建一个新的同步对象。
+
  如果为参数指定了名称的系统事件 `name` 已存在，则忽略该 `initialState` 参数。 调用此构造函数后，在 Visual Basic) 中为参数 (参数指定的变量中的值， `ref` `ByRef` `createdNew` 以确定已存在还是已创建已命名的系统事件。  
   
  如果事件的初始状态为非终止，则等待事件的线程将会阻止。 如果初始状态为 "已终止" 并且为 <xref:System.Threading.EventResetMode.ManualReset> 指定了标志 `mode` ，则等待事件的线程不会阻塞。 如果初始状态为 "已终止"，并且 `mode` 为 <xref:System.Threading.EventResetMode.AutoReset> ，则将立即释放等待事件的第一个线程，在此之后，事件将被重置，后续线程将被阻止。  
@@ -359,10 +390,20 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">命名事件存在且具有访问控制安全性，但用户不具有 <see cref="F:System.Security.AccessControl.EventWaitHandleRights.FullControl" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建命名事件，可能是因为其他类型的等待句柄具有相同名称。</exception>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 超过 260 个字符。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法创建具有提供的 <paramref name="name" /> 的同步对象。 不同类型的同步对象可能具有相同的名称。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="mode" /> 枚举值超出了合法范围。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
         <related type="Article" href="/dotnet/standard/threading/overview-of-synchronization-primitives">同步基元概述</related>
       </Docs>
     </Member>
@@ -397,7 +438,7 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>获取一个 <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> 对象，它表示当前 <see cref="T:System.Threading.EventWaitHandle" /> 对象所表示的已命名系统事件的访问控件安全性。</summary>
+        <summary>获取 <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> 对象，该对象表示由当前 <see cref="T:System.Threading.EventWaitHandle" /> 对象表示的已命名系统事件的访问控制安全性。</summary>
         <returns>一个 <see cref="T:System.Security.AccessControl.EventWaitHandleSecurity" /> 对象，它表示已命名系统事件的访问控制安全性。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -426,8 +467,8 @@
         </remarks>
         <exception cref="T:System.UnauthorizedAccessException">当前的 <see cref="T:System.Threading.EventWaitHandle" /> 对象表示已命名的系统事件，且用户不具备 <see cref="F:System.Security.AccessControl.EventWaitHandleRights.ReadPermissions" />。  
   
-- 或 - 
-当前的 <see cref="T:System.Threading.EventWaitHandle" /> 对象表示已命名的系统事件，且不是用 <see cref="F:System.Security.AccessControl.EventWaitHandleRights.ReadPermissions" /> 打开的。</exception>
+或 
+当前 <see cref="T:System.Threading.EventWaitHandle" /> 对象表示一个已命名的系统事件，但它不是以 <see cref="F:System.Security.AccessControl.EventWaitHandleRights.ReadPermissions" /> 打开的。</exception>
         <exception cref="T:System.NotSupportedException">不支持 Windows 98 或 Windows Millennium Edition。</exception>
         <exception cref="T:System.ObjectDisposedException">之前已在此 <see cref="T:System.Threading.EventWaitHandle" /> 上调用 <see cref="M:System.Threading.WaitHandle.Close" /> 方法。</exception>
         <related type="Article" href="/dotnet/standard/threading/overview-of-synchronization-primitives">同步基元概述</related>
@@ -489,14 +530,18 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">要打开的系统同步事件的名称。</param>
+        <param name="name">要打开并与其他进程共享的同步对象的名称。 该名称区分大小写。</param>
         <summary>打开指定名称为同步事件（如果已经存在）。</summary>
         <returns>一个对象，表示已命名的系统事件。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 此 <xref:System.Threading.EventWaitHandle.OpenExisting%2A> 方法尝试打开指定的已命名系统事件。 如果系统事件不存在，此方法将引发异常，而不是创建系统事件。 若要在不存在系统事件时创建系统事件，请使用 <xref:System.Threading.EventWaitHandle.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。
+
+ 此 <xref:System.Threading.EventWaitHandle.OpenExisting%2A> 方法尝试打开指定的已命名系统事件。 若要在不存在系统事件时创建系统事件，请使用 <xref:System.Threading.EventWaitHandle.%23ctor%2A> 具有参数的构造函数之一 `name` 。
   
  对此方法使用相同值的多个调用 `name` 不一定会返回相同的 <xref:System.Threading.EventWaitHandle> 对象，即使返回的对象表示相同的命名系统事件也是如此。  
   
@@ -521,13 +566,26 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">命名的系统事件不存在。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法打开具有提供的 <paramref name="name" /> 的同步对象。 该对象可能不存在，或者不同类型的同步对象可能具有相同的名称。 在某些情况下，对于无效名称，可能会引发此异常。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">已命名的事件存在，但用户不具备使用它所需的安全访问权限。</exception>
         <related type="Article" href="/dotnet/standard/threading/overview-of-synchronization-primitives">同步基元概述</related>
       </Docs>
@@ -566,7 +624,7 @@
         <Parameter Name="rights" Type="System.Security.AccessControl.EventWaitHandleRights" Index="1" FrameworkAlternate="netframework-2.0;netframework-3.0;netframework-3.5;netframework-4.0;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="name">要打开的系统同步事件的名称。</param>
+        <param name="name">要打开并与其他进程共享的同步对象的名称。 该名称区分大小写。</param>
         <param name="rights">表示所需的安全访问权限的枚举值的按位组合。</param>
         <summary>用安全访问权限打开指定名称为同步事件（如果已经存在）。</summary>
         <returns>一个对象，表示已命名的系统事件。</returns>
@@ -574,9 +632,13 @@
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `WaitHandleCannotBeOpenedException` 则会引发。
+
  `rights`参数必须包括 <xref:System.Security.AccessControl.EventWaitHandleRights.Synchronize?displayProperty=nameWithType> 允许线程等待事件的标志，以及 <xref:System.Security.AccessControl.EventWaitHandleRights.Modify?displayProperty=nameWithType> 允许线程调用 <xref:System.Threading.EventWaitHandle.Set%2A> 和方法的标志 <xref:System.Threading.EventWaitHandle.Reset%2A> 。  
   
- 此 <xref:System.Threading.EventWaitHandle.OpenExisting%2A> 方法尝试打开现有的已命名系统事件。 如果系统事件不存在，此方法将引发异常，而不是创建系统事件。 若要在不存在系统事件时创建系统事件，请使用 <xref:System.Threading.EventWaitHandle.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ 此 <xref:System.Threading.EventWaitHandle.OpenExisting%2A> 方法尝试打开现有的已命名系统事件。 若要在不存在系统事件时创建系统事件，请使用 <xref:System.Threading.EventWaitHandle.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
   
  对此方法使用相同值的多个调用 `name` 不一定会返回相同的 <xref:System.Threading.EventWaitHandle> 对象，即使返回的对象表示相同的命名系统事件也是如此。  
   
@@ -597,13 +659,20 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">命名的系统事件不存在。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.Threading.WaitHandleCannotBeOpenedException">无法打开具有提供的 <paramref name="name" /> 的同步对象。 该对象可能不存在，或者不同类型的同步对象可能具有相同的名称。 在某些情况下，对于无效名称，可能会引发此异常。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.DirectoryNotFoundException">仅限 Windows：<paramref name="name" /> 指定了未知命名空间。 有关详细信息，请参阅[对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">命名事件存在，但用户不具有所需的安全访问权限。</exception>
         <related type="Article" href="/dotnet/standard/threading/overview-of-synchronization-primitives">同步基元概述</related>
       </Docs>
@@ -647,8 +716,8 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>将事件状态设置为非终止，从而导致线程受阻。</summary>
-        <returns>如果该操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <summary>将事件状态设置为非终止状态，导致线程阻止。</summary>
+        <returns>如果该操作成功，则为 <see langword="true" />；否则，为 <see langword="false" />。</returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ObjectDisposedException">之前已在此 <see cref="T:System.Threading.EventWaitHandle" /> 上调用 <see cref="M:System.Threading.WaitHandle.Close" /> 方法。</exception>
         <related type="Article" href="/dotnet/standard/threading/overview-of-synchronization-primitives">同步基元概述</related>
@@ -693,7 +762,7 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>将事件状态设置为有信号，从而允许一个或多个等待线程继续执行。</summary>
+        <summary>将事件状态设置为终止状态，允许一个或多个等待线程继续。</summary>
         <returns>如果该操作成功，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
@@ -780,13 +849,13 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentNullException"><paramref name="eventSecurity" /> 为 <see langword="null" />。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="eventSecurity" /> 上声明的默认值为 <see langword="null" />。</exception>
         <exception cref="T:System.UnauthorizedAccessException">用户不具备 <see cref="F:System.Security.AccessControl.EventWaitHandleRights.ChangePermissions" />。  
   
-- 或 - 
+或 
 事件不是以 <see cref="F:System.Security.AccessControl.EventWaitHandleRights.ChangePermissions" /> 打开的。</exception>
         <exception cref="T:System.SystemException">当前 <see cref="T:System.Threading.EventWaitHandle" /> 对象不表示已命名的系统事件。</exception>
-        <exception cref="T:System.ObjectDisposedException">之前已在此 <see cref="T:System.Threading.EventWaitHandle" /> 上调用 <see cref="M:System.Threading.WaitHandle.Close" /> 方法。</exception>
+        <exception cref="T:System.ObjectDisposedException">之前已对此 <see cref="M:System.Threading.WaitHandle.Close" /> 调用 <see cref="T:System.Threading.EventWaitHandle" /> 方法。</exception>
         <related type="Article" href="/dotnet/standard/threading/overview-of-synchronization-primitives">同步基元概述</related>
       </Docs>
     </Member>
@@ -847,15 +916,19 @@
         <Parameter Name="result" Type="System.Threading.EventWaitHandle" RefType="out" Index="1" FrameworkAlternate="dotnet-uwp-10.0;net-5.0;netcore-1.0;netcore-1.1;netcore-2.0;netcore-2.1;netcore-2.2;netcore-3.0;netcore-3.1;netframework-4.5;netframework-4.5.1;netframework-4.5.2;netframework-4.6;netframework-4.6.1;netframework-4.6.2;netframework-4.7;netframework-4.7.1;netframework-4.7.2;netframework-4.8;netstandard-1.0;netstandard-1.1;netstandard-1.2;netstandard-1.3;netstandard-1.4;netstandard-1.6;netstandard-2.0;netstandard-2.1;xamarinandroid-7.1;xamarinios-10.8;xamarinmac-3.0" />
       </Parameters>
       <Docs>
-        <param name="name">要打开的系统同步事件的名称。</param>
+        <param name="name">要打开并与其他进程共享的同步对象的名称。 该名称区分大小写。</param>
         <param name="result">当此方法返回时，如果调用成功，则包含表示命名同步事件的 <see cref="T:System.Threading.EventWaitHandle" /> 对象；如果调用失败，则为 <see langword="null" />。 该参数未经初始化即被处理。</param>
         <summary>打开指定的命名同步事件（如果已经存在），返回指示操作是否成功的值。</summary>
-        <returns>如果成功打开命名同步事件，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <returns>如果成功打开命名同步事件，则为 <see langword="true" />；否则为 <see langword="false" />。 在某些情况下，对于无效名称，可能会返回 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果命名同步事件不存在，则此方法不会创建它。 若要在不存在系统事件时创建系统事件，请使用 <xref:System.Threading.EventWaitHandle.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `false` 则返回。
+
+ 若要在不存在系统事件时创建系统事件，请使用 <xref:System.Threading.EventWaitHandle.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
   
  如果不确定是否存在已命名的同步事件，请使用此方法重载，而不是 <xref:System.Threading.EventWaitHandle.OpenExisting%28System.String%29> 方法重载，如果同步事件不存在，则会引发异常。  
   
@@ -865,12 +938,18 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。 对于某些无效名称，该方法可能返回 <see langword="false" />。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">命名事件存在，但用户不具有所需的安全访问权限。</exception>
       </Docs>
     </Member>
@@ -912,12 +991,16 @@
         <param name="rights">表示所需的安全访问权限的枚举值的按位组合。</param>
         <param name="result">当此方法返回时，如果调用成功，则包含表示命名同步事件的 <see cref="T:System.Threading.EventWaitHandle" /> 对象；如果调用失败，则为 <see langword="null" />。 该参数未经初始化即被处理。</param>
         <summary>使用所需的安全访问权限，打开指定的命名同步事件（如果已经存在），并返回指示操作是否成功的值。</summary>
-        <returns>如果成功打开命名同步事件，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
+        <returns>如果成功打开命名同步事件，则为 <see langword="true" />；否则为 <see langword="false" />。 在某些情况下，对于无效名称，可能会返回 <see langword="false" />。</returns>
         <remarks>
           <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
- 如果命名同步事件不存在，则此方法不会创建它。 若要在不存在系统事件时创建系统事件，请使用 <xref:System.Threading.EventWaitHandle.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
+ `name`可以使用 `Global\` 或前缀 `Local\` 来指定命名空间。 如果 `Global` 指定了命名空间，则同步对象可能与系统上的任何进程共享。 `Local`指定命名空间后，如果未指定命名空间，这也是默认命名空间，则同步对象可能与同一会话中的进程共享。 在 Windows 上，会话是一个登录会话，服务通常在不同的非交互式会话中运行。 在类似 Unix 的操作系统上，每个 shell 都有自己的会话。 会话本地同步对象可能适用于具有父/子关系的进程之间的同步，它们全都在同一会话中运行。 有关 Windows 上的 synchornization 对象名称的详细信息，请参阅 [对象名称](https://docs.microsoft.com/windows/win32/sync/object-names)。
+
+ 如果命名空间中存在请求类型的同步对象，则会打开现有的同步对象。 如果命名空间中不存在同步对象，或者命名空间中存在其他类型的同步对象， `false` 则返回。
+
+ 若要在不存在系统事件时创建系统事件，请使用 <xref:System.Threading.EventWaitHandle.%23ctor%2A> 具有参数的构造函数之一 `name` 。  
   
  如果不确定是否存在已命名的同步事件，请使用此方法重载，而不是 <xref:System.Threading.EventWaitHandle.OpenExisting%28System.String%2CSystem.Security.AccessControl.EventWaitHandleRights%29> 方法重载，如果同步事件不存在，则会引发异常。  
   
@@ -927,12 +1010,18 @@
   
  ]]></format>
         </remarks>
-        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。  
-  
-- 或 - 
- <paramref name="name" /> 超过 260 个字符。</exception>
-        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 为 <see langword="null" />。</exception>
-        <exception cref="T:System.IO.IOException">出现 Win32 错误。</exception>
+        <exception cref="T:System.ArgumentException"><paramref name="name" /> 是一个空字符串。
+
+或
+
+仅限 .NET Framework：<paramref name="name" /> 的长度超过 MAX_PATH（260 个字符）。</exception>
+        <exception cref="T:System.ArgumentNullException"><paramref name="name" /> 上声明的默认值为 <see langword="null" />。</exception>
+        <exception cref="T:System.IO.IOException"><paramref name="name" /> 无效。 导致这种情况的原因有很多，包括操作系统可能会施加的一些限制，例如未知前缀或无效字符。 请注意，名称和常见前缀 "Global\" 和 "Local\" 区分大小写。 对于某些无效名称，该方法可能返回 <see langword="false" />。
+
+或
+
+存在其他错误。 `HResult` 属性可能提供更多信息。</exception>
+        <exception cref="T:System.IO.PathTooLongException"><paramref name="name" /> 太长。 长度限制可能取决于操作系统或配置。</exception>
         <exception cref="T:System.UnauthorizedAccessException">命名事件存在，但用户不具有所需的安全访问权限。</exception>
       </Docs>
     </Member>
