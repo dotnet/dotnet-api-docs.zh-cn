@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 0716e90d19a3a3f4767a596399be439ff0f15e4d
-ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 08/29/2019
-ms.locfileid: "71140226"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92231703"
 ---
-<span data-ttu-id="b77f4-101">CardSpace</span><span class="sxs-lookup"><span data-stu-id="b77f4-101">CardSpace</span></span>
+<span data-ttu-id="c8dcb-101">CardSpace</span><span class="sxs-lookup"><span data-stu-id="c8dcb-101">CardSpace</span></span>

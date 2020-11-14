@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: ff5adbcca612d030180437f495c7c9664a999d24
-ms.sourcegitcommit: 397961a0164281b579f68064c3bb66c071f374d9
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 07/14/2020
-ms.locfileid: "71139246"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92224572"
 ---
-<span data-ttu-id="7dfde-101">XAML</span><span class="sxs-lookup"><span data-stu-id="7dfde-101">XAML</span></span>
+<span data-ttu-id="331fc-101">XAML</span><span class="sxs-lookup"><span data-stu-id="331fc-101">XAML</span></span>

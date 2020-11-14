@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: b9736eb5ad1713df61c52612cffbfc3dd06d586a
-ms.sourcegitcommit: 397961a0164281b579f68064c3bb66c071f374d9
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 07/14/2020
-ms.locfileid: "71138906"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92320776"
 ---
-<span data-ttu-id="9eb84-101">国际色彩联合会 (ICC)</span><span class="sxs-lookup"><span data-stu-id="9eb84-101">International Color Consortium (ICC)</span></span>
+<span data-ttu-id="e3e70-101">国际色彩联合会 (ICC)</span><span class="sxs-lookup"><span data-stu-id="e3e70-101">International Color Consortium (ICC)</span></span>

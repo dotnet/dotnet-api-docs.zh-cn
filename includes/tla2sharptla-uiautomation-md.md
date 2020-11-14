@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 4465ab0b983a448c175e79ea5a85efc39daf0bea
-ms.sourcegitcommit: 397961a0164281b579f68064c3bb66c071f374d9
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 07/14/2020
-ms.locfileid: "71139346"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92224703"
 ---
-<span data-ttu-id="3999a-101">UI 自动化</span><span class="sxs-lookup"><span data-stu-id="3999a-101">UI Automation</span></span>
+<span data-ttu-id="7fbbb-101">UI 自动化</span><span class="sxs-lookup"><span data-stu-id="7fbbb-101">UI Automation</span></span>

@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: e41db4ea925465f96862be06128c461890052307
-ms.sourcegitcommit: 397961a0164281b579f68064c3bb66c071f374d9
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 07/14/2020
-ms.locfileid: "71138836"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92234754"
 ---
-<span data-ttu-id="f7f61-101">Windows Internet Explorer 7</span><span class="sxs-lookup"><span data-stu-id="f7f61-101">Windows Internet Explorer 7</span></span>
+<span data-ttu-id="89b5c-101">Windows Internet Explorer 7</span><span class="sxs-lookup"><span data-stu-id="89b5c-101">Windows Internet Explorer 7</span></span>

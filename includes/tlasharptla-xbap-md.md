@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 0a4c14c623348422541327c6a6b0e10b24862695
-ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 08/29/2019
-ms.locfileid: "71138296"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92225146"
 ---
-<span data-ttu-id="0858a-101">XAML 浏览器应用程序 (XBAP)</span><span class="sxs-lookup"><span data-stu-id="0858a-101">XAML browser application (XBAP)</span></span>
+<span data-ttu-id="58aa8-101">XAML 浏览器应用程序 (XBAP)</span><span class="sxs-lookup"><span data-stu-id="58aa8-101">XAML browser application (XBAP)</span></span>
