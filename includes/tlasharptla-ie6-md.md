@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 298be38f010277a45723f51c35c0332c2bbd2e9a
-ms.sourcegitcommit: 1bb00d2f4343e73ae8d58668f02297a3cf10a4c1
-ms.translationtype: HT
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
+ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 06/15/2019
-ms.locfileid: "63878876"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92234750"
 ---
-<span data-ttu-id="4fcea-101">Microsoft Internet Explorer 6</span><span class="sxs-lookup"><span data-stu-id="4fcea-101">Microsoft Internet Explorer 6</span></span>
+<span data-ttu-id="baeb3-101">Microsoft Internet Explorer 6</span><span class="sxs-lookup"><span data-stu-id="baeb3-101">Microsoft Internet Explorer 6</span></span>

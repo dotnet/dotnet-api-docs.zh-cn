@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: fe50223a93a4b8a83601fc4bdb89f3271980c61c
-ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 08/29/2019
-ms.locfileid: "71138066"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92324886"
 ---
-<span data-ttu-id="7629e-101">语言集成查询 (LINQ)</span><span class="sxs-lookup"><span data-stu-id="7629e-101">Language-Integrated Query (LINQ)</span></span>
+<span data-ttu-id="19af2-101">语言集成查询 (LINQ)</span><span class="sxs-lookup"><span data-stu-id="19af2-101">Language-Integrated Query (LINQ)</span></span>
