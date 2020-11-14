@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 9fe8c734d18c33e1fe587ed88ac86891c9413013
-ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 08/29/2019
-ms.locfileid: "71137736"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92226009"
 ---
 Windows 8.1

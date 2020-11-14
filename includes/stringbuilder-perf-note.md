@@ -1,10 +1,10 @@
 ---
 ms.openlocfilehash: 903ac4ecb57e3a8e02a4f65ecfa6f9e77a552f45
-ms.sourcegitcommit: 5ef0d02cb57c7153fd9d5417cdcad45665af832e
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 08/29/2019
-ms.locfileid: "71139676"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92324610"
 ---
 在以下情况下，通过 <xref:System.Text.StringBuilder.Chars%2A> 属性使用基于字符的索引可能会非常缓慢：
 
@@ -14,7 +14,7 @@ ms.locfileid: "71139676"
 因为每次字符访问都会遍历区块的整个链接列表以查找要索引到的正确缓冲区，所以性能受到严重影响。
 
 > [!NOTE]
->  即使对于大型“笨重的”<xref:System.Text.StringBuilder> 对象，使用 <xref:System.Text.StringBuilder.Chars%2A> 属性对一个或少量字符进行基于索引的访问几乎不影响性能；一般情况下，它是 0(n) 操作****。 当迭代 <xref:System.Text.StringBuilder> 对象中的字符时，会对性能造成显著的影响，这是 O(n^2) 操作****。 
+>  即使对于大型“笨重的”<xref:System.Text.StringBuilder> 对象，使用 <xref:System.Text.StringBuilder.Chars%2A> 属性对一个或少量字符进行基于索引的访问几乎不影响性能；一般情况下，它是 0(n) 操作。 当迭代 <xref:System.Text.StringBuilder> 对象中的字符时，会对性能造成显著的影响，这是 O(n^2) 操作。 
 
 如果通过 <xref:System.Text.StringBuilder> 对象在使用基于字符的索引时遇到性能问题，可以使用以下任一解决方法：
 

@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: c99a2c45eca43ecc92bd3abfd00cc596be0a0a32
-ms.sourcegitcommit: 397961a0164281b579f68064c3bb66c071f374d9
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
 ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 07/14/2020
-ms.locfileid: "71138226"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92224423"
 ---
 XML 纸张规范 (XPS)

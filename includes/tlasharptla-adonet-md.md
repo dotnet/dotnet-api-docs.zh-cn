@@ -1,9 +1,9 @@
 ---
 ms.openlocfilehash: 23c733f8fde0aa5e6a2d4d688008a99bd1c2a4d9
-ms.sourcegitcommit: 1bb00d2f4343e73ae8d58668f02297a3cf10a4c1
-ms.translationtype: HT
+ms.sourcegitcommit: 02dd069b9696eb4eee675b6541f86b2602076448
+ms.translationtype: MT
 ms.contentlocale: zh-CN
-ms.lasthandoff: 06/15/2019
-ms.locfileid: "63869727"
+ms.lasthandoff: 10/20/2020
+ms.locfileid: "92232816"
 ---
 ADO.NET
