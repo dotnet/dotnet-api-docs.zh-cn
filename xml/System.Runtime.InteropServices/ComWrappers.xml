@@ -1,5 +1,5 @@
 <Type Name="ComWrappers" FullName="System.Runtime.InteropServices.ComWrappers">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="b621694ae33751aac67b13a73decfd1ab9ca632b" /><Meta Name="ms.sourcegitcommit" Value="5484acfd78fc29edb48fc1ca6925046c4672954a" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="09/16/2020" /><Meta Name="ms.locfileid" Value="90695336" /></Metadata><TypeSignature Language="C#" Value="public abstract class ComWrappers" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="6e54d3101b8849b3bff74c21bd972777468e805f" /><Meta Name="ms.sourcegitcommit" Value="c861111304129386e389ea61ecfbb7d3e51dc3cd" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="11/11/2020" /><Meta Name="ms.locfileid" Value="94507288" /></Metadata><TypeSignature Language="C#" Value="public abstract class ComWrappers" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ComWrappers extends System.Object" />
   <TypeSignature Language="DocId" Value="T:System.Runtime.InteropServices.ComWrappers" />
   <TypeSignature Language="VB.NET" Value="Public MustInherit Class ComWrappers" />
@@ -25,7 +25,61 @@
   </Attributes>
   <Docs>
     <summary>用于管理 COM IUnknown 类型包装器的类。</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <format type="text/markdown"><![CDATA[  
+  
+## Remarks
+
+<xref:System.Runtime.InteropServices.ComWrappers>API 支持 `IUnknown` ABI，这与内置的 COM 互操作性支持无关。 `ComWrappers`API 公开了开发人员以高效方式替换内置版本所需的最小运行时支持。
+
+通常在运行时中，托管对象的本机代理被称为 COM 可调用包装器 (CCW) ，而本机对象的托管代理则称为运行时可调用包装器 (RCW) 。 但是，在此处使用时，不应将这些术语与同名的内置功能 (，即 [CCW](https://docs.microsoft.com/dotnet/standard/native-interop/com-callable-wrapper) 和 [RCW](https://docs.microsoft.com/dotnet/standard/native-interop/runtime-callable-wrapper)) 。 与内置功能不同，精确生存期管理、调度方法以及参数和返回值的封送处理的大多数责任将留给 `ComWrappers` 实施者。
+
+"最小支持" 由以下功能定义：
+
+1. 托管对象和本机代理之间的高效映射 (例如，CCW) 。
+2. 本机及其托管代理之间的高效映射 `IUnknown` (例如，RCW) 。
+3. 通过 [IReferenceTrackerHost](/windows/win32/api/windows.ui.xaml.hosting.referencetracker/nn-windows-ui-xaml-hosting-referencetracker-ireferencetrackerhost) 接口协定与垃圾回收器集成。
+
+   利用这种方案是一种高级方案。
+
+### <a name="proxy-state"></a>代理状态
+
+本部分提供了在其各自创建后的本机和托管代理状态的说明和说明。
+
+在下图中，强引用以实线 (来描述 `===`) ，弱引用以虚线 () 形式描述 `= = =` 。 术语 "强引用" 和 "弱引用" 应解释为 "扩展生存期" 和 "未扩展生存期"，而不是表示特定实现。
+
+下图显示了调用后托管对象和本机代理的状态 <xref:System.Runtime.InteropServices.ComWrappers.GetOrCreateComInterfaceForObject(System.Object,System.Runtime.InteropServices.CreateComInterfaceFlags)?displayProperty=nameWithType> 。
+
+```
+ --------------------                  ----------------------
+|   Managed object   |                |     Native proxy     |
+|                    |                | Ref count: 1         |
+|  ----------------  |                |  ------------------  |
+| | Weak reference |=| = = = = = = = >| | Strong reference | |
+| |    to proxy    | |<===============|=|    to object     | |
+|  ----------------  |                |  ------------------  |
+ --------------------                  ----------------------
+```
+
+下图显示了调用后的本机对象和托管代理的状态 <xref:System.Runtime.InteropServices.ComWrappers.GetOrCreateObjectForComInstance(System.IntPtr,System.Runtime.InteropServices.CreateObjectFlags)?displayProperty=nameWithType> 。 "标识" 的概念遵循的[规则 `IUnknown` ](https://docs.microsoft.com/windows/win32/com/rules-for-implementing-queryinterface#objects-must-have-identity)。
+
+```
+ ------------------               ------------------
+|  Native object   |< = = = = = =|                  |
+| Ref count: +1    |             | Mapping from     |
+ ------------------              | native identity  |
+ ------------------------        | to managed proxy |
+|   Managed proxy        |< = = =|                  |
+| Created by ComWrappers |        ------------------
+|   implementer.         |
+| Optional AddRef() on   |
+|   native object.       |
+ ------------------------
+```
+请注意，运行时透视中仅存在弱引用。 `+1`本机对象的引用计数假定为由托管代理创建者执行 (即， `ComWrappers` 实施者) 确保本机对象与其托管的代理之间的关联生存期。 有一个可选的强引用 (即， `AddRef()` 托管代理中提到) ，用于支持前面提到的方案 (3) 。 请参阅 <xref:System.Runtime.InteropServices.CreateObjectFlags.TrackerObject?displayProperty=nameWithType>。 如果具有此可选的强引用，则引用计数将为 `+2` 。
+
+ ]]></format>
+    </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
