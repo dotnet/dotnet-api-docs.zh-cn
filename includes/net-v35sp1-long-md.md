@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 10/20/2020
 ms.locfileid: "92230657"
 ---
-<span data-ttu-id="cbdc6-101">.NET Framework 3.5 Service Pack 1</span><span class="sxs-lookup"><span data-stu-id="cbdc6-101">.NET Framework 3.5 Service Pack 1</span></span>
+<span data-ttu-id="0fdb3-101">.NET Framework 3.5 Service Pack 1</span><span class="sxs-lookup"><span data-stu-id="0fdb3-101">.NET Framework 3.5 Service Pack 1</span></span>

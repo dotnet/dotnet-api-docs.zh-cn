@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 10/20/2020
 ms.locfileid: "92224423"
 ---
-<span data-ttu-id="77a21-101">XML 纸张规范 (XPS)</span><span class="sxs-lookup"><span data-stu-id="77a21-101">XML Paper Specification (XPS)</span></span>
+<span data-ttu-id="87d19-101">XML 纸张规范 (XPS)</span><span class="sxs-lookup"><span data-stu-id="87d19-101">XML Paper Specification (XPS)</span></span>

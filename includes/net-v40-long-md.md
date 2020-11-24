@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 10/20/2020
 ms.locfileid: "92224489"
 ---
-<span data-ttu-id="5d508-101">.NET Framework 4</span><span class="sxs-lookup"><span data-stu-id="5d508-101">.NET Framework 4</span></span>
+<span data-ttu-id="1c846-101">.NET Framework 4</span><span class="sxs-lookup"><span data-stu-id="1c846-101">.NET Framework 4</span></span>

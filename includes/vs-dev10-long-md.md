@@ -6,4 +6,4 @@ ms.contentlocale: zh-CN
 ms.lasthandoff: 10/20/2020
 ms.locfileid: "92224870"
 ---
-<span data-ttu-id="bcbda-101">Visual Studio 2010</span><span class="sxs-lookup"><span data-stu-id="bcbda-101">Visual Studio 2010</span></span>
+<span data-ttu-id="68f98-101">Visual Studio 2010</span><span class="sxs-lookup"><span data-stu-id="68f98-101">Visual Studio 2010</span></span>
