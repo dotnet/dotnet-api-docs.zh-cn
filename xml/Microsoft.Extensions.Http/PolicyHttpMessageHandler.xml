@@ -1,5 +1,5 @@
 <Type Name="PolicyHttpMessageHandler" FullName="Microsoft.Extensions.Http.PolicyHttpMessageHandler">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="324e7a535fe45003c2ed3af6e4cbfa64f2fcff26" /><Meta Name="ms.sourcegitcommit" Value="397961a0164281b579f68064c3bb66c071f374d9" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="07/14/2020" /><Meta Name="ms.locfileid" Value="78806161" /></Metadata><TypeSignature Language="C#" Value="public class PolicyHttpMessageHandler : System.Net.Http.DelegatingHandler" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="7cf3aaeac3d8ca769a1a1ecc8e2c88b7d5a964aa" /><Meta Name="ms.sourcegitcommit" Value="5a1772308619a503b0c695dfca01b279c555fa43" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="01/15/2021" /><Meta Name="ms.locfileid" Value="98239238" /></Metadata><TypeSignature Language="C#" Value="public class PolicyHttpMessageHandler : System.Net.Http.DelegatingHandler" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit PolicyHttpMessageHandler extends System.Net.Http.DelegatingHandler" />
   <TypeSignature Language="DocId" Value="T:Microsoft.Extensions.Http.PolicyHttpMessageHandler" />
   <TypeSignature Language="VB.NET" Value="Public Class PolicyHttpMessageHandler&#xA;Inherits DelegatingHandler" />
@@ -17,39 +17,35 @@
   <Interfaces />
   <Docs>
     <summary><see cref="T:System.Net.Http.DelegatingHandler" /> 实现，执行由 <see cref="T:Polly.Policy" /> 包围的请求处理。</summary>
-    <remarks><para>
+    <remarks>
+          <format type="text/markdown"><![CDATA[
+
+## Remarks
 此消息处理程序实现支持使用由 Polly 库提供的策略来实现暂时性故障处理和复原。
-            </para>
-      <para>
-此处提供的文档是将 Polly 与结合使用的重点指导 <see cref="T:System.Net.Http.IHttpClientFactory" /> 。 有关 Polly 的权威信息，请参阅 Polly 项目及其文档 https://github.com/app-vnext/Polly) 。
-            </para>
-      <para>
-上的扩展方法 <see cref="T:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions" /> 旨在用作一种方便且正确的方法来创建 <see cref="T:Microsoft.Extensions.Http.PolicyHttpMessageHandler" /> 。
-            </para>
-      <para>
-<see cref="M:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions.AddPolicyHandler(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder,Polly.IAsyncPolicy{System.Net.Http.HttpResponseMessage})" />方法支持 <see cref="T:Microsoft.Extensions.Http.PolicyHttpMessageHandler" /> 为任何类型的策略创建。 这包括非反应策略（如超时或缓存），这不需要基础请求首先失败。
-            </para>
-      <para>
-        <see cref="T:Microsoft.Extensions.Http.PolicyHttpMessageHandler" />并且 <see cref="T:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions" /> 便利方法仅接受泛型 <see cref="T:Polly.IAsyncPolicy`1" /> 。 可以通过使用上的泛型方法来创建泛型策略实例， <see cref="T:Polly.Policy" /> 如 <see cref="M:Polly.Policy.TimeoutAsync``1(System.Int32)" /> 。
-            </para>
-      <para>
-若要改编现有的非泛型 <see cref="T:Polly.IAsyncPolicy" /> ，请使用如下所示的代码： <example>
-将非泛型<c>IAsyncPolicy 策略</c>转换为 <see cref="T:Polly.IAsyncPolicy`1" /> 。
-            <code>
-            policy.AsAsyncPolicy&lt;HttpResponseMessage&gt;()
-            </code></example></para>
-      <para>
-此 <see cref="M:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions.AddTransientHttpErrorPolicy(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder,System.Func{Polly.PolicyBuilder{System.Net.Http.HttpResponseMessage},Polly.IAsyncPolicy{System.Net.Http.HttpResponseMessage}})" /> 方法是一种固执的简便方法，该方法支持应用程序因连接失败或服务器错误而失败的请求（5XX HTTP 状态代码）。 此类方法仅支持反应策略，如重试、断路器或回退。 此方法仅为方便而提供;如果这不能满足您的要求，我们建议根据需要创建您自己的策略。
-            </para>
-      <para>
-使用重试或超时等策略时请小心，因为 HttpClient 通过提供自己的超时 <see cref="P:System.Net.Http.HttpClient.Timeout" /> 。  合并重试和超时时， <see cref="P:System.Net.Http.HttpClient.Timeout" /> 将在所有尝试中充当超时; 可在配置序列中的重试策略后配置 Polly 超时策略，以提供每次尝试超时。
-            </para>
-      <para>
-Polly 提供的所有策略都设计为在长期使用时有效。 某些策略（如 Bulkhead）和断路器维护状态，并且应在你想要共享 Bulkhead 或断路器状态的调用范围内。 在自定义方案中结合使用策略和消息处理程序时，请务必确保正确的生存期。 提供的扩展方法 <see cref="T:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions" /> 旨在为策略分配长生存期，并确保在处理程序轮换功能处于活动状态时可以使用它们。
-            </para>
-      <para>
-<see cref="T:Microsoft.Extensions.Http.PolicyHttpMessageHandler" /> <see cref="T:System.Net.Http.HttpRequestMessage" /> 如果不存在，将在执行之前将上下文附加到 <see cref="T:Polly.Policy" /> 。 <see cref="T:Polly.Context" />将向策略提供，以供在 <see cref="T:Polly.Policy" /> 和其他消息处理程序中使用。
-            </para></remarks>
+
+此处提供的文档是将 Polly 与结合使用的重点指导 <xref:System.Net.Http.IHttpClientFactory> 。 有关 Polly 的权威信息，请参阅 Polly 项目及其 [相关文档](https://github.com/app-vnext/Polly) 。
+
+上的扩展方法 <xref:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions> 旨在用作一种方便且正确的方法来创建 <xref:Microsoft.Extensions.Http.PolicyHttpMessageHandler> 。
+
+<xref:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions.AddPolicyHandler(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder,Polly.IAsyncPolicy{System.Net.Http.HttpResponseMessage})>方法支持 <xref:Microsoft.Extensions.Http.PolicyHttpMessageHandler> 为任何类型的策略创建。 这包括非反应策略（如超时或缓存），这不需要基础请求首先失败。
+
+<xref:Microsoft.Extensions.Http.PolicyHttpMessageHandler>并且 <xref:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions> 便利方法仅接受泛型 <xref:Polly.IAsyncPolicy`1> 。 可以通过使用上的泛型方法来创建泛型策略实例， <xref:Polly.Policy> 如 <xref:Polly.Policy.TimeoutAsync``1(System.Int32)> 。
+
+若要改编现有的非泛型 <xref:Polly.IAsyncPolicy> ，请使用如下所示的代码：
+        
+```
+policy.AsAsyncPolicy&lt;HttpResponseMessage&gt;()
+```
+
+此 <xref:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions.AddTransientHttpErrorPolicy(Microsoft.Extensions.DependencyInjection.IHttpClientBuilder,System.Func{Polly.PolicyBuilder{System.Net.Http.HttpResponseMessage},Polly.IAsyncPolicy{System.Net.Http.HttpResponseMessage}})> 方法是一种固执的简便方法，该方法支持应用程序的策略，该方法因连接失败或服务器错误 (5XX HTTP 状态代码) 而失败。 此类方法仅支持重试、Circuit-Breaker 或回退等反应策略。 此方法仅为方便而提供;如果这不能满足您的要求，我们建议根据需要创建您自己的策略。
+
+使用诸如重试或超时等策略时要小心，因为 HttpClient 通过提供自己的超时 <xref:System.Net.Http.HttpClient.Timeout> 。 合并重试和超时时， <xref:System.Net.Http.HttpClient.Timeout> 将在所有尝试中充当超时; 可在配置序列中的重试策略后配置 Polly 超时策略，以提供每次尝试超时。
+
+Polly 提供的所有策略都设计为在长期使用时有效。 某些策略（如 Bulkhead 和 Circuit-Breaker 维护状态，并且应在要共享 Bulkhead 或 Circuit-Breaker 状态的调用范围内。 在自定义方案中结合使用策略和消息处理程序时，请务必确保正确的生存期。 提供的扩展方法 <xref:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions> 旨在为策略分配长生存期，并确保在处理程序轮换功能处于活动状态时可以使用它们。
+
+<xref:Microsoft.Extensions.Http.PolicyHttpMessageHandler> <xref:System.Net.Http.HttpRequestMessage> 如果不存在，将在执行之前将上下文附加到 <xref:Polly.Policy> 。 <xref:Polly.Context>将向策略提供，以供在 <xref:Polly.Policy> 和其他消息处理程序中使用。
+   ]]></format>
+    </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
