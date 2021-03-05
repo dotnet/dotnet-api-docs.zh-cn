@@ -1,0 +1,18 @@
+---
+ms.openlocfilehash: 747e67ae17272e0f4118596bd0b9682caba10dbe
+ms.sourcegitcommit: 9f423345753728e8cad38d4a22663a109e69ea91
+ms.translationtype: MT
+ms.contentlocale: zh-CN
+ms.lasthandoff: 03/04/2021
+ms.locfileid: "102091678"
+---
+<span data-ttu-id="19667-101">当通过调用方法从现有文件创建新项时 <xref:System.IO.Compression.ZipFileExtensions.CreateEntryFromFile%2A> ，该项的属性将 <xref:System.IO.Compression.ZipArchiveEntry.LastWriteTime%2A> 自动设置为上次修改文件的时间。</span><span class="sxs-lookup"><span data-stu-id="19667-101">When you create a new entry from an existing file by calling the <xref:System.IO.Compression.ZipFileExtensions.CreateEntryFromFile%2A> method, the <xref:System.IO.Compression.ZipArchiveEntry.LastWriteTime%2A> property for the entry is automatically set to the last time the file was modified.</span></span> <span data-ttu-id="19667-102">当你通过调用方法以编程方式创建新项时 <xref:System.IO.Compression.ZipArchive.CreateEntry%2A> ， <xref:System.IO.Compression.ZipArchiveEntry.LastWriteTime%2A> 该项的属性将自动设置为执行时间。</span><span class="sxs-lookup"><span data-stu-id="19667-102">When you create a new entry programmatically by calling the <xref:System.IO.Compression.ZipArchive.CreateEntry%2A> method, the <xref:System.IO.Compression.ZipArchiveEntry.LastWriteTime%2A> property for the entry is automatically set to the time of execution.</span></span> <span data-ttu-id="19667-103">如果你修改该条目，则必须显式设置 <xref:System.IO.Compression.ZipArchiveEntry.LastWriteTime%2A> 属性，前提是你希望该值反映最近更改的时间。</span><span class="sxs-lookup"><span data-stu-id="19667-103">If you modify the entry, you must explicitly set the <xref:System.IO.Compression.ZipArchiveEntry.LastWriteTime%2A> property if you want the value to reflect the time of the latest change.</span></span>
+
+<span data-ttu-id="19667-104">设置此属性时，该值将 <xref:System.DateTimeOffset> 转换为特定于 zip 存档的时间戳格式。</span><span class="sxs-lookup"><span data-stu-id="19667-104">When you set this property, the <xref:System.DateTimeOffset> value is converted to a timestamp format that is specific to zip archives.</span></span> <span data-ttu-id="19667-105">此格式支持两秒钟的解析。</span><span class="sxs-lookup"><span data-stu-id="19667-105">This format supports a resolution of two seconds.</span></span> <span data-ttu-id="19667-106">最早允许的值为1980年1月 1 0:00:00 (午夜) 。</span><span class="sxs-lookup"><span data-stu-id="19667-106">The earliest permitted value is 1980 January 1 0:00:00 (midnight).</span></span> <span data-ttu-id="19667-107">最新允许的值为 2107 12 月 31 23:59:58 () 午夜之前一秒钟。</span><span class="sxs-lookup"><span data-stu-id="19667-107">The latest permitted value is 2107 December 31 23:59:58 (one second before midnight).</span></span> <span data-ttu-id="19667-108">如果上次写入时间的值无效，则属性将返回默认值1980年1月 1 0:00:00 (午夜) 。</span><span class="sxs-lookup"><span data-stu-id="19667-108">If the value for the last write time is not valid, the property returns a default value of 1980 January 1 0:00:00 (midnight).</span></span>
+
+## <a name="examples"></a><span data-ttu-id="19667-109">示例</span><span class="sxs-lookup"><span data-stu-id="19667-109">Examples</span></span>
+
+<span data-ttu-id="19667-110">下面的示例演示如何打开 zip 存档中的条目，对其进行修改，然后将 <xref:System.IO.Compression.ZipArchiveEntry.LastWriteTime%2A> 属性设置为当前时间。</span><span class="sxs-lookup"><span data-stu-id="19667-110">The following example shows how to open an entry in a zip archive, modify it, and set the <xref:System.IO.Compression.ZipArchiveEntry.LastWriteTime%2A> property to the current time.</span></span>
+
+[!code-csharp[System.IO.Compression.ZipArchiveEntry#2](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.io.compression.ziparchiveentry/cs/program2.cs#2)]
+[!code-vb[System.IO.Compression.ZipArchiveEntry#2](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.io.compression.ziparchiveentry/vb/program2.vb#2)]

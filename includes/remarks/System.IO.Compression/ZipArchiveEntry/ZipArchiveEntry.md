@@ -1,0 +1,36 @@
+---
+ms.openlocfilehash: 961780639415afe5125b3effff236c1264ae4cd0
+ms.sourcegitcommit: 9f423345753728e8cad38d4a22663a109e69ea91
+ms.translationtype: MT
+ms.contentlocale: zh-CN
+ms.lasthandoff: 03/04/2021
+ms.locfileid: "102091691"
+---
+<span data-ttu-id="ae20d-101">Zip 存档包含每个压缩文件的条目。</span><span class="sxs-lookup"><span data-stu-id="ae20d-101">A zip archive contains an entry for each compressed file.</span></span> <span data-ttu-id="ae20d-102"><xref:System.IO.Compression.ZipArchiveEntry>利用类，您可以检查项的属性，打开或删除该项。</span><span class="sxs-lookup"><span data-stu-id="ae20d-102">The <xref:System.IO.Compression.ZipArchiveEntry> class enables you to examine the properties of an entry, and open or delete the entry.</span></span> <span data-ttu-id="ae20d-103">打开某个条目时，可以通过写入该压缩文件的流来修改压缩的文件。</span><span class="sxs-lookup"><span data-stu-id="ae20d-103">When you open an entry, you can modify the compressed file by writing to the stream for that compressed file.</span></span>
+
+<span data-ttu-id="ae20d-104">用于处理 zip 存档及其文件条目的方法分布于三个类： <xref:System.IO.Compression.ZipFile> 、 <xref:System.IO.Compression.ZipArchive> 和 <xref:System.IO.Compression.ZipArchiveEntry> 。</span><span class="sxs-lookup"><span data-stu-id="ae20d-104">The methods for manipulating zip archives and their file entries are spread across three classes: <xref:System.IO.Compression.ZipFile>, <xref:System.IO.Compression.ZipArchive> and <xref:System.IO.Compression.ZipArchiveEntry>.</span></span>
+
+|<span data-ttu-id="ae20d-105">收件人...</span><span class="sxs-lookup"><span data-stu-id="ae20d-105">To...</span></span>|<span data-ttu-id="ae20d-106">使用...</span><span class="sxs-lookup"><span data-stu-id="ae20d-106">Use...</span></span>|
+|---------|----------|
+|<span data-ttu-id="ae20d-107">从目录创建 zip 存档</span><span class="sxs-lookup"><span data-stu-id="ae20d-107">Create a zip archive from a directory</span></span>|<xref:System.IO.Compression.ZipFile.CreateFromDirectory%2A?displayProperty=nameWithType>|
+|<span data-ttu-id="ae20d-108">将 zip 存档的内容提取到目录</span><span class="sxs-lookup"><span data-stu-id="ae20d-108">Extract the contents of a zip archive to a directory</span></span>|<xref:System.IO.Compression.ZipFile.ExtractToDirectory%2A?displayProperty=nameWithType>|
+|<span data-ttu-id="ae20d-109">将新文件添加到现有 zip 存档</span><span class="sxs-lookup"><span data-stu-id="ae20d-109">Add new files to an existing zip archive</span></span>|<xref:System.IO.Compression.ZipArchive.CreateEntry%2A?displayProperty=nameWithType>|
+|<span data-ttu-id="ae20d-110">在 zip 存档中检索文件</span><span class="sxs-lookup"><span data-stu-id="ae20d-110">Retrieve an file in a zip archive</span></span>|<xref:System.IO.Compression.ZipArchive.GetEntry%2A?displayProperty=nameWithType>|
+|<span data-ttu-id="ae20d-111">检索 zip 存档中的所有文件</span><span class="sxs-lookup"><span data-stu-id="ae20d-111">Retrieve all of the files in a zip archive</span></span>|<xref:System.IO.Compression.ZipArchive.Entries%2A?displayProperty=nameWithType>|
+|<span data-ttu-id="ae20d-112">打开 zip 存档中包含的单个文件的流</span><span class="sxs-lookup"><span data-stu-id="ae20d-112">To open a stream to an individual file contained in a zip archive</span></span>|<xref:System.IO.Compression.ZipArchiveEntry.Open%2A?displayProperty=nameWithType>|
+|<span data-ttu-id="ae20d-113">删除 zip 存档中的文件</span><span class="sxs-lookup"><span data-stu-id="ae20d-113">Delete a file from a zip archive</span></span>|<xref:System.IO.Compression.ZipArchiveEntry.Delete%2A?displayProperty=nameWithType>|
+
+<span data-ttu-id="ae20d-114">如果在 `System.IO.Compression.FileSystem` 项目中引用程序集，则可以访问类的两个扩展方法 <xref:System.IO.Compression.ZipArchiveEntry> 。</span><span class="sxs-lookup"><span data-stu-id="ae20d-114">If you reference the `System.IO.Compression.FileSystem` assembly in your project, you can access two extension methods for the <xref:System.IO.Compression.ZipArchiveEntry> class.</span></span> <span data-ttu-id="ae20d-115">这些方法是 <xref:System.IO.Compression.ZipFileExtensions.ExtractToFile%28System.IO.Compression.ZipArchiveEntry%2CSystem.String%29> 和 <xref:System.IO.Compression.ZipFileExtensions.ExtractToFile%28System.IO.Compression.ZipArchiveEntry%2CSystem.String%2CSystem.Boolean%29> ，它们使你能够将项的内容解压缩到文件中。</span><span class="sxs-lookup"><span data-stu-id="ae20d-115">Those methods are <xref:System.IO.Compression.ZipFileExtensions.ExtractToFile%28System.IO.Compression.ZipArchiveEntry%2CSystem.String%29> and <xref:System.IO.Compression.ZipFileExtensions.ExtractToFile%28System.IO.Compression.ZipArchiveEntry%2CSystem.String%2CSystem.Boolean%29>, and they enable you to decompress the contents of the entry to a file.</span></span> <span data-ttu-id="ae20d-116">`System.IO.Compression.FileSystem`程序集在 Windows 8 中不可用。</span><span class="sxs-lookup"><span data-stu-id="ae20d-116">The `System.IO.Compression.FileSystem` assembly is not available in Windows 8.</span></span> <span data-ttu-id="ae20d-117">在 Windows 8.x 应用商店应用程序中，可以使用或解压缩存档的内容 <xref:System.IO.Compression.DeflateStream> <xref:System.IO.Compression.GZipStream> ，也可以使用 Windows 运行时类型 [压缩程序](https://go.microsoft.com/fwlink/p/?LinkId=246357) 和 [解压缩](https://go.microsoft.com/fwlink/?LinkId=246358) 程序来压缩和解压缩文件。</span><span class="sxs-lookup"><span data-stu-id="ae20d-117">In Windows 8.x Store apps, you can decompress the contents of an archive by using <xref:System.IO.Compression.DeflateStream> or <xref:System.IO.Compression.GZipStream>, or you can use the Windows Runtime types [Compressor](https://go.microsoft.com/fwlink/p/?LinkId=246357) and [Decompressor](https://go.microsoft.com/fwlink/?LinkId=246358) to compress and decompress files.</span></span>
+
+## <a name="examples"></a><span data-ttu-id="ae20d-118">示例</span><span class="sxs-lookup"><span data-stu-id="ae20d-118">Examples</span></span>
+
+<span data-ttu-id="ae20d-119">第一个示例演示如何在 zip 存档中创建新项并对其进行写入。</span><span class="sxs-lookup"><span data-stu-id="ae20d-119">The first example shows how to create a new entry in a zip archive and write to it.</span></span>
+
+[!code-csharp[System.IO.Compression.ZipArchiveMode#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.io.compression.ziparchivemode/cs/program1.cs#1)]
+[!code-vb[System.IO.Compression.ZipArchiveMode#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.io.compression.ziparchivemode/vb/program1.vb#1)]
+
+<span data-ttu-id="ae20d-120">第二个示例演示如何使用 <xref:System.IO.Compression.ZipFileExtensions.ExtractToFile%28System.IO.Compression.ZipArchiveEntry%2CSystem.String%29> 扩展方法。</span><span class="sxs-lookup"><span data-stu-id="ae20d-120">The second example shows how to use the <xref:System.IO.Compression.ZipFileExtensions.ExtractToFile%28System.IO.Compression.ZipArchiveEntry%2CSystem.String%29> extension method.</span></span> <span data-ttu-id="ae20d-121">`System.IO.Compression.FileSystem`若要执行代码，必须在项目中引用程序集。</span><span class="sxs-lookup"><span data-stu-id="ae20d-121">You must reference the `System.IO.Compression.FileSystem` assembly in your project for the code to execute.</span></span>
+
+[!code-csharp[System.IO.Compression.ZipArchive#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.io.compression.ziparchive/cs/program1.cs#1)]
+[!code-vb[System.IO.Compression.ZipArchive#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.io.compression.ziparchive/vb/program1.vb#1)]
+

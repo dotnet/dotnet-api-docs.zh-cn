@@ -1,0 +1,16 @@
+---
+ms.openlocfilehash: e6f92cfac11807977ea79667cf36d2105171a442
+ms.sourcegitcommit: 9f423345753728e8cad38d4a22663a109e69ea91
+ms.translationtype: MT
+ms.contentlocale: zh-CN
+ms.lasthandoff: 03/04/2021
+ms.locfileid: "102091704"
+---
+<span data-ttu-id="273f0-101"><xref:System.IO.Compression.ZipArchiveEntry.Name%2A>属性包含 <xref:System.IO.Compression.ZipArchiveEntry.FullName%2A> 属性中遵循最后一个目录分隔符 () 的部分 \\ ，不包括子目录层次结构。</span><span class="sxs-lookup"><span data-stu-id="273f0-101">The <xref:System.IO.Compression.ZipArchiveEntry.Name%2A> property contains the portion of the <xref:System.IO.Compression.ZipArchiveEntry.FullName%2A> property that follows the final directory separator character (\\), and does not include the subdirectory hierarchy.</span></span> <span data-ttu-id="273f0-102">例如，如果使用方法在 zip 存档中创建两个条目， <xref:System.IO.Compression.ZipFileExtensions.CreateEntryFromFile%2A> 并提供 `NewEntry.txt` 作为第一个条目的名称，并且为第二个条目提供名称 `AddedFolder\\NewEntry.txt` ，则这两个条目都将包含 `NewEntry.txt` 在 <xref:System.IO.Compression.ZipArchiveEntry.Name%2A> 属性中。</span><span class="sxs-lookup"><span data-stu-id="273f0-102">For example, if you create two entries in a zip archive by using the <xref:System.IO.Compression.ZipFileExtensions.CreateEntryFromFile%2A> method and provide `NewEntry.txt` as the name for the first entry and `AddedFolder\\NewEntry.txt` for the second entry, both entries will have `NewEntry.txt` in the <xref:System.IO.Compression.ZipArchiveEntry.Name%2A> property.</span></span> <span data-ttu-id="273f0-103">第一项也包含 `NewEntry.txt` 在属性中 <xref:System.IO.Compression.ZipArchiveEntry.FullName%2A> ，但第二个项将包含在 `AddedFolder\\NewEntry.txt` 属性中 <xref:System.IO.Compression.ZipArchiveEntry.FullName%2A> 。</span><span class="sxs-lookup"><span data-stu-id="273f0-103">The first entry will also have `NewEntry.txt` in the <xref:System.IO.Compression.ZipArchiveEntry.FullName%2A> property, but the second entry will have `AddedFolder\\NewEntry.txt` in the <xref:System.IO.Compression.ZipArchiveEntry.FullName%2A> property.</span></span>
+
+## <a name="examples"></a><span data-ttu-id="273f0-104">示例</span><span class="sxs-lookup"><span data-stu-id="273f0-104">Examples</span></span>
+
+<span data-ttu-id="273f0-105">下面的示例演示如何从 zip 存档中检索项并评估这些项的属性。</span><span class="sxs-lookup"><span data-stu-id="273f0-105">The following example shows how to retrieve entries from a zip archive and evaluate the properties of the entries.</span></span> <span data-ttu-id="273f0-106">它使用 <xref:System.IO.Compression.ZipArchiveEntry.Name%2A> 属性显示项的名称，并使用 <xref:System.IO.Compression.ZipArchiveEntry.Length%2A> 和 <xref:System.IO.Compression.ZipArchiveEntry.CompressedLength%2A> 属性来计算文件的压缩量。</span><span class="sxs-lookup"><span data-stu-id="273f0-106">It uses the <xref:System.IO.Compression.ZipArchiveEntry.Name%2A> property to display the name of the entry, and the <xref:System.IO.Compression.ZipArchiveEntry.Length%2A> and <xref:System.IO.Compression.ZipArchiveEntry.CompressedLength%2A> properties to calculate how much the file was compressed.</span></span>
+
+[!code-csharp[System.IO.Compression.ZipArchiveEntry#1](~/samples/snippets/csharp/VS_Snippets_CLR_System/system.io.compression.ziparchiveentry/cs/program1.cs#1)]
+[!code-vb[System.IO.Compression.ZipArchiveEntry#1](~/samples/snippets/visualbasic/VS_Snippets_CLR_System/system.io.compression.ziparchiveentry/vb/program1.vb#1)]
