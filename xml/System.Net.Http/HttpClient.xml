@@ -1,5 +1,5 @@
 <Type Name="HttpClient" FullName="System.Net.Http.HttpClient">
-  <Metadata><Meta Name="ms.openlocfilehash" Value="1e0e6cfb8ea38e4b7e6ed737812a0c9182f38026" /><Meta Name="ms.sourcegitcommit" Value="a7bb9d6f0f201343032b4ffbe59191f3568ef45f" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="11/02/2020" /><Meta Name="ms.locfileid" Value="93187562" /></Metadata><TypeSignature Language="C#" Value="public class HttpClient : System.Net.Http.HttpMessageInvoker" />
+  <Metadata><Meta Name="ms.openlocfilehash" Value="7db7af0d25ac785956462151611fd6177ed237f8" /><Meta Name="ms.sourcegitcommit" Value="75d042970105c611a6ea6721c7ddc9d7eb314dd4" /><Meta Name="ms.translationtype" Value="MT" /><Meta Name="ms.contentlocale" Value="zh-CN" /><Meta Name="ms.lasthandoff" Value="03/09/2021" /><Meta Name="ms.locfileid" Value="102516185" /></Metadata><TypeSignature Language="C#" Value="public class HttpClient : System.Net.Http.HttpMessageInvoker" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit HttpClient extends System.Net.Http.HttpMessageInvoker" />
   <TypeSignature Language="DocId" Value="T:System.Net.Http.HttpClient" />
   <TypeSignature Language="VB.NET" Value="Public Class HttpClient&#xA;Inherits HttpMessageInvoker" />
@@ -28,14 +28,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>提供基本类，用于发送 HTTP 请求和接收来自通过 URI 确认的资源的 HTTP 响应。</summary>
+    <summary>提供一个类，用于发送 HTTP 请求以及从 URI 所标识的资源接收 HTTP 响应。</summary>
     <remarks>
       <format type="text/markdown"><![CDATA[  
   
 ## Remarks  
  <xref:System.Net.Http.HttpClient>类实例充当发送 HTTP 请求的会话。 <xref:System.Net.Http.HttpClient>实例是对该实例执行的所有请求应用的设置的集合。 此外，每个 <xref:System.Net.Http.HttpClient> 实例都使用其自己的连接池，并从其他实例所执行的请求隔离其请求 <xref:System.Net.Http.HttpClient> 。  
   
- <xref:System.Net.Http.HttpClient>还可用作更具体的 HTTP 客户端的基类。 例如，FacebookHttpClient 提供特定于 Facebook web 服务的其他方法 (GetFriends 方法，例如) 。 派生类不应重写类的虚方法。 而应使用接受的构造函数重载 <xref:System.Net.Http.HttpMessageHandler> 来配置任何预处理或后请求处理。
+ 派生类不应重写类的虚方法。 而是使用接受的构造函数重载 <xref:System.Net.Http.HttpMessageHandler> 来配置任何预处理或请求后处理。
   
  默认情况下，在 .NET Framework 和 Mono 上， <xref:System.Net.HttpWebRequest> 用于将请求发送到服务器。 可以通过在采用实例作为参数的构造函数重载之一中指定不同的通道来修改此行为 <xref:System.Net.Http.HttpMessageHandler> 。 如果需要使用身份验证或缓存等功能， <xref:System.Net.Http.WebRequestHandler> 可使用来配置设置，并将实例传递给构造函数。 返回的处理程序可传递给采用参数的构造函数重载之一 <xref:System.Net.Http.HttpMessageHandler> 。  
   
@@ -62,7 +62,9 @@
   
 8.  <xref:System.Net.Http.HttpClient.PutAsync%2A>  
   
-9. <xref:System.Net.Http.HttpClient.SendAsync%2A>  
+9.  <xref:System.Net.Http.HttpClient.SendAsync%2A>  
+
+10. <xref:System.Net.Http.HttpClient.PatchAsync%2A>  
   
  <xref:System.Net.Http.HttpClient> 用于在应用程序的整个生存期内实例化一次并重复使用。 实例化每个请求的 HttpClient 类将耗尽重负载下可用的插槽数。 这将导致 SocketException 错误。 下面是正确使用 HttpClient 的示例。  
   
@@ -117,7 +119,7 @@ End Class
 - 消除了平台依赖项，从而简化了部署和服务。 例如， `libcurl` 不再依赖于适用于 macOS 的 .Net core 和适用于 Linux 的 .Net core。
 - 各种 .NET 平台的行为一致。
 
-如果不需要此更改，在 Windows 上，你仍可以 <xref:System.Net.Http.WinHttpHandler> 通过引用其[NuGet 包](https://www.nuget.org/packages/System.Net.Http.WinHttpHandler/)并将其手动传递到[ `HttpClient` 的构造函数](xref:System.Net.Http.HttpClient.%23ctor(System.Net.Http.HttpMessageHandler))来使用。
+如果不需要此更改，在 Windows 上，你仍可以 <xref:System.Net.Http.WinHttpHandler> 通过引用其[NuGet 包](https://www.nuget.org/packages/System.Net.Http.WinHttpHandler/)并手动将其传递到[ `HttpClient` 的构造函数](xref:System.Net.Http.HttpClient.%23ctor(System.Net.Http.HttpMessageHandler))来使用。
 
 ### <a name="configure-behavior-using-run-time-configuration-options"></a>使用运行时配置选项配置行为
 
@@ -824,7 +826,7 @@ End Class
 ## Remarks  
  此方法由公共 `Dispose()` 方法和 <xref:System.Object.Finalize%2A> 方法调用。 `Dispose()` 调用受保护的 `Dispose(Boolean)` 方法，并将 `disposing` 参数设置为 `true` 。 <xref:System.Object.Finalize%2A>`Dispose`在设置为的情况调用 `disposing` `false` 。  
   
- 当 `disposing` 参数为 `true` 时，此方法释放该 <xref:System.Net.Http.HttpClient> 引用的、由任何托管对象持有的全部资源。 此方法将调用每个被引用对象的 `Dispose()` 方法。  
+ 当 `disposing` 参数为 `true` 时，此方法释放该 <xref:System.Net.Http.HttpClient> 引用的、由任何托管对象持有的全部资源。 此方法调用每个引用对象的 `Dispose()` 方法。  
   
  调用此方法时，将 <xref:System.Net.Http.HttpClient.CancelPendingRequests%2A> 调用方法以中止所有挂起的请求。  
   
